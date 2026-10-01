@@ -47,6 +47,16 @@ if (create.ok) {
   console.log(`OK: 仓库已创建 ${login}/${repoName}（公开，免费 Pages 要求）`);
 } else if (create.status === 422) {
   console.log(`OK: 仓库 ${login}/${repoName} 已存在，跳过创建`);
+} else if (create.status === 403) {
+  // Fine-grained Token 经常没有"建仓库"权限，但推送不受影响
+  console.log('MANUAL: Token 没有「建仓库」权限，请手动建一个空仓库（30 秒，一次性）：');
+  console.log('  打开 https://github.com/new');
+  console.log(`  · Repository name 填 ${repoName}`);
+  console.log('  · 选 Public（免费 Pages 要求）');
+  console.log('  · 下面的初始化选项（README / .gitignore / license）全部不勾');
+  console.log('  · 点 Create repository');
+  console.log('建好后重跑: node tools/github-init.mjs  （脚本会自动检测到已存在并直接推送）');
+  process.exit(2);
 } else {
   console.log(`ERROR: 建仓库失败 ${create.status}: ${(await create.text()).slice(0, 200)}`);
   process.exit(1);
