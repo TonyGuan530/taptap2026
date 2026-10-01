@@ -32,34 +32,38 @@ if (!me.ok) {
 const login = (await me.json()).login;
 console.log(`OK: 认证为 ${login}`);
 
-// 2. 建仓库（已存在就跳过）
-const create = await fetch('https://api.github.com/user/repos', {
-  method: 'POST',
-  headers,
-  body: JSON.stringify({
-    name: repoName,
-    description: 'TapTap2026 - Godot 小游戏 + Miro→GPT→自动开发流水线',
-    private: false, // 免费版 GitHub Pages 只支持公开仓库
-    auto_init: false,
-  }),
-});
-if (create.ok) {
-  console.log(`OK: 仓库已创建 ${login}/${repoName}（公开，免费 Pages 要求）`);
-} else if (create.status === 422) {
+// 2. 仓库已存在就直接跳过创建（GitHub 对 fine-grained token 是先查权限后查重名，
+//    所以不能用 POST 的 422 来判断"已存在"）
+const probe = await fetch(`https://api.github.com/repos/${login}/${repoName}`, { headers });
+if (probe.ok) {
   console.log(`OK: 仓库 ${login}/${repoName} 已存在，跳过创建`);
-} else if (create.status === 403) {
-  // Fine-grained Token 经常没有"建仓库"权限，但推送不受影响
-  console.log('MANUAL: Token 没有「建仓库」权限，请手动建一个空仓库（30 秒，一次性）：');
-  console.log('  打开 https://github.com/new');
-  console.log(`  · Repository name 填 ${repoName}`);
-  console.log('  · 选 Public（免费 Pages 要求）');
-  console.log('  · 下面的初始化选项（README / .gitignore / license）全部不勾');
-  console.log('  · 点 Create repository');
-  console.log('建好后重跑: node tools/github-init.mjs  （脚本会自动检测到已存在并直接推送）');
-  process.exit(2);
 } else {
-  console.log(`ERROR: 建仓库失败 ${create.status}: ${(await create.text()).slice(0, 200)}`);
-  process.exit(1);
+  const create = await fetch('https://api.github.com/user/repos', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      name: repoName,
+      description: 'TapTap2026 - Godot 小游戏 + Miro→GPT→自动开发流水线',
+      private: false, // 免费版 GitHub Pages 只支持公开仓库
+      auto_init: false,
+    }),
+  });
+  if (create.ok) {
+    console.log(`OK: 仓库已创建 ${login}/${repoName}（公开，免费 Pages 要求）`);
+  } else if (create.status === 403) {
+    // Fine-grained Token 经常没有"建仓库"权限，但推送不受影响
+    console.log('MANUAL: Token 没有「建仓库」权限，请手动建一个空仓库（30 秒，一次性）：');
+    console.log('  打开 https://github.com/new');
+    console.log(`  · Repository name 填 ${repoName}`);
+    console.log('  · 选 Public（免费 Pages 要求）');
+    console.log('  · 下面的初始化选项（README / .gitignore / license）全部不勾');
+    console.log('  · 点 Create repository');
+    console.log('建好后重跑: node tools/github-init.mjs  （脚本会自动检测到已存在并直接推送）');
+    process.exit(2);
+  } else {
+    console.log(`ERROR: 建仓库失败 ${create.status}: ${(await create.text()).slice(0, 200)}`);
+    process.exit(1);
+  }
 }
 
 // 3. 配 remote（Token 只存本机 .git/config）
