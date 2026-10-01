@@ -48,6 +48,11 @@
 
 你的页面：**https://sxguan.itch.io/taptap2026**（已建好，当前是 Restricted 密码模式，密码 `taptap`）
 
+> ⚠️ **一次性设置（必须在 itch 网页后台做，API 做不了）**：
+> Edit project → 顶部 **Kind of project** 选 **HTML** → 下方 **Viewport dimensions** 选 `960 x 540`（与 Godot 导出画面一致）→ Save。
+> 不做这步，页面只会显示下载按钮、不会嵌入游戏。2026-10-02 实测：butler 推送的构建会自动标记 "Play in browser"，但页面嵌入仍需手动切 Kind。
+> API Key 已存在本机 `data/secrets.json`（`/key` 页写入，已被 gitignore），butler 推送已全流程跑通。
+
 ### 方式 A：手动上传（首次最快）
 
 1. 运行 `tools\package-itch.ps1`（自动打包最新构建）→ 得到 `dist-itch/<版本>.zip`
