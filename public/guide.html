@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>操作指南 · TapTap2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+<style>
+:root { --bg:#0d1017; --card:#161a23; --line:#262c3a; --text:#e8ecf4; --muted:#8b94a7; --accent:#4f8cff; --ok:#66bb6a; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,sans-serif; line-height:1.7; }
+.container { max-width: 860px; margin: 0 auto; padding: 24px 20px 80px; }
+h1 { font-size: 26px; margin: 8px 0 4px; }
+.sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; margin-bottom: 20px; }
+h2 { font-size: 19px; margin: 0 0 12px; }
+h2 .tag { font-size: 12px; background: rgba(79,140,255,.14); color: var(--accent); border:1px solid rgba(79,140,255,.35); border-radius:999px; padding:1px 10px; vertical-align: 3px; margin-left: 8px; }
+.step { display:flex; gap: 10px; align-items:flex-start; padding: 7px 0; border-top: 1px dashed var(--line); }
+.step:first-of-type { border-top: none; }
+.step input[type=checkbox] { width: 17px; height: 17px; margin-top: 5px; accent-color: var(--ok); cursor: pointer; flex: none; }
+.step.done .txt { color: var(--muted); text-decoration: line-through; }
+.step .txt { flex: 1; }
+.step .txt b { color: #cfe0ff; }
+code, .path { background:#1b2030; border:1px solid var(--line); border-radius:6px; padding:1px 7px; font-size: 13px; font-family: Consolas, monospace; }
+.cmd { display:block; background:#1b2030; border:1px solid var(--line); border-radius:8px; padding:10px 14px; font-family:Consolas,monospace; font-size:13px; color:#cfe0ff; white-space:pre-wrap; word-break: break-all; margin: 8px 0; }
+.note { font-size: 13px; color: var(--muted); background: rgba(255,213,79,.06); border:1px solid rgba(255,213,79,.25); border-radius: 8px; padding: 8px 12px; margin: 10px 0 0; }
+a { color: var(--accent); }
+#progress { position: sticky; top: 0; z-index: 5; background: rgba(13,16,23,.94); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); padding: 10px 20px; font-size: 14px; }
+#bar { height: 6px; background: #222836; border-radius: 99px; margin-top: 6px; overflow: hidden; }
+#bar > div { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), #9b6bff); transition: width .3s; }
+</style>
+</head>
+<body>
+<div id="progress">总进度 <span id="ptxt">0 / 0</span><div id="bar"><div></div></div></div>
+
+<div class="container">
+  <h1>📖 TapTap2026 操作指南</h1>
+  <p class="sub">照着做，做完一项勾一项（勾选状态自动保存在本机浏览器里）· 由 ZCode 生成于 2026-10-02</p>
+
+  <section>
+    <h2>① 把游戏传上 itch.io <span class="tag">现在就能做 · 1 分钟</span></h2>
+    <div class="step"><input type="checkbox" id="i11"><div class="txt">打开 <a href="https://sxguan.itch.io/taptap2026" target="_blank">sxguan.itch.io/taptap2026</a> → 点顶部 <b>Edit project</b></div></div>
+    <div class="step"><input type="checkbox" id="i12"><div class="txt">在 <b>Uploads</b> 区点 <b>Upload files</b>，选择 <span class="path">D:\GIT\taptap2026\dist-itch\v0.0.2.zip</span>（23MB，Godot 4.7 构建）</div></div>
+    <div class="step"><input type="checkbox" id="i13"><div class="txt">上传完成后点这个 zip，<b>勾选 "This file will be played in the browser"</b>，Viewport 填 <b>960 × 540</b></div></div>
+    <div class="step"><input type="checkbox" id="i14"><div class="txt">拉到底 <b>Save &amp; view page</b> → 输密码 <code>taptap</code> 确认能玩</div></div>
+    <p class="note">以后更新版本：跑 <code>tools\export-web.ps1</code> 出新包 → <code>tools\package-itch.ps1</code> 打 zip → 重复上传。想全自动看 ②。</p>
+  </section>
+
+  <section>
+    <h2>② 配置全自动发布（GitHub CI）<span class="tag">一次配置 · 永久生效</span></h2>
+    <div class="step"><input type="checkbox" id="i21"><div class="txt">登录 <a href="https://github.com/new" target="_blank">github.com/new</a> → 仓库名 <code>taptap2026</code> → 选 <b>Public</b>（免费 Pages 的要求）→ <b>Create repository</b></div></div>
+    <div class="step"><input type="checkbox" id="i22"><div class="txt">本机 Git Bash 里执行（把「你的用户名」换掉）：<span class="cmd">cd /d/GIT/taptap2026
+git config user.email "你的GitHub邮箱"
+git remote add origin https://github.com/你的用户名/taptap2026.git
+git push -u origin main</span>push 卡住就多重试几次（国内对 github.com 时好时坏）</div></div>
+    <div class="step"><input type="checkbox" id="i23"><div class="txt">仓库网页 → <b>Settings → Secrets and variables → Actions</b>：<br>Variables 标签 → New repository variable：名字 <code>ITCH_TARGET</code>，值 <code>sxguan/taptap2026</code><br>Secrets 标签 → New repository secret：名字 <code>ITCH_API_KEY</code>，值 = 你的 itch API Key（就是你粘在 /key 页面那串）</div></div>
+    <div class="step"><input type="checkbox" id="i24"><div class="txt">仓库网页 → <b>Settings → Pages</b> → Build and deployment → Source 选 <b>GitHub Actions</b></div></div>
+    <div class="step"><input type="checkbox" id="i25"><div class="txt">验证：仓库 <b>Actions</b> 标签页看「导出并发布」跑绿 → itch 页面出现新构建 → <code>https://你的用户名.github.io/taptap2026/</code> 能打开</div></div>
+    <p class="note">为什么要绕 GitHub：你的网络把 <code>api.itch.io</code> 的 TCP 直连掐断了（本机 butler 推不上），GitHub 的服务器没这个问题。配好之后 <b>git push 一次 = 自动构建 + 更新 itch + 更新 Pages</b>。</p>
+  </section>
+
+  <section>
+    <h2>③ 接入 Miro 设计板 <span class="tag">你正在注册 · 5 分钟</span></h2>
+    <div class="step"><input type="checkbox" id="i31"><div class="txt">完成 Miro 注册登录，新建一个 board，把游戏设计/脑图/参考图放进去</div></div>
+    <div class="step"><input type="checkbox" id="i32"><div class="txt">Board 右上 <b>Share</b> → 链接权限改为 <b>Anyone with the link → Viewer（评论者更好）</b> → 复制链接发给 ZCode</div></div>
+    <div class="step"><input type="checkbox" id="i33"><div class="txt">（可选，想让 ZCode 深度读写 board 时才需要）：miro.com 右上头像 → <b>Settings → Your Apps</b> → <b>Create new app</b> → 创建后在 App 页面复制 <b>Access Token</b></div></div>
+    <div class="step"><input type="checkbox" id="i34"><div class="txt">打开 <a href="http://localhost:8787/key" target="_blank">localhost:8787/key</a> 粘贴 Token 保存 → 跟 ZCode 说一声</div></div>
+    <p class="note">只给公开链接也行，ZCode 就能看内容；Token 的用处是让 ZCode 能直接在 board 上读便签、建卡片。</p>
+  </section>
+
+  <section>
+    <h2>④ 本机 butler 推送（可选，需要代理）</h2>
+    <div class="step"><input type="checkbox" id="i41"><div class="txt">现状：本机直连 <code>api.itch.io</code> 被网络掐断（TCP 100% 重置），butler 用不了；浏览器能开是因为走了 QUIC/UDP</div></div>
+    <div class="step"><input type="checkbox" id="i42"><div class="txt">装好代理（Clash / v2rayN 等）后，在项目目录执行：<span class="cmd">set HTTPS_PROXY=http://127.0.0.1:7890
+tools\push-itch.ps1 -Version v0.0.2</span>（端口按你的代理软件改）</div></div>
+  </section>
+
+  <section>
+    <h2>⑤ 日常开发循环（背下来）</h2>
+    <div class="step"><input type="checkbox" id="i51"><div class="txt">改游戏：Godot 打开 <span class="path">game\project.godot</span>（本机已装 Godot 4.7.2：<span class="path">tools\godot\</span>）</div></div>
+    <div class="step"><input type="checkbox" id="i52"><div class="txt">自测：双击 <span class="path">启动Review站点.bat</span> → <a href="http://localhost:8787" target="_blank">localhost:8787</a> 玩一圈、收反馈（反馈存在 <code>data/db.json</code>）</div></div>
+    <div class="step"><input type="checkbox" id="i53"><div class="txt">发布新版本：<span class="cmd">tools\export-web.ps1 -Version v0.0.3 -Notes "这次改了啥"</span></div></div>
+    <div class="step"><input type="checkbox" id="i54"><div class="txt">上线：<span class="cmd">git add -A
+git commit -m "v0.0.3 说明"
+git push</span>→ CI 自动更新 itch + Pages，朋友刷新就能玩到</div></div>
+  </section>
+
+  <section>
+    <h2>⑥ 踩坑速查</h2>
+    <div class="step"><input type="checkbox" id="i61"><div class="txt"><b>GitHub 下载慢/断</b>：浏览器或 curl 前面加 <code>https://gh-proxy.com/</code> 前缀；git push 失败就重试</div></div>
+    <div class="step"><input type="checkbox" id="i62"><div class="txt"><b>游戏里中文变方框</b>：别删 <code>game/fonts/NotoSansSC.ttf</code>（Godot 网页导出默认不带中文字体，项目已内置）</div></div>
+    <div class="step"><input type="checkbox" id="i63"><div class="txt"><b>导出报错</b>：多半是换/升 Godot 后没装模板（编辑器 Editor → Manage Export Templates）；本机模板已装好在 <code>%APPDATA%\Godot\export_templates\4.7.2.stable</code></div></div>
+    <div class="step"><input type="checkbox" id="i64"><div class="txt"><b>换了 Godot 版本</b>：同步改 <code>.github/workflows/deploy.yml</code> 里的两个下载 URL</div></div>
+    <div class="step"><input type="checkbox" id="i65"><div class="txt"><b>Key 安全</b>：<code>/key</code> 页面只存本机 <code>data/secrets.json</code>（gitignore，不上传不进 git）；itch key 弄丢了去 itch Settings → API Keys 重新生成</div></div>
+  </section>
+</div>
+
+<script>
+const boxes = [...document.querySelectorAll('.step input[type=checkbox]')];
+const KEY = 'taptap2026-guide-v1';
+const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+boxes.forEach((b) => {
+  b.checked = !!saved[b.id];
+  b.closest('.step').classList.toggle('done', b.checked);
+  b.addEventListener('change', () => {
+    saved[b.id] = b.checked;
+    localStorage.setItem(KEY, JSON.stringify(saved));
+    b.closest('.step').classList.toggle('done', b.checked);
+    paint();
+  });
+});
+function paint() {
+  const done = boxes.filter((b) => b.checked).length;
+  document.getElementById('ptxt').textContent = `${done} / ${boxes.length}`;
+  document.querySelector('#bar > div').style.width = (done / boxes.length * 100) + '%';
+}
+paint();
+</script>
+</body>
+</html>
