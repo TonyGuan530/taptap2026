@@ -4,43 +4,43 @@
   "slots": [
     {
       "id": "demo-01",
-      "title": "玩法块 1",
-      "goal": "待补充：把 Miro 上的想法同步到 requirements/backlog.md 后自动更新",
+      "title": "灵感菇侦探",
+      "goal": "听到物品说话的侦探：从犯罪现场物品的只言片语中还原案件真相（叙事涌现&线索涌现）",
       "buildId": "",
       "status": "pending"
     },
     {
       "id": "demo-02",
-      "title": "玩法块 2",
-      "goal": "待补充",
+      "title": "物性变换谜题",
+      "goal": "改变物品的单位/词条 → 物理属性随之改变来解谜（关联：塞尔达式箱庭谜题方向）",
       "buildId": "",
       "status": "pending"
     },
     {
       "id": "demo-03",
-      "title": "玩法块 3",
-      "goal": "待补充",
+      "title": "岩浆降温的小人国度",
+      "goal": "浇水/降温自动化维持温度，随进度涌现随机 NPC 小人",
       "buildId": "",
       "status": "pending"
     },
     {
       "id": "demo-04",
-      "title": "玩法块 4",
-      "goal": "待补充",
+      "title": "SOUP 2.0：DNA 融合逃生",
+      "goal": "和外星生物 DNA 融合改造自身，逃离危险的异星",
       "buildId": "",
       "status": "pending"
     },
     {
       "id": "demo-05",
-      "title": "玩法块 5",
-      "goal": "待补充",
+      "title": "重生之我是恐龙",
+      "goal": "学好数理化解决问题（看板暂只有标题，待成员补充细节）",
       "buildId": "",
-      "status": "pending"
+      "status": "paused"
     },
     {
       "id": "demo-06",
-      "title": "玩法块 6（备用）",
-      "goal": "目前共五到六块，这块备用；确定只有五块就删掉",
+      "title": "备用位",
+      "goal": "留给第 6 块新想法",
       "buildId": "",
       "status": "pending"
     }
