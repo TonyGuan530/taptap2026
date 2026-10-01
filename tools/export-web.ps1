@@ -8,6 +8,8 @@ param(
 $ErrorActionPreference = "Stop"
 $repo = Split-Path $PSScriptRoot -Parent
 $buildDir = Join-Path $repo "builds\$Version"
+# Godot 导出要求目标文件夹已存在
+New-Item -ItemType Directory -Force -Path $buildDir | Out-Null
 
 # 未指定 Godot 时优先用仓库自带的（tools/godot/），否则退回 PATH 里的 godot
 if (-not $GodotPath) {
