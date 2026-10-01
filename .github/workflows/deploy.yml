@@ -41,6 +41,7 @@ jobs:
         run: |
           VERSION="${{ inputs.version }}"
           if [ -z "$VERSION" ]; then VERSION="v$(date +%Y.%m%d)-run${{ github.run_number }}"; fi
+          mkdir -p "builds/$VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           ./Godot_v4.7.2-stable_linux.x86_64 --headless --path game --import
           ./Godot_v4.7.2-stable_linux.x86_64 --headless --path game --export-release "Web" "../builds/$VERSION/index.html"
