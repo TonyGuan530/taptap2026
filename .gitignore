@@ -12,6 +12,9 @@ dist-itch/
 # butler CLI 二进制（ itch.io 上传工具 ）
 tools/butler/
 
+# Godot 编辑器与导出模板（本地工具，不入库）
+tools/godot/
+
 # 系统文件
 Thumbs.db
 Desktop.ini

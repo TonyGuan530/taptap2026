@@ -27,14 +27,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 安装 Godot 4.3 与导出模板
+      - name: 安装 Godot 4.7.2 与导出模板
         run: |
-          curl -sSfL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
-          unzip -q godot.zip && chmod +x Godot_v4.3-stable_linux.x86_64
-          curl -sSfL -o templates.tpz https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz
-          mkdir -p ~/.local/share/godot/export_templates/4.3.stable /tmp/tpl
+          curl -sSfL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q godot.zip && chmod +x Godot_v4.7.2-stable_linux.x86_64
+          curl -sSfL -o templates.tpz https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/4.7.2.stable /tmp/tpl
           unzip -q templates.tpz -d /tmp/tpl
-          mv /tmp/tpl/templates/* ~/.local/share/godot/export_templates/4.3.stable/
+          mv /tmp/tpl/templates/* ~/.local/share/godot/export_templates/4.7.2.stable/
 
       - name: 导出 Web 构建
         id: export

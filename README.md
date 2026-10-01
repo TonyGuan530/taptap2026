@@ -18,7 +18,8 @@
 │   ├── main.gd / main.tscn
 │   └── export_presets.cfg    # Web 导出预设（已配好）
 ├── builds/                   # 每个版本一个目录：index.html + build.json
-│   └── v0.0.1-demo/          # 占位示例构建（纯网页版，用于跑通流程）
+│   ├── v0.0.1-demo/          # 占位示例构建（纯网页版）
+│   └── v0.0.2/               # 第一个真实 Godot 构建（4.7.2，含中文字体）
 ├── server/server.js          # 本地 Review 站（零依赖，Node 18+）
 ├── public/                   # 站点前端（列表页 + 试玩页 + 反馈表单，双模式）
 ├── tools/
@@ -98,7 +99,7 @@
 
 ## Godot 开发流程
 
-1. 安装 [Godot 4.3+](https://godotengine.org/download)（标准版即可）
+1. 安装 [Godot 4.7](https://godotengine.org/download)（标准版即可；CI 用的是 4.7.2-stable）
 2. 用 Godot 打开 `game/project.godot`，把示例游戏换成你的（纯代码/场景随意）
 3. 首次导出前：编辑器菜单 **Editor → Manage Export Templates** 下载模板
 4. 发布新版本：
@@ -111,7 +112,7 @@
 ## 常见问题
 
 - **导出失败**：多半是没装 Export Templates（见上）；或 Godot 版本与 `game/config/features` 不一致（编辑器打开项目会提示升级，点确认即可）
-- **改了 Godot 版本**：同步改 `.github/workflows/deploy.yml` 里两个下载 URL（4.3-stable → 你的版本）
+- **改了 Godot 版本**：同步改 `.github/workflows/deploy.yml` 里两个下载 URL（4.7.2-stable → 你的版本）
 - **评论数据在哪**：本地站在 `data/db.json`；itch 评论在 itch 后台；Pages 静态模式在 GitHub Discussions
 - **游戏加载不了**：本地站已带 COOP/COEP 头支持线程版导出；GitHub Pages 只支持单线程导出（当前预设 `variant/thread_support=false`，别开）
 - **git 提交人不对**：`git config user.name "名字"`、`git config user.email "邮箱"`（当前仓库用占位邮箱提交过一次，介意的话 `git commit --amend --reset-author` 重写首提交）
