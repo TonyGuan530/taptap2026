@@ -1,4 +1,4 @@
-# Push a build to itch.io with butler (official CLI).
+﻿# Push a build to itch.io with butler (official CLI).
 # Usage:
 #   .\tools\push-itch.ps1 -Version v0.0.1-demo -ApiKey YOUR_KEY
 #   .\tools\push-itch.ps1 -Version v0.0.1-demo                 (uses BUTLER_API_KEY env / saved butler login)
