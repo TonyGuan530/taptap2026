@@ -1,0 +1,22 @@
+# Godot 编辑器缓存
+.godot/
+game/.godot/
+
+# 运行时数据（玩家反馈）
+data/db.json
+
+# 本地生成的发布产物
+dist/
+dist-itch/
+
+# butler CLI 二进制（ itch.io 上传工具 ）
+tools/butler/
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# 临时文件
+*.tmp
+*.log

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>试玩 · TapTap2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="bar">
+    <a class="back" href="index.html">← 返回列表</a>
+    <div class="btitle"><span id="title">加载中…</span><span id="ver" class="chip" hidden></span></div>
+    <button id="share" class="btn ghost">🔗 复制链接</button>
+  </div>
+</header>
+
+<main class="play-grid">
+  <section>
+    <div class="frame">
+      <iframe id="game" title="游戏画面" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>
+    </div>
+    <p class="hint muted">首次加载需要下载资源，稍等几秒 · 点击游戏画面获得键盘焦点</p>
+  </section>
+
+  <aside>
+    <div class="panel">
+      <h3>📝 试玩反馈</h3>
+      <div id="feedback-form">
+        <label>昵称</label>
+        <input type="text" id="name" maxlength="20" placeholder="怎么称呼你？">
+        <label>评分</label>
+        <div id="stars" class="rate">
+          <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span><span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span>
+        </div>
+        <label>建议 / 想说的话</label>
+        <textarea id="text" maxlength="500" rows="4" placeholder="哪里好玩？哪里难受？随便说～"></textarea>
+        <button id="submit" class="btn">提交反馈</button>
+        <div id="msg" class="msg"></div>
+      </div>
+      <div id="static-hint" hidden>
+        <p class="muted" style="font-size:14px">
+          当前是静态托管模式（GitHub Pages），留言需要 GitHub 账号。<br>
+          在下方评论区留言，或把建议发给开发组。
+        </p>
+        <div id="giscus-box"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>💬 全部反馈 <span id="ccount" class="muted" style="font-weight:400"></span></h3>
+      <div id="comments"><div class="loading">加载中…</div></div>
+    </div>
+  </aside>
+</main>
+
+<script src="config.js"></script>
+<script src="play.js"></script>
+</body>
+</html>

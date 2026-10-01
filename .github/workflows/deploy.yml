@@ -1,0 +1,97 @@
+name: 导出并发布（Pages + itch.io）
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '构建版本号（留空则自动生成）'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.export.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Godot 4.3 与导出模板
+        run: |
+          curl -sSfL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q godot.zip && chmod +x Godot_v4.3-stable_linux.x86_64
+          curl -sSfL -o templates.tpz https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/4.3.stable /tmp/tpl
+          unzip -q templates.tpz -d /tmp/tpl
+          mv /tmp/tpl/templates/* ~/.local/share/godot/export_templates/4.3.stable/
+
+      - name: 导出 Web 构建
+        id: export
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [ -z "$VERSION" ]; then VERSION="v$(date +%Y.%m%d)-run${{ github.run_number }}"; fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          ./Godot_v4.3-stable_linux.x86_64 --headless --path game --import
+          ./Godot_v4.3-stable_linux.x86_64 --headless --path game --export-release "Web" "../builds/$VERSION/index.html"
+          cat > "builds/$VERSION/build.json" <<EOF
+          {"title":"TapTap2026 Demo","version":"$VERSION","date":"$(date -u +%Y-%m-%dT%H:%M:%SZ)","author":"ci","notes":"CI 自动构建（run #${{ github.run_number }}）"}
+          EOF
+
+      - name: 生成静态站点
+        run: node tools/build-static.mjs
+
+      - name: 上传 Pages 产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: 上传 itch 构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: itch-build
+          path: builds/${{ steps.export.outputs.version }}/
+
+  deploy-pages:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  # 可选：配置了仓库变量 ITCH_TARGET（如 sxguan/taptap2026）和 Secret ITCH_API_KEY 后自动启用
+  push-itch:
+    needs: build
+    if: ${{ vars.ITCH_TARGET != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 下载构建产物
+        uses: actions/download-artifact@v4
+        with:
+          name: itch-build
+          path: build-dir
+
+      - name: 安装 butler
+        run: |
+          curl -sSfL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -o butler.zip && chmod +x butler
+
+      - name: 推送到 itch.io
+        env:
+          ITCH_API_KEY: ${{ secrets.ITCH_API_KEY }}
+        run: |
+          echo "$ITCH_API_KEY" > butler_creds
+          ./butler push build-dir "$ITCH_TARGET:html" --userversion "${{ needs.build.outputs.version }}"

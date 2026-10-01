@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>点点大作战 · 占位构建</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0d1017; overflow: hidden; }
+  canvas { width: 100vw; height: 100vh; object-fit: contain; display: block; touch-action: manipulation; }
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<script>
+// 占位示例构建：与 game/ 里的 Godot 示例玩法一致。
+// 作用：在装好 Godot 之前，先跑通「发布构建 → 在线试玩 → 评分留言」整条流程。
+const W = 960, H = 540;
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+function resize() {
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  cv.width = W * dpr; cv.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resize();
+addEventListener('resize', resize);
+
+const COLORS = ['#478cbf', '#ff7043', '#66bb6a', '#ab47bc', '#ffd54f', '#ef5350'];
+const GAME_TIME = 30;
+const MISS_PENALTY = 1.5;
+
+let score = 0, timeLeft = GAME_TIME, playing = false;
+let dots = [], spawnCd = 0, lastTs = 0;
+
+function spawnDot() {
+  const r = 20 + Math.random() * 14;
+  const speed = 120 + Math.random() * 120 + (GAME_TIME - timeLeft) * 3;
+  dots.push({
+    x: 50 + Math.random() * (W - 100), y: -40, r, speed,
+    col: COLORS[(Math.random() * COLORS.length) | 0],
+    phase: Math.random() * 6.28, dead: false,
+  });
+}
+
+function startGame() {
+  score = 0; timeLeft = GAME_TIME; dots = []; spawnCd = 0; playing = true;
+}
+
+function tryPop(x, y) {
+  if (!playing) { startGame(); return; }
+  for (let i = dots.length - 1; i >= 0; i--) {
+    const d = dots[i];
+    if (Math.hypot(x - d.x, y - d.y) <= d.r + 6) {
+      score++;
+      d.dead = true;
+      return;
+    }
+  }
+}
+
+cv.addEventListener('pointerdown', (e) => {
+  const rect = cv.getBoundingClientRect();
+  const scale = Math.min(rect.width / W, rect.height / H);
+  const offX = (rect.width - W * scale) / 2;
+  const offY = (rect.height - H * scale) / 2;
+  tryPop((e.clientX - rect.left - offX) / scale, (e.clientY - rect.top - offY) / scale);
+});
+
+function step(now) {
+  const dt = Math.min((now - lastTs) / 1000, 0.05);
+  lastTs = now;
+
+  if (playing) {
+    spawnCd -= dt;
+    if (spawnCd <= 0) { spawnCd = 0.65 * (0.7 + Math.random() * 0.6); spawnDot(); }
+    for (const d of dots) {
+      d.y += d.speed * dt;
+      d.phase += dt * 6;
+      if (d.y > H + 45) { d.dead = true; timeLeft = Math.max(0, timeLeft - MISS_PENALTY); }
+    }
+    dots = dots.filter((d) => !d.dead);
+    timeLeft -= dt;
+    if (timeLeft <= 0) { timeLeft = 0; playing = false; }
+  }
+
+  draw();
+  requestAnimationFrame(step);
+}
+
+function draw() {
+  ctx.fillStyle = '#0d1017';
+  ctx.fillRect(0, 0, W, H);
+
+  // 底部危险线
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(W, H); ctx.stroke();
+
+  for (const d of dots) {
+    const wob = 1 + Math.sin(d.phase) * 0.05;
+    ctx.fillStyle = d.col;
+    ctx.beginPath(); ctx.arc(d.x, d.y, d.r * wob, 0, 6.29); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.beginPath(); ctx.arc(d.x - d.r * 0.3, d.y - d.r * 0.32, d.r * 0.26, 0, 6.29); ctx.fill();
+  }
+
+  ctx.font = '28px system-ui, "Microsoft YaHei", sans-serif';
+  ctx.fillStyle = '#e8ecf4';
+  ctx.textAlign = 'left';
+  ctx.fillText('得分 ' + score, 24, 44);
+  ctx.textAlign = 'right';
+  ctx.fillStyle = timeLeft < 10 ? '#ef5350' : '#e8ecf4';
+  ctx.fillText(timeLeft.toFixed(1) + ' s', W - 24, 44);
+
+  if (!playing) {
+    ctx.fillStyle = 'rgba(9,11,16,0.55)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#e8ecf4';
+    ctx.font = 'bold 44px system-ui, "Microsoft YaHei", sans-serif';
+    ctx.fillText('点点大作战（占位构建）', W / 2, H / 2 - 60);
+    ctx.font = '18px system-ui, "Microsoft YaHei", sans-serif';
+    ctx.fillStyle = '#8b94a7';
+    ctx.fillText(score > 0 ? '时间到！本局得分 ' + score : '30 秒内点掉尽量多的圆点，漏掉会扣时间', W / 2, H / 2 - 10);
+    ctx.fillStyle = '#4f8cff';
+    ctx.font = '26px system-ui, "Microsoft YaHei", sans-serif';
+    ctx.fillText('点击屏幕' + (score > 0 ? '再来一局' : '开始游戏'), W / 2, H / 2 + 50);
+  }
+}
+
+requestAnimationFrame(step);
+</script>
+</body>
+</html>
