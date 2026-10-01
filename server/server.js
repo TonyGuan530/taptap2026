@@ -24,6 +24,10 @@ const PORT = Number(process.env.PORT || 8787);
 const HOST = process.env.HOST || '127.0.0.1';
 const ADMIN_KEY = process.env.ADMIN_KEY || '';
 
+// 可存放的 Key 类型：latest=itch（历史原因叫 latest）、miro、miro_board（看板ID）、
+// openai、openai_base（中转地址）、github
+const SECRET_SLOTS = ['latest', 'miro', 'miro_board', 'openai', 'openai_base', 'github'];
+
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -246,18 +250,27 @@ const server = http.createServer(async (req, res) => {
       } catch {
         return sendJson(res, 400, { error: '请求格式不对' });
       }
+      const slot = String(body.key || 'latest');
+      if (!SECRET_SLOTS.includes(slot)) {
+        return sendJson(res, 400, { error: '未知的 Key 类型：' + slot });
+      }
       const value = String(body.value || '').trim();
       if (!value) return sendJson(res, 400, { error: '内容为空' });
       const secrets = loadSecrets();
-      secrets.latest = { value, savedAt: Date.now() };
+      secrets[slot] = { value, savedAt: Date.now() };
       fs.mkdirSync(DATA_DIR, { recursive: true });
       fs.writeFileSync(SECRETS_FILE, JSON.stringify(secrets, null, 2));
       return sendJson(res, 200, { ok: true, hint: maskSecret(value) });
     }
     if (pathname === '/api/secrets' && req.method === 'GET') {
-      const { latest } = loadSecrets();
-      if (!latest) return sendJson(res, 200, { saved: false });
-      return sendJson(res, 200, { saved: true, savedAt: latest.savedAt, hint: maskSecret(latest.value) });
+      const secrets = loadSecrets();
+      const saved = {};
+      for (const slot of SECRET_SLOTS) {
+        if (secrets[slot] && secrets[slot].value) {
+          saved[slot] = { savedAt: secrets[slot].savedAt, hint: maskSecret(secrets[slot].value) };
+        }
+      }
+      return sendJson(res, 200, { saved });
     }
 
     if (req.method !== 'GET' && req.method !== 'HEAD') {

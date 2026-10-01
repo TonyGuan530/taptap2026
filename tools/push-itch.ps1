@@ -28,6 +28,17 @@ if (-not $UserVersion) { $UserVersion = $Version }
 
 $pushArgs = @("push", $src, "$Target`:$Channel", "--userversion", $UserVersion)
 
+# 没显式给 Key 时，自动读本机 data/secrets.json（Review 站 /key 页保存的 itch Key）
+if (-not ($ApiKey -or $env:BUTLER_API_KEY)) {
+  $secretsPath = Join-Path $repo "data\secrets.json"
+  if (Test-Path $secretsPath) {
+    try {
+      $j = Get-Content $secretsPath -Raw | ConvertFrom-Json
+      if ($j.latest.value) { $ApiKey = $j.latest.value }
+    } catch { }
+  }
+}
+
 $keyFile = $null
 if ($ApiKey -or $env:BUTLER_API_KEY) {
   $keyValue = if ($ApiKey) { $ApiKey } else { $env:BUTLER_API_KEY }

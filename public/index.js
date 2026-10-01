@@ -37,10 +37,60 @@ async function fetchBuilds() {
   return { builds: [], static: false };
 }
 
+async function renderSlots(builds) {
+  const box = document.getElementById('slots');
+  const sec = document.getElementById('demo-sec') ? document.querySelector('.hub') : null;
+  let slots = [];
+  try {
+    const r = await fetch('demos.json?v=' + Date.now());
+    const d = await r.json();
+    slots = d.slots || [];
+  } catch (e) { /* 没有 demos.json 就隐藏大厅 */ }
+  if (sec) sec.hidden = slots.length === 0;
+  if (!slots.length) return;
+
+  const byId = Object.fromEntries(builds.map((b) => [b.id, b]));
+  box.innerHTML = '';
+  const done = slots.filter((s) => s.buildId && byId[s.buildId]).length;
+  const head = document.createElement('p');
+  head.className = 'muted';
+  head.style.cssText = 'grid-column:1/-1;margin:0 0 2px;font-size:13px';
+  head.textContent = `已可玩 ${done} / ${slots.length} 块 · 计划来源：Miro 看板（需求同步到 requirements/backlog.md）`;
+  box.appendChild(head);
+
+  for (const s of slots) {
+    const built = s.buildId && byId[s.buildId];
+    const el = document.createElement(built ? 'a' : 'div');
+    el.className = 'card slot';
+    if (built) el.href = 'play.html?id=' + encodeURIComponent(s.buildId);
+    const badge = built
+      ? '<span class="chip ok">✅ 可玩</span>'
+      : s.status === 'doing'
+        ? '<span class="chip warn">🔄 开发中</span>'
+        : '<span class="chip dim">🚧 待开发</span>';
+    el.innerHTML = `
+      <div class="card-top">
+        <div class="title">${esc(s.title)}</div>
+        ${badge}
+      </div>
+      <div class="meta">${esc(s.id)}${built ? ' · 构建 ' + esc(byId[s.buildId].version || s.buildId) : ''}</div>
+      <p class="notes">${esc(s.goal || '')}</p>
+      <div class="card-foot">
+        ${built
+          ? `<span class="stars">${stars(byId[s.buildId].avgRating)}</span>
+             <span class="muted">${byId[s.buildId].avgRating ? byId[s.buildId].avgRating + ' 分 · ' : ''}${byId[s.buildId].commentCount || 0} 条反馈</span>
+             <span class="btn">▶ 试玩</span>`
+          : '<span class="muted">需求确认后由流水线自动开发</span>'}
+      </div>`;
+    box.appendChild(el);
+  }
+}
+
 async function load() {
   const list = document.getElementById('builds');
   const empty = document.getElementById('empty');
   const { builds, static: staticMode } = await fetchBuilds();
+  renderSlots(builds);
   list.innerHTML = '';
   empty.hidden = builds.length > 0;
 

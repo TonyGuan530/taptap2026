@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>API Key 存放 · TapTap2026</title>
+<title>Key 授权中心 · TapTap2026</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔑</text></svg>">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -11,74 +11,126 @@
 <header class="topbar">
   <div class="bar">
     <a class="back" href="index.html">← 返回列表</a>
-    <div class="btitle"><span>🔑 API Key 存放处</span></div>
+    <div class="btitle"><span>🔑 Key 授权中心（Miro · GPT · GitHub · itch）</span></div>
   </div>
 </header>
 
-<main class="container" style="max-width:640px;padding-top:30px">
+<main class="container" style="max-width:680px;padding-top:30px">
   <div class="panel">
     <p class="muted" style="font-size:14px;margin-top:0">
-      粘贴 API Key / Access Token（例如 Miro Token），点保存后开发组在本机即可读取。
-      只存本机 <code>data/secrets.json</code>（已 gitignore），不会上传、不会进 git。
+      把各平台的 Token / Key 粘贴到下面并保存，自动化流水线（Miro 拉需求 → GPT 评审 → 自动开发上传）
+      就能读取。所有内容只存本机 <code>data/secrets.json</code>（已 gitignore），不会上传、不会进 git。
     </p>
-    <label>Key / Token</label>
-    <textarea id="value" rows="4" placeholder="粘贴到这里…"></textarea>
-    <button id="save" class="btn">保存</button>
-    <div id="msg" class="msg"></div>
-    <p id="current" class="muted" style="font-size:13px"></p>
+  </div>
+
+  <div class="panel">
+    <h3>🖼️ Miro Access Token <span class="muted" style="font-size:12px;font-weight:400">— 流水线自动拉取看板上的想法</span></h3>
+    <p class="muted" style="font-size:13px;margin:0 0 4px">
+      获取：miro.com → 头像 → <b>Settings → Your apps</b>（或 Developers 页）→ 创建 App / Personal access token。
+      另外把看板 ID（网址 miro.com/app/board/<b>uXjVxxxxxxx</b>= 里那段）填进下面第一栏。
+    </p>
+    <input type="text" id="miro_board" placeholder="Miro 看板 ID（如 uXjVdxxxxxx=）">
+    <label>Token</label>
+    <textarea id="miro" rows="2" placeholder="粘贴 Miro Access Token…"></textarea>
+    <button class="btn" data-key="miro">保存 Miro Token</button>
+    <div class="msg" data-msg="miro"></div>
+  </div>
+
+  <div class="panel">
+    <h3>🤖 OpenAI Key（GPT 评审）<span class="muted" style="font-size:12px;font-weight:400">— 评审 demo 是否达到验收标准</span></h3>
+    <input type="text" id="openai_base" placeholder="接口地址（可选，用中转站才填，如 https://xxx.com/v1）">
+    <label>API Key</label>
+    <textarea id="openai" rows="2" placeholder="粘贴 sk-… （platform.openai.com → API keys）"></textarea>
+    <button class="btn" data-key="openai">保存 OpenAI Key</button>
+    <div class="msg" data-msg="openai"></div>
+  </div>
+
+  <div class="panel">
+    <h3>🐙 GitHub Token <span class="muted" style="font-size:12px;font-weight:400">— 自动建仓库 + 推代码 + 开 CI</span></h3>
+    <p class="muted" style="font-size:13px;margin:0 0 4px">
+      获取：github.com → Settings → Developer settings → <b>Personal access tokens → Fine-grained</b>，
+      勾选 <b>Administration（读写）</b> 和 <b>Contents（读写）</b> 权限。
+    </p>
+    <textarea id="github" rows="2" placeholder="粘贴 github_pat_… 或 ghp_…"></textarea>
+    <button class="btn" data-key="github">保存 GitHub Token</button>
+    <div class="msg" data-msg="github"></div>
+  </div>
+
+  <div class="panel">
+    <h3>🎮 itch.io API Key <span class="muted" style="font-size:12px;font-weight:400">— 自动上传游戏（已保存过）</span></h3>
+    <p class="muted" style="font-size:13px;margin:0 0 4px">重新粘贴可覆盖。</p>
+    <textarea id="latest" rows="2" placeholder="粘贴 itch API Key…"></textarea>
+    <button class="btn" data-key="latest">保存 itch Key</button>
+    <div class="msg" data-msg="latest"></div>
   </div>
 </main>
 
 <script>
-const $msg = document.getElementById('msg');
-const $current = document.getElementById('current');
-
 function fmtTime(ts) {
-  return new Date(ts).toLocaleString('zh-CN', {
-    month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit',
-  });
+  return new Date(ts).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-(async function load() {
+async function load() {
   try {
     const r = await fetch('api/secrets');
     const d = await r.json();
-    if (d.saved) {
-      $current.textContent = `当前已保存：${d.hint}（保存于 ${fmtTime(d.savedAt)}，再次保存会覆盖）`;
-    } else {
-      $current.textContent = '当前还没有保存任何 Key。';
+    const names = { latest: 'itch', miro: 'Miro', openai: 'OpenAI', openai_base: '接口地址', github: 'GitHub' };
+    for (const [slot, info] of Object.entries(d.saved || {})) {
+      const msg = document.querySelector(`[data-msg="${slot}"]`);
+      if (msg) { msg.className = 'msg ok'; msg.textContent = `✅ 已存：${info.hint}（${fmtTime(info.savedAt)}）`; }
+    }
+    // Miro 看板 ID 已存过的话，在输入框里提示
+    const bidSaved = (d.saved || {}).miro_board;
+    if (bidSaved) {
+      const bi = document.getElementById('miro_board');
+      bi.placeholder = '已保存过看板 ID（' + bidSaved.hint + '），不换板就不用重填';
     }
   } catch {
-    $current.textContent = '读取状态失败（服务器没开？）';
+    document.querySelectorAll('.msg').forEach(m => { m.className = 'msg err'; m.textContent = '读取状态失败（服务器没开？）'; });
   }
-})();
+}
 
-document.getElementById('save').addEventListener('click', async () => {
-  const value = document.getElementById('value').value.trim();
-  $msg.className = 'msg';
-  $msg.textContent = '保存中…';
-  if (!value) {
-    $msg.className = 'msg err';
-    $msg.textContent = '❌ 先粘贴内容';
-    return;
-  }
-  try {
-    const r = await fetch('api/secrets', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ value }),
-    });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.error || '保存失败');
-    $msg.className = 'msg ok';
-    $msg.textContent = `✅ 已保存：${d.hint}`;
-    document.getElementById('value').value = '';
-    $current.textContent = `当前已保存：${d.hint}（保存于 ${fmtTime(Date.now())}，再次保存会覆盖）`;
-  } catch (e) {
-    $msg.className = 'msg err';
-    $msg.textContent = '❌ ' + e.message;
-  }
+document.querySelectorAll('button[data-key]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const slot = btn.dataset.key;
+    const msg = document.querySelector(`[data-msg="${slot}"]`);
+    const input = document.getElementById(slot);
+    if (slot === 'miro') {
+      const bid = document.getElementById('miro_board').value.trim();
+      if (bid) {
+        await fetch('api/secrets', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: 'miro_board', value: bid }) });
+      }
+    }
+    if (slot === 'openai') {
+      const base = document.getElementById('openai_base').value.trim();
+      if (base) {
+        await fetch('api/secrets', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: 'openai_base', value: base }) });
+      }
+    }
+    const value = input.value.trim();
+    msg.className = 'msg'; msg.textContent = '保存中…';
+    if (!value) { msg.className = 'msg err'; msg.textContent = '❌ 先粘贴内容'; return; }
+    try {
+      const r = await fetch('api/secrets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: slot, value }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || '保存失败');
+      msg.className = 'msg ok';
+      msg.textContent = `✅ 已保存：${d.hint}`;
+      input.value = '';
+    } catch (e) {
+      msg.className = 'msg err';
+      msg.textContent = '❌ ' + e.message;
+    }
+  });
 });
+
+load();
 </script>
 </body>
 </html>

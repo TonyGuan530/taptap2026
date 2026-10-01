@@ -3,11 +3,17 @@
 param(
   [string]$Version = ("v" + (Get-Date -Format "yyyy.MMdd-HHmm")),
   [string]$Notes = "",
-  [string]$GodotPath = "godot"
+  [string]$GodotPath = ""
 )
 $ErrorActionPreference = "Stop"
 $repo = Split-Path $PSScriptRoot -Parent
 $buildDir = Join-Path $repo "builds\$Version"
+
+# 未指定 Godot 时优先用仓库自带的（tools/godot/），否则退回 PATH 里的 godot
+if (-not $GodotPath) {
+  $bundled = Get-ChildItem (Join-Path $repo "tools\godot") -Filter "*_console.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+  $GodotPath = if ($bundled) { $bundled.FullName } else { "godot" }
+}
 
 & $GodotPath --headless --path (Join-Path $repo "game") --export-release "Web" (Join-Path $buildDir "index.html")
 if ($LASTEXITCODE -ne 0) {

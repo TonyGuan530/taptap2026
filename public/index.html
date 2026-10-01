@@ -11,17 +11,25 @@
 <header class="hero">
   <div class="container">
     <h1>🎮 TapTap2026 <span class="grad">内部 Review 站</span></h1>
-    <p class="sub">Godot 开发 · 浏览器即点即玩 · 试玩后打个分、留句话，帮我们把游戏做得更好</p>
+    <p class="sub">Miro 想法 → 自动开发 → 浏览器即点即玩 · 试玩后打个分、留句话，帮我们把游戏做得更好</p>
   </div>
 </header>
 
 <main class="container">
-  <div id="builds" class="cards"></div>
-  <div id="empty" class="empty" hidden>
-    <p style="font-size:40px">📦</p>
-    <p>还没有任何可试玩的构建。</p>
-    <p class="muted">把 Godot 的 Web 导出结果放到 <code>builds/&lt;版本名&gt;/</code> 目录（含 <code>index.html</code> 和 <code>build.json</code>），刷新本页即可显示。详见 README。</p>
-  </div>
+  <section class="hub">
+    <h2>🧪 玩法 Demo 大厅 <span class="muted" style="font-size:13px;font-weight:400">核心玩法逐块验证 · 点卡片直接试玩</span></h2>
+    <div id="slots" class="cards slots"></div>
+  </section>
+
+  <section>
+    <h2 class="sec-title">📜 版本历史</h2>
+    <div id="builds" class="cards"></div>
+    <div id="empty" class="empty" hidden>
+      <p style="font-size:40px">📦</p>
+      <p>还没有任何可试玩的构建。</p>
+      <p class="muted">把 Godot 的 Web 导出结果放到 <code>builds/&lt;版本名&gt;/</code> 目录（含 <code>index.html</code> 和 <code>build.json</code>），刷新本页即可显示。详见 README。</p>
+    </div>
+  </section>
 </main>
 
 <footer class="container foot">
