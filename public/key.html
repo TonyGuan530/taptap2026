@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Key 存放 · TapTap2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔑</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="bar">
+    <a class="back" href="index.html">← 返回列表</a>
+    <div class="btitle"><span>🔑 API Key 存放处</span></div>
+  </div>
+</header>
+
+<main class="container" style="max-width:640px;padding-top:30px">
+  <div class="panel">
+    <p class="muted" style="font-size:14px;margin-top:0">
+      粘贴 API Key / Access Token（例如 Miro Token），点保存后开发组在本机即可读取。
+      只存本机 <code>data/secrets.json</code>（已 gitignore），不会上传、不会进 git。
+    </p>
+    <label>Key / Token</label>
+    <textarea id="value" rows="4" placeholder="粘贴到这里…"></textarea>
+    <button id="save" class="btn">保存</button>
+    <div id="msg" class="msg"></div>
+    <p id="current" class="muted" style="font-size:13px"></p>
+  </div>
+</main>
+
+<script>
+const $msg = document.getElementById('msg');
+const $current = document.getElementById('current');
+
+function fmtTime(ts) {
+  return new Date(ts).toLocaleString('zh-CN', {
+    month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
+}
+
+(async function load() {
+  try {
+    const r = await fetch('api/secrets');
+    const d = await r.json();
+    if (d.saved) {
+      $current.textContent = `当前已保存：${d.hint}（保存于 ${fmtTime(d.savedAt)}，再次保存会覆盖）`;
+    } else {
+      $current.textContent = '当前还没有保存任何 Key。';
+    }
+  } catch {
+    $current.textContent = '读取状态失败（服务器没开？）';
+  }
+})();
+
+document.getElementById('save').addEventListener('click', async () => {
+  const value = document.getElementById('value').value.trim();
+  $msg.className = 'msg';
+  $msg.textContent = '保存中…';
+  if (!value) {
+    $msg.className = 'msg err';
+    $msg.textContent = '❌ 先粘贴内容';
+    return;
+  }
+  try {
+    const r = await fetch('api/secrets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ value }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || '保存失败');
+    $msg.className = 'msg ok';
+    $msg.textContent = `✅ 已保存：${d.hint}`;
+    document.getElementById('value').value = '';
+    $current.textContent = `当前已保存：${d.hint}（保存于 ${fmtTime(Date.now())}，再次保存会覆盖）`;
+  } catch (e) {
+    $msg.className = 'msg err';
+    $msg.textContent = '❌ ' + e.message;
+  }
+});
+</script>
+</body>
+</html>

@@ -4,6 +4,7 @@ game/.godot/
 
 # 运行时数据（玩家反馈）
 data/db.json
+data/secrets.json
 
 # 本地生成的发布产物
 dist/

@@ -18,6 +18,7 @@ const PUBLIC_DIR = path.join(ROOT, 'public');
 const BUILDS_DIR = path.join(ROOT, 'builds');
 const DATA_DIR = path.join(ROOT, 'data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
+const SECRETS_FILE = path.join(DATA_DIR, 'secrets.json');
 
 const PORT = Number(process.env.PORT || 8787);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -59,6 +60,20 @@ let db = loadDb();
 function saveDb() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+}
+
+function maskSecret(value) {
+  const v = String(value);
+  if (v.length <= 8) return '••••';
+  return `${v.slice(0, 3)}…${v.slice(-3)}（${v.length} 字符）`;
+}
+
+function loadSecrets() {
+  try {
+    return JSON.parse(fs.readFileSync(SECRETS_FILE, 'utf8'));
+  } catch {
+    return {};
+  }
 }
 
 function listBuilds() {
@@ -223,12 +238,36 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true });
     }
 
+    // API Key 存放（本机 data/secrets.json，gitignore；GET 只回掩码）
+    if (pathname === '/api/secrets' && req.method === 'POST') {
+      let body;
+      try {
+        body = JSON.parse(await readBody(req));
+      } catch {
+        return sendJson(res, 400, { error: '请求格式不对' });
+      }
+      const value = String(body.value || '').trim();
+      if (!value) return sendJson(res, 400, { error: '内容为空' });
+      const secrets = loadSecrets();
+      secrets.latest = { value, savedAt: Date.now() };
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+      fs.writeFileSync(SECRETS_FILE, JSON.stringify(secrets, null, 2));
+      return sendJson(res, 200, { ok: true, hint: maskSecret(value) });
+    }
+    if (pathname === '/api/secrets' && req.method === 'GET') {
+      const { latest } = loadSecrets();
+      if (!latest) return sendJson(res, 200, { saved: false });
+      return sendJson(res, 200, { saved: true, savedAt: latest.savedAt, hint: maskSecret(latest.value) });
+    }
+
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       return sendJson(res, 405, { error: 'method not allowed' });
     }
 
     // 静态：试玩页
     if (pathname === '/play') return sendFile(res, path.join(PUBLIC_DIR, 'play.html'));
+    // 静态：API Key 存放页
+    if (pathname === '/key') return sendFile(res, path.join(PUBLIC_DIR, 'key.html'));
     // 静态：首页
     if (pathname === '/' || pathname === '/index.html') {
       return sendFile(res, path.join(PUBLIC_DIR, 'index.html'));
