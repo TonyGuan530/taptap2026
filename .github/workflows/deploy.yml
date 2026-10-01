@@ -42,8 +42,8 @@ jobs:
           VERSION="${{ inputs.version }}"
           if [ -z "$VERSION" ]; then VERSION="v$(date +%Y.%m%d)-run${{ github.run_number }}"; fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          ./Godot_v4.3-stable_linux.x86_64 --headless --path game --import
-          ./Godot_v4.3-stable_linux.x86_64 --headless --path game --export-release "Web" "../builds/$VERSION/index.html"
+          ./Godot_v4.7.2-stable_linux.x86_64 --headless --path game --import
+          ./Godot_v4.7.2-stable_linux.x86_64 --headless --path game --export-release "Web" "../builds/$VERSION/index.html"
           cat > "builds/$VERSION/build.json" <<EOF
           {"title":"TapTap2026 Demo","version":"$VERSION","date":"$(date -u +%Y-%m-%dT%H:%M:%SZ)","author":"ci","notes":"CI 自动构建（run #${{ github.run_number }}）"}
           EOF
