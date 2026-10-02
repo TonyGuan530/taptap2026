@@ -43,6 +43,13 @@
       "goal": "探索获得词条(Fire/Heavy/Float/Sticky...) + 有限墨水画图形 + 赋词条生成效果；关卡只给目标不规定答案，涌现来自统一规则组合",
       "buildId": "",
       "status": "pending"
+    },
+    {
+      "id": "demo-07",
+      "title": "简单美食小摊",
+      "goal": "用户直接指示的迭代：绿幕 00ff00 背景 + ChatGPT 生成美术。玩法：按订单点击食材出餐，限时评分",
+      "buildId": "demo-07",
+      "status": "done"
     }
   ]
 }
