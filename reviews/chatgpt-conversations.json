@@ -1,0 +1,23 @@
+{
+  "updatedAt": "2026-10-02",
+  "note": "每个 demo 对应一个专属 ChatGPT 对话（保持连贯，后续版本在同一对话汇报）。流水线评审时优先复用这些对话。",
+  "conversations": {
+    "demo-01": {
+      "url": "（待建：下一轮用同套背景流程建立）",
+      "review": "reviews/chatgpt-demo-01.md"
+    },
+    "demo-02": {
+      "url": "https://chatgpt.com/c/6abf238d-6dc0-83ec-aa5e-43c62aebe892",
+      "review": "reviews/chatgpt-demo-02.md",
+      "verdict": "ITERATE"
+    },
+    "demo-03": {
+      "url": "待建",
+      "review": ""
+    },
+    "demo-04": {
+      "url": "待建",
+      "review": ""
+    }
+  }
+}
