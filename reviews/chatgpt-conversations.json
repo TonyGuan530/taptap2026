@@ -18,6 +18,11 @@
     "demo-04": {
       "url": "待建",
       "review": ""
+    },
+    "demo-05": {
+      "url": "https://chatgpt.com/c/6abf4a9c-3e7c-83ec-a5f5-6a87251014dd",
+      "review": "reviews/chatgpt-demo-05-full.md",
+      "verdict": "ITERATE"
     }
   }
 }
