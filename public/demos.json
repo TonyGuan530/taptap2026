@@ -27,8 +27,8 @@
       "id": "demo-04",
       "title": "SOUP 2.0：DNA 融合逃生",
       "goal": "和外星生物 DNA 融合改造自身，逃离危险的异星",
-      "buildId": "",
-      "status": "pending"
+      "buildId": "demo-04",
+      "status": "done"
     },
     {
       "id": "demo-05",
