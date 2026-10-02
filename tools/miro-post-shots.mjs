@@ -56,22 +56,13 @@ async function postShot(s) {
 }
 
 let posted = 0;
+// 防重复：v1 列表接口不回传文本，用本地日志做去重记录（比 API 查询可靠）
+const LOG = path.join(ROOT, 'reviews', 'miro-post-log.json');
+const log = fs.existsSync(LOG) ? JSON.parse(fs.readFileSync(LOG, 'utf8')) : {};
 for (const s of SHOTS) {
-	if (!force && s.done) {
-		console.log(`SKIP ${s.id}: 之前已贴（--force 可重贴）`);
+	if (!force && log[s.id]) {
+		console.log(`SKIP ${s.id}: 日志显示已贴过（--force 可重贴）`);
 		continue;
-	}
-	if (!force) {
-		// 去重：看板上已有同 id 的 sticker 就跳过
-		let dup = false;
-		try {
-			const list = await miro('GET', `${API}/boards/${BOARD}/widgets?type=sticker`);
-			dup = (list.data || []).some((w) => JSON.stringify(w.data || {}).includes(`${s.id} 运行画面`));
-		} catch { /* 列不出来就直接贴 */ }
-		if (dup) {
-			console.log(`SKIP ${s.id}: 看板上已贴过`);
-			continue;
-		}
 	}
 	const imgPath = path.join(ROOT, 'reviews', 'shots', s.img);
 	const vidPath = path.join(ROOT, 'reviews', 'videos', s.video);
@@ -80,6 +71,8 @@ for (const s of SHOTS) {
 		continue;
 	}
 	await postShot(s);
+	log[s.id] = { postedAt: new Date().toISOString(), x: s.x, y: s.y };
+	fs.writeFileSync(LOG, JSON.stringify(log, null, 2));
 	posted++;
 }
 console.log(`完成：新贴 ${posted} 个`);
