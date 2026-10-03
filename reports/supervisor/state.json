@@ -1,34 +1,34 @@
 {
-  "checkedAt": "2026-10-04T07:06:00+08:00",
-  "round": 72,
+  "checkedAt": "2026-10-04T07:15:00+08:00",
+  "round": 73,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP not-foreground（07:05 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 70,
-      "lastDispatch": "07:04",
-      "next": "07:14"
+      "runCount": 71,
+      "lastDispatch": "07:14",
+      "next": "07:24"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "⚠️ demo-09 队列头连续 3 轮未开工——催办批示已发 reviews/supervisor-directive-2026-10-04-demo09-track.md"
+      "evidence": "🔄 demo-10 v3 开发中（novel.gd+test 改动）——demo-09 批示在 reviews/ 通道排队（队列多合法项，暂不升级）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "🔴 空转第 6 次（8cc6fd1）——失能判定维持，等用户处置，不再逐轮计数"
+      "evidence": "🔴 空转第 7 次（f439045）——失能维持等用户；其引用「基线无本 demo 新指令」进一步证实读基线抗命"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
       "runCount": 23,
-      "evidence": "06:40 轮短轮；07:10 槽"
+      "evidence": "07:10 轮短轮无提交（正常）；07:40 槽"
     },
     "demo-04": {
       "cron": "15,45 * * * *",
       "runCount": 24,
-      "evidence": "✅ 守望轮6+构建产物入库 Pages 兜底镜像（db30b3c/b575409：v10/v11）+ ChatGPT 线程补报 v9-v11（盲测前最终确认已请求）"
+      "evidence": "07:15 轮触发中"
     },
     "demo-05": {
       "cron": "20,50 * * * *",
@@ -47,19 +47,19 @@
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD af594a5",
+    "git": "本轮 HEAD f439045",
     "itch": "占位第 3 天（Pages 兜底全在线）"
   },
   "fiveHourPlan": {
     "done": "demo-03 v12、demo-04 v11、demo-05 v12、demo-06 v12+影片、demo-08 v3+瘦身、demo-10/11 v2",
-    "running": "demo-09 补赛道（催办已发）；demo-06 盲测准备线",
+    "running": "demo-10 v3；demo-09 批示排队",
     "queue": "demo-09 补1赛道（批示已发）；demo-11 冻结+盲测准备；demo-10 v3"
   },
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
     "🔴【需用户决策】demo-02 会话失能（轻推或重建授权）",
-    "demo-09 批示 [DONE] 回执下两轮核对；无回执再升级",
-    "五小时队列 07:15-08:15 尾段：demo-09 后队列将空——补位来源=demo-11 冻结盲测准备/demo-10 v3/新认领"
+    "demo-09 批示消化核对（07:24/07:34 巡查）",
+    "demo-10 v3 产出核对（07:34）"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
