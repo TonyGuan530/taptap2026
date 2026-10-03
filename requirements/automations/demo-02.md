@@ -19,6 +19,7 @@ requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-
 - itch：demo-02-v3 已推（butler build #2057309）但 CDN 持续故障（占位页 404，publish-qa FAIL）→ 可玩链接走 GitHub Pages；pipeline-lite 每 5 分钟自愈重推
 - 待办 v4（按 KEEP 后指令）：①删 Space 通用跳，扑翼削为一次性轻 impulse，保留横移 ②开放 L4（只查 GOAL 不查词条序列，≥2 条合法路线）③公开 build 隐藏「参考解法」+ 3-5 人无提示试玩
 - v4 禁止：堆词条 / 加角色能力 / 传统 platformer 操作
+- 停滞兜底（用户指令）：轮次无可执行项或连续两轮无实质变化时，按序挑一项做——①扩展玩法（评审约束内）②补充关卡 ③迭代美术 ④转 3D 尝试（仅当 2D 到天花板且玩法合适，先征求 ChatGPT 评审意见）；所选方向写进报告与汇报
 - 已知坑新增：【羽毛 damp=1.2 会吃掉弹簧冲量】L3 弹簧冲量 (260,-660) 是抵消阻尼后的调参值，改词条参数需同步重调 L3 并跑 headless
 
 ## 每轮流程
