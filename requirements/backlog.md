@@ -33,10 +33,9 @@
   - v2：评审建议#1 → 脆墙改纯物理判定（撞击速度 ≥450，与词条解耦）
   - v3（2026-10-03）：评审建议#2 → 跳跃输入系统（空格跳/羽毛空中扑翼/←→横移，力度按词条区分）+ 第三关「组合测试房」（弹簧→羽毛空中横漂→石头砸穿舱顶，一条链用满三词条）；headless 4/4 PASS
 - v4 已完成（ChatGPT 复评 **KEEP**，Systemic Puzzle Gate 通过）：删通用跳 ✓ 扑翼滞空单次轻修正 ✓ 开放 L4（路线A 出生直漂 / 路线B 弹簧羽毛石头砸板，均 headless PASS）✓ 公开 build 隐藏参考解法 ✓
-- 待办 v5（ChatGPT 复评 v4 的指令）：
-  1. 不新增 L5；做 3-5 人无提示真人试玩 + 最轻量 telemetry（词条切换时间/重置次数/关键区域/最终路线），观察 A/B 之外的路线
-  2. 物性变化最小即时反馈层（纯 UI/FX：切换显示 轻/重/弹；撞脆板反馈速度接近阈值程度），不做新系统
-  3. review asset 管线：素材 URL 加版本参数防 raw CDN 缓存（评审连续两轮抓到旧截图）
+- v5 已完成（ChatGPT 复评 **KEEP** + instrumentation freeze 冻结令）：telemetry 通关路线行/切换链/重置计数/撞板记录 + 反馈层（切换闪现轻/重/弹、撞板速度 vs 阈值）+ 素材 URL 版本参数；headless 8/8 PASS
+- ⚠️ 冻结令（v5 = 真人试玩 baseline，2026-10-03）：冻结三词条参数/L1-L4 几何/弹簧/450 阈值/扑翼强度/横控/提示设计；仅允许修 crash、telemetry 丢数据、发布问题、明显无法玩的 bug。无真人证据不调关卡不调机制
+- 待办：Playtest Batch 01（不叫 v6）——batch 前最后一次 instrumentation 修补（冻结范围内）：①切换链补 zone 标签（spawn/spring/gap/high_window/chamber）②release 端撞板文案改定性（数字保留 debug/telemetry）③run_index 字段；然后组织 3-5 人无提示试玩，记录 unexpected_behavior 与 replay_voluntarily  3. review asset 管线：素材 URL 加版本参数防 raw CDN 缓存（评审连续两轮抓到旧截图）
   - v5 禁止：L5/第四词条/新技能/新机关族/大地图/刻意堆解法
 
 ## demo-03 给岩浆降温的小人国度

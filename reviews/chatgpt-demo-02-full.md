@@ -677,3 +677,21 @@ ChatGPT 可能会出错。请核查重要信息。
 3. 修正 review asset 管线：评审连续两轮抓到旧截图（raw CDN 缓存），导出后应校验截图关卡编号与 review metadata 一致（建议素材 URL 加版本参数）
 
 **总评：KEEP** —— v4 通过 Systemic Puzzle Gate。下一步要证明的是「玩家会不会自己找到这些解法，而且找到的过程是否好玩」。
+
+================================================================================
+## demo-02 v5 复评（2026-10-03 22:05 自动化发送/抓取）
+
+### 开发方汇报要点
+- v4 KEEP 后三建议落实：①轻量 telemetry（切换时机/失败重置/借弹簧/脆墙撞击，通关结算行「路线: 石头@6.7s｜借弹簧｜重置0」+控制台 TEL 行）②物性反馈层（切换闪现轻/重/弹；撞板速度 vs 阈值）③素材 URL 加版本参数 ?v=demo-02-v5
+- headless 8/8 PASS；L1-L4 玩法与几何零改动
+
+### ChatGPT 评审回复（结论摘要，完整原文见对话）
+
+**版本参数生效**：本轮核对截图确实是 L4（石头·重 + 撞击 720≥450 反馈可见）——review asset 管线修复确认。
+**telemetry：基本够用**，建议补极轻量 zone tag（羽毛@0.8s[spawn]→石头@6.7s[above_chamber]），L4 划 4~5 逻辑区（spawn/spring/gap/high_window/chamber），不记连续坐标。
+**反馈层：轻/重/弹 KEEP**；数值阈值显示（720≥450）在真人盲测中削弱——release 改定性文案（「轰！猛烈撞击」/「撞击太轻」），完整数字保留 debug/telemetry，防玩家把物理解谜抽象成刷数字门槛。
+**试玩记录表字段**：tester_id / run_index / L4_first_attempt_time / switch_chain+zone / reset_count / spring_used / fragile_hit_count+speeds / route_observed(A/B/New/Failed) / unexpected_behavior / replay_voluntarily（最后两个最关键——观察不提问）。
+**⚠️ 冻结令（本轮最重要指令）**：v5 = instrumentation freeze + 真人试玩 baseline。冻结三词条参数/L1-L4 几何/弹簧/450 阈值/扑翼强度/横控/提示设计；仅允许修 crash、telemetry 丢数据、发布问题、明显无法玩的 bug。无真人证据前不调关卡不调机制——「没有新证据，本身就是不应该迭代的理由」。
+**⚠️ 工作流纠偏**：下一轮不要默认叫 v6，改为「v5 + Playtest Batch 01」；按数据决定 ITERATE v6 / FREEZE / 重新评估。「自动化不是自动迭代，自动化应该帮助更快地获得证据。」
+
+**总评：KEEP**
