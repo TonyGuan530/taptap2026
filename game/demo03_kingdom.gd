@@ -24,6 +24,7 @@ extends Node2D
 ##   阶段横幅/时间进度条改五段配色；开局更平缓、后期更陡（兼顾 snowball 顾虑）；
 ##   风暴之夜酸雨结构不变（单变量原则）。
 ## v8（美术管线续推）：小屋物件绿幕贴图化（ChatGPT 生图→chromakey→透明 PNG），窗灯闪烁保留为程序特效。
+## v12（美术管线续推·职业专属）：四职业村民贴图（ChatGPT 生图×4→chromakey）——黄帽扳手/绿巾浇水壶/蓝披风向标/白巾背桶，一眼可辨职业。
 ## v9（持续开发令·氛围渐进）：五阶段可感知化——天空转血红/星星隐去/火山辉光增强/岩浆变深变亮，随阶段连续插值；纯特效零平衡。
 ## v11（持续开发令·状态反馈补全）：酸雨结束转场——天光渐亮+「☀ 酸雨过了」提示（对称开始侧震屏/闪电）；菜单两侧贴图装饰。纯表现零平衡。
 
@@ -35,6 +36,17 @@ const TEX_TOWER_L1: Texture2D = preload("res://assets/demo03/tower_l1.png")
 const TEX_TOWER_L2: Texture2D = preload("res://assets/demo03/tower_l2.png")
 const TEX_HOUSE: Texture2D = preload("res://assets/demo03/house.png")
 const TEX_VILLAGER_WALK: Texture2D = preload("res://assets/demo03/villager_walk.png")
+# v12 职业专属贴图（绿幕管线）：村民按职业一眼可辨
+const TEX_VILLAGER_ENG: Texture2D = preload("res://assets/demo03/villager_eng.png")
+const TEX_VILLAGER_BOT: Texture2D = preload("res://assets/demo03/villager_bot.png")
+const TEX_VILLAGER_MET: Texture2D = preload("res://assets/demo03/villager_met.png")
+const TEX_VILLAGER_POR: Texture2D = preload("res://assets/demo03/villager_por.png")
+const PROF_TEX := {
+	"工程师": TEX_VILLAGER_ENG,
+	"植物学家": TEX_VILLAGER_BOT,
+	"气象学家": TEX_VILLAGER_MET,
+	"搬运工": TEX_VILLAGER_POR,
+}
 
 const GAME_TIME := 60.0
 const BUILD_COST := 20
@@ -507,12 +519,9 @@ func _draw() -> void:
 		var bob := 3.0 * sin(pulse * 2.0 + n.phase)
 		var px: float = n.x + 2.5 * sin(pulse * 2.4 + n.phase)
 		var py := 356.0 + bob
-		# 贴图小人（绿幕管线双帧行走动画，职业色轻染）
-		var vtint: Color = Color(n.pcol).lerp(Color.WHITE, 0.74)
-		var vtex: Texture2D = TEX_VILLAGER
-		if int(pulse * 2.2 + n.phase) % 2 == 1:
-			vtex = TEX_VILLAGER_WALK
-		draw_texture_rect(vtex, Rect2(px - 16.0, py - 44.0, 32.0, 56.0), false, vtint)
+		# 贴图小人（绿幕管线职业专属贴图——一眼可辨职业；精英星/▲▼保留）
+		var vtex: Texture2D = PROF_TEX.get(n.prof, TEX_VILLAGER)
+		draw_texture_rect(vtex, Rect2(px - 16.0, py - 44.0, 32.0, 56.0), false)
 		if n.level >= 1:
 			draw_circle(Vector2(px, py - 50.0), 3.0, Color("ffd54f"))     # 精英星
 		if acid_on and state == "play":
