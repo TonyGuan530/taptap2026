@@ -1,47 +1,47 @@
 {
-  "checkedAt": "2026-10-03T21:30:00+08:00",
-  "round": 12,
+  "checkedAt": "2026-10-03T21:37:00+08:00",
+  "round": 13,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP（前台闸门），沿用上轮读数"
+    "thisRound": "guard SKIP（前台闸门），沿用上轮读数；5h 已自然重置"
   },
   "automations": {
     "demo-01(流水线)": {
       "id": "automation-2f2eb604-c0c1-4005-9747-f4c40f80efc7",
       "cron": "*/5 * * * *",
-      "evidence": "流水线在跑（每5分钟）；chatgpt-demo-01-full.md 仍缺——流水线已落实 demo-01 的时长审计(03c58b1/b68446c)但尚未向 ChatGPT 存档评审，催办继续（下轮再缺考虑向流水线提示词注入）"
+      "evidence": "chatgpt-demo-01-full.md 督导已代存档（21:27，ITERATE：交叉推理点/3of5指认/Case02 slice 三建议）"
     },
     "demo-02": {
       "id": "automation-8af780c6-0f5b-482a-b6a1-a375506f1683",
       "cron": "5,35 * * * *",
-      "runCount": 2,
-      "lastRunAt": 1791030916158,
-      "nextRunAt": 1791032700000,
-      "evidence": "21:05 已派发（v4 轮：demo02_physics.gd+test_demo02_v4.gd 在改）"
+      "runCount": 3,
+      "lastRunAt": 1791032716452,
+      "nextRunAt": 1791034500000,
+      "evidence": "21:35 收尾：ChatGPT v4 复评 KEEP（Systemic Puzzle Gate 通过）！v5 待办=真人试玩 telemetry+物性反馈层+素材 URL 版本参数（7ff6fc5）"
     },
     "demo-03": {
       "id": "automation-19713e80-d7b5-45c3-bb03-602904b10486",
       "cron": "10,40 * * * *",
-      "runCount": 3,
-      "lastRunAt": 1791031215793,
-      "nextRunAt": 1791033000000,
-      "evidence": "v4 已收尾(4fc70cd)，21:40 下一轮"
+      "runCount": 4,
+      "lastRunAt": 1791033016691,
+      "nextRunAt": 1791034800000,
+      "evidence": "21:10 轮=冻结守望：盲测执行手册（分组/开场白/回收表/Gate 判定，交组织者即用）+ v5 线上巡检正常；自觉遵守冻结令"
     },
     "demo-04": {
       "id": "automation-d3f50080-356e-4958-a2f6-edfc516e67a4",
       "cron": "15,45 * * * *",
-      "runCount": 3,
-      "lastRunAt": 1791031516373,
-      "nextRunAt": 1791033300000,
-      "evidence": "20:45 轮 v4 在收尾（demo04_soup.gd/test/probe04/chatgpt-full 有改动）；v4=dbd43dc GPT P0+P1 落实"
+      "runCount": 4,
+      "lastRunAt": 1791033317091,
+      "nextRunAt": 1791035100000,
+      "evidence": "21:15 轮在途（v5 导出已见 builds/demo-04-v5/）"
     },
     "demo-05": {
       "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515",
       "cron": "20,50 * * * *",
-      "runCount": 3,
-      "lastRunAt": 1791031816331,
-      "nextRunAt": 1791033600000,
-      "evidence": "20:50 轮执行中（dominance simulation）"
+      "runCount": 4,
+      "lastRunAt": 1791033616890,
+      "nextRunAt": 1791035400000,
+      "evidence": "20:50 轮执行中（demo05_volcano.gd+showcase 改动）"
     },
     "demo-06": {
       "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8",
@@ -49,16 +49,15 @@
       "runCount": 4,
       "lastRunAt": 1791032116407,
       "nextRunAt": 1791033900000,
-      "evidence": "✅ 验收通过：demo-06.mp4（35s 三关通关）+ Miro SHOTS demo-06 行双双落地（7e6967a/7442987），另清理 48MB 误提交帧序列；上板覆盖首次 7/7"
+      "evidence": "20:55 轮执行阶梯第 1 级「补充关卡」：新增 L4 翻越高墙（Float 板 40 墨/推方块 0 墨双解，GOAL-only，L3 逐字节未动），44 断言全 PASS，导出 v6"
     }
   },
   "envSnapshot": {
-    "health": "ok builds=24",
+    "health": "ok builds=29",
     "exportLock": "none",
     "godotProcs": 0,
-    "miroPostLog": "7/7 全覆盖（demo-06 已补）",
-    "git": "与 origin 同步；7e6967a/7442987 demo-06 验收材料；工作区= demo-02/04/05 在途",
-    "itchQa": "流水线盘点维持：唯一阻塞=itch，Pages 全可玩；【需用户决策】维持待复"
-  },
-  "demo01Review": "督导代发 v3 评审并存档 chatgpt-demo-01-full.md（ITERATE，接近 KEEP；三建议：交叉推理点/3of5指认/Case02 slice）；GPT 评审存档 6/6 全覆盖"
+    "miroPostLog": "8 条（7 demo + feedback note）",
+    "git": "与 origin 同步；cb19ea3 全量重导出修复内容错配；de4bd32 Pages 渲染确认",
+    "itchQa": "⚡部分恢复信号：js md5 已匹配、pck/wasm 仍占位——A 方案（兜底自愈）开始兑现，持续观察"
+  }
 }
