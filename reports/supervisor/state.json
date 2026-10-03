@@ -1,70 +1,70 @@
 {
-  "checkedAt": "2026-10-04T06:35:00+08:00",
-  "round": 69,
+  "checkedAt": "2026-10-04T06:45:00+08:00",
+  "round": 70,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（06:35 实跑）"
+    "thisRound": "guard SKIP not-foreground（06:45 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 67,
-      "lastDispatch": "06:34",
-      "next": "06:44"
+      "runCount": 68,
+      "lastDispatch": "06:44",
+      "next": "06:54"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "✅ demo-08 v3 补关至 5 关交付（d929945：L4 双门峡谷+L5 远程投递，KEEP 零回退，45 断言）——队列销账"
+      "evidence": "✅ pck 瘦身全项目基建（d72bf23：字体裁剪 95%+selected_scenes，demo-08 pck 15MB→4MB）——多日 pending 销账"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "🔴 会话失能已上报用户（等待轻推/重建授权）；调度保持 enabled 不动"
+      "evidence": "🔴 空转第 6 次（8cc6fd1）——失能判定维持，等用户处置，不再逐轮计数"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
       "runCount": 23,
-      "evidence": "✅ v12 收尾；06:40 槽"
+      "evidence": "✅ v12 收尾；06:40 轮短轮属正常；07:10 槽"
     },
     "demo-04": {
       "cron": "15,45 * * * *",
       "runCount": 24,
-      "evidence": "✅ v11 交付（92aa0ab：裂纹墙 readability 微光脉动描边，七用例 PASS，视频 60fps 重录）——dino 降队列可选（裁决调整见 pending.md）"
+      "evidence": "✅ v11 在账；06:45 轮触发中（截图刷新收尾）"
     },
     "demo-05": {
       "cron": "20,50 * * * *",
       "runCount": 23,
-      "evidence": "✅ v11 交付；06:20 轮收尾中（ending 截图在途）"
+      "evidence": "✅ v12 交付（ccd9c23：萨满预报 4 变体+结局面板可读性+笔误修复，4/4 PASS，视频 55s 全流程重录）"
     },
     "demo-06": {
       "cron": "25,55 * * * *",
       "runCount": 24,
-      "evidence": "✅ 影片 L6 段闭合（15d6293：门限根因修复+自救重置，六关 55s 全通关上板）——视频新鲜度完全销账；inkwords.gd 继续改动"
+      "evidence": "🔄 06:25 轮迭代中（inkwords.gd 改动）"
     }
   },
   "envSnapshot": {
-    "health": "ok builds=67（+1）",
+    "health": "ok builds=68（+1：demo-05 v12）",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 92aa0ab",
+    "git": "本轮 HEAD ccd9c23",
     "itch": "占位第 3 天（Pages 兜底全在线）"
   },
   "fiveHourPlan": {
-    "done": "demo-03 v12、demo-04 v11、demo-05 v11、demo-06 v12+影片六关闭合、demo-08 v3 五关、demo-10/11 v2 全交付",
-    "running": "demo-05 收尾；demo-06 下一迭代；流水线 demo-09 补赛道待派",
-    "queue": "demo-09 补1赛道（队列头）；demo-11 冻结+盲测准备；demo-10 v3；demo-04 素材池 dino（可选）"
+    "done": "demo-03 v12、demo-04 v11、demo-05 v12、demo-06 v12+影片、demo-08 v3+瘦身、demo-10/11 v2",
+    "running": "demo-06 迭代；demo-04 06:45 轮",
+    "queue": "demo-09 补1赛道（队列头）；demo-11 冻结+盲测准备；demo-10 v3"
   },
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
-    "🔴【需用户决策】demo-02 会话失能等待用户轻推/重建授权",
-    "demo-09 补赛道为队列头——流水线连续 2 轮未开工即催办",
-    "demo-06：视觉迭代继续（绿幕管线），注意 L3 约束已在 v12 交付确认"
+    "🔴【需用户决策】demo-02 会话失能（轻推或重建授权）——空转第 6 次不再计数",
+    "demo-09 补赛道队列头：流水线连续 2 轮未开工即催办",
+    "demo-06 下一轮产出核对"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
     "【WATCH】itch 占位第 3 天（Pages 兜底）",
-    "【WATCH】demo-08 pck 14.9MB 过滤（v3 新 pck 待查）；demo-09 补1赛道",
+    "【WATCH】demo-09 补1赛道",
     "【需用户决策】真人试玩/盲测排期+Batch 01 人选；itch A/B"
   ]
 }
