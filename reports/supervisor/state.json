@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-03T23:06:00+08:00",
-  "round": 22,
+  "checkedAt": "2026-10-03T23:10:00+08:00",
+  "round": 23,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP（前台闸门），沿用上轮读数"
@@ -33,7 +33,7 @@
       "runCount": 7,
       "lastRunAt": 1791038721497,
       "nextRunAt": 1791040500000,
-      "evidence": "⚠️ v7 未推送（Pages 404 已 50 分钟）；22:45 轮在途；督导本轮注入未遂（工具循环自查），强推指令已挂起 pending.md，23:15 轮第一动作执行"
+      "evidence": "✅ v7 已上线 Pages（200，督导代推送入库+CI 部署完成）；demo-04 会话冻结守望轮2 已核验督导代推并向督导上报了 Pages 镜像缺口"
     },
     "demo-05": {
       "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515",
@@ -41,7 +41,7 @@
       "runCount": 6,
       "lastRunAt": 1791037218380,
       "nextRunAt": 1791039000000,
-      "evidence": "22:50 轮在途（Gate C 裁决落地/V5 验证）"
+      "evidence": "22:50 轮 V5 验证在途"
     },
     "demo-06": {
       "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8",
@@ -58,8 +58,10 @@
     "godotProcs": 0,
     "miroPostLog": "8 条全覆盖",
     "git": "与 origin 同步；工作区= demo-04 dino 素材/demo-05 在途",
-    "itchQa": "6/6 FAIL 维持；A/B 决策挂起",
-    "fleetState": "demo-02/03/06 冻结守望等真人数据；demo-04/05 迭代中；流水线自愈运转"
+    "itchQa": "LitePipeline 已于 23:07 被督导重新启用（此前被禁用=自愈停摆根因）并手动触发一次；demo-06 观察到 butler 上传恢复但 CDN 分发仍卡占位（故障缩小为服务端分发）",
+    "fleetState": "demo-02/03/06 冻结守望等真人数据；demo-04/05 迭代中；流水线自愈运转",
+    "deployment": "6/6 最新版全在线：01v3/02v5/03v6/04v7/05v5/06v8（Pages 实测 200）；itch 仍故障走兜底",
+    "notes": "Miro 新增两条想法已收录：demo-08 纸飞机模拟器 + demo-09 赛车模拟器（待流水线找活认领或用户指示）"
   },
   "demo07Watch": "留档 CI 守约验证通过：live builds.json 0 处 demo-07、v3 dir 404；其会话提交 5ebd035 源码留档+3d40aba 冲突处置报告，自取消发布 CI"
 }

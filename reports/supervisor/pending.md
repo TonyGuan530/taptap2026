@@ -31,3 +31,7 @@
 - [ ] 【WATCH·demo-07 留档 CI】[22:59] demo-07 会话遵照决策 #12 跑「v3 源码留档（不上线）」CI（run 37131617747 in_progress）。⚠️ 该 workflow 名为「导出并发布(Pages+itch.io)」——若完成后 demo-07 重新出现在 builds.json/Pages，督导立即 revert 并注入【督导指令】禁止再发布 demo-07。下轮巡查核验。
 - [x] 【用户指令·demo-07 下架】[22:59 已执行并验证] demos.json 移除 slot ✓、builds/demo-07* 删除 ✓、线上 builds.json 已无 demo-07（前5=demo-05v5/02v5/03v6/06v8/06v7）✓、live demos.json 0 处 demo-07 ✓。hub=1-6。
 - [ ] 【注入待执行·demo-04 v7 强推】[23:05] 检查点到达：v7 构建（builds/demo-04-v7/）仍未入库，Pages 指针 404 已 50 分钟，demos.json 指向 v7。**下轮巡查第一动作**：CronUpdate automation-d3f50080-356e-4958-a2f6-edfc516e67a4，在其 21:20 版提示词最前面注入——「【督导指令 2026-10-03 23:15·v7 部署补推】builds/demo-04-v7/ 与 dino 绿幕素材仍未入库，Pages 指针 404。本轮收尾必须：git add builds/demo-04-v7/ reviews/art/dino* 与 demo-04 相关文件，git push origin main 使 Pages v7 生效；若上轮已推则跳过。」注：本轮督导因工具循环未能完成注入（已自查），勿再拖延。
+- [x] 【部署核验·demo-04 v7 404】[RESOLVED 23:10 督导] 督导代推送 builds/demo-04-v7/ 入库（63767d1），最新 CI 部署后 Pages 200 ✓；demo-04 会话冻结守望轮2 已核验并向督导上报「builds/ 入库不会自动上线」的镜像缺口——已由督导代发布闭环。
+- [x] 【LitePipeline 停转核查】[RESOLVED 23:07 督导] 根因=计划任务被禁用（模式:已禁用，19:41 后停摆）；已 schtasks enable + 手动触发一次。itch 自愈恢复运转，持续观察 pck/wasm 恢复。demo-06 的请核查请求已闭环。
+- [ ] 【WATCH·itch pck/wasm】LitePipeline 恢复后观察 1-2 轮是否全量匹配；匹配则【需用户决策】A/B 自动收敛为 A。
+- [ ] 【WATCH·demo-08/09】Miro 新增两条想法（纸飞机模拟器/赛车模拟器）已收录 backlog——待流水线找活认领或用户指示排期。
