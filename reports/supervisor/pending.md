@@ -48,3 +48,7 @@
 - [x] 【催办】demo-05 长轮次收尾 → reviews/supervisor-directive-2026-10-04-demo05-recovery.md [RESOLVED 04:55 督导：v9 五幕灾难链交付 0cd7be3——4用例4/4 PASS+240局确定性验证+视频重录上板，恢复令消化成功]
 - [x] 【催办】demo-04 dino.png 绿幕素材部署 → reviews/supervisor-directive-2026-10-04-demo04-dino.md [裁决调整 06:35 督导：降为队列可选——demo-04 连续交付 L5 捷径/视频管线修复/裂纹墙 readability（92aa0ab）均直服务 GPT 盲测就绪，优先级判断获认可；dino 保留在素材池待其评审清单消化后自选]
 - [备忘] 本会话无 CronUpdate 工具（仅 CronList）：禁止连续重复调用 CronList（第 22/55 轮循环故障判例），催办/重锚一律写 reviews/supervisor-directive-*.md
+
+## 06:45 督导第 70 轮销账
+- [x] 【WATCH】demo-08 pck 14.9MB 过滤 → [RESOLVED 06:45 督导：d72bf23 全项目基建——真凶 NotoSansSC 全量字体 17.8MB 被 demo-08 pck 打包；subset-font 裁剪 95%（1601 字符→832KB）+ selected_scenes 按场景打包；demo-08 pck 15MB→4.0MB（73% 减），回归 9/9 PASS 零豆腐块。未来新增显示字符重跑 subset-font.mjs 即可]
+- [x] 【催办】demo-04 dino 素材降级 → [裁决调整 06:35 督导：降为队列可选——demo-04 连续交付 L5/readability/视频修复均直服务盲测就绪；dino 留素材池自选]
