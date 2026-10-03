@@ -1,63 +1,14 @@
 {
-  "checkedAt": "2026-10-03T21:37:00+08:00",
-  "round": 13,
-  "quota": {
-    "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP（前台闸门），沿用上轮读数；5h 已自然重置"
-  },
+  "checkedAt": "2026-10-03T21:46:00+08:00",
+  "round": 14,
+  "quota": { "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10", "thisRound": "guard SKIP（前台闸门），沿用上轮读数；5h 已自然重置" },
   "automations": {
-    "demo-01(流水线)": {
-      "id": "automation-2f2eb604-c0c1-4005-9747-f4c40f80efc7",
-      "cron": "*/5 * * * *",
-      "evidence": "chatgpt-demo-01-full.md 督导已代存档（21:27，ITERATE：交叉推理点/3of5指认/Case02 slice 三建议）"
-    },
-    "demo-02": {
-      "id": "automation-8af780c6-0f5b-482a-b6a1-a375506f1683",
-      "cron": "5,35 * * * *",
-      "runCount": 3,
-      "lastRunAt": 1791032716452,
-      "nextRunAt": 1791034500000,
-      "evidence": "21:35 收尾：ChatGPT v4 复评 KEEP（Systemic Puzzle Gate 通过）！v5 待办=真人试玩 telemetry+物性反馈层+素材 URL 版本参数（7ff6fc5）"
-    },
-    "demo-03": {
-      "id": "automation-19713e80-d7b5-45c3-bb03-602904b10486",
-      "cron": "10,40 * * * *",
-      "runCount": 4,
-      "lastRunAt": 1791033016691,
-      "nextRunAt": 1791034800000,
-      "evidence": "21:10 轮=冻结守望：盲测执行手册（分组/开场白/回收表/Gate 判定，交组织者即用）+ v5 线上巡检正常；自觉遵守冻结令"
-    },
-    "demo-04": {
-      "id": "automation-d3f50080-356e-4958-a2f6-edfc516e67a4",
-      "cron": "15,45 * * * *",
-      "runCount": 4,
-      "lastRunAt": 1791033317091,
-      "nextRunAt": 1791035100000,
-      "evidence": "21:15 轮在途（v5 导出已见 builds/demo-04-v5/）"
-    },
-    "demo-05": {
-      "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515",
-      "cron": "20,50 * * * *",
-      "runCount": 4,
-      "lastRunAt": 1791033616890,
-      "nextRunAt": 1791035400000,
-      "evidence": "20:50 轮执行中（demo05_volcano.gd+showcase 改动）"
-    },
-    "demo-06": {
-      "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8",
-      "cron": "25,55 * * * *",
-      "runCount": 4,
-      "lastRunAt": 1791032116407,
-      "nextRunAt": 1791033900000,
-      "evidence": "20:55 轮执行阶梯第 1 级「补充关卡」：新增 L4 翻越高墙（Float 板 40 墨/推方块 0 墨双解，GOAL-only，L3 逐字节未动），44 断言全 PASS，导出 v6"
-    }
+    "demo-01(流水线)": { "id": "automation-2f2eb604-c0c1-4005-9747-f4c40f80efc7", "cron": "*/5 * * * *", "evidence": "每5分钟运转中；chatgpt-demo-01-full.md 已由督导存档（ITERATE）" },
+    "demo-02": { "id": "automation-8af780c6-0f5b-482a-b6a1-a375506f1683", "cron": "5,35 * * * *", "runCount": 4, "lastRunAt": 1791034517223, "nextRunAt": 1791036300000, "evidence": "21:35 轮 v4 开发中（demo02_physics.gd+test_demo02_v5.gd 在工作区）" },
+    "demo-03": { "id": "automation-19713e80-d7b5-45c3-bb03-602904b10486", "cron": "10,40 * * * *", "runCount": 5, "lastRunAt": 1791034817808, "nextRunAt": 1791036600000, "evidence": "21:40 已派发；冻结守望+盲测手册已交付" },
+    "demo-04": { "id": "automation-d3f50080-356e-4958-a2f6-edfc516e67a4", "cron": "15,45 * * * *", "runCount": 4, "lastRunAt": 1791033317091, "nextRunAt": 1791035100000, "evidence": "21:45 触发；v5 已导出（builds/demo-04-v5/）" },
+    "demo-05": { "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515", "cron": "20,50 * * * *", "runCount": 4, "lastRunAt": 1791033616890, "nextRunAt": 1791035400000, "evidence": "v4 压力曲线上线（8028958 Pages 镜像）；其提示词已自进化至 V4 验证轮指引（dominance 对照分层目标）；21:50 触发" },
+    "demo-06": { "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8", "cron": "25,55 * * * *", "runCount": 4, "lastRunAt": 1791032116407, "nextRunAt": 1791033900000, "evidence": "L4 KEEP + SIZE 撞车裁定回退 → v7 Playtest Baseline（af663f6，真人 Gate 指标分工 L3=spontaneous discovery/L4=transfer）；21:55 触发" }
   },
-  "envSnapshot": {
-    "health": "ok builds=29",
-    "exportLock": "none",
-    "godotProcs": 0,
-    "miroPostLog": "8 条（7 demo + feedback note）",
-    "git": "与 origin 同步；cb19ea3 全量重导出修复内容错配；de4bd32 Pages 渲染确认",
-    "itchQa": "⚡部分恢复信号：js md5 已匹配、pck/wasm 仍占位——A 方案（兜底自愈）开始兑现，持续观察"
-  }
+  "envSnapshot": { "health": "ok builds=31", "exportLock": "none", "godotProcs": 0, "miroPostLog": "8 条全覆盖", "git": "与 origin 同步；8028958 demo-05-v4 入库、af663f6 demo-06 裁定回退", "itchQa": "部分恢复持续（js 匹配/pck+wasm 占位），Pages 主渠道运转；litelog 无新条目=节流中" }
 }
