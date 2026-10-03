@@ -216,5 +216,47 @@ func _run() -> void:
 	var break_ok: bool = broke_px > 700.0
 	print("用例6: 无碎岩卡在 %.0f（<640 ✓/✗）有碎岩推进到 %.0f（>700 ✓/✗）→ %s" % [stuck_px, broke_px, "PASS（裂纹墙=碎岩双向对照）" if (stuck_ok and break_ok) else "FAIL"])
 
+	# --- 用例 7：L5 上层捷径可达性——仅超级弹跳可跃上（顶170），单高跳不可达 ---
+	await _spawn()
+	scene._load_level(4)
+	await physics_frame
+	scene.dna = {"highjump": true, "glow": true}
+	scene.jump_held = false
+	var t7 := Time.get_ticks_msec()
+	var min_py7a := 99999.0
+	var jump_cd7 := 0
+	while scene.px < 1150.0 and Time.get_ticks_msec() - t7 < 15000:
+		await physics_frame
+		jump_cd7 = maxi(0, jump_cd7 - 1)
+		if not scene.keys.get(RIGHT, false):
+			var ev := InputEventKey.new()
+			ev.keycode = RIGHT
+			ev.pressed = true
+			Input.parse_input_event(ev)
+		if jump_cd7 == 0 and scene.on_floor:
+			await _tap(JUMP)
+			jump_cd7 = 4
+		elif scene.jumps_used == 1 and scene.vy > -40.0 and scene.dna.has("double"):
+			await _tap(JUMP)
+			jump_cd7 = 8
+		min_py7a = minf(min_py7a, scene.py)
+	var single_ok: bool = min_py7a > 170.0   # 高跳顶277 越不过顶170
+	scene.dna["double"] = true
+	t7 = Time.get_ticks_msec()
+	var min_py7b := 99999.0
+	jump_cd7 = 0
+	while scene.px < 1500.0 and Time.get_ticks_msec() - t7 < 15000:
+		await physics_frame
+		jump_cd7 = maxi(0, jump_cd7 - 1)
+		if jump_cd7 == 0 and scene.on_floor:
+			await _tap(JUMP)
+			jump_cd7 = 4
+		elif scene.jumps_used == 1 and scene.vy > -40.0:
+			await _tap(JUMP)
+			jump_cd7 = 8
+		min_py7b = minf(min_py7b, scene.py)
+	var combo_ok: bool = min_py7b <= 170.0
+	print("用例7: 单高跳 min_py=%.0f（需>170 不可达）超级弹跳 min_py=%.0f（需≤170 可达）→ %s" % [min_py7a, min_py7b, "PASS（L5 上层捷径=组合可选路线）" if (single_ok and combo_ok) else "FAIL"])
+
 	Engine.time_scale = 1.0
 	quit()
