@@ -16,10 +16,10 @@ const ADJUST_TIME := 15.0
 
 ## 地块：名称/位置/风险/特产（每次存入的产出与灾害结果，存 1 次 = 基础食1水1 + 特产）
 const TILES := [
-	{id = "highland", name = "高地", x = 90, y = 130, risk = "东风灰·减半", has = "哨兵预报准·行军-1"},
+	{id = "highland", name = "高地", x = 90, y = 130, risk = "东风灰·减半", has = "哨兵准·行军-1", cap = 6},
 	{id = "valley", name = "河谷", x = 390, y = 130, risk = "暴雨泥流·全吞", has = "存1次=食1水2"},
 	{id = "forest", name = "森林", x = 690, y = 130, risk = "暴雨燃烧·损75%", has = "存1次=食2水1"},
-	{id = "cave", name = "洞穴", x = 240, y = 300, risk = "全灾害免疫", has = "撤离额外耗食1水1"},
+	{id = "cave", name = "洞穴", x = 240, y = 300, risk = "全灾害免疫", has = "撤离额外耗食1水1", cap = 10},
 	{id = "wetland", name = "湿地", x = 540, y = 300, risk = "暴雨·水污染减半", has = "存1次25%+1食1水"},
 ]
 ## 撤离路线（need 会被高地 -1 / 轻装 -2 修正）；v4 压力曲线（sweep combo0，2026-10-03）
@@ -165,6 +165,13 @@ func _tile_total(id: String) -> int:
 	return int(stored[id].food) + int(stored[id].water)
 
 
+func _tile_cap(id: String) -> int:
+	for t in TILES:
+		if t.id == id and t.has("cap"):
+			return t.cap
+	return 999
+
+
 func _forecast_text() -> String:
 	var wind_side := "西侧·高地河谷" if forecast_wind == "east" else "东侧·森林湿地"
 	var rain_pct := "七成" if forecast_rain else "三成"
@@ -223,6 +230,9 @@ func _on_tile_click(i: int) -> void:
 	var t: Dictionary = TILES[i]
 	if gather <= 0:
 		_toast("没有可存放的采集点（每 4 秒 +1）")
+		return
+	if _tile_cap(t.id) <= _tile_total(t.id):
+		_toast("%s 的储备容量已满（情报越强容量越小）" % t.name)
 		return
 	gather -= 1
 	var f := 1
