@@ -41,51 +41,90 @@ try {
 	console.log('WARN: butler status 查询失败（网络？）' + e.message);
 }
 
-// ② itch CDN 文件与本地 md5 对比（触发一次真实运行以拿到嵌入地址，再直连 CDN）
+// ② itch CDN 文件与本地 md5 对比（build 号从 butler status 解析，确保是刚推的那个）
 console.log('== ② CDN 文件校验 ==');
-// 嵌入地址格式固定：https://html.itch.zone/html/<uploadId>-<buildId>/index.html
-// 用 butler status 的输出不可解析，这里让 itch 页面提供：走一次密码登录拿 iframe 地址太重，
-// 改用约定：但勒推送的频道 HTML 页地址可由 game API 获得。为稳妥起见直接从页面抓。
 let embedBase = '';
+let buildVerified = false;
 try {
-	const page = await (await fetch('https://sxguan.itch.io/taptap2026', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: 'password=taptap',
-	})).text();
-	const m = page.match(/https:\/\/html\.itch\.zone\/html\/([\d.-]+)\/index\.html/);
-	if (m) embedBase = `https://html.itch.zone/html/${m[1]}`;
-} catch { /* 抓取失败则跳过 */ }
+	const key = getSecret('itch');
+	const tmp = path.join(process.env.TEMP || '/tmp', 'butler_qa_creds.txt');
+	fs.writeFileSync(tmp, key);
+	const out = execSync(
+		`"${path.join(ROOT, 'tools', 'butler', 'butler.exe')}" status "sxguan/taptap2026:html" -i "${tmp}"`,
+		{ timeout: 60000, encoding: 'utf8' },
+	);
+	fs.unlinkSync(tmp);
+	const buildM = out.match(/√\s*#(\d+)/);
+	if (buildM) {
+		embedBase = `https://html.itch.zone/html/19508798-${buildM[1]}`;   // upload id 19508798 为频道固定值
+		buildVerified = out.includes(version);
+		console.log(`最新构建 #${buildM[1]} → ${embedBase}`);
+		console.log(buildVerified ? `PASS: 频道版本 = ${version}` : `FAIL: 频道版本不是 ${version}（还在处理或推送未生效）`);
+		if (!buildVerified) fails++;
+	}
+} catch (e) {
+	console.log('WARN: butler status 失败 ' + e.message);
+}
+if (!embedBase) {
+	// 兜底：从游戏页抓嵌入地址
+	try {
+		const page = await (await fetch('https://sxguan.itch.io/taptap2026', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: 'password=taptap',
+		})).text();
+		const m = page.match(/https:\/\/html\.itch\.zone\/html\/([\d.-]+)\/index\.html/);
+		if (m) embedBase = `https://html.itch.zone/html/${m[1]}`;
+	} catch { /* 抓取失败则跳过 */ }
+}
 
 if (!embedBase) {
-	console.log('WARN: 未能从页面拿到嵌入地址（可能页面结构变化），CDN 校验跳过');
+	console.log('FAIL: 无法确定嵌入地址');
+	fails++;
 } else {
+	if (!buildVerified) console.log('WARN: 嵌入地址来自页面抓取，构建号未核对');
 	console.log('嵌入地址: ' + embedBase);
-	for (const f of FILES) {
-		const localMd5 = crypto.createHash('md5').update(fs.readFileSync(path.join(localDir, f))).digest('hex');
-		let remoteMd5 = '';
-		let remoteSize = 0;
-		try {
-			const buf = Buffer.from(await (await fetch(`${embedBase}/${f}`)).arrayBuffer());
-			remoteSize = buf.length;
-			remoteMd5 = crypto.createHash('md5').update(buf).digest('hex');
-		} catch (e) {
-			console.log(`FAIL: ${f} 下载失败 ${e.message}`);
-			fails++;
-			continue;
+	// CDN 可能还在处理新构建（占位页特征：所有文件返回同一哈希）——最多重试 3 次，每次等 25 秒
+	for (let attempt = 1; attempt <= 3; attempt++) {
+		let bad = 0;
+		let firstHash = '';
+		let allSame = true;
+		for (const f of FILES) {
+			const localMd5 = crypto.createHash('md5').update(fs.readFileSync(path.join(localDir, f))).digest('hex');
+			let remoteMd5 = '';
+			let remoteSize = 0;
+			try {
+				const buf = Buffer.from(await (await fetch(`${embedBase}/${f}`)).arrayBuffer());
+				remoteSize = buf.length;
+				remoteMd5 = crypto.createHash('md5').update(buf).digest('hex');
+			} catch (e) {
+				console.log(`FAIL: ${f} 下载失败 ${e.message}`);
+				bad++;
+				continue;
+			}
+			if (firstHash === '') firstHash = remoteMd5;
+			if (remoteMd5 !== firstHash) allSame = false;
+			const ok = remoteMd5 === localMd5;
+			if (f === 'index.html') {
+				// itch 服务时会向 index.html 注入包装代码，逐字节必然不同——宽松校验：体积合理即通过
+				const localSize = fs.statSync(path.join(localDir, f)).size;
+				const htmlOk = remoteSize >= localSize * 0.8 && !allSame;
+				console.log(`${htmlOk ? 'PASS' : 'FAIL'}: index.html（远程 ${remoteSize}B）宽松校验`);
+				if (!htmlOk) bad++;
+				continue;
+			}
+			console.log(`${ok ? 'PASS' : 'FAIL'}: ${f} 远程md5=${remoteMd5.slice(0, 8)} 本地md5=${localMd5.slice(0, 8)}`);
+			if (!ok) bad++;
 		}
-		const ok = remoteMd5 === localMd5;
-		if (f === 'index.html') {
-			// itch 服务时会向 index.html 注入包装代码，逐字节必然不同——宽松校验：
-			// 远程体积合理（≥本地 80%）即算通过
-			const localSize = fs.statSync(path.join(localDir, f)).size;
-			const htmlOk = remoteSize >= localSize * 0.8;
-			console.log(`${htmlOk ? 'PASS' : 'FAIL'}: index.html itch 会注入包装代码（远程 ${remoteSize}B / 本地 ${localSize}B），宽松校验通过`);
-			if (!htmlOk) fails++;
-			continue;
+		if (bad === 0) break;
+		if (allSame && attempt < 3) {
+			console.log(`CDN 疑似仍在处理构建（占位页），25 秒后重试（${attempt}/3）...`);
+			await new Promise((r) => setTimeout(r, 25000));
+		} else if (attempt < 3) {
+			console.log(`仍有 ${bad} 项异常，25 秒后重试（${attempt}/3）...`);
+			await new Promise((r) => setTimeout(r, 25000));
 		}
-		console.log(`${ok ? 'PASS' : 'FAIL'}: ${f} 远程md5=${remoteMd5.slice(0, 8)} 本地md5=${localMd5.slice(0, 8)}`);
-		if (!ok) fails++;
+		fails = Math.max(fails, bad);
 	}
 }
 
