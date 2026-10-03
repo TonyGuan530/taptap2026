@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/4 03:17:02 · 共 57 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/4 03:24:57 · 共 60 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -130,6 +130,14 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 &#x1f3ae; demo-02 运行画面 &#43; 录屏 ▼
 
+### [sticker] @(4400,6560)
+
+&#x1f3ae; demo-02 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,6700)
+
+&#x1f3ae; demo-02 物性变换谜题
+
 ### [card] @(4400,6700)
 
 &#x1f3ae; demo-02 物性变换谜题
@@ -141,6 +149,12 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 ### [sticker] @(2974,6787)
 
 <p>通过​改变​物品​的​单位​/词​条&#xff0c;​改变​物体​的​物理​属性&#xff0c;​以​此​</p>
+
+### [text] @(4400,6860)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-02.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-02.mp4
+试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;
 
 ### [text] @(4400,6892)
 

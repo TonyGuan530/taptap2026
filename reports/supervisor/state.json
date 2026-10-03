@@ -1,39 +1,37 @@
 {
-  "checkedAt": "2026-10-04T03:18:00+08:00",
-  "round": 47,
+  "checkedAt": "2026-10-04T03:26:00+08:00",
+  "round": 48,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP（前台闸门），noring 已连续 2 轮未犯，沿用读数"
+    "thisRound": "guard SKIP（前台闸门），沿用读数"
   },
   "automations": {
-    "supervisor": { "runCount": 48, "lastDispatch": "03:14", "next": "03:24" },
-    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中；demo-10/11 指挥文件在队" },
-    "demo-02": { "cron": "5,35 * * * *", "runCount": 14, "evidence": "03:35 首个带令轮（v4 三件套+L5）" },
-    "demo-03": { "cron": "10,40 * * * *", "runCount": 15, "evidence": "✅ 首个带令轮即交付 v7（42ff910）：难度阶段 3→5，全用例 PASS，视频/截图/上板同步刷新" },
-    "demo-04": { "cron": "15,45 * * * *", "runCount": 16, "evidence": "03:15 带令轮运行中（L4/L5+素材）" },
-    "demo-05": { "cron": "20,50 * * * *", "runCount": 15, "evidence": "03:20 带令轮即将开跑（灾害链 ≥5 阶段）" },
-    "demo-06": { "cron": "25,55 * * * *", "runCount": 16, "evidence": "v9 五关已达标（本轮交报告 26535a3）；下轮转美术绿幕" }
+    "supervisor": { "runCount": 49, "lastDispatch": "03:24", "next": "03:34" },
+    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "hub 扩容 69039a7：demo-10/11 slots 入列（doing，subagent 并行开发中）" },
+    "demo-02": { "cron": "5,35 * * * *", "runCount": 14, "evidence": "✅ v6 交付（7019e74）：L5 高台弹跳补至 5 关，三路线 PASS+itch 推送+最新版录屏重贴板面（ea25199）" },
+    "demo-03": { "cron": "10,40 * * * *", "runCount": 15, "evidence": "v7 五阶段已达标；03:40 下轮（美术/风暴之夜）" },
+    "demo-04": { "cron": "15,45 * * * *", "runCount": 16, "evidence": "03:15 带令轮进行中（L4/L5+素材，无锁=未到导出段）" },
+    "demo-05": { "cron": "20,50 * * * *", "runCount": 17, "evidence": "03:20 带令轮运行中（灾害链 ≥5 阶段）" },
+    "demo-06": { "cron": "25,55 * * * *", "runCount": 16, "evidence": "五关达标；03:25 触发中（转美术绿幕）" }
   },
   "envSnapshot": {
-    "health": "ok builds=45（+1=demo-03-v7）",
+    "health": "ok builds=46（+1=demo-02-v6）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "57 条/30 贴纸，无新增未认领（03:15 常读令首轮执行）",
-    "feedback": "db.json 不存在=零反馈（部署循环待命）",
-    "git": "同步（HEAD 3cc0e07）",
+    "miro": "60 条/31 贴纸：+1 为 demo-02 重贴产生的重复「运行画面」贴纸（非新想法，催办去重）；左上角三问题反馈贴纸核实=全部已于 2026-10-03 修复，无开放反馈",
+    "feedback": "db.json 零反馈",
+    "git": "同步（HEAD ea25199）",
     "itch": "占位第 3 天（Pages 兜底全在线）"
   },
   "fiveHourPlan": {
-    "demo-06": "✅ 5关达标（v9）",
-    "demo-03": "✅ 5阶段达标（v7）+视频刷新",
-    "demo-04": "🔄 03:15 轮进行中",
-    "demo-05": "⏳ 03:20 开跑",
-    "demo-02": "⏳ 03:35 开跑（差 2 关）",
-    "pipeline": "⏳ demo-10/11 在队（demo-08 差3关、demo-09 差1赛道）"
+    "done": "demo-06 ✅5关、demo-03 ✅5阶段+视频、demo-02 ✅5关+视频",
+    "running": "demo-04（L4/L5+素材）、demo-05（灾害链五阶段）、demo-06（美术绿幕）",
+    "pipeline": "demo-10/11 slots 已入 hub（doing）；demo-08 补3关、demo-09 补1赛道在队"
   },
   "pending": [
+    "【催办·demo-02】Miro 板面 demo-02「运行画面」贴纸重复（重贴未去旧），下轮 miro-post-shots 时去重",
     "【WATCH】itch 占位第 3 天（Pages 兜底）",
-    "【WATCH】demo-08 pck 14.9MB 导出过滤",
+    "【WATCH】demo-08 pck 14.9MB 导出过滤；demo-08 补3关、demo-09 补1赛道",
     "【需用户决策】真人试玩/盲测排期+Batch 01 人选；itch A/B"
   ]
 }

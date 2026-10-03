@@ -40,3 +40,4 @@
 - [ ] 【WATCH·Miro 视频新鲜度】[03:00 用户指令] 板面视频必须=最新版：当前 8 个 demo 的 reviews/videos/*.mp4 全部为旧版录制（无版本号旧文件），各 demo 每次发布新版本时必须重录+miro-post-shots 上板；巡查对照 demos.json buildId 与 miro-post-log 时间戳。
 - [x] 【用户指令·Windows 计划任务停用】[00:49 执行] TapTap-LitePipeline 与 TapTap-KeepZCodeAlive 两个 Windows 计划任务已按用户指令禁用（停一下，不要自动的 Windows 控制命令）。 itch 自愈循环暂停——占位分发问题完全等 itch 服务端恢复，Pages 渠道不受影响。恢复方式：schtasks /change /tn <任务名> /enable。
 - [ ] 【开发中·demo-10/11】[03:10 用户批示] Miro 新增两 idea 认领开工：demo-10「修改小说」、demo-11「塞尔达式箱庭谜题」（标题级短想法，流水线自行扩规格）——走 reviews/supervisor-directive-2026-10-04-demo10-11.md，v1 ≥5 关+Pages+hub+demos.json，随后 GPT 首评建对话（目标映射 11/11）；同列《最后的溪流》长文归 demo-03 扩容取材。
+- [ ] 【催办·demo-02 Miro 去重】[03:26 督导] 重贴板面卡产生两张重叠的「demo-02 运行画面」贴纸（@(4400,6560)）——下轮 miro-post-shots 时移除旧贴纸保持板面整洁（属小瑕疵不影响链接有效性）。
