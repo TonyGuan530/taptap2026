@@ -12,3 +12,8 @@
 - **dino* 素材甄别**：reviews/art/dino*.png（红色迅猛龙，透明底）为 demo-05「恐龙」主题素材（督导或 demo-05 对话生成，未入库）——按「只 add 本 demo 相关文件」指令**不代提交**，留 demo-05 轮处理。
 - **Pages 镜像缺口上报**：deploy.yml 的 Pages 产物只含 CI 当次导出的版本目录——仓库内入库的 builds/ 目录不会自动上线（实测 builds/demo-04-v7/ Pages 仍 404）。需要督导侧补一个「repo builds/ → Pages 静态同步」机制（或 workflow_dispatch 带 version 导出），否则「提交构建产物入库=Pages 兜底」不成立。demos.json 指针已正确指向 v7；itch 频道轮换+自愈照旧。
 - 无新开发（遵循 GPT 冻结指令）；headless 五用例保持 PASS。
+
+## 2026-10-04 00:10（轮3）
+- 督导第 45 轮「demo-04 观察中」确认；itch 频道现轮转至 demo-06，CDN 占位页仍未愈（publish-qa FAIL 照录）。
+- **实验房遥测文件甄别（重要，防误判）**：user://demo04_lab_log.json 已存在（10-03 22:18 写入），但内容为**自动化测试产物而非真人数据**——session 0 为旧 v5 格式残留；session 1-4 完全相同（P01/run1、glow→highjump→double 三连融合、时长 1s、仅 spawn+dna_cluster 两区），与 headless 用例 5 的传送融合模式完全一致，对应 v6/v7 的 4 次测试执行。**不得当作盲测数据发送 GPT**。真人盲测仍未执行。
+- 结论不变：demo-04 唯一待办 = 3-5 人真人盲测（手册/编号/导出就绪）。
