@@ -7,7 +7,6 @@ var game: Node2D
 var shot_saved := false
 var launched := false
 var switched := false
-var flapped := false
 
 
 func _ready() -> void:
@@ -23,9 +22,6 @@ func _physics_process(_delta: float) -> void:
 		game._on_tag(0)   # 羽毛开局
 		return
 	if game.goal_reached:
-		if not shot_saved:
-			shot_saved = true
-			_take_shot()
 		return
 	if game.ball == null:
 		return
@@ -36,11 +32,13 @@ func _physics_process(_delta: float) -> void:
 	if launched and not switched:
 		if v.y > 60.0 and game.ball.position.x < 560.0 and not game.flap_used:
 			game._try_jump()             # 掉高度就扑翼（滞空限一次）
-			flapped = true
 		if game.ball.position.x >= 590.0 and game.ball.position.x <= 630.0 and game.ball.position.y < 200.0:
 			switched = true
 			Input.action_release("ui_right")
-			game._on_tag(1)              # 高窗口切石头，弹道砸穿脆板
+			game._on_tag(1)              # 高窗口切石头——闪现「石头 · 重」（v5 反馈层）
+	elif switched and not shot_saved and game.flash_t <= 0.55:
+		shot_saved = true                # 闪现过半、石头已离手：定格反馈层
+		_take_shot()
 
 
 func _take_shot() -> void:
