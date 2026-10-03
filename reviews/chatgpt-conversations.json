@@ -3,21 +3,30 @@
   "note": "每个 demo 对应一个专属 ChatGPT 对话（保持连贯，后续版本在同一对话汇报）。流水线评审时优先复用这些对话。",
   "conversations": {
     "demo-01": {
-      "url": "（待建：下一轮用同套背景流程建立）",
-      "review": "reviews/chatgpt-demo-01.md"
+      "url": "https://chatgpt.com/c/6ac0e884-8b84-83ec-a462-ce4f684cc310",
+      "review": "reviews/chatgpt-demo-01-full.md",
+      "verdict": "待首轮评审",
+      "note": "督导于2026-10-03建立并发出背景，后续轮次在此续评"
     },
     "demo-02": {
       "url": "https://chatgpt.com/c/6abf238d-6dc0-83ec-aa5e-43c62aebe892",
-      "review": "reviews/chatgpt-demo-02.md",
-      "verdict": "ITERATE"
+      "review": "reviews/chatgpt-demo-02-full.md",
+      "verdict": "ITERATE",
+      "v2Review": "reviews/chatgpt-demo-02-v2-full.md",
+      "v2Note": "建议#1(纯物理脆墙)判KEEP；结论仍ITERATE：新核心验证=物理运动途中切词条(v3做词条快捷键1/2/3+三段连续物理测试房，不做完整移动系统)；试玩版隐藏参考解法"
     },
     "demo-03": {
-      "url": "待建",
-      "review": ""
+      "url": "https://chatgpt.com/c/6ac0e8c8-f34c-83ec-9c30-1cca9503c042",
+      "review": "reviews/chatgpt-demo-03-full.md",
+      "verdict": "待首轮评审",
+      "note": "督导于2026-10-03建立并发出背景，后续轮次在此续评"
     },
     "demo-04": {
-      "url": "待建",
-      "review": ""
+      "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",
+      "review": "reviews/chatgpt-demo-04-full.md",
+      "verdict": "待首轮评审",
+      "note": "督导于2026-10-03建立并发出背景，首轮 GPT 已指出能力-障碍一一对应的设计警报",
+      "connectedAt": "2026-10-03T19:40:00+08:00"
     },
     "demo-05": {
       "url": "https://chatgpt.com/c/6abf4a9c-3e7c-83ec-a5f5-6a87251014dd",
@@ -27,7 +36,9 @@
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
       "review": "reviews/chatgpt-demo-06-full.md",
-      "verdict": "ITERATE"
+      "verdict": "KEEP",
+      "l3Review": "reviews/chatgpt-demo-06-l3-full.md",
+      "l3Note": "L3 Gate 通过(ITERATE→KEEP)：去属性锁后 4词条×3形状可自然提供多物理关系路径；下一Gate=真人数据盲测(5~8人+轻量telemetry，不解法提示，不加新词条)"
     }
   }
 }
