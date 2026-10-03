@@ -1,14 +1,64 @@
 {
-  "checkedAt": "2026-10-03T22:26:00+08:00",
-  "round": 18,
-  "quota": { "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10", "thisRound": "guard SKIP（前台闸门），沿用上轮读数" },
-  "automations": {
-    "demo-01(流水线)": { "id": "automation-2f2eb604-c0c1-4005-9747-f4c40f80efc7", "cron": "*/5 * * * *", "evidence": "运转中；demo-07 v2 已交付（2215 报告）" },
-    "demo-02": { "id": "automation-8af780c6-0f5b-482a-b6a1-a375506f1683", "cron": "5,35 * * * *", "runCount": 5, "lastRunAt": 1791036318055, "nextRunAt": 1791038100000, "evidence": "Playtest 手册+v5 基线已交付，22:05 轮空闲正常" },
-    "demo-03": { "id": "automation-19713e80-d7b5-45c3-bb03-602904b10486", "cron": "10,40 * * * *", "runCount": 6, "lastRunAt": 1791036618396, "nextRunAt": 1791038400000, "evidence": "双轮守望：v6 收尾备案（ITERATE 不变，纯资产替换无需返工）+ 盲测手册补督导观察项（多重状态标记下角色可读性）" },
-    "demo-04": { "id": "automation-d3f50080-356e-4958-a2f6-edfc516e67a4", "cron": "15,45 * * * *", "runCount": 5, "lastRunAt": 1791035117480, "nextRunAt": 1791036900000, "evidence": "21:45 轮 v7 交付后空闲；v7b（942b45a）=GPT v7 美术复评归档（玩法 KEEP+Gate 通过）+ 资产 QA 程序化检验（alpha 检查入管线）+ 玩家精灵 34→38px 修正" },
-    "demo-05": { "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515", "cron": "20,50 * * * *", "runCount": 6, "lastRunAt": 1791037218380, "nextRunAt": 1791039000000, "evidence": "22:20 已派发；chatgpt-demo05-gateC-ruling-full.md 出现=Gate C（洞穴双高）已拿到 ChatGPT 设计裁决" },
-    "demo-06": { "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8", "cron": "25,55 * * * *", "runCount": 5, "lastRunAt": 1791035717828, "nextRunAt": 1791037500000, "evidence": "21:55 轮后冻结守望，v7 Baseline 等真人数据" }
+  "checkedAt": "2026-10-03T21:52:00+08:00",
+  "round": "13.5（用户问询专项核验）",
+  "quota": {
+    "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
+    "thisRound": "guard SKIP（前台闸门），沿用上轮读数"
   },
-  "envSnapshot": { "health": "ok builds=37", "exportLock": "none", "godotProcs": 0, "miroPostLog": "8 条全覆盖", "git": "与 origin 同步；720de6e/15558df demo-03 守望、942b45a demo-04 v7b；工作区= demo-05 在途", "itchQa": "部分恢复持续（js 匹配/pck+wasm 占位），Pages 主渠道稳定；A/B 决策挂起" }
+  "automations": {
+    "demo-01(流水线)": {
+      "id": "automation-2f2eb604-c0c1-4005-9747-f4c40f80efc7",
+      "cron": "*/5 * * * *",
+      "evidence": "运转中；demo-07 v2 已交付（2215 报告）"
+    },
+    "demo-02": {
+      "id": "automation-8af780c6-0f5b-482a-b6a1-a375506f1683",
+      "cron": "5,35 * * * *",
+      "runCount": 5,
+      "lastRunAt": 1791036318055,
+      "nextRunAt": 1791038100000,
+      "evidence": "Playtest 手册+v5 基线已交付，22:05 轮空闲正常"
+    },
+    "demo-03": {
+      "id": "automation-19713e80-d7b5-45c3-bb03-602904b10486",
+      "cron": "10,40 * * * *",
+      "runCount": 6,
+      "lastRunAt": 1791036618396,
+      "nextRunAt": 1791038400000,
+      "evidence": "双轮守望：v6 收尾备案（ITERATE 不变，纯资产替换无需返工）+ 盲测手册补督导观察项（多重状态标记下角色可读性）"
+    },
+    "demo-04": {
+      "id": "automation-d3f50080-356e-4958-a2f6-edfc516e67a4",
+      "cron": "15,45 * * * *",
+      "runCount": 5,
+      "lastRunAt": 1791035117480,
+      "nextRunAt": 1791036900000,
+      "evidence": "21:45 轮 v7 交付后空闲；v7b（942b45a）=GPT v7 美术复评归档（玩法 KEEP+Gate 通过）+ 资产 QA 程序化检验（alpha 检查入管线）+ 玩家精灵 34→38px 修正"
+    },
+    "demo-05": {
+      "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515",
+      "cron": "20,50 * * * *",
+      "runCount": 6,
+      "lastRunAt": 1791037218380,
+      "nextRunAt": 1791039000000,
+      "evidence": "22:20 已派发；chatgpt-demo05-gateC-ruling-full.md 出现=Gate C（洞穴双高）已拿到 ChatGPT 设计裁决"
+    },
+    "demo-06": {
+      "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8",
+      "cron": "25,55 * * * *",
+      "runCount": 5,
+      "lastRunAt": 1791035717828,
+      "nextRunAt": 1791037500000,
+      "evidence": "21:55 轮后冻结守望，v7 Baseline 等真人数据"
+    }
+  },
+  "envSnapshot": {
+    "health": "ok builds=37",
+    "exportLock": "none",
+    "godotProcs": 0,
+    "miroPostLog": "8 条全覆盖",
+    "git": "与 origin 同步；720de6e/15558df demo-03 守望、942b45a demo-04 v7b；工作区= demo-05 在途",
+    "itchQa": "21:50 全量复测 6/6 FAIL（4 项异常/个）；部分恢复信号未扩大",
+    "deployment": "Pages: demo-01v3/02v5/03v6/05v5/06v8 全 200；demo-04 指针=v7 未推送(404)，v6 在线可玩。itch: 6/6 QA FAIL（CDN 占位持续）——Pages 为唯一可玩渠道"
+  }
 }

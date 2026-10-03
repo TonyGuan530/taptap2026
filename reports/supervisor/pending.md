@@ -21,6 +21,7 @@
 - [x] 【GPT 对话已建】[RESOLVED 2026-10-03 19:38 督导] https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5 → 首轮 GPT 已预警「能力-障碍一一对应=脚本化谜题，涌现不足」，下轮把该意见纳入扩展（DNA 组合效果正是解法），回复存 reviews/chatgpt-demo-04-full.md。
 
 ## 全局
+- [ ] 【部署核验 21:50·用户问询】**GitHub Pages 5/6 最新版在线**（demo-01 v3 / 02 v5 / 03 v6 / 05 v5 / 06 v8 play+build 全 200）；**demo-04 例外**：demos.json 已指向 v7 但 builds/demo-04-v7/ 未推送（Pages 404），v6 及更早版本在线可玩 → demo-04 任务收尾时必须 commit+push v7 构建目录。**itch 6/6 QA FAIL**（CDN 占位持续，21:50 全量复测确认）——所有 demo 在 itch 均不可玩，Pages 为唯一可玩渠道；【需用户决策】A/B 仍待拍板（建议维持 A：itch 恢复后自愈流水线会补推）。
 - [x] 【WATCH·demo-04 疑似滞留】[RESOLVED 20:18 督导] 虚惊一场+修复生效：其首轮是 1 小时马拉松（19:19-20:15），20:15 督导 CronUpdate 后立即派发并交付 **v2（3关+DNA组合+碎片评级，headless 三用例 PASS，e6eb7cd）**，调度已重锚（runCount 2，下次 20:45）。停滞恢复四选一预案已注入其指令，下轮按 ChatGPT 评审结论选向。遗留：chatgpt-demo-04-full.md 因 OpenAI 429 未存档，下轮补。[RESOLVED 20:46 督导] full 文件已存档 ✓，v3 复评 KEEP 已入池。
 - [ ] 【WATCH·demo-06 指令验收】[20:15] 已向 demo-06 任务注入督导指令（视频+上板=最高优先级）。第 3 轮 20:25 触发后验收：reviews/videos/demo-06.mp4 与 miro-post-log.json 的 demo-06 条目。
 - [ ] 【需用户决策·itch CDN 持续故障】19:36（QA FAIL×4）、19:41（重推节流中仍 FAIL）、19:50（demo-02 v3 放弃 itch 走 GitHub Pages 兜底）——三次连续观察确认故障持续 25 分钟以上，非 CDN 传播延迟。当前各任务按既有预案自愈（Pages 兜底 + LitePipeline 重推），未阻塞发布。**请用户决策**：A. 维持现状（Pages 兜底，itch 恢复后自动回归）；B. 正式切 GitHub Pages 为主发布渠道（需改 push-itch/publish-qa/LitePipeline 业务工具，督导不代改）。未决策前督导维持 A 现状。
