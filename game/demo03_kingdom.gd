@@ -18,6 +18,11 @@ extends Node2D
 ##   （#00ff00 背景原图存 reviews/art/src/）→ ffmpeg chromakey 抠绿（reviews/art/keyed/）
 ##   → game/assets/demo03/ 透明 PNG；村民按职业色轻染，水塔 L1/L2 贴图化；
 ##   背景/特效（星空/火山/岩浆/酸雨/徽标）仍为程序绘制。零平衡/规则改动。
+## v7（督导 03:00 内容量指令：五阶段递进）：难度阶段 3→5——
+##   初火(0-12s 1.8+0.035t) → 干热风(12-25s 2.2+0.045t) → 裂地脉动(25-38s 2.7+0.055t)
+##   → 岩浆涌潮(38-50s 3.1+0.07t) → 灭亡倒计时(50s+ 3.5+0.09t)；
+##   阶段横幅/时间进度条改五段配色；开局更平缓、后期更陡（兼顾 snowball 顾虑）；
+##   风暴之夜酸雨结构不变（单变量原则）。平衡参数变更：全部用例重跑。
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
@@ -37,11 +42,13 @@ const NPC_NAMES := ["阿岩", "小露", "阿灰", "石头婶", "水生"]
 const NPC_UP_COST := 30
 const NPC_UP_COOL := 0.7
 
-## 难度阶段：until = 阶段结束时刻，base/slope = 升温速率
+## 难度阶段：until = 阶段结束时刻，base/slope = 升温速率（v7：三阶段扩至五阶段递进，督导 03:00 内容量指令）
 const PHASES := [
-	{"until": 20.0, "base": 2.0, "slope": 0.04, "name": "早期威胁"},
-	{"until": 40.0, "base": 2.5, "slope": 0.06, "name": "中期危局"},
-	{"until": 999.0, "base": 3.2, "slope": 0.10, "name": "灭亡倒计时"},
+	{"until": 12.0, "base": 1.8, "slope": 0.035, "name": "初火", "col": "aed581"},
+	{"until": 25.0, "base": 2.2, "slope": 0.045, "name": "干热风", "col": "ffd54f"},
+	{"until": 38.0, "base": 2.7, "slope": 0.055, "name": "裂地脉动", "col": "ffb74d"},
+	{"until": 50.0, "base": 3.1, "slope": 0.07, "name": "岩浆涌潮", "col": "ff8a65"},
+	{"until": 999.0, "base": 3.5, "slope": 0.09, "name": "灭亡倒计时", "col": "ef5350"},
 ]
 
 ## 酸雨事件：起始时刻（±3s 随机抖动）、基础时长；预警提前量；双向 modifier（ChatGPT v3 指引）
@@ -525,25 +532,24 @@ func _draw() -> void:
 	draw_rect(Rect2(bx2, 14, bw2 * frac, 18), bar_col)
 	draw_rect(Rect2(bx2 - 2, 12, bw2 + 4, 22), Color("e8ecf4"), false, 2)
 	draw_string(FONT, Vector2(bx2 + 6, 27), "温度 %d°" % int(heat), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("111") if frac < 0.6 else Color("fff"))
-	# 时间进度条（三阶段配色 + 当前时刻游标）
+	# 时间进度条（五阶段配色 + 当前时刻游标）
 	var tp: float = clamp(elapsed / GAME_TIME, 0.0, 1.0)
-	var seg_cols: Array = [Color("66bb6a"), Color("ffd54f"), Color("ef5350")]
-	for sgi in 3:
-		var seg_w := bw2 / 3.0
-		draw_rect(Rect2(bx2 + seg_w * sgi, 38, seg_w - 2.0, 4), Color(0, 0, 0, 0.45))
-		draw_rect(Rect2(bx2 + seg_w * sgi, 38, minf(seg_w * tp - seg_w * sgi, seg_w - 2.0), 4), (seg_cols[sgi] as Color))
+	var bounds := [0.0, 12.0, 25.0, 38.0, 50.0, 60.0]
+	for sgi in 5:
+		var s0: float = float(bounds[sgi])
+		var s1: float = float(bounds[sgi + 1])
+		var sw: float = (s1 - s0) / GAME_TIME * bw2
+		var sx: float = s0 / GAME_TIME * bw2
+		draw_rect(Rect2(bx2 + sx, 38, sw - 1.5, 4), Color(0, 0, 0, 0.45))
+		var fillw: float = clamp((elapsed - s0) / (s1 - s0), 0.0, 1.0) * (sw - 1.5)
+		draw_rect(Rect2(bx2 + sx, 38, fillw, 4), Color(PHASES[sgi].col))
 	draw_rect(Rect2(bx2 + bw2 * tp - 1.0, 35, 2.0, 10), Color("ffffff"))
 	# 水滴与时间
 	draw_string(FONT, Vector2(16, 28), "💧 %d" % int(water), HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("4fc3f7"))
 	draw_string(FONT, Vector2(VIEW.x - 110, 28), "⏱ %d/%d 秒" % [int(elapsed), int(GAME_TIME)], HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("e8ecf4"))
-	# 阶段横幅
+	# 阶段横幅（五阶段配色）
 	var ph: Dictionary = _phase()
-	var pcol := Color("aed581")
-	if elapsed >= 40.0:
-		pcol = Color("ef5350")
-	elif elapsed >= 20.0:
-		pcol = Color("ffd54f")
-	draw_string(FONT, Vector2(VIEW.x - 250, 50), "阶段：%s" % ph.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, pcol)
+	draw_string(FONT, Vector2(VIEW.x - 250, 50), "阶段：%s" % ph.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(ph.col))
 	# 提示
 	if state == "play" and elapsed < 6.0:
 		draw_string(FONT, Vector2(230, 84), "温度会越升越快！点击空槽位建造浇水设施，撑过 60 秒！", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ffcc80"))
