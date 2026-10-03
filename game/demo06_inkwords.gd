@@ -166,6 +166,7 @@ var ui_layer: CanvasLayer = null   # v4：直接持有 UI 层引用——旧 fin
                                    # 查不到自动名 "@CanvasLayer@2"，致通关面板从未显示（线上实测发现）
 var env_oid_n := 0                 # v5：预置物体实例 ID 计数（contact 链还原用）
 var dino_tex: Texture2D = null     # v8：绿幕管线玩家素材（reviews/art/demo-06/ → game/art/），缺失时回落程序绘制
+var env_texes := {}                # v10：绿幕管线环境物素材（block/ball/plank），kind → Texture2D
 
 # ---------------- 盲测 telemetry（本地记录，无后台） ----------------
 var tel_pid := "P01"        # 受试编号（数据面板可改，随记录保留）
@@ -488,6 +489,17 @@ func _try_place(pos: Vector2) -> void:
 
 
 ## v5：接触对象实例 ID（env/placed 带 oid，墙/栅栏/玩家用稳定名）
+## v10：环境物贴图懒加载（绿幕管线素材，kind → Texture2D；缺失返回 null 走程序绘制）
+func _env_tex(kind: String) -> Texture2D:
+	if env_texes.is_empty():
+		env_texes = {
+			"block": load("res://art/demo06_block.png"),
+			"ball": load("res://art/demo06_ball.png"),
+			"plank": load("res://art/demo06_plank.png"),
+		}
+	return env_texes.get(kind, null)
+
+
 func _tel_oid(n: Node) -> String:
 	if n == player:
 		return "player"
@@ -747,13 +759,18 @@ func _draw() -> void:
 			var fr: Rect2 = c.get_meta("rect")
 			draw_rect(fr, Color("8d6e63"))
 			draw_line(fr.position, fr.position + fr.size, Color("5d4037"), 2)
-	# 预置普通物体（v2：无词条、可推可撞；旧版加入后不可见，这里补上绘制）
+	# 预置普通物体（v2：无词条、可推可撞；v10：绿幕管线贴图，随刚体旋转；缺素材回落程序绘制）
 	for o in get_tree().get_nodes_in_group("level_objs"):
 		var ob := o as RigidBody2D
 		if ob == null:
 			continue
 		var osz := ob.get_meta("size", Vector2(40, 40)) as Vector2
-		if ob.get_meta("kind", "") == "ball":
+		var etex: Texture2D = _env_tex(ob.get_meta("kind", ""))
+		if etex != null:
+			draw_set_transform(ob.position, ob.rotation, osz / etex.get_size())
+			draw_texture_rect(etex, Rect2(-etex.get_size() / 2.0, etex.get_size()), false)
+			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		elif ob.get_meta("kind", "") == "ball":
 			draw_circle(ob.position, osz.x / 2.0, Color("b8a888"))
 			draw_arc(ob.position, osz.x / 2.0, 0.0, TAU, 24, Color("111111"), 2.0)
 		else:
