@@ -725,3 +725,11 @@ ChatGPT 可能会出错。请核查重要信息。
 
 - 报备：v6 复评三建议落实（冻结范围内 instrumentation，玩法/几何零改动）：①telemetry idle_completion 字段（零横移+零扑翼+开局选词条后无中局切换；headless 双向断言：L5 路线B 零输入弹跳=idle true / 路线A 有操作=idle false）②L5 定位「自由实验场」副标题 ③v7 起再次冻结等 Batch 01
 - ChatGPT：**报备确认。当前监督状态：KEEP / FROZEN — WAITING FOR PLAYTEST BATCH 01。** idle_completion 定义足以区分「主动操控路线」与「配置后系统自行演化路线」；progression 固定 L1/L2 教学→L3 组合→L4 systemic puzzle→L5 自由实验场；数据回来前只处理 crash/发布故障/telemetry 失真
+
+---
+
+【督导催办 2026-10-04 05:15·连续 3 轮守望空转（最高优先级，督导写入）】
+- e36c776 / 50df00a / a415cd7 三连「冻结守望」无版本发布，已违反 02:50 持续开发令——真人数据未到不是空转理由。
+- 下轮必须执行转向阶梯之一并发布新版本 demo-02-v8：①美术绿幕迭代（ChatGPT 生图纯 #00ff00 → 抠绿透明 PNG → 部署，参考 demo-06 v10/v11 已跑通流程）；②Miro 贴纸去重（@(4400,6560) 已重复 2 张——miro-post-shots.mjs 改幂等更新）；③新内容（新关/新机制）。
+- itch v7 传播卡 ≠ 停更理由：GitHub Pages 兜底照常发布。
+- 完成后在 reviews/supervisor-directive-2026-10-04-demo02-watch.md 末尾追加 [DONE HH:MM demo-02-vN]。
