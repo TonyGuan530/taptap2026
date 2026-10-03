@@ -83,6 +83,20 @@
       "archivedAt": "2026-10-04T03:20+08:00",
       "v2Review": "reviews/chatgpt-demo-09-v2-full.md",
       "v2Note": "v2 复评 KEEP(2026-10-04 从 ITERATE 升级)：三 archetype 同场互不支配+面积预算结构性 trade-off——「存在多种真正不同有效设计」获明确工程证据，核心 mechanic 值得占用后续开发时间。下一步=冻结 mechanic 进真人盲测（最多 2 个 instrumentation：①架构变化遥测 run_index/wheel_count/radii/positions/chassis/total_area/finish_time/result/previous_build_distance，major_change=轮数或车身变化或位置>0.15 或半径>20% ②3-5 人盲测只给一句目标，记录 total runs/distinct architecture/主动改轮数/改轴距/非对称/看遥测改方案/口头解释）。Gate=≥3/5 无提示产生 ≥2 个 major build architecture。若只微调→加轻量局部目标反馈（只描述现象不教解法）。禁：自由画车身/AI 对手/新零件/更多赛道/美术 polish——编码边际信息收益已低，缺的是真人行为"
+    },
+    "demo-10": {
+      "url": "https://chatgpt.com/c/6ac16382-36e0-83ec-a9cd-e9f1deda4568",
+      "review": "reviews/chatgpt-demo-10-11-first.md",
+      "verdict": "ITERATE",
+      "note": "v1 首评(2026-10-04)：状态传递/后果积累/跨章反馈的编辑系统成立（文本成为状态系统的界面），最大问题=词槽可能退化成数值按钮（披着小说皮的三属性 build puzzle）。v2 三变化（实验版不扩内容）：①同一词不同上下文不同结果槽（照片随身份派生含义）②矛盾可被后文圆回来——UNRESOLVED_ANOMALY 机制，圆回=FORESHADOW_PAYOFF 奖励、没圆才转抗议（把错误转化成伏笔）③盲测版隐藏基调数值（低中高/文字反馈）测玩家是否开始认真阅读。禁：6-10 章/生成式 AI/自由输入/几十结局。v2 唯一命题=矛盾→圆回变伏笔能否产生明显 Eureka；不能→倾向 DROP；成立→升 KEEP",
+      "archivedAt": "2026-10-04T05:00+08:00"
+    },
+    "demo-11": {
+      "url": "https://chatgpt.com/c/6ac16454-cfbc-83ec-a401-b8fb66635293",
+      "review": "reviews/chatgpt-demo-10-11-first.md",
+      "verdict": "ITERATE（强候选）",
+      "note": "v1 首评(2026-10-04)：约 70% Systemic/30% Scripted——5 房均非单一钥匙、压力开关持续状态、Room5 机会成本；但 8 条解法全被枚举进测试=都是设计师预设，「多解」≠「涌现」。最大风险=滑向内容生产。v2 只做 3 件（不加第 6 房）：①Room5 改开放实验房（删解法提示+冗余资源 2 箱 2 铁水 2 开关）②唯一新增传播关系：火融冰→冰上物体失支撑掉水/下沉（冰霜→地形→放置物→火→再变→物体状态）③测试升级状态空间搜索（限步自动找合法解，搜出未编排解=最有价值证据）。②+③ 是本轮 Gate。唯一验收=不新增工具下 Room5 产生 ≥1 个未编排合法解（自动搜索或真人）→ 大概率 KEEP。禁：敌人/新元素/新工具/6-10 房/3D/美术",
+      "archivedAt": "2026-10-04T05:00+08:00"
     }
   }
 }
