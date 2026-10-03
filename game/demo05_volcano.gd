@@ -75,6 +75,7 @@ var route_chosen := -1
 var margin := 0               # v6 A'：撤离余量 = 行军消耗后剩余物资（结算评分用）
 var night_weather := ""       # v9 第五幕：萨满第二预言——"cold"=寒夜（撤离耗 1 水）/"mist"=稳雾
 var end_style := 0            # v11 内容层：结局文风索引（每局随机，0-2）
+var forecast_voice := 0      # v12 内容层：萨满预报措辞索引（每局随机，0-3）
 var result := ""
 var pulse := 0.0
 var hovered := -1
@@ -93,6 +94,7 @@ func _ready() -> void:
 		stored[t.id] = {food = 0, water = 0}
 	_roll_forecast()
 	end_style = randi() % END_STYLES.size()
+	forecast_voice = randi() % FORECAST_VOICES.size()
 	_build_ui()
 	# 采集计时：每 4 秒 +1 采集点
 	var timer_node := Timer.new()
@@ -150,6 +152,12 @@ func _build_ui() -> void:
 	end_panel.name = "EndPanel"
 	end_panel.position = Vector2(130, 60)
 	end_panel.size = Vector2(700, 420)
+	var panel_sb := StyleBoxFlat.new()
+	panel_sb.bg_color = Color(0.07, 0.06, 0.1, 0.96)
+	panel_sb.border_color = Color(0.55, 0.45, 0.25, 1.0)
+	panel_sb.set_border_width_all(2)
+	panel_sb.set_corner_radius_all(6)
+	end_panel.add_theme_stylebox_override("panel", panel_sb)
 	end_panel.visible = false
 	ui.add_child(end_panel)
 	var et := Label.new()
@@ -196,10 +204,19 @@ func _tile_total(id: String) -> int:
 	return int(stored[id].food) + int(stored[id].water)
 
 
+## 萨满预报措辞变体（v12 内容层，纯文案）
+const FORECAST_VOICES := [
+	{head = "萨满预言：", tail = ""},
+	{head = "萨满仰观星象，低声说：", tail = "。年轻族人低声议论纷纷"},
+	{head = "老萨满咳着血说：", tail = "。帐篷里一片沉默"},
+	{head = "萨满掷出兽骨：", tail = "。骨纹的走向昭示着天意"},
+]
+
 func _forecast_text() -> String:
+	var voice: Dictionary = FORECAST_VOICES[forecast_voice]
 	var wind_side := "西侧·高地河谷" if forecast_wind == "east" else "东侧·森林湿地"
 	var rain_pct := "七成" if forecast_rain else "三成"
-	return "萨满预言：火山灰将罩住%s · 降雨概率约%s" % [wind_side, rain_pct]
+	return voice.head + "火山灰将罩住%s · 降雨概率约%s%s" % [wind_side, rain_pct, voice.tail]
 
 
 func _restart() -> void:
@@ -214,6 +231,7 @@ func _restart() -> void:
 	route_bonus = 0
 	night_weather = ""
 	end_style = randi() % END_STYLES.size()
+	forecast_voice = randi() % FORECAST_VOICES.size()
 	events = []
 	route_chosen = -1
 	for t in TILES:
