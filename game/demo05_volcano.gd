@@ -11,7 +11,7 @@ extends Control
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 
-const PHASE1_TIME := 45.0
+const PHASE1_TIME := 28.0
 const ADJUST_TIME := 15.0
 
 ## 地块：名称/位置/风险/特产（每次存入的产出与灾害结果，存 1 次 = 基础食1水1 + 特产）
@@ -22,11 +22,11 @@ const TILES := [
 	{id = "cave", name = "洞穴", x = 240, y = 300, risk = "全灾害免疫", has = "撤离额外耗食1水1"},
 	{id = "wetland", name = "湿地", x = 540, y = 300, risk = "暴雨·水污染减半", has = "存1次25%+1食1水"},
 ]
-## 撤离路线（need 会被高地 -1 / 轻装 -2 修正）
+## 撤离路线（need 会被高地 -1 / 轻装 -2 修正）；v4 压力曲线（sweep combo0，2026-10-03）
 const ROUTES := [
-	{name = "北线·翻山", risk = "耗体力大，但远离灰区", need = 6},
-	{name = "东线·沿河", risk = "快，但可能遇泥流改道", need = 4},
-	{name = "南线·密林", risk = "食物多，慢，易迷路", need = 5},
+	{name = "北线·翻山", risk = "耗体力大，但远离灰区", need = 12},
+	{name = "东线·沿河", risk = "快，但可能遇泥流改道", need = 14},
+	{name = "南线·密林", risk = "食物多，慢，易迷路", need = 16},
 ]
 ## 灾后应急行动（仅一次）
 const ADJUST_CARDS := [
@@ -93,7 +93,7 @@ func _build_ui() -> void:
 	var ui := CanvasLayer.new()
 	add_child(ui)
 	var title := Label.new()
-	title.text = "重生之我是恐龙 · 火山生存（demo-05 v2）"
+	title.text = "重生之我是恐龙 · 火山生存（demo-05 v4）"
 	title.position = Vector2(16, 8)
 	title.add_theme_font_size_override("font_size", 20)
 	title.add_theme_color_override("font_color", Color("ffd54f"))
@@ -484,8 +484,9 @@ func _show_end() -> void:
 
 
 func _score() -> int:
+	# v4：封顶奖励——超过安全冗余(4份)的囤积不再加分，杜绝 all_cave 式囤积 score-dominance
 	var base: int = {"win": 70, "partial": 45, "lose": 10}[result]
-	return base + supply.food * 2 + supply.water * 2
+	return base + mini(supply.food, 4) * 2 + mini(supply.water, 4) * 2
 
 
 # ---------------- 绘制 ----------------

@@ -98,6 +98,7 @@
 - headless 平衡测试（game/tests/test_demo05.gd，4 用例全 PASS）：分散储备 win / 全押河谷遇雨不行动只剩初始6份 / 全押森林不遇雨食满仓 / 全押河谷遇雨+抢运随身20份
 - V3 Gate（ChatGPT 2026-10-03 续评，reviews/chatgpt-demo-05-v2-full.md）：不加玩法只做验证——①新玩家连玩5局≥3种策略+≥2次主动换策略 ②盯防「高地开局」「灾后必抢运」dominant sequence ③headless 加 dominance simulation（全洞穴/全高地/全河谷/全森林/均匀分散/高地→按天气投资/激进→抢运/低储备→轻装 8 policy 数百局）；数值平衡冻结
 - V3 进展（2026-10-03 晚）：dominance simulation 完成（reviews/demo05-dominance-sim-2026-10-03.md，game/tests/test_demo05_dominance.gd）——8 policy 全部 100% 胜率，游戏无失败压力；评分 all_cave(113.5) 微弱压过 intel_play(113.3)，「高地开局」证伪。ChatGPT 第二次裁决（reviews/chatgpt-demo05-v3-data-full.md）：**解除数值冻结**，只碰采集次数×路线需求两个旋钮做 sweep（game/tests/sweep_demo05_pressure.gd；目标生存分层：优秀 75-90%/混合 55-75%/投机 35-65%/错误 15-40%），评分改封顶奖励 min(食,4)×2+min(水,4)×2，真人 5 局测试推迟到压力曲线修完之后（模板 reviews/human-test-demo05-template.md 已按裁决加「上局结果/为何换策略」两列）
+- V4 压力曲线（2026-10-03 夜，sweep 两轮定档 game/tests/sweep_demo05_pressure.gd）：首轮需求 4-8 档仍 8/8 全胜（供给~20 对需求 4-8 太富裕，且泥流与风向无关、河谷雨天必归零）→ 放大到死亡区间后采纳 combo0：准备期 45s→28s（采集 7 点）、路线需求 6/4/5→12/14/16、评分=基础分+min(食,4)×2+min(水,4)×2。分层：投机(全押河谷/森林)50%、均匀分散 75%、保险/情报/抢运 100%、速度派 50%——「不再 8/8 全 >90%」达成；headless 4 用例重跑全 PASS 且用例 2 首次出现真灭亡。demo-05-v4 已导出推 itch/Pages
 
 ## demo-06 词条涂鸦创造
 

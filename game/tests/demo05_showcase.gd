@@ -14,19 +14,17 @@ func _ready() -> void:
 	v = load("res://demo05_volcano.tscn").instantiate()
 	add_child(v)
 	steps = [
-		{at = 6.0, kind = "dep", arg = "valley"},
-		{at = 10.0, kind = "dep", arg = "valley"},
-		{at = 14.0, kind = "dep", arg = "valley"},
-		{at = 18.0, kind = "dep", arg = "valley"},
-		{at = 22.0, kind = "dep", arg = "forest"},
-		{at = 26.0, kind = "dep", arg = "forest"},
-		{at = 30.0, kind = "dep", arg = "cave"},
-		{at = 34.0, kind = "dep", arg = "cave"},
-		{at = 38.0, kind = "dep", arg = "highland"},
-		{at = 49.0, kind = "emg", arg = ""},
-		{at = 51.0, kind = "reloc", arg = "valley"},
-		{at = 56.0, kind = "route", arg = 1},
-		{at = 61.0, kind = "quit", arg = ""},
+		{at = 5.0, kind = "dep", arg = "valley"},
+		{at = 7.0, kind = "dep", arg = "valley"},
+		{at = 9.0, kind = "dep", arg = "valley"},
+		{at = 11.0, kind = "dep", arg = "forest"},
+		{at = 13.0, kind = "dep", arg = "forest"},
+		{at = 15.0, kind = "dep", arg = "cave"},
+		{at = 17.0, kind = "dep", arg = "highland"},
+		{at = 32.0, kind = "emg", arg = ""},
+		{at = 34.0, kind = "reloc", arg = "valley"},
+		{at = 39.0, kind = "route", arg = 0},
+		{at = 44.0, kind = "quit", arg = ""},
 	]
 
 
@@ -74,7 +72,7 @@ func _tick_step(s: Dictionary) -> bool:
 
 func _process(delta: float) -> void:
 	t += delta
-	if t > 75.0:
+	if t > 55.0:
 		get_tree().quit()
 		return
 	if si >= steps.size():
