@@ -42,3 +42,9 @@
 - [ ] 【开发中·demo-10/11】[03:10 用户批示] Miro 新增两 idea 认领开工：demo-10「修改小说」、demo-11「塞尔达式箱庭谜题」（标题级短想法，流水线自行扩规格）——走 reviews/supervisor-directive-2026-10-04-demo10-11.md，v1 ≥5 关+Pages+hub+demos.json，随后 GPT 首评建对话（目标映射 11/11）；同列《最后的溪流》长文归 demo-03 扩容取材。
 - [ ] 【催办·demo-02 Miro 去重】[03:26 督导] 重贴板面卡产生两张重叠的「demo-02 运行画面」贴纸（@(4400,6560)）——下轮 miro-post-shots 时移除旧贴纸保持板面整洁（属小瑕疵不影响链接有效性）。
 - [ ] 【催办·demo-04 Miro 去重】[03:46 督导] 「demo-04 运行画面」贴纸 @(4400,10560) 已累计 3 张（历史遗留 2+本轮重贴 1）——下轮 miro-post-shots 时移除旧贴纸；建议顺手把 miro-post-shots 改为幂等更新（先删旧卡再贴新），demo-02 的 @(4400,6560) 同理（2 张）。
+
+## 04:40 督导第 56 轮新增催办（CronUpdate 工具不可用，指令走 reviews/ 文件通道）
+- [ ] 【催办】demo-02 连续 2 轮守望空转 → reviews/supervisor-directive-2026-10-04-demo02-watch.md（转向：美术绿幕/Miro 去重/内容增量，下轮必发布）
+- [ ] 【催办】demo-05 长轮次收尾（04:07 改码停滞+未提交+无 Godot 进程）→ reviews/supervisor-directive-2026-10-04-demo05-recovery.md（收尾/重建+恢复预案；05:10 无回执升级诊断）
+- [ ] 【催办】demo-04 dino.png 绿幕素材部署 → reviews/supervisor-directive-2026-10-04-demo04-dino.md（玩法零改动；05:15 核对 [DONE] 回执）
+- [备忘] 本会话无 CronUpdate 工具（仅 CronList）：禁止连续重复调用 CronList（第 22/55 轮循环故障判例），催办/重锚一律写 reviews/supervisor-directive-*.md
