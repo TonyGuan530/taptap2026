@@ -1,14 +1,15 @@
 {
-  "checkedAt": "2026-10-03T19:40:00+08:00",
-  "round": 2,
-  "note": "总督导每10分钟巡查基线。runCount/lastRunAt 对比：连续2轮无增长且 lastRunAt 距今>50分钟判卡住。nextRunAt 过期但上一轮仍在执行=排队，不算卡死。",
+  "checkedAt": "2026-10-03T19:55:00+08:00",
+  "round": 3,
+  "quota": { "h5": "87%", "weekly": "46%", "mcp": "100%", "resetCredits": 10, "action": "none（全部≥5%）" },
+  "note": "总督导每10分钟巡查基线。卡死判定补充规则（第3轮起）：runCount/lastRunAt 只是派发计数，长轮次会合法地超 30 分钟且中间槽位被合并——判卡死前必须用「工作区活动mtime/新提交/GPT评审文件」佐证；有活动=长轮次进行中，只报告不判定。",
   "automations": {
-    "demo-01": { "id": "automation-2f2eb604-c0c1-4005-9747-f4c40f80efc7", "cron": "0,30 * * * *", "runCount": 11, "lastRunAt": 1791026146633, "nextRunAt": 1791027000000, "note": "19:30 触发排队中（19:15 开始的第11轮仍在执行，git 有其开发改动）" },
-    "demo-02": { "id": "automation-8af780c6-0f5b-482a-b6a1-a375506f1683", "cron": "5,35 * * * *", "runCount": 1, "lastRunAt": 1791026135510, "nextRunAt": 1791027300000, "note": "19:35 触发排队中（首轮仍在执行）" },
-    "demo-03": { "id": "automation-19713e80-d7b5-45c3-bb03-602904b10486", "cron": "10,40 * * * *", "runCount": 1, "lastRunAt": 1791026158074, "nextRunAt": 1791027600000, "note": "19:40 触发在即，首轮仍在执行" },
-    "demo-04": { "id": "automation-d3f50080-356e-4958-a2f6-edfc516e67a4", "cron": "15,45 * * * *", "runCount": 1, "lastRunAt": 1791026363277, "nextRunAt": 1791027900000, "note": "首轮执行中（demo04_soup.gd 有改动）" },
-    "demo-05": { "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515", "cron": "20,50 * * * *", "runCount": 1, "lastRunAt": 1791026366868, "nextRunAt": 1791026400000, "note": "19:20 已过期20分钟仍未触发——首轮19:19开始还在跑（demo05_volcano.gd 有改动）。连续2轮无增长且 lastRunAt>50min 则判卡住" },
-    "demo-06": { "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8", "cron": "25,55 * * * *", "runCount": 1, "lastRunAt": 1791026713783, "nextRunAt": 1791028500000, "note": "首轮 19:25:13 已跑，产出提交 642d0f1（demo-06 L3 Gate 通过 ITERATE→KEEP）" }
+    "demo-01": { "id": "automation-2f2eb604-c0c1-4005-9747-f4c40f80efc7", "cron": "0,30 * * * *", "runCount": 11, "lastRunAt": 1791026146633, "nextRunAt": 1791028800000, "evidence": "第11轮已完成并推送 868cc47（demo-01 v2 三案件 headless 全 PASS），会话空闲等 20:00" },
+    "demo-02": { "id": "automation-8af780c6-0f5b-482a-b6a1-a375506f1683", "cron": "5,35 * * * *", "runCount": 1, "lastRunAt": 1791026135510, "nextRunAt": 1791027300000, "evidence": "首轮长跑已产出 c55430b（v3 跳跃系统+第三关 4/4 PASS 已推 Pages 兜底）；nextRunAt 停在 19:35 属合并排队" },
+    "demo-03": { "id": "automation-19713e80-d7b5-45c3-bb03-602904b10486", "cron": "10,40 * * * *", "runCount": 1, "lastRunAt": 1791026158074, "nextRunAt": 1791027600000, "evidence": "首轮仍在跑（39min+）：GPT 评审已写出、正用 movie_demo03.gd 录制视频" },
+    "demo-04": { "id": "automation-d3f50080-356e-4958-a2f6-edfc516e67a4", "cron": "15,45 * * * *", "runCount": 1, "lastRunAt": 1791026363277, "nextRunAt": 1791027900000, "evidence": "首轮仍在跑（35min+）：demo04_soup.gd/test 有改动+调试文件 _dbg04.gd" },
+    "demo-05": { "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515", "cron": "20,50 * * * *", "runCount": 1, "lastRunAt": 1791026366868, "nextRunAt": 1791026400000, "evidence": "首轮仍在跑（35min+）：demo05_showcase 场景+视频重录中" },
+    "demo-06": { "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8", "cron": "25,55 * * * *", "runCount": 1, "lastRunAt": 1791026713783, "nextRunAt": 1791028500000, "evidence": "第2轮 19:55 触发在即" }
   },
-  "envSnapshot": { "health": "ok builds=13", "exportLock": "none", "godotProcs": 2, "miroExportMtime": "2026-10-03T19:35:03+08:00", "gitDirty": "5 个 demo 全部并行开发中（01~05 的 gd/test/project.godot 均有改动），本地领先 origin ≥1 提交(642d0f1) 待推送", "itchQa": "LitePipeline 19:36 QA FAIL×4（远程 md5 与本地不一致），重推被10分钟节流，自愈中" }
+  "envSnapshot": { "health": "ok builds=15", "exportLock": "none", "godotProcs": 2, "miroExportMtime": "2026-10-03T19:40:03+08:00", "miroPostLog": "仍缺 demo-06 条目（19:08 未变）", "git": "与 origin 同步；demo-02 v3 / demo-01 v2 已推送；工作区= demo-03/04/05 首轮在途改动", "itchQa": "CDN 故障持续，demo-02 v3 走 Pages 兜底（WATCH 第2次观察到）" }
 }
