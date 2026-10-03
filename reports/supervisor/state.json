@@ -1,34 +1,35 @@
 {
-  "checkedAt": "2026-10-04T01:36:00+08:00",
-  "round": 37,
+  "checkedAt": "2026-10-04T01:46:00+08:00",
+  "round": 38,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP（前台闸门），沿用上轮读数"
   },
   "automations": {
-    "supervisor": { "runCount": 38, "lastDispatch": "01:34", "next": "01:44" },
+    "supervisor": { "runCount": 39, "lastDispatch": "01:44", "next": "01:54" },
     "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中" },
-    "demo-02": { "cron": "5,35 * * * *", "runCount": 11, "evidence": "01:35 触发中" },
-    "demo-03": { "cron": "10,40 * * * *", "runCount": 12, "evidence": "01:40 下轮" },
-    "demo-04": { "cron": "15,45 * * * *", "runCount": 12, "evidence": "01:45 下轮" },
-    "demo-05": { "cron": "20,50 * * * *", "runCount": 12, "evidence": "01:50 下轮" },
-    "demo-06": { "cron": "25,55 * * * *", "runCount": 13, "evidence": "01:25 已跑，01:55 下轮" }
+    "demo-02": { "cron": "5,35 * * * *", "runCount": 12, "evidence": "01:35 冻结守望轮 8（24d2336），02:05 下轮" },
+    "demo-03": { "cron": "10,40 * * * *", "runCount": 13, "evidence": "01:40 冻结守望零变更（f8ecd51），02:10 下轮" },
+    "demo-04": { "cron": "15,45 * * * *", "runCount": 12, "evidence": "01:45 触发中（唯一仍在迭代 slot）" },
+    "demo-05": { "cron": "20,50 * * * *", "runCount": 12, "evidence": "01:50 下轮（冻结/等真人）" },
+    "demo-06": { "cron": "25,55 * * * *", "runCount": 13, "evidence": "01:55 下轮（冻结守望）" }
   },
   "envSnapshot": {
-    "health": "ok builds=41（+1=demo-08-v3）",
+    "health": "ok builds=41",
     "exportLock": "none",
     "godotProcs": 0,
-    "miroFresh": "01:34",
-    "git": "同步（HEAD 408766f）"
+    "miroFresh": "01:40",
+    "git": "同步（HEAD e450a97）",
+    "itch": "占位第 3 天（服务端），Pages 兜底全在线"
   },
   "majorUpdates": {
-    "demo-08": "v3 交付（c01bb7f/408766f）：L2 双门复合场景（低空快速门+高空门，三策略收益极差 0 无支配）+ 稳定型 ±5° 容错；v3 9+v2 10+v1 9 断言全 PASS；Pages 上线，待 ChatGPT v3 复评",
-    "demo-05": "Gate C 终裁闭环（V8 冻结、转真人 Gate）"
+    "demo-08": "v3 复评 KEEP 维持+阶段切换：系统验证三连完毕（v1 影响/v2 性格/v3 多解无支配），不做 v4；真人 Gate 方案落档（3-5 人×6 字段+Gate A/B/C 判据）",
+    "fleet": "demo-05 与 demo-08 双双进入等真人状态；demo-02/03/06 冻结守望；demo-04 为唯一仍在迭代 slot——全队瓶颈收敛到真人试玩排期"
   },
   "pending": [
     "【WATCH】itch 占位第 3 天（纯等服务端；Pages 兜底）",
     "【WATCH】demo-08 pck 14.9MB 导出过滤",
-    "【需用户决策】真人试玩/盲测排期（最紧迫）；itch A/B 维持待复",
-    "demo-08 v3 复评、demo-02 Playtest Batch 01、demo-04 v8"
+    "【需用户决策·最紧迫】真人试玩/盲测排期——demo-05/08 双双就绪等真人，冻结守望的 02/03/06 也全在等数据；itch A/B 维持待复",
+    "demo-04 v8（唯一迭代线）"
   ]
 }
