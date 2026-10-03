@@ -90,16 +90,20 @@
     "demo-10": {
       "url": "https://chatgpt.com/c/6ac16382-36e0-83ec-a9cd-e9f1deda4568",
       "review": "reviews/chatgpt-demo-10-11-first.md",
-      "verdict": "ITERATE",
+      "verdict": "KEEP（v2 升级）",
       "note": "v1 首评(2026-10-04)：状态传递/后果积累/跨章反馈的编辑系统成立（文本成为状态系统的界面），最大问题=词槽可能退化成数值按钮（披着小说皮的三属性 build puzzle）。v2 三变化（实验版不扩内容）：①同一词不同上下文不同结果槽（照片随身份派生含义）②矛盾可被后文圆回来——UNRESOLVED_ANOMALY 机制，圆回=FORESHADOW_PAYOFF 奖励、没圆才转抗议（把错误转化成伏笔）③盲测版隐藏基调数值（低中高/文字反馈）测玩家是否开始认真阅读。禁：6-10 章/生成式 AI/自由输入/几十结局。v2 唯一命题=矛盾→圆回变伏笔能否产生明显 Eureka；不能→倾向 DROP；成立→升 KEEP",
-      "archivedAt": "2026-10-04T05:00+08:00"
+      "archivedAt": "2026-10-04T05:00+08:00",
+      "v2Review": "reviews/chatgpt-demo-10-11-v2-full.md",
+      "v2Note": "v2 复评 KEEP(2026-10-04 从 ITERATE 升级)：Eureka 结构成立——矛盾=暂时未解决的故事状态（非错误），后文赋予意义=「改写前文意义」的能力；玩家完成负状态→延迟→正状态的系统转换；出现「未来重新解释过去」的质变。新最大风险=Eureka 重复发生不依赖唯一配方（气闸→殖民飞船若成固定配对则与脆墙+石头趋同）。v3 只做一个核心实验：同一 anomaly ≥2 种合法解释（气闸→A 伪装殖民飞船/科幻 vs B 矿井防爆门/悬疑，都算回收但推向不同方向）+逆序闭环（先写解释再出现对应物，v3.1 可延后）+轻量遥测（anomaly_created/resolved/type/chapters_to_resolution/same_anomaly_different_resolution）。真人关键观察=是否有人无提示主动保留 anomaly 不马上 Reset。继续冻结 6-10 章/LLM/自由输入"
     },
     "demo-11": {
       "url": "https://chatgpt.com/c/6ac16454-cfbc-83ec-a401-b8fb66635293",
       "review": "reviews/chatgpt-demo-10-11-first.md",
-      "verdict": "ITERATE（强候选）",
+      "verdict": "KEEP（v2 升级，Gate 通过）",
       "note": "v1 首评(2026-10-04)：约 70% Systemic/30% Scripted——5 房均非单一钥匙、压力开关持续状态、Room5 机会成本；但 8 条解法全被枚举进测试=都是设计师预设，「多解」≠「涌现」。最大风险=滑向内容生产。v2 只做 3 件（不加第 6 房）：①Room5 改开放实验房（删解法提示+冗余资源 2 箱 2 铁水 2 开关）②唯一新增传播关系：火融冰→冰上物体失支撑掉水/下沉（冰霜→地形→放置物→火→再变→物体状态）③测试升级状态空间搜索（限步自动找合法解，搜出未编排解=最有价值证据）。②+③ 是本轮 Gate。唯一验收=不新增工具下 Room5 产生 ≥1 个未编排合法解（自动搜索或真人）→ 大概率 KEEP。禁：敌人/新元素/新工具/6-10 房/3D/美术",
-      "archivedAt": "2026-10-04T05:00+08:00"
+      "archivedAt": "2026-10-04T05:00+08:00",
+      "v2Review": "reviews/chatgpt-demo-10-11-v2-full.md",
+      "v2Note": "v2 复评 KEEP(2026-10-04 Gate 通过)：DFS 6 解 6/6 非编排含融冰传播解——「Room5 产生开发时未编排合法解」Gate 达成；Emergence 评级 70%→90% Systemic（Solution Space Expansion 非 Replacement；火烧木箱=资源删除/空间重构工具）。新最大风险=世界规则可读性（箱沉变桥/铁沉消失/融冰预判/烧资源是策略——玩家不懂则后台几十条涌现解也体会不到）。下一步=冻结 Room5 rules + 3-5 人盲测（记录首次通关时间/工具/解法序列/非预设真人解 + 追问「哪一步发现原来还能这么用」）+ 轻量遥测（tool_use/freeze/melt/burn/switch_state 归类 solution family）。判据=5 人中 ≥2 不同 solution family 且 1 人非预设解→证据链完整→强核心候选。禁：第 6 房/新工具/新元素/3D/procedural generator"
     }
   }
 }
