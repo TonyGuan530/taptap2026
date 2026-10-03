@@ -14,16 +14,17 @@
 requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-export.md）。玩法：形状(圆球/长板/方块)×词条(Heavy/Float/Fire/Sticky)统一规则物理解谜，目标 3-4 关。
 
 ## 当前状态
-- public/demos.json 的 demo-02 slot（buildId=demo-02-v5，4 关已上线；v5=telemetry 通关路线行 + 物性反馈层（轻/重/弹闪现、撞板速度 vs 阈值）+ 素材 URL 版本参数，headless 8/8 PASS）
-- ChatGPT 复评 v5 结论 **KEEP + ⚠️冻结令**（v5 = instrumentation freeze + 真人试玩 baseline）；完整结论存 reviews/chatgpt-demo-02-full.md 尾部
-- ⚠️ **冻结令（最高优先级，2026-10-03）**：冻结三词条参数/L1-L4 几何/弹簧/450 阈值/扑翼强度/横控/提示设计；仅允许修 crash、telemetry 丢数据、发布问题、明显无法玩的 bug。无真人证据不调关卡不调机制（「没有新证据，本身就是不应该迭代的理由」）
-- 下一轮任务 = **「v5 + Playtest Batch 01」不叫 v6**：①batch 前最后一次 instrumentation 修补（冻结范围内）：切换链补 zone 标签（spawn/spring/gap/high_window/chamber）、release 撞板文案改定性（数字保留 debug/telemetry）、run_index 字段 → 重导一次 v5（覆盖同版本号或 demo-02-v5b）②然后等/组织 3-5 人无提示试玩（记录 unexpected_behavior 与 replay_voluntarily，观察不提问）③按数据决定 ITERATE v6 / FREEZE / 重评 KEEP
-- itch CDN 故障持续；可玩链接以 GitHub Pages 为准：https://tonyguan530.github.io/taptap2026/play.html?id=demo-02（v5 build 待 CI 后 curl 验证）
-- 停滞兜底（用户指令）在冻结期调整：无真人数据时不做扩展玩法/补充关卡，只允许冻结清单内的修补——「没有新证据，本身就是不应该迭代的理由」（评审原话）
-- 已知坑新增：【羽毛 damp=1.2 会吃掉弹簧冲量】L3 冲量 (250,-690)、L4 冲量 (240,-660) 都是抵消阻尼的调参值，改词条参数需同步重调并跑 headless（冻结期不应触发）
-- 已知坑新增：【L4 路线A 不需要弹簧】羽毛从出生直接横漂即可入舱（评审认可的涌现信号）；改地形前先跑 test_demo02_v4.gd 确认 A/B 双路线仍成立
-- 已知坑新增：【headless 测试扑翼计数】测试循环里尝试扑翼必须加 `and not scene.flap_used` 守卫，否则每帧递增提前退出循环（v4 踩过）
-- 已知坑新增：【评审素材缓存】给评审的素材 URL 必须带 ?v=<版本> 参数（v4 前连续两轮 raw CDN 缓存旧图，v5 加参数后评审确认拿到新图）
+- public/demos.json 的 demo-02 slot（buildId=demo-02-v6，5 关已上线；v6=新增 L5「高台弹跳」达成 ≥5 关（督导 03:00 指令），headless 9 用例 PASS——L1-L4 回归 + L5 三路线（A 弹簧羽毛漂上高台 / B 皮球零输入弹跳链涌现 / C 无弹簧出生直漂））
+- ChatGPT 复评 v6 结论 **KEEP**：L5 符合「复用既有规则产生新关系」；路线 B=好的系统涌现（spectacle），保留勿修、勿当 puzzle depth 证据；L4=自由解题（puzzle）、L5=自由实验/展示（playoff）定位成立，无需交换顺序；完整结论存 reviews/chatgpt-demo-02-full.md 尾部
+- ⚠️ **再次冻结（v6 复评指令，2026-10-04）**：冻结 L1-L5 几何/词条参数/bounce/弹簧/提示——仅允许修 crash、telemetry 丢数据、发布问题；「bounce 积分步长敏感是冻结它的理由，不是精调它的理由」
+- 下一轮任务 = Batch 01 准备：①telemetry 加 idle_completion 字段（本轮成功前无横移/扑翼/主动切换 = true，冻结允许的 instrumentation）②L5 内部定位自由实验关（可改副标题语义，非必须）③然后组织 3-5 人无提示试玩（手册 reviews/playtest/demo-02-batch01-手册.md），重点观察 L5：玩家见皮球自动通关是惊喜/困惑/无意识；数据到达 → Gate 判定（ITERATE v7 / FREEZE / 重评 KEEP）
+- v6+ 禁止：L6 / 第四词条 / 新机关 / 调 bounce / 为零输入路线补障碍 / 改 L5 几何
+- itch CDN 故障持续（对新构建部署环节）；可玩链接以 GitHub Pages 为准：https://tonyguan530.github.io/taptap2026/play.html?id=demo-02（v6 build.json 已验证 200）
+- 停滞兜底按督导 02:50 持续开发令执行：每轮须实质开发并发布；但本 demo 现处于「内容目标达成+再冻结」态——无可执行项时保持守望轮（产出巡检报告），督导若催办以本文件冻结令为准
+- 已知坑新增：【羽毛 damp=1.2 会吃掉弹簧冲量】L3 (250,-690)、L4 (240,-660)、L5 (240,-830) 均为抵消阻尼调参值（L5 加大是供皮球弹上雨棚），改词条参数需同步重调并跑 headless
+- 已知坑新增：【皮球弹跳链积分敏感】L5 路线B 弹跳结果随 time_scale 变化——headless 弹跳用例必须真实时间（time_scale=1.0）验证，6x 加速会误报 FAIL
+- 已知坑新增：【headless 测试扑翼计数】测试循环里尝试扑翼必须加 `and not scene.flap_used` 守卫（v4 踩过）
+- 已知坑新增：【评审素材缓存】素材 URL 必须带 ?v=<版本> 参数（v5 起生效，评审确认）
 
 ## 每轮流程
 1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。（注意：测试验证不要用本地前端——直接用 GitHub Pages 公网链接 https://tonyguan530.github.io/taptap2026/play.html?id=<slotId> 或 itch 页面，截图/录屏也从公网页面取）

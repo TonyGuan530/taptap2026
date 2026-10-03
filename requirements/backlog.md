@@ -33,11 +33,11 @@
   - v2：评审建议#1 → 脆墙改纯物理判定（撞击速度 ≥450，与词条解耦）
   - v3（2026-10-03）：评审建议#2 → 跳跃输入系统（空格跳/羽毛空中扑翼/←→横移，力度按词条区分）+ 第三关「组合测试房」（弹簧→羽毛空中横漂→石头砸穿舱顶，一条链用满三词条）；headless 4/4 PASS
 - v4 已完成（ChatGPT 复评 **KEEP**，Systemic Puzzle Gate 通过）：删通用跳 ✓ 扑翼滞空单次轻修正 ✓ 开放 L4（路线A 出生直漂 / 路线B 弹簧羽毛石头砸板，均 headless PASS）✓ 公开 build 隐藏参考解法 ✓
-- v5 已完成（ChatGPT 复评 **KEEP** + instrumentation freeze 冻结令）：telemetry 通关路线行/切换链/重置计数/撞板记录 + 反馈层（切换闪现轻/重/弹、撞板速度 vs 阈值）+ 素材 URL 版本参数；headless 8/8 PASS
-- ⚠️ 冻结令（v5 = 真人试玩 baseline，2026-10-03）：冻结三词条参数/L1-L4 几何/弹簧/450 阈值/扑翼强度/横控/提示设计；仅允许修 crash、telemetry 丢数据、发布问题、明显无法玩的 bug。无真人证据不调关卡不调机制
-- 待办：Playtest Batch 01（不叫 v6）——batch 前最后一次 instrumentation 修补（冻结范围内）：①切换链补 zone 标签（spawn/spring/gap/high_window/chamber）②release 端撞板文案改定性（数字保留 debug/telemetry）③run_index 字段；然后组织 3-5 人无提示试玩，记录 unexpected_behavior 与 replay_voluntarily  3. review asset 管线：素材 URL 加版本参数防 raw CDN 缓存（评审连续两轮抓到旧截图）
-  - v5 禁止：L5/第四词条/新技能/新机关族/大地图/刻意堆解法
-
+- v5 已完成（**KEEP**+冻结令后又被用户 02:50 持续开发令解除）：telemetry 通关路线行/zone 标签/run_index + 反馈层（轻/重/弹闪现、撞板定性 release 文案）+ 素材 URL 版本参数
+- v6 已完成（2026-10-04，用户 ≥5 关指令 + ChatGPT 复评 **KEEP**）：新增 L5「高台弹跳」——雨棚/高台双台阶几何，三路线 headless 全 PASS（A 弹簧羽毛漂上高台 / B 皮球零输入弹跳链涌现 / C 无弹簧出生直漂）；L5 定位=自由实验/系统展示关（playoff），L4=自由解题（puzzle）
+- ⚠️ 再次冻结（v6 复评指令）：冻结 L1-L5 几何/词条参数/bounce/弹簧——仅允许修 crash、telemetry 丢数据、发布问题；Batch 01 数据优先
+- 待办：Batch 01 前最后一次 instrumentation（评审 v6 建议#1）：telemetry 加 idle_completion 字段（成功前无横移/扑翼/主动切换）；然后组织 3-5 人无提示试玩，重点观察 L5 玩家对皮球自动通关的反应（惊喜/困惑/无意识）；数据回收后 Gate 判定
+- v6+ 禁止：L6/第四词条/新机关/调 bounce/为零输入路线补障碍/改 L5 几何
 ## demo-03 给岩浆降温的小人国度
 
 - 一句话玩法：通过强化/自动化更强的浇水/降温，来达成维持温度的目的，中途随进度解锁（涌现）随机 NPC 小人
