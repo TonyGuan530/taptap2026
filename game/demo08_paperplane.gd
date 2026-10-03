@@ -37,7 +37,8 @@ const LEVELS := [
 	{name = "第 1 关 · 后山操场", short = "后山操场", ratio = 1.4, folds = 3, target_m = 30.0, wind = "none", reward = 0,
 		tip = "纸最宽好折大翼，终点 30 米，无风。折线画在纸的右侧偏上，30 度满力扔"},
 	{name = "第 2 关 · 教学楼顶", short = "教学楼顶", ratio = 1.0, folds = 4, target_m = 45.0, wind = "head", reward = 6,
-		tip = "纸变方正可折 4 次，逆风阻力 1.25 倍，终点 45 米，先在商店补强化"},
+		gate_x = 34.0, gate_h = 12.0, gate_bonus = 3,
+		tip = "纸变方正可折 4 次，逆风阻力 1.25 倍，终点 45 米；终点前 34 米有高空门（12 米高），飘得高的折法穿过+3 金币"},
 	{name = "第 3 关 · 河堤风口", short = "河堤风口", ratio = 0.8, folds = 5, target_m = 65.0, wind = "tail", reward = 10,
 		tip = "纸最窄可折 5 次，顺风给恒定推力，终点 65 米，过了就是全通关"},
 ]
@@ -73,6 +74,8 @@ var pitch := 0.0               # 机头角（弧度，负=抬头）
 var eff_lift := 0.0            # 投掷时定格的等效升力面积（含翼面强化）
 var flight_time := 0.0
 var flight_distance := 0.0     # 米（每 0.2s 采样 + 结算时刷新，取最大）
+var apex_m := 0.0              # v2：本掷最高高度（米），轨迹性格验收用
+var gate_hit := false          # v2：高空门是否已穿越
 var sample_acc := 0.0
 var bounced := false
 var last_pass := false
@@ -412,6 +415,8 @@ func do_throw(angle_deg: float, power: float) -> void:
 	plane_pos = Vector2(START_X, GROUND_Y - 40.0)
 	flight_time = 0.0
 	flight_distance = 0.0
+	apex_m = 0.0
+	gate_hit = false
 	sample_acc = 0.0
 	bounced = false
 	last_pass = false
@@ -670,7 +675,15 @@ func _fly_step(delta: float) -> void:
 	var spd := velocity.length()
 	# 升力 = 竖直向上的减重加速度，随速度平方增长、封顶 0.95g（保证最终会降落，不会失速画圈）
 	var lift_up: float = minf(LIFT_K * eff_lift * spd * spd, GRAV * 0.95)
-	var lift_tilt: float = clampf(float(plane_params.trim), -1.5, 1.5) * 0.22
+	# v2 飞行性格（弱非线性，验收=3 种肉眼可辨轨迹）：
+	# 配平低（机头重）→ 升力衰减 → 高速低平俯冲；配平高（机头轻）→ 升力后倾 → 飘-掉高（滞空换速度）
+	var t_trim: float = clampf(float(plane_params.trim), -1.5, 1.5)
+	var lift_scale := 1.0
+	var lift_tilt: float = t_trim * 0.22
+	if t_trim < -0.05:
+		lift_scale = lerpf(1.0, 0.35, clampf((-t_trim - 0.05) / 0.55, 0.0, 1.0))
+	elif t_trim > 0.15:
+		lift_tilt = lerpf(t_trim * 0.22, 0.55, clampf((t_trim - 0.15) / 0.45, 0.0, 1.0))
 	if _has_upgrade("trimtool"):
 		lift_tilt *= 0.5
 	var lift_dir := Vector2(sin(lift_tilt), -cos(lift_tilt)).normalized()
@@ -681,7 +694,7 @@ func _fly_step(delta: float) -> void:
 	var drag_vec := Vector2.ZERO
 	if spd > 0.01:
 		drag_vec = -velocity / spd * (drag_coef * spd * spd)
-	var acc := lift_dir * lift_up + drag_vec + Vector2(0.0, GRAV)
+	var acc := lift_dir * (lift_up * lift_scale) + drag_vec + Vector2(0.0, GRAV)
 	if _wind_mode() == "tail":
 		acc += Vector2(TAIL_THRUST, 0.0)
 	if _has_upgrade("prop"):
@@ -690,7 +703,9 @@ func _fly_step(delta: float) -> void:
 	# 机头视觉上追随速度方向，配平让姿态微微抬头（纯表现）
 	var d_ang := wrapf(velocity.angle() - pitch, -PI, PI)
 	pitch += (PITCH_FOLLOW * d_ang + 0.35 * clampf(float(plane_params.trim), -1.0, 1.0)) * delta
+	var prev_x := plane_pos.x
 	plane_pos += velocity * delta
+	apex_m = maxf(apex_m, (GROUND_Y - plane_pos.y) / PX_PER_M)
 	trail.append(plane_pos)
 	if trail.size() > 120:
 		trail.pop_front()
@@ -701,6 +716,16 @@ func _fly_step(delta: float) -> void:
 	if sample_acc >= SAMPLE_STEP:
 		sample_acc -= SAMPLE_STEP
 		flight_distance = maxf(flight_distance, (plane_pos.x - START_X) / PX_PER_M)
+	# v2 高空得分门：在门的位置处于门高以上穿过 → 额外金币（一次性）
+	var gate_x_m: float = float(LEVELS[level_idx].get("gate_x", 0.0))
+	if gate_x_m > 0.0 and not gate_hit:
+		var gate_px := START_X + gate_x_m * PX_PER_M
+		if prev_x < gate_px and plane_pos.x >= gate_px:
+			if plane_pos.y <= GROUND_Y - float(LEVELS[level_idx].gate_h) * PX_PER_M:
+				gate_hit = true
+				var gb: int = int(LEVELS[level_idx].gate_bonus)
+				coins += gb
+				coins_earned += gb
 	var finish_px := START_X + float(LEVELS[level_idx].target_m) * PX_PER_M
 	if plane_pos.x >= finish_px:
 		_settle()
@@ -792,6 +817,16 @@ func _draw_ticks_and_flag() -> void:
 		draw_line(Vector2(fx, GROUND_Y), Vector2(fx, GROUND_Y - 130.0), Color("6b4a2f"), 5.0)
 		draw_polygon(PackedVector2Array([Vector2(fx, GROUND_Y - 130.0), Vector2(fx + 46.0, GROUND_Y - 116.0), Vector2(fx, GROUND_Y - 102.0)]), PackedColorArray([Color("e53935")]))
 		draw_string(FONT, Vector2(fx - 34.0, GROUND_Y - 140.0), "终点 %.0f 米" % target_m, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("b71c1c"))
+	# v2 高空得分门（立在地上的高空圆环，穿过=额外金币）
+	var gate_x_m: float = float(LEVELS[level_idx].get("gate_x", 0.0))
+	if gate_x_m > 0.0:
+		var gx := START_X + gate_x_m * PX_PER_M - scroll_x
+		var gy := GROUND_Y - float(LEVELS[level_idx].gate_h) * PX_PER_M
+		if gx > -80.0 and gx < VIEW.x + 80.0:
+			var gcol := Color("ffd54f") if not gate_hit else Color("b0bec5")
+			draw_arc(Vector2(gx, gy), 34.0, -PI / 2, PI / 2, 20, gcol, 5.0)
+			draw_line(Vector2(gx, GROUND_Y), Vector2(gx, gy), Color("8d6e63"), 3.0)
+			draw_string(FONT, Vector2(gx - 40.0, gy - 46.0), "高空门 +%d" % int(LEVELS[level_idx].gate_bonus), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("f57f17"))
 
 
 func _draw_thrower() -> void:
@@ -821,13 +856,35 @@ func _draw_paper() -> void:
 func _draw_bars() -> void:
 	var bx := 545.0
 	var by := 152.0
-	_draw_bar("升力面积（0 到 1.5）", float(plane_params.lift_area), false, bx, by, Color("1e88e5"))
-	_draw_bar("配平（左负俯冲 / 右正抬头）", float(plane_params.trim), true, bx, by + 46.0, Color("43a047"))
-	_draw_bar("阻力（0 到 1.5）", float(plane_params.drag_f), false, bx, by + 92.0, Color("fb8c00"))
-	draw_string(FONT, Vector2(bx, by + 150.0), "折纸规则（完全透明）：", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("0d3b4e"))
-	draw_string(FONT, Vector2(bx, by + 172.0), "折线中点越靠纸右侧 → 升力面积越大", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("455a64"))
-	draw_string(FONT, Vector2(bx, by + 192.0), "折线中点越靠上 → 配平为正（抬头），靠下俯冲", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("455a64"))
-	draw_string(FONT, Vector2(bx, by + 212.0), "折线总长越长 → 阻力越大", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("455a64"))
+	# v2 监督建议#3：参数从精确数值改档位仪表（保留因果可见，防盯数字局部最优）
+	_draw_tier("升力", _tier3(float(plane_params.lift_area), 0.5, 1.0), bx, by, Color("1e88e5"))
+	_draw_tier("配平", _trim_tier(float(plane_params.trim)), bx, by + 46.0, Color("43a047"))
+	_draw_tier("阻力", _tier3(float(plane_params.drag_f), 0.5, 1.0), bx, by + 92.0, Color("fb8c00"))
+	draw_string(FONT, Vector2(bx, by + 150.0), "折纸规则（因果透明）：", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("0d3b4e"))
+	draw_string(FONT, Vector2(bx, by + 172.0), "折线中点越靠纸右侧 → 升力越大（滞空久）", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("455a64"))
+	draw_string(FONT, Vector2(bx, by + 192.0), "折线中点越靠上 → 配平抬头（飘），靠下俯冲（快）", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("455a64"))
+	draw_string(FONT, Vector2(bx, by + 212.0), "折线总长越长 → 阻力越大（越慢越稳）", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("455a64"))
+
+
+func _tier3(v: float, mid: float, high: float) -> String:
+	return "低" if v < mid else ("中" if v < high else "高")
+
+
+func _trim_tier(v: float) -> String:
+	return "俯冲" if v < -0.15 else ("稳定" if v <= 0.35 else "抬头")
+
+
+func _draw_tier(label: String, tier: String, x: float, y: float, col: Color) -> void:
+	draw_string(FONT, Vector2(x, y + 14.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("37474f"))
+	var cells: Array = ["低", "中", "高"] if label != "配平" else ["俯冲", "稳定", "抬头"]
+	for k in cells.size():
+		var cx := x + 70.0 + k * 92.0
+		var active: bool = cells[k] == tier
+		var bg := col if active else Color(1, 1, 1, 0.6)
+		draw_rect(Rect2(cx, y, 84.0, 22.0), bg)
+		if active:
+			draw_rect(Rect2(cx, y, 84.0, 22.0), Color("263238"), false, 2.0)
+		draw_string(FONT, Vector2(cx + (34.0 if cells[k].length() == 1 else 22.0), y + 16.0), cells[k], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color.WHITE if active else Color("607d8b"))
 
 
 func _draw_bar(label: String, val: float, centered: bool, x: float, y: float, col: Color) -> void:
