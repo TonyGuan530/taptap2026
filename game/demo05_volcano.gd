@@ -166,13 +166,6 @@ func _tile_total(id: String) -> int:
 	return int(stored[id].food) + int(stored[id].water)
 
 
-func _tile_cap(id: String) -> int:
-	for t in TILES:
-		if t.id == id and t.has("cap"):
-			return t.cap
-	return 999
-
-
 func _forecast_text() -> String:
 	var wind_side := "西侧·高地河谷" if forecast_wind == "east" else "东侧·森林湿地"
 	var rain_pct := "七成" if forecast_rain else "三成"
@@ -231,9 +224,6 @@ func _on_tile_click(i: int) -> void:
 	var t: Dictionary = TILES[i]
 	if gather <= 0:
 		_toast("没有可存放的采集点（每 4 秒 +1）")
-		return
-	if _tile_cap(t.id) <= _tile_total(t.id):
-		_toast("%s 的储备容量已满（情报越强容量越小）" % t.name)
 		return
 	gather -= 1
 	var f := 1
@@ -509,7 +499,8 @@ func _show_end() -> void:
 
 func _score() -> int:
 	# v6 A'：撤离余量计分——基础分 + clamp(余量,0,8)×2；刚凑够=70，富余≥8=86
-	var base: int = {"win": 70, "partial": 45, "lose": 10}[result]
+	# result 可能为 ""（测试/异常路径下未选路线），.get 兜底按灭亡计
+	var base: int = {"win": 70, "partial": 45, "lose": 10}.get(result, 10)
 	return base + clampi(margin, 0, 8) * 2
 
 
