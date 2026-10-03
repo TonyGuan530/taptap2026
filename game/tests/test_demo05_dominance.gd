@@ -142,7 +142,7 @@ func _run() -> void:
 	var weathers := [[true, true], [true, false], [false, true], [false, false]]
 	var stats := {}
 	for p in POLICIES:
-		stats[p.id] = {games = 0, win = 0, partial = 0, lose = 0, score = 0, rainW = 0, rainN = 0, dryW = 0, dryN = 0, eastW = 0, eastN = 0, westW = 0, westN = 0}
+		stats[p.id] = {games = 0, win = 0, partial = 0, lose = 0, score = 0, rainW = 0, rainN = 0, dryW = 0, dryN = 0, eastW = 0, eastN = 0, westW = 0, westN = 0, rainP = 0, dryP = 0, eastP = 0, westP = 0}
 	var game_no := 0
 	for p in POLICIES:
 		for g in GAMES_PER_POLICY:
@@ -166,18 +166,26 @@ func _run() -> void:
 				st.rainN += 1
 				if scene.result == "win":
 					st.rainW += 1
+				elif scene.result == "partial":
+					st.rainP += 1
 			else:
 				st.dryN += 1
 				if scene.result == "win":
 					st.dryW += 1
+				elif scene.result == "partial":
+					st.dryP += 1
 			if scene.wind == "east":
 				st.eastN += 1
 				if scene.result == "win":
 					st.eastW += 1
+				elif scene.result == "partial":
+					st.eastP += 1
 			else:
 				st.westN += 1
 				if scene.result == "win":
 					st.westW += 1
+				elif scene.result == "partial":
+					st.westP += 1
 			game_no += 1
 			if game_no % 60 == 0:
 				_log("进度 %d/240 局…" % game_no)
@@ -192,12 +200,13 @@ func _run() -> void:
 		var st: Dictionary = stats[p.id]
 		if st.games == 0:
 			continue
-		var rw: float = 100.0 * st.rainW / maxi(1, st.rainN)
-		var dw: float = 100.0 * st.dryW / maxi(1, st.dryN)
-		var ew: float = 100.0 * st.eastW / maxi(1, st.eastN)
-		var ww: float = 100.0 * st.westW / maxi(1, st.westN)
+		var rw: float = 100.0 * (st.rainW + st.rainP) / maxi(1, st.rainN)
+		var dw: float = 100.0 * (st.dryW + st.dryP) / maxi(1, st.dryN)
+		var ew: float = 100.0 * (st.eastW + st.eastP) / maxi(1, st.eastN)
+		var ww: float = 100.0 * (st.westW + st.westP) / maxi(1, st.westN)
+		var surv: float = 100.0 * (st.win + st.partial) / st.games
 		var asc: float = 1.0 * st.score / st.games
-		top_surv = maxf(top_surv, 100.0 * st.win / st.games)
+		top_surv = maxf(top_surv, surv)
 		top_score = maxf(top_score, asc)
 		_log("%-17s %3d %5.1f  %2d/%-2d(%5.1f)  %2d/%-2d(%5.1f)  %2d/%-2d(%5.1f)  %2d/%-2d(%5.1f)  %6.1f" % [p.id, st.games, 100.0 * st.win / st.games, st.rainW, st.rainN, rw, st.dryW, st.dryN, dw, st.eastW, st.eastN, ew, st.westW, st.westN, ww, asc])
 	_log("")
@@ -208,13 +217,13 @@ func _run() -> void:
 		var st: Dictionary = stats[p.id]
 		if st.games == 0:
 			continue
-		var rw: float = 100.0 * st.rainW / maxi(1, st.rainN)
+		var rw: float = 100.0 * 100.0 * (st.rainW + st.rainPartial) / maxi(1, st.rainN)
 		if p.id != "all_cave" and rw >= 20.0 and rw <= 70.0 and st.rainN >= 10:
 			mid_rain.append(p.id)
 		var gap: float = absf(100.0 * st.eastW / maxi(1, st.eastN) - 100.0 * st.westW / maxi(1, st.westN))
 		if gap >= 15.0:
 			wind_gap.append(p.id + "(" + ("%.0f" % gap) + "pp)")
-		var surv: float = 100.0 * st.win / st.games
+		var surv: float = 100.0 * (st.win + st.partial) / st.games
 		if surv >= top_surv and asc_check(stats, p.id, top_score):
 			c_fail.append(p.id)
 	_log("Gate A（≥2 非洞穴策略雨天胜率 20-70 区间）：%s → %s" % [", ".join(mid_rain), "PASS" if mid_rain.size() >= 2 else "FAIL"])

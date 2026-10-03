@@ -30,7 +30,7 @@ const ROUTES := [
 ]
 ## 灾后应急行动（仅一次）
 const ADJUST_CARDS := [
-	{id = "relocate", name = "抢运储备", desc = "点选后再点一个地块：其储备转入洞穴（洒落25%）"},
+	{id = "relocate", name = "抢运储备", desc = "点选后再点一个地块：其储备转入洞穴（洒落15%）"},
 	{id = "scout", name = "侦察路线", desc = "耗储备食1水1：路线随机风险全部确定化"},
 	{id = "abandon", name = "轻装奔袭", desc = "耗储备食1水1：全部路线需求-2"},
 	{id = "skip", name = "按兵不动", desc = "不做应急，按原计划硬扛"},
@@ -354,14 +354,14 @@ func _do_relocate(i: int) -> void:
 	if _tile_total(t.id) <= 0:
 		_toast("「%s」没有储备可抢运" % t.name)
 		return
-	var f2: int = int(s.food * 3 / 4.0)
-	var w2: int = int(s.water * 3 / 4.0)
+	var f2: int = int(s.food * 85 / 100.0)
+	var w2: int = int(s.water * 85 / 100.0)
 	stored.cave.food += f2
 	stored.cave.water += w2
 	stored[t.id] = {food = 0, water = 0}
 	emergency = "relocate"
 	relocating = false
-	_log_ev("大地轰鸣，族群冒死把「%s」的储备抢运进洞穴，路上洒落了四分之一。" % t.name)
+	_log_ev("大地轰鸣，族群冒死把「%s」的储备抢运进洞穴，路上洒落了一成半。" % t.name)
 	_end_adjust()
 
 
@@ -433,9 +433,9 @@ func _enter_decide() -> void:
 	supply.food = mini(3 + f, 12)
 	supply.water = mini(3 + w, 12)
 	if _tile_total("cave") > 0:
-		supply.food = maxi(0, supply.food - 1)
-		supply.water = maxi(0, supply.water - 1)
-		_log_ev("从洞穴搬出储备要翻越洞口，额外耗掉了 1 食 1 水。")
+		supply.food = maxi(0, supply.food - 2)
+		supply.water = maxi(0, supply.water - 2)
+		_log_ev("从洞穴搬出储备要翻越洞口，额外耗掉了 2 食 2 水。")
 	if _tile_total("highland") > 0:
 		route_bonus -= 1
 		_log_ev("高地哨兵看得远，为全族找到了更好走的路线（需求-1）。")
