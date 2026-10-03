@@ -170,16 +170,18 @@ func _run() -> void:
 		await _tap(KEY_E)
 	await physics_frame
 	var evs: Array = scene.lab_events
-	var fuses := evs.filter(func(e): return e.ev == "fuse")
-	var combos5 := evs.filter(func(e): return e.ev == "combo")
+	var fuses := evs.filter(func(e): return e.event_type == "dna_fused")
+	var combos5 := evs.filter(func(e): return e.event_type == "combo_discovered")
+	var zones := evs.filter(func(e): return e.event_type == "zone_enter")
+	var envelope_ok: bool = fuses.size() > 0 and fuses[0].has("elapsed_ms") and fuses[0].has("owned_dna") and fuses[0].has("tester_id") and fuses[0].has("player_x")
 	var order_ok: bool = fuses.size() == 3 and fuses[0].id == "glow" and fuses[1].id == "highjump" and fuses[2].id == "double"
 	scene._exit_lab()
 	await physics_frame
 	var lf := FileAccess.open("user://demo04_lab_log.json", FileAccess.READ)
 	var file_ok: bool = lf != null and lf.get_as_text().length() > 20
 	if lf: lf.close()
-	var pass5: bool = order_ok and combos5.size() == 2 and file_ok
-	print("用例5: 遥测 fuse=%d combo=%d 顺序正确=%s 持久化=%s → %s" % [fuses.size(), combos5.size(), order_ok, file_ok, "PASS（实验房自由融合遥测可用）" if pass5 else "FAIL"])
+	var pass5: bool = order_ok and combos5.size() == 2 and file_ok and envelope_ok and zones.size() >= 2
+	print("用例5: 遥测 fuse=%d combo=%d zone=%d 信封=%s 顺序=%s 持久化=%s → %s" % [fuses.size(), combos5.size(), zones.size(), envelope_ok, order_ok, file_ok, "PASS（实验房遥测 v2：信封+区域+持久化）" if pass5 else "FAIL"])
 
 	Engine.time_scale = 1.0
 	quit()

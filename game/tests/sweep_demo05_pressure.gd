@@ -10,7 +10,14 @@ const TIME_SCALE := 60.0
 const TILE_ORDER := ["highland", "valley", "forest", "cave", "wetland"]
 const ROUTE_ORDER := [1, 2, 0]
 const BASE_NEEDS := [6, 4, 5]
-const COMBOS := [[7, 1], [7, 2], [8, 1], [8, 2], [9, 1], [9, 2]]
+## 第二轮 sweep（需求三连=东/南/北直接给出，第一项=采集次数）：
+## 首轮（需求 4-8 档）8 policy 全胜零死亡——供给 ~18-27 对需求 4-8 太富裕，按授权放大到死亡区间
+const COMBOS := [
+	[7, [12, 14, 16]],
+	[7, [14, 17, 20]],
+	[7, [16, 20, 24]],
+	[9, [14, 17, 20]],
+]
 
 const POLICIES := [
 	{id = "all_cave", desc = "保险派"},
@@ -90,7 +97,7 @@ func _invest(scene, policy: String, invested: int) -> String:
 	return "cave"
 
 
-func _play_game(scene, policy: String) -> void:
+func _play_game(scene, policy: String, needs: Array) -> void:
 	var invested := 0
 	var t0 := Time.get_ticks_msec()
 	while scene.phase == "prepare" and Time.get_ticks_msec() - t0 < 30000:
@@ -120,7 +127,9 @@ func _play_game(scene, policy: String) -> void:
 	if scene.phase == "decide":
 		var total: int = scene.supply.food + scene.supply.water
 		for i in ROUTE_ORDER:
-			if total >= scene._route_need(i):
+			# 路线需求增量在此叠加（const ROUTES 深只读，不可原地改；须含高地/轻装的 route_bonus）
+			var need: int = maxi(1, scene.ROUTES[i].need + (needs[i] - BASE_NEEDS[i]) + scene.route_bonus)
+			if total >= need:
 				scene._choose_route(i)
 				break
 
@@ -137,7 +146,8 @@ func _run() -> void:
 	for cs in combo_args.split(","):
 		var ci := int(cs)
 		var points: int = COMBOS[ci][0]
-		var need_add: int = COMBOS[ci][1]
+		var need_add: int = 0
+		var needs: Array = COMBOS[ci][1]
 		var stats := {}
 		for p in POLICIES:
 			stats[p.id] = {games = 0, win = 0, partial = 0, lose = 0, food = 0, water = 0}
@@ -149,9 +159,7 @@ func _run() -> void:
 				if scene == null:
 					continue
 				scene.timer = float(points * 4)
-				for i in scene.ROUTES.size():
-					scene.ROUTES[i].need = BASE_NEEDS[i] + need_add
-				await _play_game(scene, p.id)
+				await _play_game(scene, p.id, needs)
 				var st: Dictionary = stats[p.id]
 				st.games += 1
 				match scene.result:
@@ -166,7 +174,7 @@ func _run() -> void:
 				scene.queue_free()
 				await physics_frame
 		_log("")
-		_log("-- combo %d：采集 %d 点 · 路线需求 %d/%d/%d --" % [ci, points, BASE_NEEDS[0] + need_add, BASE_NEEDS[1] + need_add, BASE_NEEDS[2] + need_add])
+		_log("-- combo %d：采集 %d 点 · 路线需求 %d/%d/%d --" % [ci, points, needs[0], needs[1], needs[2]])
 		_log("policy             局  胜%%  惨胜%%  败%%  均食  均水  封顶分")
 		for p in POLICIES:
 			var st: Dictionary = stats[p.id]

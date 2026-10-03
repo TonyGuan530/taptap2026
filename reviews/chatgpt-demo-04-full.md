@@ -100,3 +100,15 @@ v3 的改法是对的，比把「弹簧腿 + 振翅 = 超级弹跳」直接写�
 **结论：捷径保留，无需结构性调整**；盲测前最多轻量 tuning。
 
 **下一 Gate**：至少有部分盲测玩家在没有明确教程的情况下，主动把新发现的 DNA 组合重新应用到先前见过的环境或可选路线，而不是只在系统提示后沿主路执行。如果这条能过，demo-04 的「发现」就从 scripted discovery 真正转向 player-driven experimentation。
+
+
+## v5 复评（实验房遥测设计）
+
+**P2 工具面：KEEP，已经足够开始真人测试。** 建议补字段（不要做成完整 analytics）：
+
+- **优先 4 项**：① session_id / tester_id / run_index（区分玩家与重玩，同一人重玩 3 次不算 3 个独立玩家，tester_id 匿名编号 P01 即可）；② **统一 elapsed_ms 时间戳**（若只能改一处，优先这个——回答「进入多久首次融合/组合发现后多久开始重新跳/是否出现发现→停顿→回头实验」）；③ 关键事件（dna_fused/combo_discovered/reset/zone_entered）带 player_position+facing+owned_dna（否则难判断是主动回头还是顺路经过）；④ 粗粒度 zone_enter：spawn / dna_cluster / high_platform / gap / return_area，每次进入只记一次。
+- **有就很好**：platform_attempt/platform_reached、gap_attempt/gap_crossed（把「试了」和「成功了」分开）；fuse 事件带 owned_dna（分析「能力客观已存在→玩家开始利用」的时间差）。
+- **明确不要**：每帧输入/鼠标轨迹/每帧位置/物理状态/FPS/UI 日志。
+- 统一事件信封：session_id, tester_id, run_index, elapsed_ms, event_type, player_x, player_y, owned_dna + 事件 payload。
+- **盲测必须配人工观察表**（每人 4 项）：①是否主动尝试高台 ②组合发现后是否主动回头 ③是否主动尝试未被要求的配对 ④玩家第一次说出「那这两个是不是也能组合」的时刻（第 4 条遥测无法可靠判断，是判断「可实验系统」心智模型的最好信号）。
+- **下一轮需要的不是更多实现，而是数据**：3-5 人原始 JSON + 简单观察记录发来，重点分析三类行为链：主动探索、组合发现后的重新解释、未被提示的配对假设。

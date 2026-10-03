@@ -1,7 +1,7 @@
 {
-  "title": "TapTap2026 Demo",
-  "version": "demo-06-v5",
-  "date": "2026-10-03T12:27:50.576Z",
-  "author": "49321",
-  "notes": "session_end closure + contact_enter chain with instance ids; neutral win text (review fixes)"
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-06-v5",
+    "date":  "2026-10-03T21:29:15+08:00",
+    "author":  "49321",
+    "notes":  "场景重导出（修复 main_scene 残留）"
 }

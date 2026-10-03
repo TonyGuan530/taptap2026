@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-02-v4",
+    "date":  "2026-10-03T21:26:46+08:00",
+    "author":  "49321",
+    "notes":  "v4: drop generic jump, single-use light feather flap, keep air control; open-solution L4 (goal-only check, 2+ routes); hide solution hints in public builds"
+}

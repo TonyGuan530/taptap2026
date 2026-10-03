@@ -1,7 +1,7 @@
 {
-  "title": "词条涂鸦创造 v6",
-  "version": "demo-06-v6",
-  "date": "2026-10-03T21:12:08+08:00",
-  "author": "49321",
-  "notes": "v6 迭代（落实 ChatGPT 评审建议#2）：SIZE 小/中/大——尺寸影响墨水消耗/质量/碰撞体积，统一参数缩放（评审：组合深度验证的前置）"
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-06-v6",
+    "date":  "2026-10-03T21:24:55+08:00",
+    "author":  "49321",
+    "notes":  "L4 wall level (stall ladder: extra level) - float plank or push-block routes, goal-only checks"
 }
