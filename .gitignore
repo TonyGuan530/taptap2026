@@ -25,3 +25,4 @@ Desktop.ini
 *.tmp
 *.log
 .movie06/
+tools/node_modules/
