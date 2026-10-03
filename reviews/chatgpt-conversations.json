@@ -51,6 +51,13 @@
       "verdict": "L4 KEEP（transfer 诊断关）；SIZE=B 回退主线待 Gate 后恢复；整体 KEEP/READY FOR HUMAN PLAYTEST",
       "l3Review": "reviews/chatgpt-demo-06-l3-full.md",
       "l3Note": "L3 Gate 通过(ITERATE→KEEP)：去属性锁后 4词条×3形状可自然提供多物理关系路径；下一Gate=真人数据盲测(5~8人+轻量telemetry，不解法提示，不加新词条)"
+    },
+    "demo-07": {
+      "url": "https://chatgpt.com/c/6ac112ff-cd24-83ec-8fe5-35b5ce1c270c",
+      "review": "reviews/chatgpt-demo-07-v2-full.md",
+      "verdict": "ITERATE",
+      "note": "v2 四关卡首轮评审(2026-10-03)：L3/L4 有效扩展(双订单调度)但 Emergence 偏 Scripted——单线程→多线程 Simon Says，最大问题=无策略压缩(熟练后只会点快)。v3 只做一个实验勿扩关：①共享食材批处理(双订单同食材一击同推，只改判定) ②订单食材自由顺序 ③专门测试关 6-8 组双订单(部分高度共享/部分不共享)，遥测总点击/完成/跑单/连击，Gate=玩家主动发现并利用合单。不做 L5/L6/新食材/经济/顾客动画；emoji 顺手修不进 Gate。裁决只有 KEEP/ITERATE/DROP；若实验无主动规划→下轮倾向 DROP",
+      "archivedAt": "2026-10-03T23:05+08:00"
     }
   }
 }
