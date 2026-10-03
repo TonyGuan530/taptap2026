@@ -198,7 +198,7 @@ func _level6() -> void:
 		game._try_place(Vector2(220, 401))
 	elif lv_f == 90:
 		game._try_place(Vector2(535, 346))
-	elif lv_f > 120:
+	elif lv_f > 20:
 		var px: float = game.player.position.x
 		var py: float = game.player.position.y
 		game.keys[KEY_D] = true
@@ -210,7 +210,7 @@ func _level6() -> void:
 			game.keys[KEY_SPACE] = false
 		if game.on_floor:
 			var want := false
-			if px > 146.0 and px < 168.0 and py > 420.0:
+			if px > 56.0 and px < 90.0 and py > 420.0:
 				want = true        # 地面 → P1（顶 390，跳点在板左缘前 9~19px）
 			elif px > 240.0 and px < 290.0 and py > 350.0 and py < 400.0:
 				want = true        # P1 → 塔1（顶 330）
