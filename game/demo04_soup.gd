@@ -68,6 +68,11 @@ const LEVELS := [
 			[0, 470, 400, 70],
 			[400, 200, 50, 340],       # 组合高墙1：顶 y200，需高跳+二段跳
 			[450, 470, 450, 70],
+			# 组合可选捷径（P0）：上层平台只有超级弹跳能从地面跃上——
+			# 普通路线走黑暗双沟（慢、险），上层路线跳过双沟（快）+ 专属碎片
+			[700, 170, 120, 20],       # 发射台：普通跳顶277够不到顶170，超级弹跳顶104可落
+			[880, 170, 140, 20],       # 上层碎片 (1000,130)
+			[1080, 170, 140, 20],      # 末端 1220：走落回主路，连沟2一起省掉
 			[1150, 470, 300, 70],      # 黑暗沟1 900→1150：需荧光（高跳可过）
 			[1700, 470, 450, 70],      # 黑暗沟2 1450→1700：需荧光+二段跳
 			[1850, 230, 50, 240],      # 组合高墙2：顶 y230，需高跳+二段跳
@@ -84,7 +89,7 @@ const LEVELS := [
 		pits = [Rect2(900, 540, 250, 200), Rect2(1450, 540, 250, 200)],
 		dark = Vector2(700.0, 1800.0),
 		goal_x = 2150.0,
-		shards = [Vector2(425, 150), Vector2(1025, 280), Vector2(1875, 180)],
+		shards = [Vector2(425, 150), Vector2(1025, 280), Vector2(1875, 180), Vector2(1000, 130)],
 	},
 ]
 
@@ -209,7 +214,7 @@ func _load_level(i: int) -> void:
 
 
 func _update_shard_label() -> void:
-	shard_label.text = "基因碎片 %d/3 · 总计 %d" % [level_shards, total_shards]
+	shard_label.text = "基因碎片 %d/%d · 总计 %d" % [level_shards, shards.size(), total_shards]
 
 
 func _dna_label_text() -> String:
@@ -245,7 +250,7 @@ func _check_combo_discovery() -> String:
 
 
 func _rating() -> String:
-	if level_shards >= 3 and elapsed <= 50.0:
+	if level_shards >= shards.size() and elapsed <= 50.0:
 		return "S"
 	if elapsed <= 90.0:
 		return "A"
@@ -369,7 +374,7 @@ func _physics_process(delta: float) -> void:
 		if not shard_got[i] and absf(px - shards[i].x) < 48.0 and absf((py - 15.0) - shards[i].y) < 55.0:
 			shard_got[i] = true
 			level_shards += 1
-			toast = "🧬 基因碎片 %d/3" % level_shards
+			toast = "🧬 基因碎片 %d/%d" % [level_shards, shards.size()]
 			toast_age = 0.0
 			_update_shard_label()
 
@@ -486,11 +491,14 @@ func _draw() -> void:
 			var rt := ""
 			for i in ratings.size():
 				rt += "第%d关 %s   " % [i + 1, ratings[i]]
-			draw_string(FONT, Vector2(210, 228), "总碎片 %d/9 · 总用时 %d 秒" % [total_shards, int(total_time)], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4"))
+			var shards_max := 0
+			for L in LEVELS:
+				shards_max += L.shards.size()
+			draw_string(FONT, Vector2(210, 228), "总碎片 %d/%d · 总用时 %d 秒" % [total_shards, shards_max, int(total_time)], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4"))
 			draw_string(FONT, Vector2(210, 256), rt, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("7ee787"))
 			draw_string(FONT, Vector2(210, 296), "异星伙伴送你到最后一程。刷新页面可再跑一次。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("8b94a7"))
 			draw_string(FONT, Vector2(210, 322), "评级规则：S=3 碎片且 50 秒内 · A=90 秒内 · B=完成", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("8b94a7"))
 		else:
 			draw_string(FONT, Vector2(210, 185), "🚀 本关逃脱！", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color("4fc3f7"))
-			draw_string(FONT, Vector2(210, 228), "评级 %s · 碎片 %d/3 · 用时 %d 秒" % [_rating(), level_shards, int(elapsed)], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4"))
+			draw_string(FONT, Vector2(210, 228), "评级 %s · 碎片 %d/%d · 用时 %d 秒" % [_rating(), level_shards, shards.size(), int(elapsed)], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4"))
 			draw_string(FONT, Vector2(210, 262), "前方还有 %d 关，新地形会逼你融合更多 DNA。" % [LEVELS.size() - level_idx - 1], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("8b94a7"))

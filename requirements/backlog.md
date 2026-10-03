@@ -86,6 +86,7 @@
 - v2 机制：①区域收益×风险——河谷存1次=食1水2（暴雨泥流全吞）、森林=食2水1（暴雨燃烧损75%）、洞穴免疫灾害但撤离耗食1水1、高地=哨兵预报准+路线需求-1（东风灰减半）、湿地25%概率+1食1水；②萨满天气预报（75%正确，高地储备使情报100%准确）；③灾后应变15秒一次：抢运储备（转入洞穴洒25%）/侦察路线/轻装奔袭（需求-2）/按兵不动——灾害结算在应急行动之后，抢运能改写结局
 - headless 平衡测试（game/tests/test_demo05.gd，4 用例全 PASS）：分散储备 win / 全押河谷遇雨不行动只剩初始6份 / 全押森林不遇雨食满仓 / 全押河谷遇雨+抢运随身20份
 - V3 Gate（ChatGPT 2026-10-03 续评，reviews/chatgpt-demo-05-v2-full.md）：不加玩法只做验证——①新玩家连玩5局≥3种策略+≥2次主动换策略 ②盯防「高地开局」「灾后必抢运」dominant sequence ③headless 加 dominance simulation（全洞穴/全高地/全河谷/全森林/均匀分散/高地→按天气投资/激进→抢运/低储备→轻装 8 policy 数百局）；数值平衡冻结
+- V3 进展（2026-10-03 晚）：dominance simulation 完成（reviews/demo05-dominance-sim-2026-10-03.md，game/tests/test_demo05_dominance.gd）——8 policy 全部 100% 胜率，游戏无失败压力；评分 all_cave(113.5) 微弱压过 intel_play(113.3)，「高地开局」证伪。ChatGPT 第二次裁决（reviews/chatgpt-demo05-v3-data-full.md）：**解除数值冻结**，只碰采集次数×路线需求两个旋钮做 sweep（game/tests/sweep_demo05_pressure.gd；目标生存分层：优秀 75-90%/混合 55-75%/投机 35-65%/错误 15-40%），评分改封顶奖励 min(食,4)×2+min(水,4)×2，真人 5 局测试推迟到压力曲线修完之后（模板 reviews/human-test-demo05-template.md 已按裁决加「上局结果/为何换策略」两列）
 
 ## demo-06 词条涂鸦创造
 

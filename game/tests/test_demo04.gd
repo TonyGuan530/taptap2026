@@ -1,8 +1,9 @@
 extends SceneTree
-## demo-04 v2 通关验证（headless）：反应式小机器人跑完全部关卡。
-## 用例 1：融合全部 DNA → 连过 3 关（PASS：wins>=3 且停在第 3 关胜利）
+## demo-04 v4 通关验证（headless）：反应式小机器人跑完全部关卡。
+## 用例 1：融合全部 DNA → 连过 3 关 + 组合发现 2/2（PASS：wins>=3 且停在第 3 关胜利）
 ## 用例 2：不融合蹦蹦兽（无高跳）→ 卡在 L1 高墙前（PASS：px < 1060）
 ## 用例 3：融合高跳+振翅但不融合荧光 → 卡在黑暗裂谷（PASS：never win 且 max_px < 2900）
+## 用例 4：L3 组合可选捷径可达性——单高跳够不到上层平台，超级弹跳（高跳+振翅）可达
 ## 运行：godot --headless --path game -s res://tests/test_demo04.gd
 
 const RIGHT := KEY_RIGHT
@@ -92,6 +93,43 @@ func _bot(max_game_s: float, skip: String) -> Dictionary:
 		max_px = maxf(max_px, scene.px)
 	return {"wins": wins, "max_px": max_px, "final_px": scene.px, "shards": shard_sum, "level": scene.level_idx}
 
+func _reach_test(with_combo: bool) -> float:
+	## L3 捷径可达性：从 x470 地面起跳向右，返回飞行中的最高点（最小 py）。
+	await _spawn()
+	scene._load_level(2)
+	await physics_frame
+	scene.px = 470.0
+	scene.py = 440.0
+	scene.vy = 0.0
+	scene.dna = {"highjump": true}
+	if with_combo:
+		scene.dna["double"] = true
+	scene.jump_held = false
+	await physics_frame
+	# 等待真正落地（_load_level 后从空中放下）再起跳
+	for i in 30:
+		if scene.on_floor:
+			break
+		await physics_frame
+	var min_py := 99999.0
+	await _tap(JUMP)
+	var ev := InputEventKey.new()
+	ev.keycode = RIGHT
+	ev.pressed = true
+	Input.parse_input_event(ev)
+	for i in 120:
+		await physics_frame
+		min_py = minf(min_py, scene.py)
+		if scene.on_floor and i > 8:
+			break
+		if with_combo and not scene.on_floor and scene.jumps_used == 1 and scene.vy > -40.0:
+			await _tap(JUMP)
+	var up := InputEventKey.new()
+	up.keycode = RIGHT
+	up.pressed = false
+	Input.parse_input_event(up)
+	return min_py
+
 func _run() -> void:
 	await process_frame
 	Engine.time_scale = 4.0
@@ -113,6 +151,12 @@ func _run() -> void:
 	var r3: Dictionary = await _bot(90.0, "glow")
 	var pass3: bool = r3.wins == 0 and r3.max_px < 2900.0
 	print("用例3: 无荧光 max_px=%.0f wins=%d → %s" % [r3.max_px, r3.wins, "PASS（黑暗裂谷强制需要荧光 DNA）" if pass3 else "FAIL"])
+
+	# --- 用例 4：L3 组合可选捷径——只有超级弹跳能跃上发射台（顶 y170） ---
+	var min_a: float = await _reach_test(false)   # 只有高跳
+	var min_b: float = await _reach_test(true)    # 高跳+振翅=超级弹跳
+	var pass4: bool = min_a > 180.0 and min_b <= 170.0
+	print("用例4: 单高跳 min_py=%.0f（需>180 不可达）超级弹跳 min_py=%.0f（需≤170 可达）→ %s" % [min_a, min_b, "PASS（捷径=组合可选路线， Mastery 而非 Requirement）" if pass4 else "FAIL"])
 
 	Engine.time_scale = 1.0
 	quit()

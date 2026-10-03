@@ -429,9 +429,9 @@ func _draw() -> void:
 			var rx := fposmod(k * 41.0 + pulse * 60.0, VIEW.x + 40.0) - 20.0
 			var ry := fposmod(k * 97.0 + pulse * 100.0, VIEW.y)
 			draw_line(Vector2(rx, ry), Vector2(rx - 5.0, ry + 15.0), Color(0.78, 0.45, 0.95, 0.5), 2.0)
-		draw_rect(Rect2(VIEW.x / 2 - 150, 48, 300, 26), Color(0.12, 0.06, 0.18, 0.82))
-		draw_rect(Rect2(VIEW.x / 2 - 150, 48, 300, 26), Color("ce93d8"), false, 1.5)
-		draw_string(FONT, Vector2(VIEW.x / 2 - 118, 66), "☔ 酸雨中：设施降温 ×%s · 村民降温 ×%s" % [ACID_TOWER_MULT, ACID_NPC_MULT], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ce93d8"))
+		draw_rect(Rect2(VIEW.x / 2 - 175, 48, 350, 26), Color(0.12, 0.06, 0.18, 0.82))
+		draw_rect(Rect2(VIEW.x / 2 - 175, 48, 350, 26), Color("ce93d8"), false, 1.5)
+		draw_string(FONT, Vector2(VIEW.x / 2 - 165, 66), "☔ 酸雨中：设施降温 ×%s · 村民降温 ×%s" % [ACID_TOWER_MULT, ACID_NPC_MULT], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ce93d8"))
 	# 闪电白幕（酸雨落地瞬间）
 	if flash > 0.0:
 		draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color(0.85, 0.75, 1.0, flash * 0.28))

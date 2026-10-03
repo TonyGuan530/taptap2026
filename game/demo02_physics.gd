@@ -71,7 +71,7 @@ const LEVELS := [
 			Rect2(470, 340, 40, 130),           # 坑中石柱（垫脚/障碍）
 		],
 		spring = Rect2(150, 440, 100, 30),      # 弹簧：原地高高起飞（冲量需抵消羽毛的空气阻尼）
-		spring_impulse = Vector2(260, -660),
+		spring_impulse = Vector2(250, -690),
 		fragile = Rect2(660, 240, 300, 30),     # 舱室脆天花板：只能从正上方砸穿进入
 		goal = Rect2(680, 430, 270, 40),        # 舱底整条 = 目标区（砸穿即落在上面）
 		spawn = Vector2(200, 60),

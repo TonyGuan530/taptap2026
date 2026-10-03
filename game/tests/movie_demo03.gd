@@ -5,6 +5,7 @@ extends Node2D
 
 var game: Node2D
 var shot_saved := false
+var acid_shot_saved := false
 
 
 func _ready() -> void:
@@ -30,10 +31,17 @@ func _process(_delta: float) -> void:
 	# 定格酸雨剧情：第一场 22s 准时来，第二场不出场
 	game.acid_events[0].start = 22.0
 	game.acid_events[1].start = 999.0
-	# 截图：预警倒计时 + 精英村民★ + 双设施
+	# 截图1：预警倒计时（21.5s，药丸横幅 + 精英村民 + 双设施）
 	if e >= 21.5 and not shot_saved:
 		shot_saved = true
 		var img := get_viewport().get_texture().get_image()
 		var out: String = ProjectSettings.globalize_path("res://") + "../reviews/shots/demo-03.png"
 		img.save_png(out)
 		print("SHOT_SAVED: ", out, " elapsed=", e)
+	# 截图2：酸雨进行中（25s，▼被压制设施 / ▲被强化村民 同框，版本化文件名防 raw 缓存）
+	if e >= 25.0 and not acid_shot_saved:
+		acid_shot_saved = true
+		var img2 := get_viewport().get_texture().get_image()
+		var out2: String = ProjectSettings.globalize_path("res://") + "../reviews/shots/demo-03-v4-acid.png"
+		img2.save_png(out2)
+		print("SHOT_SAVED: ", out2, " elapsed=", e)
