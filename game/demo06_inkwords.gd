@@ -167,6 +167,8 @@ var ui_layer: CanvasLayer = null   # v4：直接持有 UI 层引用——旧 fin
 var env_oid_n := 0                 # v5：预置物体实例 ID 计数（contact 链还原用）
 var dino_tex: Texture2D = null     # v8：绿幕管线玩家素材（reviews/art/demo-06/ → game/art/），缺失时回落程序绘制
 var env_texes := {}                # v10：绿幕管线环境物素材（block/ball/plank），kind → Texture2D
+var goal_tex: Texture2D = null     # v11：绿幕终点旗（缺失回落程序绘制）
+var fence_tex: Texture2D = null    # v11：绿幕木栅栏（缺失回落程序绘制）
 
 # ---------------- 盲测 telemetry（本地记录，无后台） ----------------
 var tel_pid := "P01"        # 受试编号（数据面板可改，随记录保留）
@@ -743,22 +745,35 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	var lv: Dictionary = LEVELS[level_idx]
 	draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color("141a26"))
-	# 目标区
+	# 目标区（v11：绿幕终点旗贴图 + 保留边框与 GOAL 文字）
 	var gr: Rect2 = get_meta("goal_rect", Rect2(830, 400, 100, 70))
 	draw_rect(gr, Color(1.0, 0.84, 0.31, 0.15))
 	draw_rect(gr, Color("ffd54f"), false, 3)
-	draw_string(FONT, gr.position + Vector2(8, 24), "GOAL", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("ffd54f"))
+	if goal_tex == null:
+		goal_tex = load("res://art/demo06_goal.png")
+	if goal_tex != null:
+		var fw: float = gr.size.y * 0.6
+		draw_texture_rect(goal_tex, Rect2(gr.position.x + 3.0, gr.position.y + 3.0, fw, gr.size.y - 6.0), false)
+		draw_string(FONT, gr.position + Vector2(fw + 10.0, gr.size.y - 12.0), "GOAL", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("ffd54f"))
+	else:
+		draw_string(FONT, gr.position + Vector2(8, 24), "GOAL", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("ffd54f"))
 	# 地形
 	for c in get_children():
 		if c is StaticBody2D and c.has_meta("rect"):
 			var r: Rect2 = c.get_meta("rect")
 			draw_rect(r, Color("39415a"))
 			draw_rect(r, Color("1c2030"), false, 2)
-		# 木栅栏
-		if c is StaticBody2D and c.name == "Fence" and is_instance_valid(c):
+		# 木栅栏（v11：绿幕贴图取纹理中央竖条适配窄碰撞体；可燃语义与碰撞不变）
+		if c.name == "Fence" and is_instance_valid(c):
 			var fr: Rect2 = c.get_meta("rect")
-			draw_rect(fr, Color("8d6e63"))
-			draw_line(fr.position, fr.position + fr.size, Color("5d4037"), 2)
+			if fence_tex == null:
+				fence_tex = load("res://art/demo06_fence.png")
+			if fence_tex != null:
+				draw_texture_rect_region(fence_tex, Rect2(fr.position.x - 7.0, fr.position.y - 2.0,
+					fr.size.x + 14.0, fr.size.y + 2.0), Rect2(96.0, 0.0, 48.0, 170.0))
+			else:
+				draw_rect(fr, Color("8d6e63"))
+				draw_line(fr.position, fr.position + fr.size, Color("5d4037"), 2)
 	# 预置普通物体（v2：无词条、可推可撞；v10：绿幕管线贴图，随刚体旋转；缺素材回落程序绘制）
 	for o in get_tree().get_nodes_in_group("level_objs"):
 		var ob := o as RigidBody2D
