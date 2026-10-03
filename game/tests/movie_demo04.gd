@@ -8,6 +8,7 @@ var jump_cd := 0
 
 
 func _ready() -> void:
+	Engine.time_scale = 4.0   # 与 headless 测试同步长：dt=0.0667 下跳跃弧线经六用例验证
 	game = load("res://demo04_soup.tscn").instantiate()
 	add_child(game)
 
