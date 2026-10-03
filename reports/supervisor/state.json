@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-03T23:56:00+08:00",
-  "round": 27,
+  "checkedAt": "2026-10-04T00:05:00+08:00",
+  "round": 28,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP（前台闸门），沿用上轮读数"
@@ -9,7 +9,7 @@
     "demo-01(流水线)": {
       "id": "automation-2f2eb604-c0c1-4005-9747-f4c40f80efc7",
       "cron": "*/5 * * * *",
-      "evidence": "运转中；✅ 找活流程首次完整跑通：Miro 新想法→backlog→自动认领 demo-08 纸飞机模拟器（demo08_paperplane.gd/.tscn+test_demo08.gd 出现在工作区）"
+      "evidence": "运转中；demo-08 开发推进（paperplane .gd/.uid/.tscn 已在工作区）"
     },
     "demo-02": {
       "id": "automation-8af780c6-0f5b-482a-b6a1-a375506f1683",
@@ -17,7 +17,7 @@
       "runCount": 6,
       "lastRunAt": 1791038118363,
       "nextRunAt": 1791039900000,
-      "evidence": "冻结守望等 Batch 01 真人数据"
+      "evidence": "00:05 下一轮；冻结守望等 Batch 01"
     },
     "demo-03": {
       "id": "automation-19713e80-d7b5-45c3-bb03-602904b10486",
@@ -25,7 +25,7 @@
       "runCount": 7,
       "lastRunAt": 1791038418720,
       "nextRunAt": 1791040200000,
-      "evidence": "00:40 下一轮；冻结守望零变更巡检正常"
+      "evidence": "23:40 轮冻结守望已派发；00:40 下一轮"
     },
     "demo-04": {
       "id": "automation-d3f50080-356e-4958-a2f6-edfc516e67a4",
@@ -33,7 +33,7 @@
       "runCount": 7,
       "lastRunAt": 1791038721497,
       "nextRunAt": 1791040500000,
-      "evidence": "00:15 下一轮；v7 已上线 Pages 200"
+      "evidence": "00:15 下一轮；v7 已验证 Pages 200（23:10）"
     },
     "demo-05": {
       "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515",
@@ -41,7 +41,7 @@
       "runCount": 6,
       "lastRunAt": 1791037218380,
       "nextRunAt": 1791039000000,
-      "evidence": "00:20 下一轮；V6/V6A' 已交付（撤离余量计分+绿幕管线）"
+      "evidence": "v6 A' 构建已入库+Pages 镜像（1491e24）；并行切 main_scene 事故已修复重推（3eb6fb1）；A' 4/4 PASS+dominance harness bug 定位归档（38f8df7）"
     },
     "demo-06": {
       "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8",
@@ -49,7 +49,7 @@
       "runCount": 5,
       "lastRunAt": 1791035717828,
       "nextRunAt": 1791037500000,
-      "evidence": "23:55 轮已派发；冻结守望"
+      "evidence": "23:55 轮已派发（冻结守望）"
     }
   },
   "envSnapshot": {
@@ -58,7 +58,7 @@
     "godotProcs": 0,
     "miroPostLog": "8 条全覆盖",
     "git": "与 origin 同步；工作区= demo-04 dino 素材/demo-05 在途",
-    "itchQa": "LitePipeline 完整周期跑通（demo-06 已贴过自动跳过、干净收尾）；占位分发仍等 itch 服务端",
+    "itchQa": "LitePipeline 00:01 周期：demo-06 QA 仍占位 FAIL、重推节流中（自愈循环正常）；服务端分发问题持续",
     "fleetState": "demo-02/03/06 冻结守望等真人数据；demo-04/05 迭代中；流水线自愈运转",
     "deployment": "6/6 最新版全在线：01v3/02v5/03v6/04v7/05v5/06v8（Pages 实测 200）；itch 仍故障走兜底",
     "notes": "Miro 新增两条想法已收录：demo-08 纸飞机模拟器 + demo-09 赛车模拟器（待流水线找活认领或用户指示）"
