@@ -32,6 +32,7 @@ requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-
 8. 收尾：demos.json 更新、git push origin main、reports/ 报告、中文简短汇报。绝不把 data/secrets.json 内容写进报告或提交。
 
 ## 本 demo 已知坑（务必遵守）
+- 【禁止本地前端测试】（用户指令 2026-10-03）本地站（localhost:8787）只做 Review 留言板；测试验证一律 godot --headless（逻辑）+ 公网 Pages/itch（真机与发布完整性，curl build.json=200 / publish-qa）。截图/录屏也从公网页面取。
 - 【没有 keys/state 变量】球是纯物理自动滚动，无输入系统。测试时只允许使用实际存在的变量：goal_reached / ball / prev_speed / tag_idx / _on_tag / _load_level。写测试前先读 game/demo02_physics.gd 确认。
 - 【测试用文件日志】headless 测试的 print 在超时杀进程时会全丢——用 FileAccess 写 user://v2log.txt 并 flush（参考 game/tests/test_demo02_v2.gd）。
 - 【Float 词 g=0.05 缓降，不是 0】；脆墙判定是纯物理（撞击速度 ≥450）。
