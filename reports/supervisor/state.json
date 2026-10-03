@@ -1,35 +1,34 @@
 {
-  "checkedAt": "2026-10-04T01:26:00+08:00",
-  "round": 36,
+  "checkedAt": "2026-10-04T01:36:00+08:00",
+  "round": 37,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP（前台闸门），沿用上轮读数"
   },
   "automations": {
-    "supervisor": { "runCount": 37, "lastDispatch": "01:24", "next": "01:34" },
+    "supervisor": { "runCount": 38, "lastDispatch": "01:34", "next": "01:44" },
     "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中" },
-    "demo-02": { "cron": "5,35 * * * *", "runCount": 11, "evidence": "01:05 已跑，01:35 下轮" },
-    "demo-03": { "cron": "10,40 * * * *", "runCount": 12, "evidence": "01:10 已跑，01:40 下轮" },
-    "demo-04": { "cron": "15,45 * * * *", "runCount": 12, "evidence": "01:15 已跑，01:45 下轮" },
-    "demo-05": { "cron": "20,50 * * * *", "runCount": 12, "evidence": "01:20 轮已消化 Gate C 终裁（2d10ebc 归档）+维护轮（d3e37ef）" },
-    "demo-06": { "cron": "25,55 * * * *", "runCount": 12, "evidence": "01:25 触发中" }
+    "demo-02": { "cron": "5,35 * * * *", "runCount": 11, "evidence": "01:35 触发中" },
+    "demo-03": { "cron": "10,40 * * * *", "runCount": 12, "evidence": "01:40 下轮" },
+    "demo-04": { "cron": "15,45 * * * *", "runCount": 12, "evidence": "01:45 下轮" },
+    "demo-05": { "cron": "20,50 * * * *", "runCount": 12, "evidence": "01:50 下轮" },
+    "demo-06": { "cron": "25,55 * * * *", "runCount": 13, "evidence": "01:25 已跑，01:55 下轮" }
   },
   "envSnapshot": {
-    "health": "ok builds=40",
+    "health": "ok builds=41（+1=demo-08-v3）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miroFresh": "01:22",
-    "git": "同步（HEAD d3e37ef）",
-    "itch": "占位页第 3 天（服务端），Pages 兜底全在线；demo-05 Pages v8 3/3 md5 校验通过"
+    "miroFresh": "01:34",
+    "git": "同步（HEAD 408766f）"
   },
   "majorUpdates": {
-    "demo-05": "Gate C 终裁闭环：V8 数值冻结、停止自动调参、转真人 5 局 Gate（行为学四指标）；冻结态 Pages 校验健康",
-    "demo-08": "v2 KEEP 已确认（上轮）；v3 窄授权在途"
+    "demo-08": "v3 交付（c01bb7f/408766f）：L2 双门复合场景（低空快速门+高空门，三策略收益极差 0 无支配）+ 稳定型 ±5° 容错；v3 9+v2 10+v1 9 断言全 PASS；Pages 上线，待 ChatGPT v3 复评",
+    "demo-05": "Gate C 终裁闭环（V8 冻结、转真人 Gate）"
   },
   "pending": [
     "【WATCH】itch 占位第 3 天（纯等服务端；Pages 兜底）",
     "【WATCH】demo-08 pck 14.9MB 导出过滤",
-    "【需用户决策】真人试玩/盲测排期（demo-05 已进真人 Gate 待排，最紧迫）；itch A/B 维持待复",
-    "demo-08 v3（L2 低空快速门）、demo-02 Playtest Batch 01、demo-04 v8"
+    "【需用户决策】真人试玩/盲测排期（最紧迫）；itch A/B 维持待复",
+    "demo-08 v3 复评、demo-02 Playtest Batch 01、demo-04 v8"
   ]
 }
