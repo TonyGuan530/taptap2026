@@ -27,7 +27,9 @@
       "v4Review": "reviews/chatgpt-demo-03-v4-full.md",
       "v4Note": "v4(美术迭代)续评 ITERATE 沿用：▲/▼徽标不污染盲测→保留不回滚,盲测更名「最终形态可读性盲测」(游戏自带预警+状态反馈下,≥3/5第二局主动说明相对价值变化+行为迁移→KEEP)；徽标只表状态不表策略答案；不再加教学文本；证据链已修(版本化 demo-03-v4-acid.png)；若继续停滞允许独立「风暴之夜」可选模式但仅改一个变量=酸雨频率(15/30/45s 短酸雨,其余全不动),禁多参数同改/岗位/建筑树/90秒/3D",
       "v5Review": "reviews/chatgpt-demo-03-v5-full.md",
-      "v5Note": "v5(风暴之夜)续评 ITERATE：单变量范围 PASS(低频长雨→高频短雨,总暴露16s→12s强调切换次数)；Classic Regression Gate PASS；盲测分组=≥2人经典→经典+≥2人经典→风暴(区分learning effect与storm effect),第5人自由；Gate=3-5名首次玩家无外部解释,仅靠正式UI/预警/▲▼完成两局,≥3/5第二局主动说明相对价值变化且telemetry出现迁移→KEEP并停止堆功能；Mechanical Gate已够,勿再加bot/headless case；禁第三模式/第二种天气/新职业/建筑/岗位/90秒/3D"
+      "v5Note": "v5(风暴之夜)续评 ITERATE：单变量范围 PASS(低频长雨→高频短雨,总暴露16s→12s强调切换次数)；Classic Regression Gate PASS；盲测分组=≥2人经典→经典+≥2人经典→风暴(区分learning effect与storm effect),第5人自由；Gate=3-5名首次玩家无外部解释,仅靠正式UI/预警/▲▼完成两局,≥3/5第二局主动说明相对价值变化且telemetry出现迁移→KEEP并停止堆功能；Mechanical Gate已够,勿再加bot/headless case；禁第三模式/第二种天气/新职业/建筑/岗位/90秒/3D",
+      "v6Review": "reviews/chatgpt-demo-03-v6-full.md",
+      "v6Note": "v6(绿幕美术管线)备案确认 ITERATE 不变：纯资产管线替换,未触碰规则/经济/Mechanical Gate,四项回归与 v5 一致；贴图无需返工；盲测时顺带观察职业轻染+★+▲▼同屏时角色本体是否一眼可读(状态标记勿压过角色轮廓)；除此之外不动玩法,等真人数据"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",
