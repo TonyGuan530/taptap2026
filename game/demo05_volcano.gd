@@ -16,10 +16,10 @@ const ADJUST_TIME := 15.0
 
 ## 地块：名称/位置/风险/特产（每次存入的产出与灾害结果，存 1 次 = 基础食1水1 + 特产）
 const TILES := [
-	{id = "highland", name = "高地", x = 90, y = 130, risk = "东风灰·减半", has = "哨兵准·行军-1", cap = 6},
+	{id = "highland", name = "高地", x = 90, y = 130, risk = "东风灰·减半", has = "哨兵：预报100%准"},
 	{id = "valley", name = "河谷", x = 390, y = 130, risk = "暴雨泥流·全吞", has = "存1次=食1水2"},
 	{id = "forest", name = "森林", x = 690, y = 130, risk = "暴雨燃烧·损75%", has = "存1次=食2水1"},
-	{id = "cave", name = "洞穴", x = 240, y = 300, risk = "全灾害免疫", has = "撤离额外耗食1水1", cap = 10},
+	{id = "cave", name = "洞穴", x = 240, y = 300, risk = "全灾害免疫", has = "撤离额外耗食1水1"},
 	{id = "wetland", name = "湿地", x = 540, y = 300, risk = "暴雨·水污染减半", has = "存1次25%+1食1水"},
 ]
 ## 撤离路线（need 会被高地 -1 / 轻装 -2 修正）；v4 压力曲线（sweep combo0，2026-10-03）
@@ -94,6 +94,15 @@ func _roll_forecast() -> void:
 func _build_ui() -> void:
 	var ui := CanvasLayer.new()
 	add_child(ui)
+	# v10：绿幕管线恐龙主角立绘（reviews/art/dino.png → game/art/，纯视觉）
+	var dino_tex: Texture2D = load("res://art/dino.png")
+	if dino_tex:
+		var dino := Sprite2D.new()
+		dino.texture = dino_tex
+		dino.position = Vector2(860, 420)
+		dino.scale = Vector2(0.15, 0.15)
+		dino.modulate = Color(1, 1, 1, 0.92)
+		ui.add_child(dino)
 	var title := Label.new()
 	title.text = "重生之我是恐龙 · 火山生存（demo-05）"
 	title.position = Vector2(16, 8)
@@ -276,7 +285,7 @@ func _process(delta: float) -> void:
 		_set_hint("看看布局付出了什么代价。")
 	elif phase == "decide":
 		_set_status("【撤离】选择路线带领族群离开灾区%s" % ("　❄ 萨满第二预言：今夜寒夜，路上额外耗 1 水" if night_weather == "cold" else "　萨满第二预言：撤离夜稳雾无风"))
-		_set_hint("需求%d已被修正（高地-1/轻装-2）。路线随机风险：侦察过就不再是赌博。" % (4 + route_bonus) if route_bonus != 0 else "各路线有随机风险，侦察过就不再是赌博。")
+		_set_hint("需求%d已被修正（轻装-2）。路线随机风险：侦察过就不再是赌博。" % (4 + route_bonus) if route_bonus != 0 else "各路线有随机风险，侦察过就不再是赌博。")
 	queue_redraw()
 
 
@@ -466,9 +475,7 @@ func _enter_decide() -> void:
 		supply.food = maxi(0, supply.food - 2)
 		supply.water = maxi(0, supply.water - 2)
 		_log_ev("从洞穴搬出储备要翻越洞口，额外耗掉了 2 食 2 水。")
-	if _tile_total("highland") > 0:
-		route_bonus -= 1
-		_log_ev("高地哨兵看得远，为全族找到了更好走的路线（需求-1）。")
+	# v10（监督者预批准）：移除高地「路线需求-1」，高地保留预报校准单一收益
 	_log_ev("族群收拾行囊：带上 %d 份食物、%d 份水，准备撤离。" % [supply.food, supply.water])
 
 
