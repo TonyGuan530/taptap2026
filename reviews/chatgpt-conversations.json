@@ -44,7 +44,8 @@
       "v2Note": "v2 续评 ITERATE（性质升级）：三建议全落实、系统设计站住，4 个策略 archetype（情报/保险/投机/补救）理论成立；V3 不加玩法只做验证 Gate=①新玩家5局≥3种策略+≥2次主动换策略 ②盯防「高地开局」「灾后必抢运」dominant sequence ③headless 加 dominance simulation（8 个简单 policy 跑几百局）；数值平衡冻结",
       "v5Review": "reviews/chatgpt-demo05-v4-verify-full.md",
       "v5Note": "V4 验证裁决(ITERATE)：雨天二元极化 → V5 窄授权只动泥流 severity；落地泥流吞50%后 Gate A/B PASS（4策略雨天47%落20-70区间、东西风差50-100pp）、Gate C FAIL（洞穴系三维并列双高，平顶评分+免疫致加税只能二元跳变）→ 待监督者在「评分含路线成本/北线随机事件」间裁决；真人5局Gate继续推迟",
-      "v6Note": "V6 A' 已落地（余量计分+行军真消耗+结算顺序修正，4用例4/4 PASS，惨胜/灭亡/富余三态分明）；dominance harness 有 deposit 间歇不执行的 bug（3/4 局 invested=0），240 局大样本验证受阻待修；itch CDN 故障第 2 天，Pages 主可达"
+      "v6Note": "V6 A' 已落地（余量计分+行军真消耗+结算顺序修正，4用例4/4 PASS，惨胜/灭亡/富余三态分明）；dominance harness 有 deposit 间歇不执行的 bug（3/4 局 invested=0），240 局大样本验证受阻待修；itch CDN 故障第 2 天，Pages 主可达",
+      "v8Note": "V8 已落地（cave tax 2/2：监督者 3/3 实测 all_cave 0% 存活违反 Gate1 意图故取 2/2 并声明偏差；抢运洒落 15%）+ tile-cap 撤销（v7）+ 确定性直呼驱动 harness。V8 数据：all_cave 100% 活/74 分垫底（安全地板达成）、relocate 复活（灭亡→惨胜）、intel 46.7%win/100%雨存活/63.4、策略前沿成形；存活率口径下待监督者对「cave 74 仍最高分」做终裁"
     },
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
