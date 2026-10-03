@@ -24,6 +24,10 @@ if (-not $Version) {
   $Version = $latest.Name
 }
 $src = Join-Path $builds $Version
+# 推送守卫：空目录/缺 index.html 的构建绝不推（防止把线上游戏推坏）
+if (-not (Test-Path (Join-Path $src "index.html"))) {
+  throw "push guard: builds/$Version/index.html missing - refusing to push an empty or broken build"
+}
 if (-not $UserVersion) { $UserVersion = $Version }
 
 $pushArgs = @("push", $src, "$Target`:$Channel", "--userversion", $UserVersion)
