@@ -49,7 +49,7 @@ func _run() -> void:
 
 	# 用例1 菜单
 	_check(s.state == "menu", "1.1 初始为选关菜单")
-	_check(s.LEVELS.size() == 4, "1.2 四关配置齐全")
+	_check(s.LEVELS.size() == 5, "1.2 五关配置齐全（4 关+实验房）")
 	var b0: Button = s.menu_panel.get_node("LevelBtn0")
 	var b3: Button = s.menu_panel.get_node("LevelBtn3")
 	_check(b0 != null and not b0.disabled, "1.3 第 1 关可选")

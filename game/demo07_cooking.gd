@@ -26,9 +26,24 @@ const LEVELS := [
 	{name = "关卡 2 · 熟客上门", time = 60.0, omin = 3, omax = 4, twin = false, rush = false, target = 7, penalty = 4.0,
 		patience = 0.0, tip = "订单变大：3~4 种食材，点错扣的时间更多"},
 	{name = "关卡 3 · 午餐高峰", time = 70.0, omin = 4, omax = 4, twin = true, rush = false, target = 8, penalty = 5.0,
-		patience = 0.0, tip = "双订单并发：餐盘跟当前单走，先做哪单自己排"},
+		patience = 0.0, tip = "双订单并发：两单共用的食材，点一次同时上两单"},
 	{name = "关卡 4 · 美食节评委", time = 75.0, omin = 4, omax = 5, twin = true, rush = true, target = 10, penalty = 6.0,
 		patience = 30.0, tip = "评委催单：订单带耐心环，耗尽即跑单（断连+扣 5 秒）"},
+	{name = "实验房 · 合单之谜", time = 120.0, omin = 0, omax = 0, twin = true, rush = false, target = 16, penalty = 5.0,
+		patience = 0.0, tip = "v3 实验：8 组固定双订单（部分共用食材）。共用食材点一次两单齐进——把同料订单排在一起做更省手速"},
+]
+
+## 实验房专用：8 组人工设计双订单（[单A食材, 单B食材]）——共享度从高到低混合
+## 验证问题：玩家是否会主动发现并利用「合单」（一次点击推进两单），而不是单纯点得更快
+const EXPERIMENT_PAIRS := [
+	[["bun", "patty", "sauce"], ["bun", "lettuce", "cheese"]],      # 共享 1：面包
+	[["bun", "patty"], ["bun", "patty", "cheese"]],                # 子集：面包+肉饼
+	[["tomato", "lettuce"], ["tomato", "lettuce", "sauce"]],       # 子集：番茄+生菜
+	[["bun", "patty", "sauce"], ["tomato", "lettuce", "cheese"]],  # 零共享
+	[["cheese", "sauce"], ["tomato", "patty"]],                    # 零共享
+	[["bun", "tomato", "sauce"], ["bun", "sauce", "cheese"]],      # 共享 2：面包+酱料
+	[["patty", "lettuce"], ["patty", "sauce", "tomato"]],          # 共享 1：肉饼
+	[["bun", "patty", "cheese", "sauce"], ["bun", "cheese"]],      # 子集：面包+奶酪
 ]
 
 const RUSH_LOSS := 5.0   # 跑单额外扣秒（penalty 之外）
@@ -43,6 +58,12 @@ var time_left := 60.0
 var state := "menu"            # menu / play / clear / end
 var wrong_flash := 0.0
 var served_total := 0
+# v3 实验房遥测：总点击 / 合单利用（一次点击推进 ≥2 单的次数）/ 跑单数
+var clicks_total := 0
+var merge_hits := 0
+var rush_outs := 0
+var order_queue := []          # 实验房固定订单序列
+var queue_pos := 0
 
 var order_boxes := []          # 两块订单框（twin 关两块齐开）
 var plate: Control
@@ -88,7 +109,7 @@ func _build_ui() -> void:
 	var ui := CanvasLayer.new()
 	add_child(ui)
 	var title := Label.new()
-	title.text = "简单美食小摊（demo-07 · 绿幕版 · 四关卡）"
+	title.text = "简单美食小摊（demo-07 v3 · 绿幕版 · 四关卡+实验房）"
 	title.position = Vector2(16, 8)
 	title.add_theme_font_size_override("font_size", 20)
 	title.add_theme_color_override("font_color", Color("111111"))
@@ -158,7 +179,7 @@ func _build_ui() -> void:
 	menu_panel.add_theme_stylebox_override("panel", mp_style)
 	ui.add_child(menu_panel)
 	var mt := Label.new()
-	mt.text = "🍜 选关开摊"
+	mt.text = "选关开摊（5 关）"
 	mt.position = Vector2(24, 14)
 	mt.add_theme_font_size_override("font_size", 22)
 	mt.add_theme_color_override("font_color", Color("111111"))
@@ -167,8 +188,8 @@ func _build_ui() -> void:
 		var lb := Button.new()
 		lb.name = "LevelBtn%d" % i
 		lb.text = "第%d关" % (i + 1)
-		lb.position = Vector2(24 + i * 132, 60)
-		lb.size = Vector2(120, 44)
+		lb.position = Vector2(24 + i * 104, 60)
+		lb.size = Vector2(96, 44)
 		lb.pressed.connect(start_level.bind(i))
 		lb.mouse_entered.connect(_on_menu_hover.bind(i))
 		menu_panel.add_child(lb)
@@ -251,7 +272,7 @@ func _go_menu() -> void:
 		var lb: Button = level_buttons[i]
 		var locked: bool = i > unlocked
 		lb.disabled = locked
-		lb.text = ("🔒 第%d关" % (i + 1)) if locked else ("第%d关 %s" % [i + 1, _lv_short(i)])
+		lb.text = ("第%d关（未解锁）" % (i + 1)) if locked else ("第%d关 %s" % [i + 1, _lv_short(i)])
 	menu_tip.text = LEVELS[mini(unlocked, LEVELS.size() - 1)].tip
 	_update_status()
 
@@ -275,7 +296,17 @@ func start_level(i: int) -> void:
 	score = 0
 	combo = 0
 	served_total = 0
+	clicks_total = 0
+	merge_hits = 0
+	rush_outs = 0
 	orders = []
+	order_queue = []
+	queue_pos = 0
+	if i == LEVELS.size() - 1 and L.omin == 0:
+		# 实验房：装载 8 组固定双订单（16 单按序出）
+		for pair in EXPERIMENT_PAIRS:
+			order_queue.append(pair[0])
+			order_queue.append(pair[1])
 	var count: int = 2 if L.twin else 1
 	for k in count:
 		orders.append(_make_order())
@@ -299,6 +330,10 @@ func _layout_boxes() -> void:
 
 func _make_order() -> Dictionary:
 	var L: Dictionary = LEVELS[level_idx]
+	if order_queue.size() > 0 and queue_pos < order_queue.size():
+		var items: Array = order_queue[queue_pos]
+		queue_pos += 1
+		return {items = items.duplicate(), added = [], patience = L.patience}
 	var ids := ING.map(func(g): return g.id)
 	ids.shuffle()
 	var n: int = randi_range(L.omin, L.omax)
@@ -357,40 +392,49 @@ func _refresh_plate() -> void:
 
 func _update_status() -> void:
 	if state == "menu":
-		status_label.text = "🌱 绿幕小摊：选一关开张吧（已通关 %d 关）" % unlocked
+		status_label.text = "绿幕小摊：选一关开张吧（已通关 %d 关）" % unlocked
 		return
 	var L: Dictionary = LEVELS[level_idx]
-	status_label.text = "%s · ⏱ %d 秒 · 出餐 %d/%d · 连对 %d" % [
+	status_label.text = "%s · 剩 %d 秒 · 出餐 %d/%d · 连对 %d" % [
 		L.name, int(time_left), score, L.target, combo]
 
 
 func _on_ingredient(i: int) -> void:
 	if state != "play":
 		return
-	var ai := _active_idx()
-	if ai < 0:
-		return
-	var o: Dictionary = orders[ai]
-	var items: Array = o.items
-	var added: Array = o.added
 	var id: String = ING[i].id
-	if items.has(id) and added.count(id) < items.count(id):
-		added.append(id)
+	clicks_total += 1
+	# v3 共享食材批处理：一次点击推进所有需要该食材的订单（各按剩余需求量）
+	var advanced := 0
+	var done := []
+	for k in orders.size():
+		var o: Dictionary = orders[k]
+		var items: Array = o.items
+		var added: Array = o.added
+		if items.has(id) and added.count(id) < items.count(id):
+			added.append(id)
+			advanced += 1
+			if added.size() == items.size():
+				done.append(k)
+	if advanced >= 2:
+		merge_hits += 1
+	if advanced == 0:
+		combo = 0
+		time_left = maxf(1.0, time_left - LEVELS[level_idx].penalty)
+		wrong_flash = 0.4
+	else:
 		combo += 1
-		if added.size() == items.size():
-			score += 1
-			served_total += 1
+		if done.size() > 0:
+			score += done.size()
+			served_total += done.size()
 			var L: Dictionary = LEVELS[level_idx]
 			if score >= int(L.target):
 				_win()
 				return
-			orders[ai] = _make_order()
-		_refresh_boxes()
-		_refresh_plate()
-	else:
-		combo = 0
-		time_left = maxf(1.0, time_left - LEVELS[level_idx].penalty)
-		wrong_flash = 0.4
+			for k in done:
+				orders[k] = _make_order()
+	_refresh_boxes()
+	_refresh_plate()
 	_update_status()
 
 
@@ -404,6 +448,7 @@ func _rush_tick(delta: float) -> void:
 		o.patience = maxf(0.0, o.patience - delta)
 		if o.patience <= 0.0:
 			orders[k] = _make_order()
+			rush_outs += 1
 			combo = 0
 			time_left = maxf(1.0, time_left - RUSH_LOSS)
 			wrong_flash = 0.3
@@ -415,9 +460,9 @@ func _win() -> void:
 	state = "clear"
 	unlocked = maxi(unlocked, mini(level_idx + 1, LEVELS.size() - 1))
 	var used: float = LEVELS[level_idx].time - time_left
-	end_title.text = "🎉 过关！"
-	end_body.text = "%s 出餐 %d 单达标，用时 %d 分 %d 秒。\n剩余 %d 秒，手速不错。\n\n绿幕版：背景与素材底都是 #00ff00，后续直接抠像换真实场景。" % [
-		LEVELS[level_idx].name, score, int(used) / 60, int(used) % 60, int(time_left)]
+	end_title.text = "过关！"
+	end_body.text = "%s 出餐 %d 单达标，用时 %d 分 %d 秒。\n剩余 %d 秒。\n—— 本局遥测：总点击 %d · 合单利用 %d · 跑单 %d ——\n绿幕版：背景与素材底都是 #00ff00，后续直接抠像换真实场景。" % [
+		LEVELS[level_idx].name, score, int(used) / 60, int(used) % 60, int(time_left), clicks_total, merge_hits, rush_outs]
 	btn_next.visible = level_idx < LEVELS.size() - 1
 	end_panel.visible = true
 	_update_status()
@@ -426,9 +471,9 @@ func _win() -> void:
 func _lose() -> void:
 	state = "end"
 	var L: Dictionary = LEVELS[level_idx]
-	end_title.text = "⏰ 打烊！"
-	end_body.text = "差 %d 单达标（%d/%d）。\n最高连对 %d 次。再试一次？\n\n小提示：%s" % [
-		int(L.target) - score, score, L.target, combo, L.tip]
+	end_title.text = "打烊！"
+	end_body.text = "差 %d 单达标（%d/%d）。\n最高连对 %d 次。\n—— 本局遥测：总点击 %d · 合单利用 %d · 跑单 %d ——\n小提示：%s" % [
+		int(L.target) - score, score, L.target, combo, clicks_total, merge_hits, rush_outs, L.tip]
 	btn_next.visible = false
 	end_panel.visible = true
 	_update_status()
@@ -466,4 +511,4 @@ func _draw() -> void:
 				draw_string(FONT, c + Vector2(-8, 7), "%d" % int(ceil(o.patience)), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("111111"))
 	if wrong_flash > 0.0:
 		draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color(1, 0, 0, wrong_flash * 0.25))
-	draw_string(FONT, Vector2(16, 78), "🍜 欢迎光临", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("111111"))
+	draw_string(FONT, Vector2(16, 78), "欢迎光临", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("111111"))
