@@ -19,7 +19,7 @@
 - [x] 【GPT 对话已建】[RESOLVED 2026-10-03 19:38 督导] https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5 → 首轮 GPT 已预警「能力-障碍一一对应=脚本化谜题，涌现不足」，下轮把该意见纳入扩展（DNA 组合效果正是解法），回复存 reviews/chatgpt-demo-04-full.md。
 
 ## 全局
-- [ ] 【WATCH·itch CDN】[19:36 首观察] LitePipeline QA FAIL×4：index.wasm/index.js 远程 md5 与本地不一致。19:36 重推节流；19:50 demo-02 v3 仍走 Pages 兜底（第 2 次观察）。若 20:05 巡查仍 FAIL → 连续 3 轮，升级【需用户决策】（考虑正式切 GitHub Pages 为主发布渠道）。
+- [ ] 【需用户决策·itch CDN 持续故障】19:36（QA FAIL×4）、19:41（重推节流中仍 FAIL）、19:50（demo-02 v3 放弃 itch 走 GitHub Pages 兜底）——三次连续观察确认故障持续 25 分钟以上，非 CDN 传播延迟。当前各任务按既有预案自愈（Pages 兜底 + LitePipeline 重推），未阻塞发布。**请用户决策**：A. 维持现状（Pages 兜底，itch 恢复后自动回归）；B. 正式切 GitHub Pages 为主发布渠道（需改 push-itch/publish-qa/LitePipeline 业务工具，督导不代改）。未决策前督导维持 A 现状。
 - [x] 【排队观察】[RESOLVED 19:55 督导] demo-01/02/05 的「过点未触发」实为长轮次合并排队：demo-01 第11轮已完成并推送（868cc47 三案件版），demo-02 首轮已产出 v3 并推送（c55430b），demo-03/04/05 首轮仍在跑且有持续文件活动。判定规则已补充：派发计数需用工作区活动佐证，有活动=长轮次进行中，不判卡死。
 - [ ] 【git 未提交】19:25 时 12 个改动 + 2 个未跟踪（含 demo-01/03/06 的 gd 与测试文件——各任务开发轮正在进行，属正常中间态）→ 各 demo 任务收尾时顺带提交；若连续 3 轮未动，督导再代提交。
 - [ ] 【评论池为空】data/db.json 尚不存在 = 7 个 demo 零玩家评论。评论驱动环节暂无输入，属正常冷启动，无需行动。

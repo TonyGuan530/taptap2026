@@ -15,9 +15,10 @@ requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-
 
 ## 当前状态
 - public/demos.json 的 demo-02 slot（buildId=demo-02-v3，3 关已上线；v3=跳跃输入+组合测试房，headless 4/4 PASS）
-- itch：demo-02-v3 已推（butler build #2057309）但 CDN 持续故障（占位页 404，publish-qa FAIL）→ 本轮可玩链接走 GitHub Pages；pipeline-lite 每 5 分钟自愈重推
-- ChatGPT 专属监督对话（迭代时在此续评）：https://chatgpt.com/c/6abf238d-6dc0-83ec-aa5e-43c62aebe892（上轮结论 ITERATE；v3 已发复评请求）
-- 待办 v4：按 v3 复评结论迭代（关注：组合深度/涌现性是否成立、扑翼手感）
+- ChatGPT 复评 v3 结论 **KEEP**（首次进入候选核心机制池）；完整结论存 reviews/chatgpt-demo-02-full.md 尾部
+- itch：demo-02-v3 已推（butler build #2057309）但 CDN 持续故障（占位页 404，publish-qa FAIL）→ 可玩链接走 GitHub Pages；pipeline-lite 每 5 分钟自愈重推
+- 待办 v4（按 KEEP 后指令）：①删 Space 通用跳，扑翼削为一次性轻 impulse，保留横移 ②开放 L4（只查 GOAL 不查词条序列，≥2 条合法路线）③公开 build 隐藏「参考解法」+ 3-5 人无提示试玩
+- v4 禁止：堆词条 / 加角色能力 / 传统 platformer 操作
 - 已知坑新增：【羽毛 damp=1.2 会吃掉弹簧冲量】L3 弹簧冲量 (260,-660) 是抵消阻尼后的调参值，改词条参数需同步重调 L3 并跑 headless
 
 ## 每轮流程

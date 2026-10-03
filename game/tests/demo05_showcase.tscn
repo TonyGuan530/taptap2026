@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5showcase05d"]
+
+[ext_resource type="Script" path="res://tests/demo05_showcase.gd" id="1"]
+
+[node name="Showcase" type="Node"]
+script = ExtResource("1")

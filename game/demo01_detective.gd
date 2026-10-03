@@ -80,6 +80,33 @@ const CASES := [
 		correct = 1,
 		ending = "真相：管家知道老主人改了遗嘱，便在阁楼上烧毁原件，灰烬里的残片暴露了日期。\n他以为抽屉的锁和保险箱能掩盖一切——却忘了自己的怀表，停在老爷被发现的那一刻。\n天网恢恢。本案告破！",
 	},
+	{
+		name = "案件四 · 雪夜的失踪",
+		items = [
+			{ id = "door", name = "反锁的书房门", kind = "window", rect = Rect2(430, 210, 110, 100),
+				words = "我从里面反锁，钥匙还插在锁孔上……整晚没有人从我这里进来或出去。",
+				clue = "书房门从内反锁——外人无法进出" },
+			{ id = "locker", name = "玄关鞋柜", kind = "vase", rect = Rect2(120, 380, 80, 110),
+				words = "她的那双雪靴昨夜还在我这里……今早，我不见了那双靴子。",
+				clue = "妻子的雪靴失踪了" },
+			{ id = "tracks", name = "窗外的雪地脚印", kind = "foot", rect = Rect2(220, 460, 90, 45),
+				words = "一行脚印从窗台下笔直走向林子……步幅平稳，不慌不忙，是个清醒的人。",
+				clue = "雪地脚印步幅平稳——出走者是清醒的" },
+			{ id = "fireplace", name = "熄灭的壁炉", kind = "clock", rect = Rect2(455, 90, 90, 90),
+				words = "我的余烬里有一角烧焦的睡袍……粉色的，绣着主人的名字。",
+				clue = "壁炉里有烧毁的睡袍纤维" },
+			{ id = "pills", name = "半瓶安眠药", kind = "tea", rect = Rect2(300, 320, 40, 50),
+				words = "主人睡前常拿我里的药……昨晚，我少了几颗。",
+				clue = "安眠药少了几颗" },
+			{ id = "milk", name = "床头的牛奶杯", kind = "tea", rect = Rect2(300, 240, 40, 50),
+				words = "昨夜她喝下了我……然后睡得很沉很沉，沉到听不见开门声。",
+				clue = "妻子昨夜服药后沉睡" },
+		],
+		question = "妻子是怎么失踪的？",
+		choices = ["被陌生人破门绑走", "自己服药假睡，换装后从窗户离开", "被野兽袭击拖进了林子"],
+		correct = 1,
+		ending = "真相：没有绑匪，也没有野兽。妻子服下安眠药假睡，深夜换上雪靴、烧掉睡袍制造错觉，\n从窗户走进了暴雪——反锁的门是她留给世界的谜题。\n一场自导自演的失踪。本案告破！",
+	},
 ]
 
 var ITEMS := []
@@ -291,7 +318,9 @@ func _on_choice(ci: int) -> void:
 		accuse_panel.visible = false
 		solved = true
 		end_panel.visible = true
-		end_label.text = ENDING
+		end_label.text = ENDING + "
+
+—— 本局用时 %d 分 %d 秒 ——" % [int(elapsed) / 60, int(elapsed) % 60]
 	else:
 		var q = get_tree().root.find_child("QLabel", true, false)
 		if q:

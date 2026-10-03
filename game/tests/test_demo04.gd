@@ -85,7 +85,7 @@ func _bot(max_game_s: float, skip: String) -> Dictionary:
 			if scene.on_floor:
 				if (not _ground_ahead(scene.px + 50.0)) or (not _ground_ahead(scene.px + 110.0)) or _wall_ahead():
 					await _tap(JUMP)
-					jump_cd = 20
+					jump_cd = 4
 			elif scene.dna.has("double") and scene.jumps_used == 1 and scene.vy > -40.0:
 				await _tap(JUMP)
 				jump_cd = 8

@@ -116,6 +116,7 @@ var toast_age := 99.0
 var pulse := 0.0
 var cam_x := 0.0
 var keys := {}
+var jump_held := false             # 跳跃边沿检测：长按不会吞掉二段跳
 
 var level_label: Label
 var dna_label: Label
@@ -275,7 +276,9 @@ func _physics_process(delta: float) -> void:
 
 	var left: bool = keys.get(KEY_LEFT, false) or keys.get(KEY_A, false)
 	var right: bool = keys.get(KEY_RIGHT, false) or keys.get(KEY_D, false)
-	var jump_pressed: bool = (keys.get(KEY_SPACE, false) or keys.get(KEY_W, false) or keys.get(KEY_UP, false))
+	var jump_down: bool = (keys.get(KEY_SPACE, false) or keys.get(KEY_W, false) or keys.get(KEY_UP, false))
+	var jump_pressed := jump_down and not jump_held   # 边沿触发：新按下才算跳
+	jump_held = jump_down
 
 	if left:
 		face = -1.0
@@ -338,7 +341,7 @@ func _physics_process(delta: float) -> void:
 	# 组合·夜翼（振翅+荧光）：黑暗中也能展翅疾行（减速惩罚减半）
 	if px > dark.x and px < dark.y and not dna.has("glow"):
 		var dark_slow := 0.55
-		if dna.has("double"):
+		if dna.has("double") and dna.has("glow"):
 			dark_slow = 0.25
 		px -= (float(right) - float(left)) * WALK * dark_slow * delta
 

@@ -26,7 +26,7 @@ func _run() -> void:
 	await process_frame
 	Engine.time_scale = 6.0
 	var all_pass := true
-	for ci in 3:
+	for ci in 4:
 		scene = load("res://demo01_detective.tscn").instantiate()
 		root.add_child(scene)
 		await physics_frame

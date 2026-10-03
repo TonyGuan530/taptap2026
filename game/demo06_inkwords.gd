@@ -28,6 +28,12 @@ extends Node2D
 ##    B. Sticky 方块 → 丢进沟里靠右壁，接触冻结成固定垫脚（黏附固定关系，40 墨）；
 ##    C. 把预置方块推下沟/用 Heavy 圆球撞进沟贴右壁 → 动量传递成垫脚（质量碰撞关系，0~40 墨）。
 
+## v3 迭代（ChatGPT L3 评审 KEEP：下一道 Gate = 真人数据盲测，2026-10-03）：
+##    新增轻量 telemetry（评审指定 8 字段：timestamp/shape/tag/spawn_position/ink_cost/
+##    object_contact/death_or_reset/goal），本地记录无后台——web 存 localStorage、
+##    本地存 user://telemetry_demo06.json，右下角「📦数据」面板可看 JSON/复制/设受试编号，
+##    通关时自动打印到控制台。玩法、L3 几何、解法提示（本就不渲染）零改动，不污染盲测。
+
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 const GRAV := 1600.0
@@ -115,8 +121,17 @@ var jumps_used := 0
 
 var ui_labels := {}
 
+# ---------------- 盲测 telemetry（本地记录，无后台） ----------------
+var tel_pid := "P01"        # 受试编号（数据面板可改，随记录保留）
+var tel_sid := ""           # 会话号：区分多次运行/页面刷新
+var tel_events := []        # 事件流水（只放 str/int/float/Array，保证 JSON 可序列化）
+var tel_t0_ms := 0          # 会话起始，用于 elapsed
+
 
 func _ready() -> void:
+	tel_sid = str(int(Time.get_unix_time_from_system()))
+	tel_t0_ms = Time.get_ticks_msec()
+	_tel_restore()
 	_build_ui()
 	_load_level(0)
 
@@ -170,6 +185,13 @@ func _build_ui() -> void:
 		b2.pressed.connect(_on_word.bind(i))
 		b2.name = "WordBtn" + str(i)
 		ui.add_child(b2)
+	# 盲测数据导出入口（右下角小按钮，不进玩法区）
+	var tdb := Button.new()
+	tdb.text = "📦数据"
+	tdb.position = Vector2(884, 506)
+	tdb.size = Vector2(72, 28)
+	tdb.pressed.connect(_on_tel_panel)
+	ui.add_child(tdb)
 
 
 func _refresh_buttons() -> void:
@@ -183,11 +205,13 @@ func _refresh_buttons() -> void:
 
 func _on_shape(i: int) -> void:
 	shape_idx = i
+	_tel("select", {"shape": SHAPES[i].id})
 	_refresh_buttons()
 
 
 func _on_word(i: int) -> void:
 	word_idx = i
+	_tel("select", {"tag": WORDS[i].id})
 	_refresh_buttons()
 	_set_hint("%s：%s" % [WORDS[i].name, WORDS[i].tip])
 
@@ -212,6 +236,7 @@ func _load_level(idx: int) -> void:
 	ink = lv.ink
 	state = "play"
 	elapsed = 0.0
+	_tel("start", {"ink": ink})
 	for c in get_children():
 		if c is RigidBody2D or c is StaticBody2D or c is CharacterBody2D:
 			c.queue_free()
@@ -329,6 +354,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if state == "play":
 			_try_place(pos)
 	elif event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_R:
+		_tel("reset", {"why": "R", "pos": [snappedf(player.position.x, 0.5), snappedf(player.position.y, 0.5)]})
 		player.position = LEVELS[level_idx].spawn   # v2：改用当前关卡出生点（原为写死坐标）
 		player.velocity = Vector2.ZERO
 	elif event is InputEventKey:
@@ -395,11 +421,31 @@ func _try_place(pos: Vector2) -> void:
 		t.timeout.connect(func():
 			if is_instance_valid(body):
 				body.freeze = true)
+		_tel("place", {"shape": shape.id, "tag": word.id,
+			"pos": [snappedf(pos.x, 0.5), snappedf(pos.y, 0.5)],
+			"ink_cost": cost, "ink_left": ink})
 	_set_hint("放置了 %s×%s（-%d💧）。%s" % [shape.name, word.name, cost, word.tip])
+
+
+func _tel_classify(n: Node) -> String:
+	if n == player:
+		return "player"
+	if n.name == "Fence":
+		return "fence"
+	if n is StaticBody2D:
+		return "static"
+	if n is RigidBody2D and n.is_in_group("level_objs"):
+		return "env"
+	if n is RigidBody2D:
+		return "placed"
+	return "other"
 
 
 func _on_placed_contact(body_node: Node, placed_body: RigidBody2D) -> void:
 	var word_id: String = placed_body.get_meta("word", "")
+	if not placed_body.has_meta("tel_contacted"):   # 盲测：每放置物只记首次接触对象
+		placed_body.set_meta("tel_contacted", true)
+		_tel("contact", {"tag": word_id, "with": _tel_classify(body_node)})
 	# 统一规则：Fire 遇易燃物 → 烧毁；Heavy 重物遇脆物/栅栏 → 砸毁
 	if word_id == "fire" and (body_node.get_meta("flammable", false) or body_node.name == "Fence"):
 		body_node.queue_free()
@@ -426,6 +472,7 @@ func _physics_process(delta: float) -> void:
 	on_floor = player.is_on_floor()
 	# 坠落出界自动复位（防 NaN 卡死物理）
 	if player.position.y > 700:
+		_tel("reset", {"why": "fall", "pos": [snappedf(player.position.x, 0.5), snappedf(player.position.y, 0.5)]})
 		player.position = LEVELS[level_idx].spawn   # v2：改用当前关卡出生点（原为写死坐标）
 		player.velocity = Vector2.ZERO
 	# 玩家推动普通物体（统一物理：推力来自行走）
@@ -456,6 +503,8 @@ func _win() -> void:
 	if state != "play":
 		return
 	state = "win"
+	_tel("goal", {"elapsed": snappedf(elapsed, 0.1), "ink_left": ink, "placements": placed.size()})
+	print("[demo-06 telemetry] " + tel_export_json())   # 盲测可只靠录屏+控制台取数
 	var panel := Panel.new()
 	panel.name = "WinPanel"
 	var style := StyleBoxFlat.new()
@@ -487,6 +536,113 @@ func _win() -> void:
 		else:
 			_load_level(0))
 	panel.add_child(next)
+
+
+# ---------------- 盲测 telemetry 实现 ----------------
+
+func _tel(type: String, extra: Dictionary = {}) -> void:
+	var ev := {
+		"type": type,
+		"ts": Time.get_datetime_string_from_system(),
+		"el": snappedf((Time.get_ticks_msec() - tel_t0_ms) / 1000.0, 0.1),
+		"sid": tel_sid,
+		"level": level_idx,
+	}
+	for k in extra:
+		ev[k] = extra[k]
+	tel_events.append(ev)
+	_tel_persist()
+
+
+func tel_export_json() -> String:
+	return JSON.stringify({"pid": tel_pid, "events": tel_events})
+
+
+## web→localStorage（base64 防转义），本地→user:// 文件；失败静默，不影响玩法
+func _tel_persist() -> void:
+	if OS.has_feature("web"):
+		var payload := Marshalls.utf8_to_base64(tel_export_json())
+		var js = Engine.get_singleton("JavaScriptBridge")
+		js.eval("try{localStorage.setItem('demo06_tel','%s')}catch(e){}" % payload)
+	else:
+		var f := FileAccess.open("user://telemetry_demo06.json", FileAccess.WRITE)
+		if f:
+			f.store_string(tel_export_json())
+
+
+## 启动恢复历史事件（多次运行累积在同一份记录，按 sid 区分会话）
+func _tel_restore() -> void:
+	var raw := ""
+	if OS.has_feature("web"):
+		var js = Engine.get_singleton("JavaScriptBridge")
+		var r = js.eval("(function(){try{return localStorage.getItem('demo06_tel')||''}catch(e){return ''}})()", true)
+		raw = str(r)
+	elif FileAccess.file_exists("user://telemetry_demo06.json"):
+		raw = FileAccess.get_file_as_string("user://telemetry_demo06.json")
+	if raw == "":
+		return
+	var json_text := raw
+	if OS.has_feature("web"):
+		json_text = Marshalls.base64_to_utf8(raw)
+	var parsed = JSON.parse_string(json_text)
+	if parsed is Dictionary and parsed.get("events", null) is Array:
+		tel_events = parsed["events"]
+		if parsed.get("pid", "") is String and str(parsed["pid"]) != "":
+			tel_pid = str(parsed["pid"])
+
+
+## 📦数据面板：受试编号 + JSON 查看/复制（盲测后取数用）
+func _on_tel_panel() -> void:
+	var ui := get_tree().root.find_child("CanvasLayer", true, false)
+	if ui == null or ui.has_node("TelPanel"):
+		return
+	var panel := Panel.new()
+	panel.name = "TelPanel"
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.08, 0.1, 0.15, 0.97)
+	style.set_corner_radius_all(10)
+	panel.add_theme_stylebox_override("panel", style)
+	panel.position = Vector2(150, 60)
+	panel.size = Vector2(660, 420)
+	ui.add_child(panel)
+	var pid_l := LineEdit.new()
+	pid_l.name = "TelPid"
+	pid_l.text = tel_pid
+	pid_l.position = Vector2(16, 14)
+	pid_l.size = Vector2(120, 30)
+	pid_l.placeholder_text = "受试编号"
+	pid_l.text_changed.connect(func(s: String): tel_pid = s)
+	panel.add_child(pid_l)
+	var box := TextEdit.new()
+	box.text = tel_export_json()
+	box.position = Vector2(16, 54)
+	box.size = Vector2(628, 316)
+	box.editable = false
+	panel.add_child(box)
+	var copy := Button.new()
+	copy.text = "复制 JSON"
+	copy.position = Vector2(160, 380)
+	copy.size = Vector2(120, 30)
+	copy.pressed.connect(func():
+		DisplayServer.clipboard_set(tel_export_json())
+		_set_hint("telemetry 已复制到剪贴板"))
+	panel.add_child(copy)
+	var clr := Button.new()
+	clr.text = "清空记录"
+	clr.position = Vector2(290, 380)
+	clr.size = Vector2(110, 30)
+	clr.pressed.connect(func():
+		tel_events = []
+		_tel_persist()
+		box.text = tel_export_json())
+	panel.add_child(clr)
+	var close := Button.new()
+	close.text = "关闭"
+	close.position = Vector2(580, 380)
+	close.size = Vector2(64, 30)
+	close.pressed.connect(func(): panel.queue_free())
+	panel.add_child(close)
+	print("[demo-06 telemetry] " + tel_export_json())
 
 
 # ---------------- 绘制 ----------------
