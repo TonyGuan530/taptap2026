@@ -26,8 +26,8 @@
     {
       "id": "demo-04",
       "title": "SOUP 2.0：DNA 融合逃生",
-      "goal": "和外星生物 DNA 融合改造自身，逃离危险的异星（v7：3 关卡 + DNA 组合发现 + 组合捷径 + 实验房遥测 + ChatGPT 绿幕美术；待盲测数据）",
-      "buildId": "demo-04-v7",
+      "goal": "和外星生物 DNA 融合改造自身，逃离危险的异星（v8：5 关卡 + 4 种 DNA（碎岩/恐龙兽） + 组合发现 + 捷径 + 实验房遥测 + 绿幕美术；GPT 玩法 KEEP × 3）",
+      "buildId": "demo-04-v8",
       "status": "done"
     },
     {

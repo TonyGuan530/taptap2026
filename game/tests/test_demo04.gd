@@ -73,7 +73,7 @@ func _bot(max_game_s: float, skip: String) -> Dictionary:
 		if scene.state == "win":
 			wins += 1
 			shard_sum += scene.level_shards
-			if wins >= 3:
+			if wins >= 5:
 				break
 			scene._advance()
 			await physics_frame
@@ -137,8 +137,8 @@ func _run() -> void:
 	# --- 用例 1：全 DNA 连过 3 关 ---
 	await _spawn()
 	var r1: Dictionary = await _bot(400.0, "")
-	var pass1: bool = r1.wins >= 3 and r1.level == 2 and scene.combos_found.size() >= 2
-	print("用例1: wins=%d level=%d/3 碎片=%d/9 组合发现=%d/2 → %s" % [r1.wins, r1.level + 1, r1.shards, scene.combos_found.size(), "PASS" if pass1 else "FAIL"])
+	var pass1: bool = r1.wins >= 5 and r1.level == 4 and scene.combos_found.size() >= 2
+	print("用例1: wins=%d level=%d/5 碎片=%d 组合发现=%d/2 → %s" % [r1.wins, r1.level + 1, r1.shards, scene.combos_found.size(), "PASS（5 关全通）" if pass1 else "FAIL"])
 
 	# --- 用例 2：不融合蹦蹦兽，应卡在 L1 高墙前 ---
 	await _spawn()
@@ -182,6 +182,39 @@ func _run() -> void:
 	if lf: lf.close()
 	var pass5: bool = order_ok and combos5.size() == 2 and file_ok and envelope_ok and zones.size() >= 2
 	print("用例5: 遥测 fuse=%d combo=%d zone=%d 信封=%s 顺序=%s 持久化=%s → %s" % [fuses.size(), combos5.size(), zones.size(), envelope_ok, order_ok, file_ok, "PASS（实验房遥测 v2：信封+区域+持久化）" if pass5 else "FAIL"])
+
+	# --- 用例 6：L4 裂纹岩墙双向对照——无碎岩卡墙，有碎岩击穿 ---
+	await _spawn()
+	scene._load_level(3)
+	await physics_frame
+	scene.dna = {"highjump": true}
+	scene.jump_held = false
+	var t6 := Time.get_ticks_msec()
+	var stuck_px := 0.0
+	var jump_cd6 := 0
+	while scene.elapsed < 20.0 and Time.get_ticks_msec() - t6 < 30000:
+		await physics_frame
+		jump_cd6 = maxi(0, jump_cd6 - 1)
+		if not scene.keys.get(RIGHT, false):
+			var ev := InputEventKey.new()
+			ev.keycode = RIGHT
+			ev.pressed = true
+			Input.parse_input_event(ev)
+		if jump_cd6 == 0 and scene.on_floor:
+			await _tap(JUMP)
+			jump_cd6 = 10
+		stuck_px = scene.px
+	var stuck_ok: bool = stuck_px < 640.0   # 高跳顶277 越不过顶250 的裂纹墙
+	scene.dna["break"] = true
+	t6 = Time.get_ticks_msec()
+	var broke_px := 0.0
+	while Time.get_ticks_msec() - t6 < 8000:
+		await physics_frame
+		broke_px = scene.px
+		if broke_px > 700.0:
+			break
+	var break_ok: bool = broke_px > 700.0
+	print("用例6: 无碎岩卡在 %.0f（<640 ✓/✗）有碎岩推进到 %.0f（>700 ✓/✗）→ %s" % [stuck_px, broke_px, "PASS（裂纹墙=碎岩双向对照）" if (stuck_ok and break_ok) else "FAIL"])
 
 	Engine.time_scale = 1.0
 	quit()

@@ -9,7 +9,7 @@ const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 ## v7 美术：ChatGPT 生图（#00ff00 绿幕）→ ffmpeg 抠绿透明 PNG（reviews/art/ 溯源）
 const TEX_PLAYER: Texture2D = preload("res://assets/dna/soup_player.png")
-const TEX_ALIEN := {"highjump": preload("res://assets/dna/alien_bouncy.png"), "double": preload("res://assets/dna/alien_wing.png"), "glow": preload("res://assets/dna/alien_glow.png")}
+const TEX_ALIEN := {"highjump": preload("res://assets/dna/alien_bouncy.png"), "double": preload("res://assets/dna/alien_wing.png"), "glow": preload("res://assets/dna/alien_glow.png"), "break": preload("res://assets/dna/alien_dino.png")}
 const GROUND_Y := 470.0
 const GRAV := 1500.0
 const WALK := 260.0
@@ -93,6 +93,62 @@ const LEVELS := [
 		dark = Vector2(700.0, 1800.0),
 		goal_x = 2150.0,
 		shards = [Vector2(425, 150), Vector2(1025, 280), Vector2(1875, 180), Vector2(1000, 130)],
+	},
+	{
+		name = "碎岩回廊",
+		blocks = [
+			[0, 470, 600, 70],
+			[600, 250, 50, 290, 1],    # 裂纹岩墙1：顶250 高跳(277)不可越——碎岩击穿 或 组合跳越（双解法）
+			[650, 470, 550, 70],
+			[1200, 250, 50, 290, 1],   # 裂纹岩墙2
+			[1250, 470, 550, 70],
+			[2050, 470, 450, 70],      # 亮场坑 1800→2050（250px 需高跳/二段）
+			[2500, 180, 50, 340],      # 组合高墙：顶180，需高跳+二段跳
+			[2550, 470, 450, 70],
+			[3000, 470, 300, 70],
+		],
+		aliens = [
+			{id = "highjump", name = "蹦蹦兽", col = Color("ab47bc"), x = 200.0,
+				dna = "弹簧腿 DNA", tip = "普通跳变高跳"},
+			{id = "break", name = "恐龙兽", col = Color("e05a3a"), x = 400.0,
+				dna = "碎岩 DNA", tip = "撞击裂纹岩墙可将其击碎"},
+			{id = "double", name = "双翼虫", col = Color("4fc3f7"), x = 800.0,
+				dna = "振翅 DNA", tip = "空中可再跳一次"},
+			{id = "glow", name = "灯灯菌", col = Color("ffd54f"), x = 1400.0,
+				dna = "荧光 DNA", tip = "身体发光，照亮黑暗"},
+		],
+		pits = [Rect2(1800, 540, 250, 200)],
+		dark = Vector2(-1, -1),
+		goal_x = 3000.0,
+		shards = [Vector2(625, 200), Vector2(1925, 400), Vector2(2525, 130)],
+	},
+	{
+		name = "终焉长廊",
+		blocks = [
+			[0, 470, 700, 70],
+			[700, 250, 50, 290, 1],    # 黑暗中的裂纹岩墙：碎岩 DNA 是唯一正解（双翼虫在墙后）
+			[750, 470, 500, 70],
+			[1500, 470, 450, 70],      # 黑暗沟1 1250→1500
+			[1950, 180, 50, 340],      # 组合高墙1：顶180
+			[2000, 470, 450, 70],
+			[2700, 470, 300, 70],      # 黑暗沟2 2450→2700
+			[2750, 230, 50, 240],      # 组合高墙2：顶230
+			[3000, 470, 400, 70],
+		],
+		aliens = [
+			{id = "glow", name = "灯灯菌", col = Color("ffd54f"), x = 200.0,
+				dna = "荧光 DNA", tip = "身体发光，照亮黑暗"},
+			{id = "highjump", name = "蹦蹦兽", col = Color("ab47bc"), x = 400.0,
+				dna = "弹簧腿 DNA", tip = "普通跳变高跳"},
+			{id = "break", name = "恐龙兽", col = Color("e05a3a"), x = 600.0,
+				dna = "碎岩 DNA", tip = "撞击裂纹岩墙可将其击碎"},
+			{id = "double", name = "双翼虫", col = Color("4fc3f7"), x = 1000.0,
+				dna = "振翅 DNA", tip = "空中可再跳一次"},
+		],
+		pits = [Rect2(1250, 540, 250, 200), Rect2(2450, 540, 250, 200)],
+		dark = Vector2(500.0, 2500.0),
+		goal_x = 3100.0,
+		shards = [Vector2(725, 200), Vector2(1375, 300), Vector2(1975, 130)],
 	},
 ]
 
@@ -206,7 +262,7 @@ func _ready() -> void:
 func _load_level(i: int) -> void:
 	level_idx = i
 	var L: Dictionary = LEVELS[i]
-	blocks = L.blocks
+	blocks = L.blocks.map(func(b): return b.duplicate())   # 深拷贝：碎墙状态不污染关卡常量
 	aliens = L.aliens
 	pits = L.pits
 	dark = L.dark
@@ -515,11 +571,16 @@ func _physics_process(delta: float) -> void:
 	# 地形碰撞（AABB 简化：先垂直后水平，逐块解析）
 	var r := Rect2(px - 14, py - 30, 28, 30)
 	on_floor = false
-	for b in blocks:
+	var to_break := []
+	for bi in blocks.size():
+		var b = blocks[bi]
 		var br := Rect2(b[0], b[1], b[2], b[3])
 		if br.intersects(r):
+			if b.size() > 4 and b[4] == 1 and dna.has("break"):
+				to_break.append(bi)   # 碎岩 DNA：接触即碎，不解析碰撞
+				continue
 			var prev_y := py - vy * delta
-			if vy >= 0.0 and prev_y - 30 <= br.position.y + 8:
+			if vy >= 0.0 and prev_y <= br.position.y + 8:   # 脚底判定：防止高跳顶点身体过墙角被吸附上墙（v8 修复）
 				py = br.position.y
 				vy = 0.0
 				on_floor = true
@@ -533,6 +594,14 @@ func _physics_process(delta: float) -> void:
 					px = br.position.x - 14
 				else:
 					px = br.position.x + br.size.x + 14
+	# 击碎的裂纹墙移除（本关内保持碎裂）
+	if not to_break.is_empty():
+		to_break.reverse()
+		for bi in to_break:
+			blocks.remove_at(bi)
+		toast = "💥 碎岩 DNA 击碎了裂纹岩墙！"
+		toast_age = 0.0
+
 	# 掉坑 → 回到最近的地面边缘
 	if py > VIEW.y + 120:
 		var edge := 120.0
@@ -615,8 +684,14 @@ func _draw() -> void:
 		var br := Rect2(b[0] + off, b[1], b[2], b[3])
 		if br.position.x > VIEW.x + 50 or br.end.x < -50:
 			continue
-		draw_rect(br, Color("3d3552"))
-		draw_rect(br, Color("241f36"), false, 2)
+		if b.size() > 4 and b[4] == 1:
+			draw_rect(br, Color("6a5644"))
+			draw_line(Vector2(br.position.x + 10, br.position.y + 4), Vector2(br.end.x - 14, br.end.y - 8), Color("2c241c"), 2)
+			draw_line(Vector2(br.end.x - 12, br.position.y + 6), Vector2(br.position.x + 16, br.end.y - 4), Color("2c241c"), 2)
+			draw_line(Vector2(br.position.x + 20, br.position.y + 2), Vector2(br.position.x + 8, br.end.y - 2), Color("2c241c"), 2)
+		else:
+			draw_rect(br, Color("3d3552"))
+			draw_rect(br, Color("241f36"), false, 2)
 	# 坑（黑暗中的裂谷）
 	for p in pits:
 		var pr := Rect2(p.position.x + off, 470, p.size.x, 200)
