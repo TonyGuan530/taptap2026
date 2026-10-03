@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-02-v6",
+    "date":  "2026-10-04T03:19:32+08:00",
+    "author":  "49321",
+    "notes":  "v6: L5 high-shelf bounce room (5 levels total) - spring+feather glide / ball bounce-chain on canopy (emergent zero-input route) / spawn-drift terrace route; all verified headless"
+}
