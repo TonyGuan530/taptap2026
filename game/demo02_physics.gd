@@ -13,15 +13,17 @@ const FRAGILE_SPEED := 450.0   # 脆墙被砸碎所需的最低撞击速度（�
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 
 ## 词条定义（flap=空中扑翼升力(0=不能扑，每次滞空限一次) / air_a=横移加速度 / air_vmax=横移限速）
+## v5（落实 ChatGPT v4 KEEP 后指令）：轻量 telemetry（词条切换时机/失败重置/脆墙撞击/最终路线，
+##   通关时并入结算行）+ 物性即时反馈层（切换闪现「轻/重/弹」、撞板反馈速度差多少）——纯 UI/FX，不加新系统。
 const TAGS := [
 	{id = "feather", name = "羽毛", col = Color("e8e4d8"), g = 0.18, damp = 1.2, bounce = 0.2,
-		flap = -200.0, air_a = 420.0, air_vmax = 300.0,
+		flap = -200.0, air_a = 420.0, air_vmax = 300.0, kw = "轻",
 		tip = "轻飘飘，慢飘+一次轻扑翼修正"},
 	{id = "stone", name = "石头", col = Color("8d8d94"), g = 2.4, damp = 0.0, bounce = 0.08,
-		flap = 0.0, air_a = 90.0, air_vmax = 160.0,
+		flap = 0.0, air_a = 90.0, air_vmax = 160.0, kw = "重",
 		tip = "又重又快，砸什么都碎，几乎横移不动"},
 	{id = "ball", name = "皮球", col = Color("ef5350"), g = 1.0, damp = 0.0, bounce = 0.86,
-		flap = 0.0, air_a = 240.0, air_vmax = 380.0,
+		flap = 0.0, air_a = 240.0, air_vmax = 380.0, kw = "弹",
 		tip = "弹！横移灵活，借弹簧跳最高"},
 ]
 
@@ -112,6 +114,14 @@ var goal_reached := false
 var elapsed := 0.0
 var flap_used := false         # 羽毛扑翼：每次滞空限一次（落地重置）
 var ground_ray: RayCast2D      # 球脚下的接地检测
+# v5 telemetry：本局（自最近一次重置起）的行为轨迹
+var tel_switches: Array[String] = []   # ["羽毛@0.8s", ...]
+var tel_resets := 0                    # 失败自动重置次数（手动重置不计）
+var tel_hits: Array[String] = []       # ["脆墙@2.1s 撞612/450", ...]
+var tel_spring := false                # 本局是否借弹簧
+var route_line := ""                   # 通关后定格的路线结算行
+var flash_label: Label                 # 切换词条的即时报（轻/重/弹）
+var flash_t := 0.0
 
 
 func _ready() -> void:
@@ -158,6 +168,15 @@ func _ready() -> void:
 	msg_label.add_theme_font_size_override("font_size", 15)
 	ui.add_child(msg_label)
 
+	# v5：切换词条的即时报（轻/重/弹），短暂显示后淡出
+	flash_label = Label.new()
+	flash_label.position = Vector2(VIEW.x / 2.0 - 80, 96)
+	flash_label.size = Vector2(160, 40)
+	flash_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	flash_label.add_theme_font_size_override("font_size", 26)
+	flash_label.modulate.a = 0.0
+	ui.add_child(flash_label)
+
 	level_label = Label.new()
 	level_label.position = Vector2(16, 42)
 	level_label.add_theme_font_size_override("font_size", 15)
@@ -170,9 +189,17 @@ func _ready() -> void:
 # ---------------- 词条 ----------------
 
 func _on_tag(i: int) -> void:
+	var switched := i != tag_idx
 	tag_idx = i
 	_apply_tag()
 	_refresh_tag_buttons()
+	if switched:
+		# v5 telemetry + 即时反馈：换词条才记录并闪现（点当前词条不刷屏）
+		tel_switches.append("%s@%.1fs" % [TAGS[i].name, elapsed])
+		flash_label.text = "%s · %s" % [TAGS[i].name, TAGS[i].kw]
+		flash_label.add_theme_color_override("font_color", TAGS[i].col)
+		flash_label.modulate.a = 1.0
+		flash_t = 0.9
 	hint = "词条 → %s：%s（切换是实时的，球正在飞也能换）" % [TAGS[i].name, TAGS[i].tip]
 
 
@@ -206,6 +233,11 @@ func _load_level(idx: int) -> void:
 	stuck_time = 0.0
 	elapsed = 0.0
 	flap_used = false
+	tel_switches = []
+	tel_hits = []
+	tel_resets = 0
+	tel_spring = false
+	route_line = ""
 	for c in get_children():
 		if c is RigidBody2D or c is StaticBody2D or c is Area2D:
 			c.queue_free()
@@ -270,14 +302,21 @@ func _on_ball_hit(other: Node) -> void:
 	var lv: Dictionary = LEVELS[level_idx]
 	if lv.fragile.size.x > 0 and other.name == "FragileWall" and ball != null:
 		# 纯物理判定：撞击速度够快就碎（石头自然砸得碎；皮球/羽毛物理上做不到）
+		var spd := int(prev_speed)
+		tel_hits.append("脆墙@%.1fs 撞%d/%d" % [elapsed, spd, FRAGILE_SPEED])
 		if prev_speed >= FRAGILE_SPEED:
 			other.queue_free()
-			hint = "轰！高速撞击——脆墙碎了！"
+			hint = "轰！撞击 %d ≥ %d——脆墙碎了！" % [spd, FRAGILE_SPEED]
 		else:
-			hint = "这次撞得太轻，脆墙纹丝不动……"
+			hint = "撞了 %d，还差 %d——脆墙纹丝不动……" % [spd, FRAGILE_SPEED - spd]
 
 
-func _reset_ball(keep_time := false) -> void:
+func _reset_ball(keep_time := false, count_fail := false) -> void:
+	if count_fail:
+		tel_resets += 1
+	tel_switches = []
+	tel_hits = []
+	tel_spring = false
 	if ball != null:
 		ball.queue_free()
 	var lv: Dictionary = LEVELS[level_idx]
@@ -354,10 +393,15 @@ func _physics_process(delta: float) -> void:
 	if lv.spring.size.x > 0 and spring_ready and (Rect2(lv.spring) as Rect2).has_point(ball.position):
 		ball.linear_velocity = lv.spring_impulse
 		spring_ready = false
+		tel_spring = true
 
 	# 目标区
 	if (Rect2(lv.goal) as Rect2).has_point(ball.position):
 		goal_reached = true
+		# v5 telemetry：路线结算行（切换时机/弹簧/失败重置），供真人试玩记录用
+		var sw := "无切换" if tel_switches.is_empty() else "→".join(tel_switches)
+		route_line = "路线: %s%s｜重置%d" % [sw, "｜借弹簧" if tel_spring else "", tel_resets]
+		print("TEL|L%d|%s|%.1fs|%s" % [level_idx + 1, sw, elapsed, route_line])
 		if level_idx + 1 < LEVELS.size():
 			msg_label.text = "✔ 通关！用时 %d 秒 —— 点右上「下一关」继续挑战。" % int(elapsed)
 		else:
@@ -373,12 +417,16 @@ func _physics_process(delta: float) -> void:
 	if stuck_time > 2.0 or ball.position.y > VIEW.y + 80 or ball.position.y < -300:
 		msg_label.text = "❌ %s 干不成这件事……换个词条试试（已自动重置）" % TAGS[tag_idx].name
 		stuck_time = -2.0
-		_reset_ball(true)
+		_reset_ball(true, true)
 
 
 # ---------------- 绘制 ----------------
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	# v5：切换即报淡出
+	if flash_t > 0.0:
+		flash_t = maxf(0.0, flash_t - delta)
+		flash_label.modulate.a = clampf(flash_t / 0.9, 0.0, 1.0)
 	queue_redraw()
 
 
