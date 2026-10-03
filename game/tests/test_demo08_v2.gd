@@ -91,11 +91,12 @@ func _run() -> void:
 	var dive_apex: float = s.apex_m
 	_check(not dive_hit, "3.2 俯冲机（低平）穿不过高空门（apex %.1f m < 12 m）" % dive_apex)
 	_check(floaty_apex > dive_apex * 1.4, "3.4 两种性格 L2 高度形态差 ≥40%%（%.1f vs %.1f m）" % [floaty_apex, dive_apex])
-	# 收益核算：两掷仅差一个门奖励（+3）与距离币差
+	# 收益核算（v3 起两门并存：抬头吃高空门、俯冲吃低空门，各 +3）
 	var earn_f: int = floaty_coins - c0
 	var earn_d: int = dive_coins - floaty_coins
-	var expect_diff: int = 3 + int(floaty_dist / 10.0) - int(dive_dist / 10.0)
-	_check(earn_f - earn_d == expect_diff, "3.3 门奖励结算恰 +3（收益 %d vs %d，期望差 %d）" % [earn_f, earn_d, expect_diff])
+	var exp_f: int = int(floaty_dist / 10.0) + 6 + 3
+	var exp_d: int = int(dive_dist / 10.0) + 6 + 3
+	_check(earn_f == exp_f and earn_d == exp_d, "3.3 两掷收益各=距离币+过关6+门3（%d/%d 期望 %d/%d）" % [earn_f, earn_d, exp_f, exp_d])
 
 	# 用例4 档位仪表
 	_check(s._tier3(0.3, 0.5, 1.0) == "低" and s._tier3(0.7, 0.5, 1.0) == "中" and s._tier3(1.2, 0.5, 1.0) == "高", "4.1 升力/阻力三档阈值正确")

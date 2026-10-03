@@ -37,8 +37,8 @@ const LEVELS := [
 	{name = "第 1 关 · 后山操场", short = "后山操场", ratio = 1.4, folds = 3, target_m = 30.0, wind = "none", reward = 0,
 		tip = "纸最宽好折大翼，终点 30 米，无风。折线画在纸的右侧偏上，30 度满力扔"},
 	{name = "第 2 关 · 教学楼顶", short = "教学楼顶", ratio = 1.0, folds = 4, target_m = 45.0, wind = "head", reward = 6,
-		gate_x = 34.0, gate_h = 12.0, gate_bonus = 3,
-		tip = "纸变方正可折 4 次，逆风阻力 1.25 倍，终点 45 米；终点前 34 米有高空门（12 米高），飘得高的折法穿过+3 金币"},
+		gate_x = 34.0, gate_h = 12.0, gate_bonus = 3, low_gate_x = 40.0, low_gate_top = 10.0,
+		tip = "逆风阻力 1.25 倍，终点 45 米；34 米高空门（12m 以上）+3、40 米低空门（10m 以下）+3——抬头吃高门、俯冲吃低门、求稳直通"},
 	{name = "第 3 关 · 河堤风口", short = "河堤风口", ratio = 0.8, folds = 5, target_m = 65.0, wind = "tail", reward = 10,
 		tip = "纸最窄可折 5 次，顺风给恒定推力，终点 65 米，过了就是全通关"},
 ]
@@ -76,6 +76,8 @@ var flight_time := 0.0
 var flight_distance := 0.0     # 米（每 0.2s 采样 + 结算时刷新，取最大）
 var apex_m := 0.0              # v2：本掷最高高度（米），轨迹性格验收用
 var gate_hit := false          # v2：高空门是否已穿越
+var low_gate_hit := false      # v3：低空门是否已穿越
+var angle_forgive := 0.0       # v3：稳定型投掷角容差（稳定区且接近 40° 时减阻力）
 var sample_acc := 0.0
 var bounced := false
 var last_pass := false
@@ -417,6 +419,13 @@ func do_throw(angle_deg: float, power: float) -> void:
 	flight_distance = 0.0
 	apex_m = 0.0
 	gate_hit = false
+	low_gate_hit = false
+	# v3 稳定型容错：配平在稳定区且投掷角接近 40° 最优时，阻力降低（角误差 ±5° 内满额）
+	var ang_err: float = absf(throw_angle - 40.0)
+	var t_st: float = float(plane_params.trim)
+	angle_forgive = 0.0
+	if t_st >= -0.15 and t_st <= 0.35:
+		angle_forgive = 0.2 * clampf(1.0 - ang_err / 5.0, 0.0, 1.0)
 	sample_acc = 0.0
 	bounced = false
 	last_pass = false
@@ -691,6 +700,7 @@ func _fly_step(delta: float) -> void:
 	var drag_coef := DRAG_K * (BASE_DRAG + drag_f_v)
 	if _wind_mode() == "head":
 		drag_coef *= HEAD_DRAG_MULT
+	drag_coef *= (1.0 - angle_forgive)  # v3 稳定型容错：贴近最优角的稳定机阻力更小
 	var drag_vec := Vector2.ZERO
 	if spd > 0.01:
 		drag_vec = -velocity / spd * (drag_coef * spd * spd)
@@ -726,6 +736,16 @@ func _fly_step(delta: float) -> void:
 				var gb: int = int(LEVELS[level_idx].gate_bonus)
 				coins += gb
 				coins_earned += gb
+	# v3 低空快速门：在门的位置处于开通高度以下穿过 → 额外金币（一次性，奖励俯冲型）
+	var lg_x_m: float = float(LEVELS[level_idx].get("low_gate_x", 0.0))
+	if lg_x_m > 0.0 and not low_gate_hit:
+		var lg_px := START_X + lg_x_m * PX_PER_M
+		if prev_x < lg_px and plane_pos.x >= lg_px:
+			if plane_pos.y >= GROUND_Y - float(LEVELS[level_idx].low_gate_top) * PX_PER_M:
+				low_gate_hit = true
+				var lgb: int = int(LEVELS[level_idx].gate_bonus)
+				coins += lgb
+				coins_earned += lgb
 	var finish_px := START_X + float(LEVELS[level_idx].target_m) * PX_PER_M
 	if plane_pos.x >= finish_px:
 		_settle()
@@ -827,6 +847,17 @@ func _draw_ticks_and_flag() -> void:
 			draw_arc(Vector2(gx, gy), 34.0, -PI / 2, PI / 2, 20, gcol, 5.0)
 			draw_line(Vector2(gx, GROUND_Y), Vector2(gx, gy), Color("8d6e63"), 3.0)
 			draw_string(FONT, Vector2(gx - 40.0, gy - 46.0), "高空门 +%d" % int(LEVELS[level_idx].gate_bonus), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("f57f17"))
+	# v3 低空快速门（低空横杆，从杆下低空穿过=额外金币，奖励俯冲型）
+	var lg_x_m: float = float(LEVELS[level_idx].get("low_gate_x", 0.0))
+	if lg_x_m > 0.0:
+		var lx := START_X + lg_x_m * PX_PER_M - scroll_x
+		var ly := GROUND_Y - float(LEVELS[level_idx].low_gate_top) * PX_PER_M
+		if lx > -80.0 and lx < VIEW.x + 80.0:
+			var lcol := Color("4fc3f7") if not low_gate_hit else Color("b0bec5")
+			draw_line(Vector2(lx - 30.0, ly), Vector2(lx + 30.0, ly), lcol, 5.0)
+			draw_line(Vector2(lx - 30.0, ly), Vector2(lx - 30.0, GROUND_Y), Color("8d6e63"), 3.0)
+			draw_line(Vector2(lx + 30.0, ly), Vector2(lx + 30.0, GROUND_Y), Color("8d6e63"), 3.0)
+			draw_string(FONT, Vector2(lx - 40.0, ly - 12.0), "低空门 +%d" % int(LEVELS[level_idx].gate_bonus), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("0277bd"))
 
 
 func _draw_thrower() -> void:
