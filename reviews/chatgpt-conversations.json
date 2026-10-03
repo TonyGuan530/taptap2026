@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-02",
+  "updatedAt": "2026-10-03",
   "note": "每个 demo 对应一个专属 ChatGPT 对话（保持连贯，后续版本在同一对话汇报）。流水线评审时优先复用这些对话。",
   "conversations": {
     "demo-01": {
@@ -22,6 +22,11 @@
     "demo-05": {
       "url": "https://chatgpt.com/c/6abf4a9c-3e7c-83ec-a5f5-6a87251014dd",
       "review": "reviews/chatgpt-demo-05-full.md",
+      "verdict": "ITERATE"
+    },
+    "demo-06": {
+      "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
+      "review": "reviews/chatgpt-demo-06-full.md",
       "verdict": "ITERATE"
     }
   }
