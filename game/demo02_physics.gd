@@ -1,28 +1,29 @@
 extends Node2D
 ## 物性变换谜题：给小球换"词条"，物理行为随之改变，借此解谜。
 ## 羽毛=超轻慢飘 / 石头=重物高速坠落 / 皮球=高弹性。对应 Miro 玩法块 demo-02。
-## v3：新增跳跃输入系统（空格跳 / 羽毛空中扑翼 / ←→ 空中横移，力度按词条区分），
-##   并加第三关「组合测试房」：弹簧起飞 → 空中切羽毛横漂 → 切石头砸穿舱门，一条链用满三词条。
+## v4（落实 ChatGPT KEEP 后指令）：删除通用跳跃（高度一律来自环境：弹簧/坠落/反弹）；
+##   羽毛扑翼削为每次滞空一次的轻量升力修正（不可悬停）；保留 ←→ 横移；
+##   公开 build（非 debug）隐藏「参考解法」；新增第四关「开放解法房」（只查 GOAL 不查路线）。
 ## 纯代码实现、无外部资源；真·物理引擎（RigidBody2D）驱动，词条切换实时生效。
 
 const VIEW := Vector2(960, 540)
 const BALL_R := 16.0
 const FRAGILE_SPEED := 450.0   # 脆墙被砸碎所需的最低撞击速度（纯物理判定，与词条无关）
-const FLAP_CD := 0.5           # 羽毛空中扑翼冷却（秒）
+const FLAP_CD := 0.5           # 羽毛扑翼冷却（秒；每次滞空仍只限一次）
 
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 
-## 词条定义（jump=起跳速度 / flap=空中扑翼速度(0=不能扑) / air_a=横移加速度 / air_vmax=横移限速）
+## 词条定义（flap=空中扑翼升力(0=不能扑，每次滞空限一次) / air_a=横移加速度 / air_vmax=横移限速）
 const TAGS := [
 	{id = "feather", name = "羽毛", col = Color("e8e4d8"), g = 0.18, damp = 1.2, bounce = 0.2,
-		jump = 300.0, flap = -280.0, air_a = 420.0, air_vmax = 300.0,
-		tip = "轻飘飘，慢飘+空中可扑翼横移"},
+		flap = -200.0, air_a = 420.0, air_vmax = 300.0,
+		tip = "轻飘飘，慢飘+一次轻扑翼修正"},
 	{id = "stone", name = "石头", col = Color("8d8d94"), g = 2.4, damp = 0.0, bounce = 0.08,
-		jump = 240.0, flap = 0.0, air_a = 90.0, air_vmax = 160.0,
+		flap = 0.0, air_a = 90.0, air_vmax = 160.0,
 		tip = "又重又快，砸什么都碎，几乎横移不动"},
 	{id = "ball", name = "皮球", col = Color("ef5350"), g = 1.0, damp = 0.0, bounce = 0.86,
-		jump = 520.0, flap = 0.0, air_a = 240.0, air_vmax = 380.0,
-		tip = "弹！跳得最高，横移灵活"},
+		flap = 0.0, air_a = 240.0, air_vmax = 380.0,
+		tip = "弹！横移灵活，借弹簧跳最高"},
 ]
 
 ## 关卡：walls 静态块 / spring 弹簧区 / fragile 脆墙 / goal 目标区 / spawn 出生点
