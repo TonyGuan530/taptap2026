@@ -63,6 +63,10 @@ const LEVELS := [
 		a1 = 28.0, w1 = 380.0, a2 = 11.0, w2 = 160.0, a3 = 20.0, w3 = 900.0,
 		min_wheels = 2, rear_min = 2, max_r = 20.0, ground = "a1887f", ground_dark = "6d4c41",
 		tip = "山地陡坡：两个后轮 + 轮胎半径上限 20。四个中小轮铺满底盘最稳，过了就是全通关"},
+	{name = "第 4 关 · 诊断测试场", short = "诊断测试场", target_m = 450.0,
+		a1 = 17.0, w1 = 170.0, a2 = 9.0, w2 = 48.0, a3 = 3.0, w3 = 900.0,
+		min_wheels = 2, rear_min = 0, max_r = 0.0, budget = 4300.0, ground = "c9b458", ground_dark = "8a7742",
+		tip = "v2 诊断关（450 米短场）：陡坡沟 + 密集小颠簸 + 高速段叠加。轮胎总面积预算 4300（Σπr²）——大轮与多轮不可兼得。试试长轴距大轮/短轴距小轮/三轮偏置谁快谁稳"},
 ]
 
 var state := "menu"          # menu / build / drive / settle / final
@@ -84,6 +88,19 @@ var last_pass := false
 var settle_reason := ""      # finish / flip
 var roof_time := 0.0         # 车顶触地累计秒数
 var auto_throttle := 0.0     # 测试注入：>0 时按满油门，随时间递减
+# v2 遥测（监督者六指标）：最大俯仰/滞空/托底次数/接地率 + Ghost 记忆
+var max_pitch := 0.0         # 本掷最大 |姿态角|（弧度）
+var airtime_s := 0.0         # 全轮离地累计秒数
+var bottom_out := 0          # 悬挂压缩到顶的次数（托底）
+var grounded_frames := 0     # 接地帧数
+var drive_frames := 0        # 总物理帧数
+var launch_layout := []      # 发车时轮胎布局快照 [{xr,r}]
+var last_layout_by_level := {}   # level_idx -> 上一次发车布局（车库自动预填=复制上一版）
+var last_time_by_level := {}     # level_idx -> 上一次完赛/结算用时
+var ghost_pts := []          # 上一次完赛轨迹（世界坐标采样），驾驶时半透明回放
+var cur_ghost_pts := []      # 当前掷轨迹采样
+var was_bottom := false      # 托底事件边沿检测
+var ghost_n := 0             # 轨迹采样计数
 var scroll_x := 0.0
 var pulse := 0.0
 var ph1 := 0.0
@@ -221,8 +238,8 @@ func _build_ui() -> void:
 		var lb := Button.new()
 		lb.name = "LevelBtn%d" % i
 		lb.text = "第%d关 · %s" % [i + 1, String(LEVELS[i].short)]
-		lb.position = Vector2(24 + i * 208, 58)
-		lb.size = Vector2(196, 46)
+		lb.position = Vector2(24 + i * 155, 58)
+		lb.size = Vector2(147, 46)
 		lb.pressed.connect(start_level.bind(i))
 		lb.mouse_entered.connect(_on_menu_hover.bind(i))
 		menu_panel.add_child(lb)
@@ -360,7 +377,7 @@ func _reset_run() -> void:
 	_go_menu()
 
 
-func start_level(i: int) -> void:
+func start_level(i: int, restore: bool = false) -> void:
 	if i < 0 or i >= LEVELS.size():
 		return
 	level_idx = i
@@ -370,6 +387,11 @@ func start_level(i: int) -> void:
 	ph2 = rng.randf() * TAU
 	ph3 = rng.randf() * TAU
 	wheels = []
+	# v2 复制上一版：结算后续玩（重试/下一关）时车库自动预填上次布局（玩家可微调或清空）
+	if restore and last_layout_by_level.has(i):
+		var saved: Array = last_layout_by_level[i]
+		for w in saved:
+			wheels.append({xr = float(w.xr), r = float(w.r), pc = 0.0, spin = 0.0, wx = 0.0, wy = 0.0})
 	sel_idx = -1
 	last_radius = 18.0
 	car_pos = Vector2(START_X, BASE_GROUND_Y - 40.0)
@@ -378,6 +400,12 @@ func start_level(i: int) -> void:
 	vel = Vector2.ZERO
 	flight_time = 0.0
 	max_speed = 0.0
+	max_pitch = 0.0
+	airtime_s = 0.0
+	bottom_out = 0
+	grounded_frames = 0
+	drive_frames = 0
+	ghost_pts = []
 	last_pass = false
 	settle_reason = ""
 	roof_time = 0.0
@@ -412,6 +440,15 @@ func add_wheel(x_ratio: float, radius: float) -> bool:
 	var cap: float = float(LEVELS[level_idx].max_r)
 	if cap > 0.0 and r > cap:
 		return false
+	# v3 轮胎总预算：Σπr² ≤ budget（大轮与多轮不可兼得，制造取舍）
+	var budget: float = float(LEVELS[level_idx].get("budget", 0.0))
+	if budget > 0.0:
+		var area_sum := 0.0
+		for w in wheels:
+			var wr: float = float(w.r)
+			area_sum += PI * wr * wr
+		if area_sum + PI * r * r > budget:
+			return false
 	var xr := clampf(x_ratio, 0.03, 0.97)
 	wheels.append({xr = xr, r = r, pc = 0.0, spin = 0.0, wx = 0.0, wy = 0.0})
 	sel_idx = wheels.size() - 1
@@ -494,6 +531,10 @@ func do_launch() -> bool:
 		w.pc = comp0
 		w.spin = 0.0
 	r0 = float(wheels[0].r)
+	# v2：快照本次布局（结算后写回 last_layout_by_level，下次进库自动预填）
+	launch_layout = []
+	for w in wheels:
+		launch_layout.append({xr = float(w.xr), r = float(w.r)})
 	var gy := ground_y(START_X)
 	car_pos = Vector2(START_X, gy - beam_y - SUSP_LEN - r0 + comp0)
 	car_angle = 0.0
@@ -501,6 +542,12 @@ func do_launch() -> bool:
 	vel = Vector2.ZERO
 	flight_time = 0.0
 	max_speed = 0.0
+	max_pitch = 0.0
+	airtime_s = 0.0
+	bottom_out = 0
+	grounded_frames = 0
+	drive_frames = 0
+	ghost_pts = []
 	last_pass = false
 	settle_reason = ""
 	roof_time = 0.0
@@ -519,7 +566,7 @@ func throttle_on(t: float) -> void:
 	auto_throttle = maxf(auto_throttle, maxf(0.0, t))
 
 
-## 结算后继续：过关 → 下一关（最后一关 → 全通关）；翻车 → 就地重试
+## 结算后继续：过关 → 下一关（最后一关 → 全通关）；翻车 → 就地重试（restore=true 预填上一版布局）
 func settle_continue() -> void:
 	if state != "settle":
 		return
@@ -527,33 +574,35 @@ func settle_continue() -> void:
 		if level_idx >= LEVELS.size() - 1:
 			_show_final()
 		else:
-			start_level(level_idx + 1)
+			start_level(level_idx + 1, true)
 	else:
-		start_level(level_idx)
+		start_level(level_idx, true)
 
 
 func _show_settle_panel() -> void:
 	var L: Dictionary = LEVELS[level_idx]
 	var is_last: bool = level_idx >= LEVELS.size() - 1
 	var v2_note: String = "注：对手车与车辆碰撞玩法安排在 v2 版本。"
+	var metrics: String = "\n遥测：最大俯仰 %.2f rad · 滞空 %.1f 秒 · 托底 %d 次 · 接地率 %d%%" % [
+		max_pitch, airtime_s, bottom_out, int(100.0 * float(grounded_frames) / maxf(1.0, float(drive_frames)))]
 	if last_pass:
 		settle_title.text = "过关！"
 		settle_btn.text = "查看总成绩" if is_last else "下一关"
-		settle_body.text = "%s\n用时 %.1f 秒 · 最高速度 %.0f 米/秒 · 终点 %.0f 米\n%s" % [
-			String(L.name), flight_time, max_speed, float(L.target_m), v2_note]
+		settle_body.text = "%s\n用时 %.1f 秒 · 最高速度 %.0f 米/秒 · 终点 %.0f 米%s\n%s" % [
+			String(L.name), flight_time, max_speed, float(L.target_m), metrics, v2_note]
 	else:
 		settle_title.text = "翻车了！"
 		settle_btn.text = "就地重试"
 		var dist_m: float = (car_pos.x - START_X) / PX_PER_M
-		settle_body.text = "%s\n车顶触地超过 %.1f 秒，坚持了 %.1f 秒、跑了 %.0f 米。\n轮胎布局影响重心：后重易翘头、前重易栽头，调整布局再来。\n%s" % [
-			String(L.name), ROOF_LIMIT, flight_time, dist_m, v2_note]
+		settle_body.text = "%s\n车顶触地超过 %.1f 秒，坚持了 %.1f 秒、跑了 %.0f 米%s。\n轮胎布局影响重心：后重易翘头、前重易栽头，调整布局再来（已自动载入上一版布局）。\n%s" % [
+			String(L.name), ROOF_LIMIT, flight_time, dist_m, metrics, v2_note]
 	settle_panel.visible = true
 
 
 func _show_final() -> void:
 	state = "final"
 	settle_panel.visible = false
-	final_body.text = "三关全部跑到终点旗！\n总用时 %.1f 秒 · 最后一关最高速度 %.0f 米/秒\n你的轮胎布局学毕业了——对手车与碰撞玩法 v2 见。\n感谢试玩！" % [
+	final_body.text = "四关全部跑到终点旗！\n总用时 %.1f 秒 · 最后一关最高速度 %.0f 米/秒\n你的轮胎布局学毕业了——诊断关数据会告诉你哪种车型适合哪种路。\n感谢试玩！" % [
 		total_time, max_speed]
 	final_panel.visible = true
 	_update_status()
@@ -710,6 +759,25 @@ func _drive_step(dt: float) -> void:
 	if grounded > 0 and absf(vel.x) > 4.0:
 		acc.x -= signf(vel.x) * ROLL_FRIC
 
+	# v2 遥测六指标采集：max_pitch / airtime / bottom_out / 接地率（finish_time 与 rollover 在结算处）
+	drive_frames += 1
+	max_pitch = maxf(max_pitch, absf(car_angle))
+	if grounded > 0:
+		grounded_frames += 1
+	else:
+		airtime_s += dt
+	var bo_now := false
+	for w in wheels:
+		if float(w.pc) >= MAX_COMP - 0.5:
+			bo_now = true
+			break
+	if bo_now and not was_bottom:
+		bottom_out += 1
+	was_bottom = bo_now
+	ghost_n += 1
+	if ghost_n % 6 == 0:
+		cur_ghost_pts.append(car_pos)
+
 	# 手写积分（无物理引擎）：线速度 + 角速度
 	vel += acc * dt
 	if vel.length() > SPEED_MAX:
@@ -768,6 +836,10 @@ func _settle(reason: String) -> void:
 	settle_reason = reason
 	last_pass = reason == "finish"
 	total_time += flight_time
+	# v2 记忆：布局/用时/轨迹存档（下次进库预填 + Ghost 回放）
+	last_layout_by_level[level_idx] = launch_layout.duplicate(true)
+	last_time_by_level[level_idx] = flight_time
+	ghost_pts = cur_ghost_pts.duplicate(true)
 	if last_pass:
 		unlocked = maxi(unlocked, mini(level_idx + 1, LEVELS.size() - 1))
 	state = "settle"
@@ -783,7 +855,7 @@ func _update_status() -> void:
 		return
 	var L: Dictionary = LEVELS[level_idx]
 	if state == "menu":
-		status_label.text = "赛车模拟器 · 已解锁 %d/3 关" % (unlocked + 1)
+		status_label.text = "赛车模拟器 · 已解锁 %d/%d 关" % [unlocked + 1, LEVELS.size()]
 		hint_label.text = "选一关进入车库：摆轮胎定重心，开到终点旗"
 	elif state == "build":
 		var ok: bool = can_launch()
@@ -958,11 +1030,25 @@ func _draw_world() -> void:
 	# 起点小旗 + 终点旗
 	_draw_flag(START_X, Color("43a047"), "起点")
 	_draw_flag(START_X + float(L.target_m) * PX_PER_M, Color("e53935"), "终点")
+	# v2 Ghost：上一趟轨迹半透明回放
+	if state == "drive" and ghost_pts.size() >= 2:
+		var gp := PackedVector2Array()
+		for p in ghost_pts:
+			var px2: float = float((p as Vector2).x) - scroll_x
+			if px2 > -30.0 and px2 < VIEW.x + 30.0:
+				gp.append(Vector2(px2, float((p as Vector2).y)))
+		if gp.size() >= 2:
+			draw_polyline(gp, Color(0.3, 0.5, 0.9, 0.35), 3.0)
 	_draw_world_car()
 	if state == "drive" and roof_time > 0.15:
 		var cx: float = car_pos.x - scroll_x
 		draw_string(FONT, Vector2(cx - 90.0, car_pos.y - 70.0), "车顶触地 %.1f / %.1f 秒，快翻了！" % [roof_time, ROOF_LIMIT],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("c62828"))
+	# v2 HUD：上一趟用时对比
+	if state == "drive" and last_time_by_level.has(level_idx):
+		var lt: float = float(last_time_by_level[level_idx])
+		draw_string(FONT, Vector2(VIEW.x - 240.0, 70.0), "上一趟 %.1f 秒 / 本次 %.1f 秒" % [lt, flight_time],
+			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("37474f"))
 
 
 func _draw_flag(wx: float, col: Color, txt: String) -> void:

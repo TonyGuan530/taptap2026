@@ -192,8 +192,19 @@ func _run() -> void:
 	var l3_pass: bool = l3_ok and l3_settled and s.last_pass
 	_log("  第3关：last_pass=%s 用时 %.1f 秒 最高速度 %.0f 米/秒" % [str(s.last_pass), s.flight_time, s.max_speed])
 	s.settle_continue()
-	_check(l2_pass and at_l3 and l3_pass and s.state == "final",
-		"用例9 全通关：L2/L3 依次过关，最终 state=final（当前 %s）" % str(s.state))
+	var at_l4: bool = s.state == "build" and s.level_idx == 3
+	# 第 4 关（诊断关）：settle_continue 会预填上一版布局，直接清空重摆（预算内）
+	s.clear_wheels()
+	var l4_a: bool = s.add_wheel(0.08, 26.0)
+	var l4_b: bool = s.add_wheel(0.92, 26.0)
+	var l4_ok: bool = s.do_launch()
+	s.throttle_on(90.0)
+	var l4_settled: bool = await _wait_state(s, "settle", 60000)
+	var l4_pass: bool = l4_ok and l4_settled and s.last_pass
+	_log("  第4关(诊断)：last_pass=%s 用时 %.1f 秒 布局预填与预算规则生效" % [str(s.last_pass), s.flight_time])
+	s.settle_continue()
+	_check(l2_pass and at_l3 and l3_pass and at_l4 and l4_pass and s.state == "final",
+		"用例9 全通关：L2/L3/L4 依次过关，最终 state=final（当前 %s）" % str(s.state))
 
 	s.queue_free()
 	await physics_frame
