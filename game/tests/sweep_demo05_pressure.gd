@@ -137,6 +137,7 @@ func _play_game(scene, policy: String, needs: Array) -> void:
 func _run() -> void:
 	await process_frame
 	Engine.time_scale = TIME_SCALE
+	Engine.max_physics_steps_per_frame = 240
 	var combo_args := "0,1,2,3,4,5"
 	var user_args := OS.get_cmdline_user_args()
 	if user_args.size() > 0:

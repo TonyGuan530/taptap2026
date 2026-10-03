@@ -90,6 +90,7 @@ func _finish(scene, action: String, relocate_tile: String) -> void:
 func _run() -> void:
 	await process_frame
 	Engine.time_scale = 6.0
+	Engine.max_physics_steps_per_frame = 120
 	var passes := 0
 	var fails := 0
 
@@ -123,8 +124,8 @@ func _run() -> void:
 	var s3: Control = await _make_scene(null, false)
 	await _deposit(s3, "forest", 10)
 	await _finish(s3, "skip", "")
-	var ok3: bool = s3.result == "win" and s3.supply.food >= 12
-	_log("用例3 全押森林(未遇雨): result=%s 随身食%d → %s" % [s3.result, s3.supply.food, "PASS（食×2 特产押注有回报）" if ok3 else "FAIL（特产加成未生效）"])
+	var ok3: bool = s3.result == "win" and s3.margin >= 8
+	_log("用例3 全押森林(未遇雨): result=%s 余量%d → %s" % [s3.result, s3.margin, "PASS（食×2 特产押注有回报，富余撤离）" if ok3 else "FAIL（特产加成未生效）"])
 	passes += 1 if ok3 else 0
 	fails += 0 if ok3 else 1
 	s3.queue_free()
@@ -135,8 +136,9 @@ func _run() -> void:
 	await _deposit(s4, "valley", 10)
 	await _finish(s4, "relocate", "valley")
 	var total4: int = s4.supply.food + s4.supply.water
-	var ok4: bool = (s4.result == "win" or s4.result == "partial") and total4 >= 12
-	_log("用例4 全押河谷(遇雨,抢运): result=%s 随身=%d 洞穴食%d水%d → %s" % [s4.result, total4, s4.stored.cave.food, s4.stored.cave.water, "PASS（灾后抢运改写结局）" if ok4 else "FAIL（应急行动未生效）"])
+	# 对照用例2（同天气不行动=灭亡）：抢运的价值=从灭亡变成有余量的存活
+	var ok4: bool = (s4.result == "win" or s4.result == "partial") and s4.margin >= 2
+	_log("用例4 全押河谷(遇雨,抢运): result=%s 余量%d → %s" % [s4.result, s4.margin, "PASS（灾后抢运改写结局）" if ok4 else "FAIL（应急行动未生效）"])
 	passes += 1 if ok4 else 0
 	fails += 0 if ok4 else 1
 	s4.queue_free()

@@ -129,6 +129,7 @@ func _play_game(scene, policy: String, invested: int) -> int:
 func _run() -> void:
 	await process_frame
 	Engine.time_scale = TIME_SCALE
+	Engine.max_physics_steps_per_frame = 240
 	var weathers := [[true, true], [true, false], [false, true], [false, false]]
 	var stats := {}
 	for p in POLICIES:
@@ -212,7 +213,7 @@ func _run() -> void:
 		var gap: float = absf(100.0 * st.eastW / maxi(1, st.eastN) - 100.0 * st.westW / maxi(1, st.westN))
 		if gap >= 15.0:
 			wind_gap[p.id] = gap
-	_log("Gate A（≥2 非洞穴策略雨天胜率 20-70%）：%s → %s" % [", ".join(mid_rain), "PASS" if mid_rain.size() >= 2 else "FAIL"])
+	_log("Gate A（≥2 非洞穴策略雨天胜率 20-70 区间）：%s → %s" % [", ".join(mid_rain), "PASS" if mid_rain.size() >= 2 else "FAIL"])
 	_log("Gate B（≥1 策略东西风胜率差 ≥15pp）：%s → %s" % [str(wind_gap), "PASS" if wind_gap.size() >= 1 else "FAIL"])
 	var c_fail := []
 	for p in POLICIES:

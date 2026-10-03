@@ -54,6 +54,7 @@ var scouted := false
 var route_bonus := 0          # 撤离需求修正：高地 -1 / 轻装 -2
 var events := []              # 末日故事事件链
 var route_chosen := -1
+var margin := 0               # v6 A'：撤离余量 = 行军消耗后剩余物资（结算评分用）
 var result := ""
 var pulse := 0.0
 var hovered := -1
@@ -93,7 +94,7 @@ func _build_ui() -> void:
 	var ui := CanvasLayer.new()
 	add_child(ui)
 	var title := Label.new()
-	title.text = "重生之我是恐龙 · 火山生存（demo-05 v4）"
+	title.text = "重生之我是恐龙 · 火山生存（demo-05）"
 	title.position = Vector2(16, 8)
 	title.add_theme_font_size_override("font_size", 20)
 	title.add_theme_color_override("font_color", Color("ffd54f"))
@@ -458,9 +459,9 @@ func _route_need(i: int) -> int:
 func _choose_route(i: int) -> void:
 	route_chosen = i
 	var r: Dictionary = ROUTES[i]
-	var total: int = supply.food + supply.water
-	_log_ev("族群选择了%s：%s" % [r.name, r.risk])
 	var need: int = _route_need(i)
+	_log_ev("族群选择了%s：%s" % [r.name, r.risk])
+	# v6 A' 结算顺序修正：先路线随机事件 → 再算最终物资 → 判 need → 算余量 → 评分
 	if i == 1 and not scouted and randf() < 0.5:
 		supply.water = maxi(0, supply.water - 1)
 		_log_ev("东线果然遇到泥流改道，多耗了 1 份水。")
@@ -472,15 +473,27 @@ func _choose_route(i: int) -> void:
 			_log_ev("南线一路觅食顺利，多出 1 份食物。")
 		else:
 			_log_ev("南线密林里绕了远路，什么也没找到。")
-	if total >= need and supply.food >= 1 and supply.water >= 1:
-		result = "win"
-		_log_ev("第 %d 天，族群抵达一片没有被灰烬覆盖的新生态区。火山的故事结束了，生存的故事才刚刚开始。" % (5 + i))
-	elif total >= need:
-		result = "partial"
-		_log_ev("族群踉踉跄跄抵达新生态区，但食物见底——活下来了，代价惨重。")
-	else:
+	var total: int = supply.food + supply.water
+	# v6 A' 判定顺序：先按消耗前总量判生死/质量 → 再把 need 份真正消耗掉（影响余量与结算画面）
+	if total < need:
+		margin = 0
 		result = "lose"
 		_log_ev("物资在半途耗尽……族群的足迹消失在灰烬里。")
+	else:
+		margin = total - need
+		var consumed: int = need
+		var f_use: int = mini(supply.food, int(ceil(consumed / 2.0)))
+		var w_use: int = mini(supply.water, consumed - f_use)
+		f_use += mini(supply.food - f_use, consumed - f_use - w_use)
+		supply.food -= f_use
+		supply.water -= w_use
+		_log_ev("行军消耗了 %d 份物资（食 %d 水 %d），抵达时还剩 %d 份。" % [consumed, f_use, w_use, margin])
+		if supply.food >= 1 and supply.water >= 1:
+			result = "win"
+			_log_ev("第 %d 天，族群抵达一片没有被灰烬覆盖的新生态区。火山的故事结束了，生存的故事才刚刚开始。" % (5 + i))
+		else:
+			result = "partial"
+			_log_ev("族群踉踉跄跄抵达新生态区，但食物或水见底——活下来了，代价惨重。")
 	_show_end()
 
 
@@ -491,13 +504,13 @@ func _show_end() -> void:
 	end_body.text = ""
 	for e in events:
 		end_body.text += "· " + e + "\n"
-	end_body.text += "\n—— 结算：%s · 剩余食物 %d 水 %d · 评分 %d ——" % [verdict, supply.food, supply.water, _score()]
+	end_body.text += "\n—— 结算：%s · 撤离余量 %d · 剩余食物 %d 水 %d · 评分 %d ——" % [verdict, margin, supply.food, supply.water, _score()]
 
 
 func _score() -> int:
-	# v4：封顶奖励——超过安全冗余(4份)的囤积不再加分，杜绝 all_cave 式囤积 score-dominance
+	# v6 A'：撤离余量计分——基础分 + clamp(余量,0,8)×2；刚凑够=70，富余≥8=86
 	var base: int = {"win": 70, "partial": 45, "lose": 10}[result]
-	return base + mini(supply.food, 4) * 2 + mini(supply.water, 4) * 2
+	return base + clampi(margin, 0, 8) * 2
 
 
 # ---------------- 绘制 ----------------
