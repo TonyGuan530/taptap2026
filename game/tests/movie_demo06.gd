@@ -16,9 +16,10 @@ var dbg: FileAccess
 
 
 func _dbg() -> void:
-	if dbg and cur_lv == 1:
-		dbg.store_string("f=%d lv_f=%d px=%.0f py=%.0f floor=%s space=%s\n" % [f, lv_f,
-			game.player.position.x, game.player.position.y, str(game.on_floor), str(game.keys.get(KEY_SPACE, false))])
+	if dbg and cur_lv >= 1:
+		dbg.store_string("f=%d lv=%d lv_f=%d state=%s px=%.0f py=%.0f floor=%s D=%s\n" % [f, cur_lv, lv_f,
+			str(game.state), game.player.position.x, game.player.position.y,
+			str(game.on_floor), str(game.keys.get(KEY_D, false))])
 		if f % 300 == 0:
 			dbg.flush()
 
@@ -46,13 +47,13 @@ func _process(_delta: float) -> void:
 		game.keys[KEY_D] = false
 		game.keys[KEY_SPACE] = false
 	lv_f += 1
-	# 通关后停留 100 帧（胜利面板入镜）再进下一关；驱动绕过按钮，需手动藏面板
+	# 通关后停留 100 帧（胜利面板入镜）再进下一关；驱动绕过按钮，需手动释放面板——
+	# 旧面板 visible=false 但不释放，下一关再赢会重名，find_child 只找到旧的（踩过）
 	if game.state == "win":
 		win_wait += 1
 		if win_wait == 100 and game.level_idx < 2:
-			var wp = game.get_tree().root.find_child("WinPanel", true, false)
-			if wp:
-				wp.visible = false
+			for wp in game.get_tree().root.find_children("WinPanel", "Panel", true, false):
+				wp.queue_free()
 			game._load_level(game.level_idx + 1)
 		return
 	win_wait = 0
@@ -92,20 +93,25 @@ func _level2() -> void:
 				_jump()
 
 
-## L3：两块 Float 长板悬空桥（与 test_demo06_l3 T5 同参数，已实证可通关）
+## L3：两块 Float 长板悬空桥。玩家出生点(70)正对预置长板落点(65..215)——会被砸进地形，
+## 故 lv_f==5 先把玩家挪到 x=305（三件落物间隙），板1 也右移到 420 并重算跳跃窗。
 func _level3() -> void:
+	if lv_f == 5:
+		print("L3 TELEPORT at lv_f=", lv_f, " player=", game.player)
+		game.player.position = Vector2(305, 330)
+		game.player.velocity = Vector2.ZERO
 	if lv_f == 30:
 		game._on_shape(1)
 		game._on_word(1)
-		game._try_place(Vector2(400, 350))
+		game._try_place(Vector2(420, 350))
 	elif lv_f == 90:
 		game._try_place(Vector2(615, 350))
 	elif lv_f > 120:
 		var px: float = game.player.position.x
 		var py: float = game.player.position.y
 		game.keys[KEY_D] = true
-		# L3 桥上定格（板2 上、GOAL 前）——给 Miro 一张 v5 最新画面
-		if not shot_saved and game.on_floor and px > 430 and px < 570 and py < 350:
+		# L3 桥上定格（板1 上、GOAL 前）——给 Miro 一张 v5 最新画面
+		if not shot_saved and game.on_floor and px > 360 and px < 480 and py < 350:
 			shot_saved = true
 			var img := get_viewport().get_texture().get_image()
 			var out: String = ProjectSettings.globalize_path("res://") + "../reviews/shots/demo-06.png"
@@ -113,8 +119,8 @@ func _level3() -> void:
 			print("SHOT_SAVED: ", out, " lv_f=", lv_f)
 		if game.on_floor:
 			var want := false
-			if px > 285.0 and px < 320.0 and py > 370.0:
-				want = true        # 左台缘起跳上板1
+			if px > 300.0 and px < 318.0 and py > 370.0:
+				want = true        # 左台起跳上板1（跳点距板缘≥36px，弧线净空 4~16px）
 			elif px > 408.0 and px < 460.0 and py < 350.0:
 				want = true        # 板1 起跳上板2
 			elif px > 625.0 and px < 665.0 and py < 350.0:
