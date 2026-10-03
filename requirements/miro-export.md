@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/3 19:40:03 · 共 41 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/3 20:12:15 · 共 43 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(-218,-185)
@@ -75,6 +75,14 @@ Feedback Slide
 
 <p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-05.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-05.mp4 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;</p>
 
+### [sticker] @(4400,5060)
+
+&#x1f501; demo-05 v2 迭代&#xff08;2026-10-03&#xff0c;落实 ChatGPT ITERATE 三建议&#xff09;&#xff1a;
+1. 区域收益×风险&#xff1a;河谷水×2/森林食×2/洞穴免灾但撤离税/高地哨兵预报准&#43;行军-1
+2. 灾后应变一次&#xff1a;抢运/侦察/轻装&#xff08;灾害结算在行动后&#xff0c;能改写结局&#xff09;
+3. 不完全天气预报&#xff1a;信息→判断→风险承担
+headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch CDN 占位页故障中&#xff0c;GitHub Pages 自动更新。
+
 ### [sticker] @(5714,5732)
 
 <p>修改小​说​</p>
@@ -82,6 +90,15 @@ Feedback Slide
 ### [frame] @(19724,6204)
 
 灵感菇
+
+### [text] @(4400,6300)
+
+&#x1f195; demo-02 v3 更新&#xff08;2026-10-03&#xff09;&#xff1a;
+新增跳跃输入系统&#xff1a;空格&#61;跳&#xff08;羽毛可空中扑翼&#xff09; / ←→&#61;空中横移&#xff0c;力度随词条变化。
+第三关「组合测试房」&#xff1a;弹簧起飞 → 空中切羽毛横漂 → 舱顶正上方切石头砸穿舱门入舱&#xff0c;一条链用满三个词条&#xff1b;错误词条会掉坑自动重置。
+headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链接不变内容即最新&#xff09;。
+试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;
+&#xff08;itch CDN 故障期备用镜像: https://tonyguan530.github.io/taptap2026/builds/demo-02-v3/ &#xff09;
 
 ### [sticker] @(16706,6342)
 

@@ -19,7 +19,7 @@ requirements/backlog.md 的 demo-05 节 + Miro 原始想法（现代恐龙意识
 - ✅ 定时任务已创建（2026-10-03，本对话，automation-684bb086）：cron `20,50 * * * *`，任务名「每30分钟：demo-05 恐龙火山生存 开发迭代评审发布」。本对话 URL：待填
 
 ## 每轮流程
-1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。
+1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。（注意：测试验证不要用本地前端——直接用 GitHub Pages 公网链接 https://tonyguan530.github.io/taptap2026/play.html?id=<slotId> 或 itch 页面，截图/录屏也从公网页面取）
 2. Miro 同步：node tools/miro-fetch.mjs；提取与恐龙火山相关的新想法，更新 requirements/backlog.md 的 demo-05 节。
 3. 反馈：data/db.json 的 demo-05 评论，挑可执行项落实。
 4. 开发/迭代：改 game/demo05_volcano.gd——扩展方向（与 GPT 讨论后定）：酸雨事件（Miro 扩展贴纸）、建筑系统（初始建筑：山）、群体系统、多轮难度；headless 平衡测试 game/tests/test_demo05.gd 风格（会玩→胜 / 摆烂→败 双用例，改参数后必须重跑）。

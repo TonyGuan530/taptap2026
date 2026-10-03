@@ -20,7 +20,7 @@ requirements/backlog.md 的 demo-03 节 + Miro 原始想法（requirements/miro-
 - 已创建（2026-10-03）：任务名「每30分钟：demo-03 岩浆降温的小人国度 开发迭代评审发布」，cron `10,40 * * * *`，ID automation-19713e80-d7b5-45c3-bb03-602904b10486，常驻于本专属对话
 
 ## 每轮流程
-1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。
+1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。（注意：测试验证不要用本地前端——直接用 GitHub Pages 公网链接 https://tonyguan530.github.io/taptap2026/play.html?id=<slotId> 或 itch 页面，截图/录屏也从公网页面取）
 2. Miro 同步：node tools/miro-fetch.mjs；提取与岩浆降温相关的新想法（注意「随机系统酸雨」「建筑系统」扩展贴纸），更新 requirements/backlog.md 的 demo-03 节。
 3. 反馈：data/db.json 的 demo-03 评论，挑可执行项落实。
 4. 开发/迭代：改 game/demo03_volcano.gd——扩展方向（与 GPT 讨论后定）：难度阶段（早期/中期/灭亡倒计时）、酸雨事件、村民升级、建筑系统；headless 平衡测试 game/tests/test_demo03.gd 风格（会玩→胜 / 摆烂→败 双用例）。

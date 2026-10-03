@@ -18,7 +18,7 @@ requirements/backlog.md 的 demo-04 节 + Miro 原始想法。玩法：横版跑
 - ChatGPT 监督对话尚未建立（首次运行时创建，把对话 URL 记入 reviews/chatgpt-conversations.json）
 
 ## 每轮流程
-1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。
+1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。（注意：测试验证不要用本地前端——直接用 GitHub Pages 公网链接 https://tonyguan530.github.io/taptap2026/play.html?id=<slotId> 或 itch 页面，截图/录屏也从公网页面取）
 2. Miro 同步：node tools/miro-fetch.mjs；提取与 SOUP/ DNA 融合相关的新想法，更新 requirements/backlog.md 的 demo-04 节。
 3. 反馈：data/db.json 的 demo-04 评论，挑可执行项落实。
 4. 开发/迭代：改 game/demo04_soup.gd——扩展方向（与 GPT 讨论后定）：第 2-3 关卡（新 DNA 组合地形）、DNA 组合效果、计时/收集评分；headless 通关验证 game/tests/test_demo04.gd 风格（模拟按键通关 + 缺 DNA 卡墙对照）。

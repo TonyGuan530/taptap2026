@@ -1,11 +1,12 @@
 extends Node2D
-## 岩浆降温的小人国度 v2：温度不断上升，建造/升级浇水设施降温，撑过 60 秒。
+## 岩浆降温的小人国度 v3：温度不断上升，建造/升级浇水设施降温，撑过 60 秒。
 ## 随进度涌现随机 NPC 村民帮忙提水。对应 Miro 玩法块 demo-03。
-## v2（Miro《最后的溪流》扩展）：
-##   难度阶段：早期威胁(0-20s) → 中期危局(20-40s) → 灭亡倒计时(40s+)，升温逐段加速
-##   酸雨事件：随机时刻天降酸雨，升温加剧（气象学家村民可把酸雨时长减半）
-##   村民职业：工程师(费用-5💧)/植物学家(降温+0.4/s)/气象学家(酸雨减半)/搬运工(水滴+1.5/s)
-##   村民升级：点击村民花 30💧 升为精英村民，+0.7/s 降温
+## v2（Miro《最后的溪流》扩展）：难度阶段 / 酸雨事件 / 村民职业与升级
+## v3（ChatGPT 监督评审指引，reviews/chatgpt-demo-03-full.md）：
+##   酸雨改双向 modifier：酸雨 8 秒内 设施降温 ×0.6、村民降温 ×1.5（不再直接加温度）——
+##   让"升级设施 vs 升级村民"的机会成本随天气变化，验证 局势变化→策略迁移。
+##   3 秒酸雨预警：prediction → preparation → consequence。
+##   消费遥测：spend_log 记录每次建造/升级/招募村民的花费时刻，供三窗口策略迁移分析。
 ## 纯代码实现、无外部资源。
 
 const VIEW := Vector2(960, 540)
@@ -29,11 +30,13 @@ const PHASES := [
 	{"until": 999.0, "base": 3.2, "slope": 0.10, "name": "灭亡倒计时"},
 ]
 
-## 酸雨事件：起始时刻（±3s 随机抖动）、基础时长、额外升温
+## 酸雨事件：起始时刻（±3s 随机抖动）、基础时长；预警提前量；双向 modifier（ChatGPT v3 指引）
 const ACID_TIMES := [22.0, 46.0]
 const ACID_JITTER := 3.0
 const ACID_DUR := 8.0
-const ACID_RISE := 2.0
+const ACID_WARN := 3.0
+const ACID_TOWER_MULT := 0.6   # 酸雨期间设施降温效率
+const ACID_NPC_MULT := 1.5     # 酸雨期间村民降温效率
 
 ## 村民职业（Miro 小人系统的 demo 裁剪版）
 const PROFS := [
@@ -56,7 +59,8 @@ var elapsed := 0.0
 var towers := [0, 0, 0]        # 每槽位等级 0/1/2
 var npcs := []                 # {name, x, phase, prof, pcol, level}
 var npc_next := 0
-var acid_events := []          # {start, announced}
+var acid_events := []          # {start, announced, warned}
+var spend_log := []            # {t, kind: build/upgrade/promote, amount} 消费遥测
 var toasts := []               # {text, x, y, age}
 var state := "play"            # play / win / lose
 var pulse := 0.0
@@ -80,10 +84,11 @@ func _setup_round() -> void:
 	npcs = []
 	npc_next = 0
 	toasts = []
+	spend_log = []
 	acid_was_on = false
 	acid_events = [
-		{"start": ACID_TIMES[0] + randf_range(-ACID_JITTER, ACID_JITTER), "announced": false},
-		{"start": ACID_TIMES[1] + randf_range(-ACID_JITTER, ACID_JITTER), "announced": false},
+		{"start": ACID_TIMES[0] + randf_range(-ACID_JITTER, ACID_JITTER), "announced": false, "warned": false},
+		{"start": ACID_TIMES[1] + randf_range(-ACID_JITTER, ACID_JITTER), "announced": false, "warned": false},
 	]
 	state = "play"
 	if overlay_title:
@@ -182,6 +187,7 @@ func _try_build(i: int) -> void:
 		return
 	water -= c
 	towers[i] = 1
+	spend_log.append({t = elapsed, kind = "build", amount = c})
 	_toast("浇水设施建成！降温 %s/s" % COOL_L1, SLOTS[i].position)
 
 
@@ -192,6 +198,7 @@ func _try_upgrade(i: int) -> void:
 		return
 	water -= c
 	towers[i] = 2
+	spend_log.append({t = elapsed, kind = "upgrade", amount = c})
 	_toast("设施升级！降温 %s/s" % COOL_L2, SLOTS[i].position)
 
 
@@ -204,6 +211,7 @@ func _try_promote(n: Dictionary) -> void:
 		return
 	water -= NPC_UP_COST
 	n.level = 1
+	spend_log.append({t = elapsed, kind = "promote", amount = NPC_UP_COST})
 	_toast("%s 升级为精英村民！降温 +%.1f/s" % [n.name, NPC_UP_COOL], Vector2(float(n.x) - 60.0, 330.0))
 
 
@@ -223,25 +231,28 @@ func _process(delta: float) -> void:
 		return
 	elapsed += delta
 
-	# 温度：阶段化上升 + 酸雨加剧
+	# 温度：阶段化上升；酸雨不直接加温，而是压制设施/放大村民（v3 双向 modifier）
 	var ph: Dictionary = _phase()
 	var rise: float = float(ph.base) + float(ph.slope) * elapsed
 	var acid_on := _acid_active()
-	if acid_on:
-		rise += ACID_RISE
-		for e in acid_events:
-			if not e.announced and elapsed >= float(e.start):
-				e.announced = true
-				_toast("☔ 酸雨来袭！升温 +%s/s" % ACID_RISE, Vector2(VIEW.x / 2 - 70, 90))
-				break
+	for e in acid_events:
+		if not e.warned and elapsed >= float(e.start) - ACID_WARN and elapsed < float(e.start):
+			e.warned = true
+			_toast("☔ 酸雨将在 %d 秒后到达！趁早决定水滴花在哪" % int(ceil(float(e.start) - elapsed)), Vector2(VIEW.x / 2 - 110, 90))
+		if not e.announced and elapsed >= float(e.start):
+			e.announced = true
+			_toast("☔ 酸雨来袭！设施降温 ×%s · 村民降温 ×%s" % [ACID_TOWER_MULT, ACID_NPC_MULT], Vector2(VIEW.x / 2 - 110, 90))
+			break
 	acid_was_on = acid_on
 
-	# 冷却：设施 + 村民（职业加成 + 精英升级）
-	var cool := 0.0
+	# 冷却：设施 + 村民（职业加成 + 精英升级）；酸雨期间双向修正
+	var tower_cool := 0.0
 	for t in towers:
-		cool += COOL_L1 if t == 1 else (COOL_L2 if t == 2 else 0.0)
+		tower_cool += COOL_L1 if t == 1 else (COOL_L2 if t == 2 else 0.0)
+	var npc_cool := 0.0
 	for n in npcs:
-		cool += NPC_COOL + (0.4 if n.prof == "植物学家" else 0.0) + float(n.level) * NPC_UP_COOL
+		npc_cool += NPC_COOL + (0.4 if n.prof == "植物学家" else 0.0) + float(n.level) * NPC_UP_COOL
+	var cool := tower_cool * (ACID_TOWER_MULT if acid_on else 1.0) + npc_cool * (ACID_NPC_MULT if acid_on else 1.0)
 	heat = clamp(heat + (rise - cool) * delta, 0.0, 130.0)
 
 	# 水滴收入：基础 + 村民（搬运工加成）
@@ -285,7 +296,7 @@ func _show_end(win: bool) -> void:
 		overlay_title.add_theme_color_override("font_color", Color("66bb6a"))
 	else:
 		overlay_title.text = "🔥 岩浆吞没了国度……"
-		overlay_body.text = "温度突破了 100 度（坚持了 %d 秒，%s）。\n提示：开局尽快建第一座设施，15 秒前建起第二座，\n攒水滴升级；酸雨来时别慌，它会过去；村民能点一下升级！" % [
+		overlay_body.text = "温度突破了 100 度（坚持了 %d 秒，%s）。\n提示：开局尽快建第一座设施，15 秒前建起第二座；\n听到酸雨预警就想想：该升级设施还是投资村民？酸雨中村民更强！" % [
 			int(elapsed), str(_phase().name)]
 		overlay_title.add_theme_color_override("font_color", Color("ef5350"))
 
@@ -347,14 +358,20 @@ func _draw() -> void:
 			draw_circle(Vector2(px, py - 28), 3.0, Color("ffd54f"))     # 精英星
 		var label := "%s·%s%s" % [n.name, n.prof, "★" if n.level >= 1 else ""]
 		draw_string(FONT, Vector2(px - 38, py + 26), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("c6cddc"))
-	# 酸雨（紫雨 + 提示）
+	# 酸雨预警（3 秒倒计时，给玩家准备窗口）
+	if state == "play":
+		for e in acid_events:
+			var s := float(e.start)
+			if elapsed >= s - ACID_WARN and elapsed < s:
+				draw_string(FONT, Vector2(VIEW.x / 2 - 128, 70), "☔ 酸雨将在 %d 秒后到达——先想好水滴花在哪！" % int(ceil(s - elapsed)), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ce93d8"))
+	# 酸雨（紫雨 + 双向修正提示）
 	if _acid_active() and state == "play":
 		draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color(0.55, 0.25, 0.75, 0.08))
 		for k in 26:
 			var rx := fposmod(k * 41.0 + pulse * 60.0, VIEW.x + 40.0) - 20.0
 			var ry := fposmod(k * 97.0 + pulse * 100.0, VIEW.y)
 			draw_line(Vector2(rx, ry), Vector2(rx - 5.0, ry + 15.0), Color(0.78, 0.45, 0.95, 0.5), 2.0)
-		draw_string(FONT, Vector2(VIEW.x / 2 - 88, 70), "☔ 酸雨来袭！升温 +%s/s" % ACID_RISE, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ce93d8"))
+		draw_string(FONT, Vector2(VIEW.x / 2 - 118, 70), "☔ 酸雨中：设施降温 ×%s · 村民降温 ×%s" % [ACID_TOWER_MULT, ACID_NPC_MULT], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ce93d8"))
 	# 温度条
 	var bw2 := 360.0
 	var bx2 := (VIEW.x - bw2) / 2

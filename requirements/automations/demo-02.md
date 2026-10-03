@@ -22,7 +22,7 @@ requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-
 - 已知坑新增：【羽毛 damp=1.2 会吃掉弹簧冲量】L3 弹簧冲量 (260,-660) 是抵消阻尼后的调参值，改词条参数需同步重调 L3 并跑 headless
 
 ## 每轮流程
-1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。
+1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。（注意：测试验证不要用本地前端——直接用 GitHub Pages 公网链接 https://tonyguan530.github.io/taptap2026/play.html?id=<slotId> 或 itch 页面，截图/录屏也从公网页面取）
 2. Miro 同步：node tools/miro-fetch.mjs；提取与物性变换相关的新想法，更新 requirements/backlog.md 的 demo-02 节。
 3. 反馈：data/db.json 的 demo-02 评论 + reviews/chatgpt-demo-02-full.md 结论，挑可执行项落实。
 4. 开发/迭代：改 game/demo02_physics.gd（当前 2 关 → 3-4 关）；headless 测试 game/tests/test_demo02_v2.gd 风格。
