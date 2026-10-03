@@ -63,6 +63,8 @@
 - v5 上线 2026-10-03（demo-03-v5）：「风暴之夜」可选实验模式上线——开始菜单选模式（经典 60 秒 / 风暴之夜·实验），风暴=15/30/45s±2s 三场 4 秒短酸雨（总暴露 16s→12s，强调切换次数），其余规则全冻结；结算面板可「选模式」返回；局内紫框模式徽标；spend_log 两模式通用。测试四行全 PASS（经典三行回归 + 风暴 win+3/3 场酸雨）。
 - ChatGPT v5 评审（reviews/chatgpt-demo-03-v5-full.md）：ITERATE——风暴单变量范围 PASS；Classic Regression Gate PASS；**盲测分组=≥2 人经典→经典 + ≥2 人经典→风暴**（区分 learning effect 与 storm effect），第 5 人自由；Gate 精确化：3-5 名首次玩家无外部解释、仅靠正式 UI/预警/▲▼ 完成两局，≥3/5 第二局主动说明相对价值变化且 telemetry 出现迁移 → **KEEP 并停止堆验证功能**。Mechanical Gate 已够，勿再加 bot/headless case；禁第三模式/第二种天气/新职业/建筑/岗位/90 秒/3D。
 - v6 上线 2026-10-03（demo-03-v6，督导指令·迭代美术工作流）：角色/物件贴图改走绿幕生图管线——ChatGPT 生图（#00ff00 背景原图 reviews/art/src/）→ ffmpeg chromakey+despill 抠绿（reviews/art/keyed/）→ game/assets/demo03/ 游戏尺寸透明 PNG；村民（职业色轻染）/水塔 L1/L2 贴图化；背景/特效保持程序绘制。零平衡/规则改动，测试四行 PASS。
+- v7 上线 2026-10-04（demo-03-v7，督导 03:00 内容量指令）：难度阶段 3→5——初火(0-12s 1.8+0.035t)/干热风(12-25s 2.2+0.045t)/裂地脉动(25-38s 2.7+0.055t)/岩浆涌潮(38-50s 3.1+0.07t)/灭亡倒计时(50s+ 3.5+0.09t)；横幅/进度条五段配色；风暴酸雨结构不变。全用例重跑四行 PASS（会玩 win/迁移 PASS/摆烂 26 秒败/风暴 win+3/3）。
+- ChatGPT v7 评审（reviews/chatgpt-demo-03-v7-full.md）：ITERATE + 盲测 Gate 不变——五阶段=合格 pacing refinement（pacing KEEP，不算新玩法证据）；snowball 仍未关闭（会玩局仍 heat=0，留真人数据，勿再追调数值）；盯防两可读性风险：阶段横幅勿抢酸雨预警、五段色勿与状态色语义打架；**盲测统一以 v7 为基线**（勿混 v5/v6），分组不变；真人 Gate 通过→直接 KEEP。
 
 ## demo-04 SOUP 2.0：DNA 融合逃生
 
@@ -100,6 +102,7 @@
 - headless 平衡测试（game/tests/test_demo05.gd，4 用例全 PASS）：分散储备 win / 全押河谷遇雨不行动只剩初始6份 / 全押森林不遇雨食满仓 / 全押河谷遇雨+抢运随身20份
 - V3 Gate（ChatGPT 2026-10-03 续评，reviews/chatgpt-demo-05-v2-full.md）：不加玩法只做验证——①新玩家连玩5局≥3种策略+≥2次主动换策略 ②盯防「高地开局」「灾后必抢运」dominant sequence ③headless 加 dominance simulation（全洞穴/全高地/全河谷/全森林/均匀分散/高地→按天气投资/激进→抢运/低储备→轻装 8 policy 数百局）；数值平衡冻结
 - V3 进展（2026-10-03 晚）：dominance simulation 完成（reviews/demo05-dominance-sim-2026-10-03.md，game/tests/test_demo05_dominance.gd）——8 policy 全部 100% 胜率，游戏无失败压力；评分 all_cave(113.5) 微弱压过 intel_play(113.3)，「高地开局」证伪。ChatGPT 第二次裁决（reviews/chatgpt-demo05-v3-data-full.md）：**解除数值冻结**，只碰采集次数×路线需求两个旋钮做 sweep（game/tests/sweep_demo05_pressure.gd；目标生存分层：优秀 75-90%/混合 55-75%/投机 35-65%/错误 15-40%），评分改封顶奖励 min(食,4)×2+min(水,4)×2，真人 5 局测试推迟到压力曲线修完之后（模板 reviews/human-test-demo05-template.md 已按裁决加「上局结果/为何换策略」两列）
+- V8 终局（2026-10-04 凌晨，监督者终裁选 A：停止自动调参）：cave tax 2食2水（3/3 实测致死偏差声明）+ 抢运洒落 15% + tile-cap 回退 + A' 余量计分。240 局干净数据：all_cave 100%/74 安全地板、intel 46.7%win/雨天存活 100%、relocate 复活（灭亡→100% 惨胜）、风向因果 50-100pp。**数值全面冻结，进入真人 5 局 Gate**（行为学四指标：策略发现≥3/学习链≥2/洞穴收敛判死线/应急理解；不加安全余量 UI）。模板 reviews/human-test-demo05-template.md
 - V4 压力曲线（2026-10-03 夜，sweep 两轮定档 game/tests/sweep_demo05_pressure.gd）：首轮需求 4-8 档仍 8/8 全胜（供给~20 对需求 4-8 太富裕，且泥流与风向无关、河谷雨天必归零）→ 放大到死亡区间后采纳 combo0：准备期 45s→28s（采集 7 点）、路线需求 6/4/5→12/14/16、评分=基础分+min(食,4)×2+min(水,4)×2。分层：投机(全押河谷/森林)50%、均匀分散 75%、保险/情报/抢运 100%、速度派 50%——「不再 8/8 全 >90%」达成；headless 4 用例重跑全 PASS 且用例 2 首次出现真灭亡。demo-05-v4 已导出推 itch/Pages
 
 ## demo-06 词条涂鸦创造
