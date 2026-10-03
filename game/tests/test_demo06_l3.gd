@@ -284,6 +284,53 @@ func _run() -> void:
 	_check("T8a L4 实机通关（解法A·仅 GOAL 判定，无解法 trigger）", won4,
 		"state=%s player=%s" % [String(scene.state), str(scene.player.position)])
 
+	# ============ T9 L5「双沟群岛」几何（持续开发令·补充关卡，L3/L4 未动） ============
+	scene._load_level(4)
+	await _wait(0.5)
+	var lv5: Dictionary = scene.LEVELS[4]
+	var g1: float = lv5.walls[4].position.x - lv5.walls[3].end.x   # 沟1 = 中岛左缘 - 左岛右缘
+	var g2: float = lv5.walls[5].position.x - lv5.walls[4].end.x   # 沟2 = 右岛左缘 - 中岛右缘
+	_check("T9a 沟1 ≤ 水平射程（可直接跳过）", g1 <= jump_range and g1 > 60.0, "沟1=%.0f 射程=%.0f" % [g1, jump_range])
+	_check("T9b 沟2 > 水平射程（必须架助，墨水策略分化点）", g2 > jump_range, "沟2=%.0f 射程=%.0f" % [g2, jump_range])
+	_check("T9c 坑底覆盖两段沟（掉落不出屏）",
+		lv5.walls[6].position.x <= lv5.walls[3].end.x and lv5.walls[6].end.x >= lv5.walls[5].position.x)
+	_check("T9d 三岛同高 400（平面路线，无垂直陷阱）",
+		lv5.walls[3].position.y == 400.0 and lv5.walls[4].position.y == 400.0 and lv5.walls[5].position.y == 400.0)
+	_check("T9e 墨水足够单板解法（40）", int(lv5.ink) >= 40, "ink=%s" % str(lv5.ink))
+	var objs5 := get_nodes_in_group("level_objs")
+	_check("T9i 坑底环境物体 2 件（落坑逃生路径，无软锁）", objs5.size() == 2, "实际=%d" % objs5.size())
+
+	# ============ T10 L5 实机通关（单板解法：直跳沟1 + Float 板越沟2，仅 GOAL 判定） ============
+	scene._on_shape(1)
+	scene._on_word(1)
+	scene._try_place(Vector2(665, 391))   # Float 长板跨沟2（顶 380， spans 600..730）
+	await _wait(0.3)
+	var won5 := false
+	var jc5 := 0
+	var t5 := Time.get_ticks_msec()
+	while scene.state == "play" and Time.get_ticks_msec() - t5 < 45000:
+		await physics_frame
+		scene.keys[KEY_D] = true
+		jc5 = maxi(0, jc5 - 1)
+		var px5: float = scene.player.position.x
+		var py5: float = scene.player.position.y
+		if scene.on_floor and jc5 == 0:
+			var want := false
+			if px5 > 270.0 and px5 < 280.0 and py5 > 370.0:
+				want = true        # 左岛缘直跳沟1（落中岛 420..560）
+			elif px5 > 548.0 and px5 < 560.0 and py5 > 370.0:
+				want = true        # 中岛缘起跳上板（顶 380，落点 600..730）
+			if want:
+				scene.keys[KEY_SPACE] = true
+				jc5 = 25
+			else:
+				scene.keys[KEY_SPACE] = false
+	won5 = scene.state == "win"
+	scene.keys[KEY_D] = false
+	scene.keys[KEY_SPACE] = false
+	_check("T10a L5 实机通关（单板解法·仅 GOAL 判定，无解法 trigger）", won5,
+		"state=%s player=%s" % [String(scene.state), str(scene.player.position)])
+
 	Engine.time_scale = 1.0
 	_log("统计: PASS=%d FAIL=%d" % [pass_cnt, fail_cnt])
 	_log("ALL DONE")

@@ -1,8 +1,8 @@
 extends Node2D
-## demo-06 上板素材驱动：30fps 跑一局四关通关剧本——
-## L1 Fire 圆球烧栅栏 → L2 单块 Float 长板两级跳登高台 → L3 两块 Float 长板桥跨断层 → L4 Float 长板翻越高墙。
+## demo-06 上板素材驱动：30fps 跑一局五关通关剧本——
+## L1 Fire 烧栅栏 → L2 浮板登高台 → L3 浮板桥 → L4 浮板翻越高墙 → L5 双沟群岛（直跳+单板）。
 ## 帧序列供 ffmpeg 合成 reviews/videos/demo-06.mp4；L3 桥上定格存 reviews/shots/demo-06.png。
-## 运行：godot --path game --write-movie <仓库绝对路径>/.movie06/f.png --fixed-fps 30 --quit-after 1400 res://tests/movie_demo06.tscn
+## 运行：godot --path game --write-movie <仓库绝对路径>/.movie06/f.png --fixed-fps 30 --quit-after 1750 res://tests/movie_demo06.tscn
 ## 跳跃参数（与 demo06_inkwords.gd 一致）：跳高 84.5 / 满速水平射程 156；L2 台阶每级抬升 ≤40，头部净空 ≥12px。
 
 var game: Node2D
@@ -51,7 +51,7 @@ func _process(_delta: float) -> void:
 	# 旧面板 visible=false 但不释放，下一关再赢会重名，find_child 只找到旧的（踩过）
 	if game.state == "win":
 		win_wait += 1
-		if win_wait == 100 and game.level_idx < 3:
+		if win_wait == 100 and game.level_idx < 4:
 			for wp in game.get_tree().root.find_children("WinPanel", "Panel", true, false):
 				wp.queue_free()
 			game._load_level(game.level_idx + 1)
@@ -63,6 +63,7 @@ func _process(_delta: float) -> void:
 		1: _level2()
 		2: _level3()
 		3: _level4()
+		4: _level5()
 
 
 ## L1：Fire 圆球点燃栅栏，走向 GOAL
@@ -150,7 +151,29 @@ func _level4() -> void:
 			if px > 262.0 and px < 274.0 and py > 420.0:
 				want = true        # 地面 → 浮板（顶 390）
 			elif px > 455.0 and px < 485.0 and py < 400.0:
-				want = true        # 浮板 → 越墙（顶 380，抬升 10）
+				want = true        # 浮板 → 越墙（墙顶 380 低于板顶 390，抬升 10）
+			if want:
+				_jump()
+			else:
+				game.keys[KEY_SPACE] = false
+
+
+## L5：单块 Float 长板跨沟2（沟1 140 直跳、沟2 200 架板）——与 test T10 同参数
+func _level5() -> void:
+	if lv_f == 30:
+		game._on_shape(1)
+		game._on_word(1)
+		game._try_place(Vector2(665, 391))
+	elif lv_f > 90:
+		var px: float = game.player.position.x
+		var py: float = game.player.position.y
+		game.keys[KEY_D] = true
+		if game.on_floor:
+			var want := false
+			if px > 270.0 and px < 280.0 and py > 370.0:
+				want = true        # 左岛缘直跳沟1（落中岛）
+			elif px > 548.0 and px < 560.0 and py > 370.0:
+				want = true        # 中岛缘起跳上板（顶 380）
 			if want:
 				_jump()
 			else:
