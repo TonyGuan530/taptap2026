@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-03T23:36:00+08:00",
-  "round": 25,
+  "checkedAt": "2026-10-03T23:46:00+08:00",
+  "round": 26,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP（前台闸门），沿用上轮读数"
@@ -25,7 +25,7 @@
       "runCount": 7,
       "lastRunAt": 1791038418720,
       "nextRunAt": 1791040200000,
-      "evidence": "23:10 轮冻结守望已派发"
+      "evidence": "23:40 轮冻结守望已派发（零变更巡检正常）"
     },
     "demo-04": {
       "id": "automation-d3f50080-356e-4958-a2f6-edfc516e67a4",
@@ -33,7 +33,7 @@
       "runCount": 7,
       "lastRunAt": 1791038721497,
       "nextRunAt": 1791040500000,
-      "evidence": "23:15 轮已派发；v7 已上线 Pages 200"
+      "evidence": "23:15 轮后空闲；v7 已上线 Pages 200"
     },
     "demo-05": {
       "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515",
@@ -41,7 +41,7 @@
       "runCount": 6,
       "lastRunAt": 1791037218380,
       "nextRunAt": 1791039000000,
-      "evidence": "23:20 轮已派发（V5 验证/sweep_pressure 在途）"
+      "evidence": "✅ V6 交付（6acc97c）：撤离余量计分+结算顺序修正 4/4 PASS + 绿幕生图管线打通（dino.png 抠绿入库）；已知问题=夜间高负载 headless 物理步进饥饿（已加 max_physics_steps 修复，验证留下轮干净窗口）"
     },
     "demo-06": {
       "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8",
@@ -49,7 +49,7 @@
       "runCount": 5,
       "lastRunAt": 1791035717828,
       "nextRunAt": 1791037500000,
-      "evidence": "23:25 轮已派发（冻结守望）"
+      "evidence": "23:25 轮冻结守望；23:55 下一轮"
     }
   },
   "envSnapshot": {
@@ -58,7 +58,7 @@
     "godotProcs": 0,
     "miroPostLog": "8 条全覆盖",
     "git": "与 origin 同步；工作区= demo-04 dino 素材/demo-05 在途",
-    "itchQa": "LitePipeline 自愈循环运行中（23:35 重试 1/3，仍占位）；服务端分发问题等待 itch 侧解决",
+    "itchQa": "LitePipeline 自愈循环持续（23:45 重试仍占位）——服务端分发问题等 itch 解决",
     "fleetState": "demo-02/03/06 冻结守望等真人数据；demo-04/05 迭代中；流水线自愈运转",
     "deployment": "6/6 最新版全在线：01v3/02v5/03v6/04v7/05v5/06v8（Pages 实测 200）；itch 仍故障走兜底",
     "notes": "Miro 新增两条想法已收录：demo-08 纸飞机模拟器 + demo-09 赛车模拟器（待流水线找活认领或用户指示）"
