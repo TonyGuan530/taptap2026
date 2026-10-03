@@ -5,8 +5,9 @@
     "demo-01": {
       "url": "https://chatgpt.com/c/6ac0e884-8b84-83ec-a462-ce4f684cc310",
       "review": "reviews/chatgpt-demo-01-full.md",
-      "verdict": "待首轮评审",
-      "note": "督导于2026-10-03建立并发出背景，后续轮次在此续评"
+      "verdict": "ITERATE（明显接近 KEEP，差真人验证）",
+      "note": "督导于2026-10-03建立并发出背景，后续轮次在此续评",
+      "archivedAt": "2026-10-03T21:27+08:00"
     },
     "demo-02": {
       "url": "https://chatgpt.com/c/6abf238d-6dc0-83ec-aa5e-43c62aebe892",

@@ -12,7 +12,7 @@
 - [x] 【GPT 对话已建】[RESOLVED 2026-10-03 19:38 督导] 督导已在 ChatGPT 建立专属对话并发出背景：https://chatgpt.com/c/6ac0e884-8b84-83ec-a462-ce4f684cc310 → 下轮评审直接在此续评，回复存 reviews/chatgpt-demo-01-full.md。
 - [ ] 【NEEDS_WORK】旧评审要求真人试玩计时确认单局 2-3 分钟——需要时在汇报里提醒用户试玩。
 - [x] 【提示词过时·注入取消】[RESOLVED 20:36 督导] demo-01 任务已自我进化为「每5分钟全局流水线」（健康自愈→停滞转向→subagent并行→发布QA），停滞四选一已纳入其转向阶梯并写入 README（6b0e5ad）——注入作废，督导适配新拓扑；灵感菇侦探的迭代改由流水线反馈跟进承担。
-- [ ] 【GPT full 缺失·归属流水线】reviews/chatgpt-demo-01-full.md 仍不存在——owner=每5分钟流水线（其评审步骤覆盖 reviews/chatgpt-*.md），20:45/20:50 巡查抽查；连续 3 轮无产出则催办。
+- [x] 【GPT full 缺失·归属流水线】[RESOLVED 21:27 督导] 督导亲自在 demo-01 专属对话发 v3 版本说明并存档 reviews/chatgpt-demo-01-full.md。**结论 ITERATE（明显接近 KEEP，差真人验证）**：①第一案加交叉推理点（重写2-3条证词）②允许 3/5 线索随时指认 ③Case02 极小 vertical slice；禁止再因时长加线索。→ 建议交流水线/任务下轮落实①②。
 
 ## demo-03 岩浆降温的小人国度
 - [x] 【GPT 对话已建】[RESOLVED 2026-10-03 19:38 督导] https://chatgpt.com/c/6ac0e8c8-f34c-83ec-9c30-1cca9503c042 → 下轮（19:40 起）评审在此续评，回复存 reviews/chatgpt-demo-03-full.md。
