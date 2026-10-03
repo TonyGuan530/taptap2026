@@ -12,14 +12,14 @@
 requirements/backlog.md 的 demo-05 节 + Miro 原始想法（现代恐龙意识 + 火山灾害生存策略，含地形风险/资源分散储备/灾后动态灾害连锁）。玩法：准备期分散储备 → 火山爆发随机灾害链 → 撤离决策 → 末日故事结算。
 
 ## 当前状态
-- public/demos.json 的 demo-05 slot（buildId=demo-05，60 秒生存局已上线）
-- headless 平衡测试 game/tests/test_demo05.gd（分散储备富余存活 / 全押河谷遇雨储备尽失，双 PASS）
-- ChatGPT 监督对话尚未建立（本聊天即为起点，创建后把对话 URL 记入 reviews/chatgpt-conversations.json）
+- public/demos.json 的 demo-05 slot（buildId=demo-05-v2，V2 已上线：特产收益×风险/灾后应急行动/萨满天气预报；Pages 四件套 md5 已验证与本地一致）
+- headless 平衡测试 game/tests/test_demo05.gd 4 用例全 PASS（分散储备胜 / 全押河谷遇雨不行动剩6份 / 全押森林胜 / 全押河谷遇雨+抢运救回20份）
+- ChatGPT 监督对话：https://chatgpt.com/c/6abf4a9c-3e7c-83ec-a5f5-6a87251014dd（v2 续评 ITERATE → reviews/chatgpt-demo-05-v2-full.md；V3 Gate=dominance simulation headless 测试 + 真人 5 局策略多样性，数值冻结不加新系统）
 - ITERATE 反馈（demo-05 监督评审）：验证「玩家连玩 5 局会出现 3-4 种都成立的策略」——需要策略多样性扩展（酸雨事件/建筑系统等 Miro 扩展贴纸）
 - ✅ 定时任务已创建（2026-10-03，本对话，automation-684bb086）：cron `20,50 * * * *`，任务名「每30分钟：demo-05 恐龙火山生存 开发迭代评审发布」。本对话 URL：待填
 
 ## 每轮流程
-1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。（注意：测试验证不要用本地前端——直接用 GitHub Pages 公网链接 https://tonyguan530.github.io/taptap2026/play.html?id=<slotId> 或 itch 页面，截图/录屏也从公网页面取）
+1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。
 2. Miro 同步：node tools/miro-fetch.mjs；提取与恐龙火山相关的新想法，更新 requirements/backlog.md 的 demo-05 节。
 3. 反馈：data/db.json 的 demo-05 评论，挑可执行项落实。
 4. 开发/迭代：改 game/demo05_volcano.gd——扩展方向（与 GPT 讨论后定）：酸雨事件（Miro 扩展贴纸）、建筑系统（初始建筑：山）、群体系统、多轮难度；headless 平衡测试 game/tests/test_demo05.gd 风格（会玩→胜 / 摆烂→败 双用例，改参数后必须重跑）。
@@ -29,6 +29,9 @@ requirements/backlog.md 的 demo-05 节 + Miro 原始想法（现代恐龙意识
 8. 收尾：demos.json 更新、git push origin main、reports/ 报告、中文简短汇报。绝不把 data/secrets.json 内容写进报告或提交。
 
 ## 本 demo 已知坑（务必遵守）
-- 【平衡联动】改温度曲线/设施/村民参数后必须重跑 test_demo05.gd 双用例——会玩必须能胜、摆烂必须能败。
+- 【禁止前端实测（用户指令 2026-10-03）】不开内嵌浏览器测试——IAB 渲染被宿主窗口节流（rAF 卡死），页面实测不可信。验证发布一律公网 HTTP：itch 用 `node tools/publish-qa.mjs <ver>`（四件套 md5 对比）；GitHub Pages 用 curl（builds.json 找版本 + builds/<ver>/ 四件套 md5 对比本地）。
+- 【截图/录屏】不从浏览器抓；用 Godot Movie Maker 离线渲染：`godot --path game --write-movie <out.avi> --fixed-fps 30 res://tests/demo05_showcase.tscn`（自动演示驱动+确定性种子），再 `ffmpeg` 转 mp4、抽关键帧当截图。
+- 【git 纪律】多任务并行，只 `git add` 自己的文件清单，绝不 `git add -A`（会卷进其他 demo 的进行中改动）；导出前查 data/export.lock。
+- 【平衡联动】改温度曲线/设施/村民参数后必须重跑 test_demo05.gd 全部用例——既有判据必须保持 PASS。
 - 【 headless 测试用真实时间计时】（time_scale 加速），按帧数计时毫无意义。
 - 【 Godot 严格模式】clamp 返回 Variant 需显式 : float；CanvasLayer 不能赋给 Control 变量。
