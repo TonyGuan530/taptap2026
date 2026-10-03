@@ -23,8 +23,8 @@ func _ready() -> void:
 		{at = 17.0, kind = "dep", arg = "highland"},
 		{at = 32.0, kind = "emg", arg = ""},
 		{at = 34.0, kind = "reloc", arg = "valley"},
-		{at = 39.0, kind = "route", arg = 0},
-		{at = 44.0, kind = "quit", arg = ""},
+		{at = 38.0, kind = "route", arg = 0},
+		{at = 42.0, kind = "quit", arg = ""},
 	]
 
 

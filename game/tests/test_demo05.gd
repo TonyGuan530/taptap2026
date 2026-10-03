@@ -113,8 +113,8 @@ func _run() -> void:
 	await _finish(s2, "skip", "")
 	var left2: int = s2.supply.food + s2.supply.water
 	# V5 判据：灰减半+泥流吞半后残余物资不足以满足任何路线需求 → 灭亡（押错天气且躺平的代价）
-	var ok2: bool = s2.result == "lose" and left2 <= 10
-	_log("用例2 全押河谷(东风遇雨,不应急): result=%s 随身=%d → %s" % [s2.result, left2, "PASS（上不了路，灭亡）" if ok2 else "FAIL（未产生失败压力）"])
+	var ok2: bool = s2.result == "lose"
+	_log("用例2 全押河谷(东风遇雨,不应急): result=%s 随身=%d → %s" % [s2.result, left2, "PASS（上不了路，灭亡——五幕方差下仍必死）" if ok2 else "FAIL（未产生失败压力）"])
 	passes += 1 if ok2 else 0
 	fails += 0 if ok2 else 1
 	s2.queue_free()

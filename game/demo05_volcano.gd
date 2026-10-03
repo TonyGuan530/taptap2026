@@ -35,6 +35,24 @@ const ADJUST_CARDS := [
 	{id = "abandon", name = "轻装奔袭", desc = "耗储备食1水1：全部路线需求-2"},
 	{id = "skip", name = "按兵不动", desc = "不做应急，按原计划硬扛"},
 ]
+## 结局文风三变体（v11 内容层）：按 result 取尾声
+const END_STYLES := [
+	{name = "史诗体", lines = {
+		"win": "后世把这次迁徙称为「大出走」——火焰追逐着他们的尾巴，而他们跑赢了末日。",
+		"partial": "他们活着抵达了新家，只是每一步都踏着同伴的影子。史书称之为「血泪归途」。",
+		"lose": "灰烬落下时，没有史诗，只有风。",
+	}},
+	{name = "幸存者日记", lines = {
+		"win": "……我们在黎明前越过了最后一条河。回头望，山还在烧。我们活下来了，这就够了。",
+		"partial": "……水只剩最后一口。夜里有人偷偷哭了，但没有人回头。",
+		"lose": "……日记到这里就停了。愿拾到它的同类知道：我们试过。",
+	}},
+	{name = "幼龙视角", lines = {
+		"win": "妈妈说，大火之后我们找到了长满果子的新家。我只记得天上一直下着灰，像下雪。",
+		"partial": "那天很冷，大家走得很慢。但妈妈说，我们到家了。",
+		"lose": "那天晚上，我靠着妈妈的背睡着了。梦里没有火山。",
+	}},
+]
 
 var phase := "prepare"        # prepare / announce / adjust / resolve / decide / end
 var timer := PHASE1_TIME
@@ -56,6 +74,7 @@ var events := []              # 末日故事事件链
 var route_chosen := -1
 var margin := 0               # v6 A'：撤离余量 = 行军消耗后剩余物资（结算评分用）
 var night_weather := ""       # v9 第五幕：萨满第二预言——"cold"=寒夜（撤离耗 1 水）/"mist"=稳雾
+var end_style := 0            # v11 内容层：结局文风索引（每局随机，0-2）
 var result := ""
 var pulse := 0.0
 var hovered := -1
@@ -73,6 +92,7 @@ func _ready() -> void:
 	for t in TILES:
 		stored[t.id] = {food = 0, water = 0}
 	_roll_forecast()
+	end_style = randi() % END_STYLES.size()
 	_build_ui()
 	# 采集计时：每 4 秒 +1 采集点
 	var timer_node := Timer.new()
@@ -193,6 +213,7 @@ func _restart() -> void:
 	scouted = false
 	route_bonus = 0
 	night_weather = ""
+	end_style = randi() % END_STYLES.size()
 	events = []
 	route_chosen = -1
 	for t in TILES:
@@ -532,9 +553,14 @@ func _show_end() -> void:
 	phase = "end"
 	end_panel.visible = true
 	var verdict := "完美撤离" if result == "win" else ("惨胜" if result == "partial" else "灭亡")
+	var style: Dictionary = END_STYLES[end_style]
+	var coda: String = style.lines.get(result, style.lines.get("lose", ""))
 	end_body.text = ""
 	for e in events:
 		end_body.text += "· " + e + "\n"
+	end_body.text += "\n—— 本局叙事：%s ——" % style.name
+	if coda != "":
+		end_body.text += "\n「%s」" % coda
 	end_body.text += "\n—— 结算：%s · 撤离余量 %d · 剩余食物 %d 水 %d · 评分 %d ——" % [verdict, margin, supply.food, supply.water, _score()]
 
 
