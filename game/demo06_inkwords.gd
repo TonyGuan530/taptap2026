@@ -421,9 +421,9 @@ func _try_place(pos: Vector2) -> void:
 		t.timeout.connect(func():
 			if is_instance_valid(body):
 				body.freeze = true)
-		_tel("place", {"shape": shape.id, "tag": word.id,
-			"pos": [snappedf(pos.x, 0.5), snappedf(pos.y, 0.5)],
-			"ink_cost": cost, "ink_left": ink})
+	_tel("place", {"shape": shape.id, "tag": word.id,
+		"pos": [snappedf(pos.x, 0.5), snappedf(pos.y, 0.5)],
+		"ink_cost": cost, "ink_left": ink})
 	_set_hint("放置了 %s×%s（-%d💧）。%s" % [shape.name, word.name, cost, word.tip])
 
 

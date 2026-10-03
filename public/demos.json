@@ -26,8 +26,8 @@
     {
       "id": "demo-04",
       "title": "SOUP 2.0：DNA 融合逃生",
-      "goal": "和外星生物 DNA 融合改造自身，逃离危险的异星",
-      "buildId": "demo-04",
+      "goal": "和外星生物 DNA 融合改造自身，逃离危险的异星（v2：3 关卡 + DNA 组合效果 + 基因碎片评级）",
+      "buildId": "demo-04-v2",
       "status": "done"
     },
     {
@@ -41,7 +41,7 @@
       "id": "demo-06",
       "title": "词条涂鸦创造（新想法）",
       "goal": "探索获得词条(Fire/Heavy/Float/Sticky...) + 有限墨水画图形 + 赋词条生成效果；关卡只给目标不规定答案，涌现来自统一规则组合",
-      "buildId": "demo-06-v2",
+      "buildId": "demo-06-v3",
       "status": "done"
     },
     {

@@ -143,8 +143,8 @@ func _run() -> void:
 	_check("T4e 环境方块留在台上也可直接跳越（60 抬升 ≤ 跳高）", 60.0 <= jump_h)
 
 	# ============ T5 实机通关（解法A）——通关只由玩家进入 GOAL 触发 ============
-	scene.shape_idx = 1    # 长板
-	scene.word_idx = 1     # Float
+	scene._on_shape(1)     # 长板（走真实选择路径，select 进 telemetry）
+	scene._on_word(1)      # Float
 	scene._try_place(Vector2(400, 350))
 	scene._try_place(Vector2(615, 350))
 	await _wait(0.3)
@@ -181,6 +181,30 @@ func _run() -> void:
 	scene.keys[KEY_SPACE] = false
 	_check("T5b 实机通关（解法A·仅 GOAL 判定，无解法 trigger）", won,
 		"state=%s player=%s" % [String(scene.state), str(scene.player.position)])
+
+	# ============ T6 盲测 telemetry（ChatGPT L3 评审指定 8 字段，玩法零改动） ============
+	var has_place := false
+	var has_select := false
+	for e in scene.tel_events:
+		if e.get("type", "") == "place" and e.get("shape", "") == "plank" and e.get("tag", "") == "float" \
+				and int(e.get("ink_cost", 0)) == cost_a / 2 and (e.get("pos", []) as Array).size() == 2:
+			has_place = true
+		if e.get("type", "") == "select":
+			has_select = true
+	_check("T6a place 事件含 shape/tag/spawn_position/ink_cost", has_place)
+	_check("T6b select 事件记录（可回放首次试 Heavy/Sticky）", has_select)
+	var has_goal := false
+	for e2 in scene.tel_events:
+		if e2.get("type", "") == "goal" and int(e2.get("level", -1)) == 2 and e2.has("elapsed"):
+			has_goal = true
+	_check("T6c goal 事件记录通关（用时/剩余墨水/放置数）", has_goal)
+	var jtxt: String = scene.tel_export_json()
+	var jparsed = JSON.parse_string(jtxt)
+	var evs_ok: bool = jparsed is Dictionary and jparsed.get("events", null) is Array \
+			and (jparsed["events"] as Array).size() == scene.tel_events.size()
+	_check("T6d 导出 JSON 可解析且事件数一致", evs_ok, "json_len=%d" % jtxt.length())
+	var pid_ok: bool = jparsed is Dictionary and str(jparsed.get("pid", "")) != ""
+	_check("T6e 记录含受试编号 pid（盲测区分受试者）", pid_ok)
 
 	Engine.time_scale = 1.0
 	_log("统计: PASS=%d FAIL=%d" % [pass_cnt, fail_cnt])
