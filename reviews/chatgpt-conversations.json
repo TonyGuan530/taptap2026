@@ -78,9 +78,11 @@
     "demo-09": {
       "url": "https://chatgpt.com/c/6ac149b7-71ec-83ec-b5d3-aa115787eaf5",
       "review": "reviews/chatgpt-demo-09-v1-full.md",
-      "verdict": "ITERATE",
+      "verdict": "KEEP（v2 升级）",
       "note": "v1 首轮评审(2026-10-04)：造车 toy 成立（轮胎自由度真实落到物理，非 UI 假自由）但只证明「设计会改变车」，未证明「不同设计长期都有意义」。最大问题=假选择/万能解风险（自由度可能坍缩成「把轮胎摆正确」）。v2 只做 3 件：①诊断关（300-500m 三物理问题：密集小颠簸/短陡坡沟/高速平路），验收记录 finish_time/max_pitch/airtime/bottom_out_count/rollover/wheel_contact_ratio 证明 ≥3 类 build trade-off ②Garage 一键复制上一版+Ghost 对比（上一趟时间显示）③轮胎总预算（总面积/总质量 ≤X 制造取舍，systemic 化原始想法的面积上限）。禁做：自由画车身/AI 对手/碰撞/更多赛道/美术/零件商店。v2 唯一命题=玩家理解系统后会不会主动造第二三种完全不同的车；会→接近 KEEP",
-      "archivedAt": "2026-10-04T03:20+08:00"
+      "archivedAt": "2026-10-04T03:20+08:00",
+      "v2Review": "reviews/chatgpt-demo-09-v2-full.md",
+      "v2Note": "v2 复评 KEEP(2026-10-04 从 ITERATE 升级)：三 archetype 同场互不支配+面积预算结构性 trade-off——「存在多种真正不同有效设计」获明确工程证据，核心 mechanic 值得占用后续开发时间。下一步=冻结 mechanic 进真人盲测（最多 2 个 instrumentation：①架构变化遥测 run_index/wheel_count/radii/positions/chassis/total_area/finish_time/result/previous_build_distance，major_change=轮数或车身变化或位置>0.15 或半径>20% ②3-5 人盲测只给一句目标，记录 total runs/distinct architecture/主动改轮数/改轴距/非对称/看遥测改方案/口头解释）。Gate=≥3/5 无提示产生 ≥2 个 major build architecture。若只微调→加轻量局部目标反馈（只描述现象不教解法）。禁：自由画车身/AI 对手/新零件/更多赛道/美术 polish——编码边际信息收益已低，缺的是真人行为"
     }
   }
 }
