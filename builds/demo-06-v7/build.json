@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-06-v7",
+    "date":  "2026-10-03T21:40:25+08:00",
+    "author":  "49321",
+    "notes":  "playtest baseline: 4 tags x 3 shapes fixed size + L1-L4 (SIZE reverted per reviewer B ruling, commit kept in history)"
+}
