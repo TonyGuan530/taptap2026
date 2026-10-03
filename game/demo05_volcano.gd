@@ -76,6 +76,7 @@ var margin := 0               # v6 A'：撤离余量 = 行军消耗后剩余物�
 var night_weather := ""       # v9 第五幕：萨满第二预言——"cold"=寒夜（撤离耗 1 水）/"mist"=稳雾
 var end_style := 0            # v11 内容层：结局文风索引（每局随机，0-2）
 var forecast_voice := 0      # v12 内容层：萨满预报措辞索引（每局随机，0-3）
+var dino_portrait: Sprite2D  # v10/v13：恐龙立绘引用（呼吸动画用）
 var result := ""
 var pulse := 0.0
 var hovered := -1
@@ -124,6 +125,8 @@ func _build_ui() -> void:
 		dino.position = Vector2(860, 420)
 		dino.scale = Vector2(0.15, 0.15)
 		dino.modulate = Color(1, 1, 1, 0.92)
+		dino.name = "DinoPortrait"
+		dino_portrait = dino
 		ui.add_child(dino)
 	var title := Label.new()
 	title.text = "重生之我是恐龙 · 火山生存（demo-05）"
@@ -299,6 +302,10 @@ func _on_tile_click(i: int) -> void:
 func _process(delta: float) -> void:
 	pulse += delta * 4.0
 	toast_age += delta
+	# v13：恐龙待机呼吸（纯视觉）
+	if dino_portrait:
+		var breath: float = 1.0 + 0.025 * sin(pulse * 0.8)
+		dino_portrait.scale = Vector2(0.15, 0.15 * breath)
 	if phase == "prepare":
 		timer -= delta
 		var sentinel: bool = _tile_total("highland") > 0
