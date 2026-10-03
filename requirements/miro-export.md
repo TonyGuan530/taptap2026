@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/3 22:40:39 · 共 54 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/3 23:11:11 · 共 56 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(-218,-185)
@@ -249,3 +249,11 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-06.png
 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-06.mp4
 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;
+
+### [sticker] @(1340,16707)
+
+<p><strong><u>纸</u></strong>​<strong><u>飞机</u></strong>​<strong><u>模拟器</u></strong>​<strong><u>&#43;</u></strong>​<strong><u>肉鸽</u></strong>&#xff1a;​让​玩家折出​一​架​纸​飞机&#xff0c;​能​超过​到​终点​线算​过关。​<br />玩家​可以​自由​折​叠纸。​但是​在​不同​关卡​获得​的​纸​的​形状​不同&#xff0c;​可折​叠​次​数​不同。​<br />关​卡​间​商​店​可以​强化&#xff1a;​纸张、​玩​家力气、​以及​一些​可以​贴​在​纸飞​机​上​的​强化​物品​&#xff08;比如​螺旋桨​等&#xff09;。​<br />涌现&#xff1a;​定义​了​折纸​规则&#xff0c;​玩家​自行​发挥​折出​的​纸飞机。​</p>
+
+### [sticker] @(1340,19600)
+
+<p><strong><u>赛车</u></strong>​<strong><u>模</u></strong>​<strong><u>拟器</u></strong>&#xff1a;​让​玩家​自己​画​轮胎​和​车身&#xff0c;​轮胎​位​置​数量​可​自由​摆放&#xff0c;​并​让​玩家驾驶​自己​画​的​赛车​开到​终点。​<br />游戏​基于​简化​版​真实物​理​引擎&#xff0c;​因为​玩​家画​的​轮胎、​车身​不​规整&#xff0c;​所以​可能​会​开​不​了​直线​或者​颠簸&#xff0c;​可能​会​撞​上​其他​车辆。​<br />关卡​可以​做​一些​限制&#xff1a;​比如​必须​至少​装备​两​个​后轮&#xff0c;​一​个​轮胎面​积​至​多​为​X。​</p>
