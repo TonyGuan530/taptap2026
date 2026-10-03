@@ -1,32 +1,35 @@
 {
-  "checkedAt": "2026-10-04T02:16:00+08:00",
-  "round": 41,
+  "checkedAt": "2026-10-04T02:26:00+08:00",
+  "round": 42,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP（前台闸门），沿用上轮读数"
   },
   "automations": {
-    "supervisor": { "runCount": 42, "lastDispatch": "02:15", "next": "02:24" },
-    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中" },
-    "demo-02": { "cron": "5,35 * * * *", "runCount": 13, "evidence": "02:05 冻结守望轮 9（c10d6aa），02:35 下轮" },
-    "demo-03": { "cron": "10,40 * * * *", "runCount": 14, "evidence": "02:10 冻结守望零变更（9345f3a），02:40 下轮" },
-    "demo-04": { "cron": "15,45 * * * *", "runCount": 14, "evidence": "02:15 轮运行中（唯一迭代线），02:45 下轮" },
-    "demo-05": { "cron": "20,50 * * * *", "runCount": 13, "evidence": "02:20 下轮（冻结等真人）" },
-    "demo-06": { "cron": "25,55 * * * *", "runCount": 14, "evidence": "02:25 下轮" }
+    "supervisor": { "runCount": 43, "lastDispatch": "02:24", "next": "02:34" },
+    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中；产出 demo-09 v1（d51cf4c/c4a5392）" },
+    "demo-02": { "cron": "5,35 * * * *", "runCount": 13, "evidence": "02:35 下轮（冻结守望）" },
+    "demo-03": { "cron": "10,40 * * * *", "runCount": 14, "evidence": "02:40 下轮（冻结守望）" },
+    "demo-04": { "cron": "15,45 * * * *", "runCount": 14, "evidence": "02:15 已跑，02:45 下轮（唯一迭代线）" },
+    "demo-05": { "cron": "20,50 * * * *", "runCount": 14, "evidence": "02:20 已跑，02:50 下轮（冻结等真人）" },
+    "demo-06": { "cron": "25,55 * * * *", "runCount": 14, "evidence": "02:25 触发中（冻结守望）" }
   },
   "envSnapshot": {
-    "health": "ok builds=41",
+    "health": "ok builds=42（+1=demo-09-v1）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miroFresh": "02:10",
-    "git": "同步（HEAD 9345f3a）",
+    "miroFresh": "02:20",
+    "git": "同步（HEAD c4a5392）",
     "itch": "占位第 3 天（服务端），Pages 兜底全在线"
   },
-  "fleetState": "demo-05/08 等真人 Gate；demo-02/03/06 冻结守望；demo-04 唯一迭代线；瓶颈=真人试玩排期（用户决策）",
+  "majorUpdates": {
+    "demo-09": "v1 新 demo 落地（Miro 想法→流水线 subagent 开发）：赛车模拟器——车库设计 3 车身预设×轮胎自由布局（半径 12-30px+后轮规则+重心标记）、手写悬挂物理（弹簧阻尼 60/9+驱动力矩+翻车判定 1.5s）、3 关地形递进；涌现=轮胎布局决定行驶性格；10 断言全 PASS；导出 demo-09-v1（Pages）。「画车身」MVP 简化为预设轮廓，手绘留 v2"
+  },
+  "fleetState": "demo-05/08 等真人 Gate；demo-02/03/06 冻结守望；demo-04 唯一迭代线；demo-09 v1 新上线待评审；瓶颈=真人试玩排期（用户决策）",
   "pending": [
     "【WATCH】itch 占位第 3 天（纯等服务端；Pages 兜底）",
     "【WATCH】demo-08 pck 14.9MB 导出过滤",
     "【需用户决策·最紧迫】真人试玩/盲测排期；itch A/B 维持待复",
-    "demo-04 v8"
+    "demo-09 v1 待 GPT 评审映射；demo-04 v8"
   ]
 }
