@@ -36,4 +36,6 @@
 - [ ] 【WATCH·itch pck/wasm】LitePipeline 恢复后观察 1-2 轮是否全量匹配；匹配则【需用户决策】A/B 自动收敛为 A。
 - [x] 【WATCH·demo-08/09】[RESOLVED 02:35 督导] 流水线已认领并落地两条 Miro 想法：demo-08 纸飞机 v1-v3（复评 KEEP 转真人 Gate，方案落档）、demo-09 赛车 v1（首评 ITERATE+v2 诊断关窄授权，专属对话 6ac149b7）。
 - [x] 【用户指令·持续开发令】[02:55 执行] 调度节奏判定合理保留（督导 10 分/流水线 5 分/六任务 30 分错峰）；「冻结守望/等真人」型空轮取消——demo-02/03/05/06 已 CronUpdate 注入持续开发令（各带专属约束：demo-02 v4 三件套、demo-03 参数重跑红线、demo-05 V8 平衡冻结但内容层开放、demo-06 L3 逐字节不动但 L4/L5 首选）；流水线（demo-08/09 执行者）经 reviews/supervisor-directive-2026-10-04-continuous-dev.md 消化；真人排期从「开发阻塞」降级为「Gate 判定时点」。督导巡查新增判据：连续 2 轮守望型空转=异常催办。
+- [ ] 【WATCH·≥5关达标】[03:00 用户指令] 每个 demo 至少 5 关：demo-02 现 3 关（差 2）、demo-03 三阶段（差 2）、demo-04 三关+组合（差 1-2）、demo-05 三阶段（差 2）、demo-06 L1-3（补 L4/L5 即达）、demo-08 两关（差 3）、demo-09 三+诊断关（差 1）——逐轮验收各 demo 报告的关卡数，连续 2 轮未向 5 关推进即催办。
+- [ ] 【WATCH·Miro 视频新鲜度】[03:00 用户指令] 板面视频必须=最新版：当前 8 个 demo 的 reviews/videos/*.mp4 全部为旧版录制（无版本号旧文件），各 demo 每次发布新版本时必须重录+miro-post-shots 上板；巡查对照 demos.json buildId 与 miro-post-log 时间戳。
 - [x] 【用户指令·Windows 计划任务停用】[00:49 执行] TapTap-LitePipeline 与 TapTap-KeepZCodeAlive 两个 Windows 计划任务已按用户指令禁用（停一下，不要自动的 Windows 控制命令）。 itch 自愈循环暂停——占位分发问题完全等 itch 服务端恢复，Pages 渠道不受影响。恢复方式：schtasks /change /tn <任务名> /enable。
