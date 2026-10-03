@@ -52,7 +52,8 @@
       "v9Note": "v9 内容层发布（五幕灾难链：余震/兽群/第二预言寒夜）；V9 240 局：Gate A/B PASS、C intel 双料第一（100% 存活+63.4）→ 下轮按预批准削高地双收益（拟取消路线-1）后复测",
       "v10Note": "v10：intel 削双收益（移除高地路线-1）+ 恐龙立绘部署；240 局：all_cave 100%活/49 垫底（安全地板达成）、highland 46.7%win/61.5 领先、intel 23.3%/56、relocate 100%惨胜复活维持；三 Gate 字面 C FAIL（highland 双料）→ 数据已交监督者裁决：接受前沿进真人 Gate 或授权 highland 微调",
       "v10Ruling": "reviews/chatgpt-demo05-v10-frontier-full.md",
-      "v11Note": "v11 内容层：结局文风三变体（史诗体/幸存者日记/幼龙视角，开局随机）；4用例 4/4；V8 参数冻结维持；等真人 Gate 数据"
+      "v11Note": "v11 内容层：结局文风三变体（史诗体/幸存者日记/幼龙视角，开局随机）；4用例 4/4；V8 参数冻结维持；等真人 Gate 数据",
+      "v14Note": "v14 内容层：第四条撤离路线「西线·兽道」（need 15 稳但绕远，无随机事件）+ 四卡布局；V8 平衡冻结维持；4用例 4/4；dominance 未重跑（西线为人类专属选项）"
     },
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
@@ -95,7 +96,9 @@
       "note": "v1 首评(2026-10-04)：状态传递/后果积累/跨章反馈的编辑系统成立（文本成为状态系统的界面），最大问题=词槽可能退化成数值按钮（披着小说皮的三属性 build puzzle）。v2 三变化（实验版不扩内容）：①同一词不同上下文不同结果槽（照片随身份派生含义）②矛盾可被后文圆回来——UNRESOLVED_ANOMALY 机制，圆回=FORESHADOW_PAYOFF 奖励、没圆才转抗议（把错误转化成伏笔）③盲测版隐藏基调数值（低中高/文字反馈）测玩家是否开始认真阅读。禁：6-10 章/生成式 AI/自由输入/几十结局。v2 唯一命题=矛盾→圆回变伏笔能否产生明显 Eureka；不能→倾向 DROP；成立→升 KEEP",
       "archivedAt": "2026-10-04T05:00+08:00",
       "v2Review": "reviews/chatgpt-demo-10-11-v2-full.md",
-      "v2Note": "v2 复评 KEEP(2026-10-04 从 ITERATE 升级)：Eureka 结构成立——矛盾=暂时未解决的故事状态（非错误），后文赋予意义=「改写前文意义」的能力；玩家完成负状态→延迟→正状态的系统转换；出现「未来重新解释过去」的质变。新最大风险=Eureka 重复发生不依赖唯一配方（气闸→殖民飞船若成固定配对则与脆墙+石头趋同）。v3 只做一个核心实验：同一 anomaly ≥2 种合法解释（气闸→A 伪装殖民飞船/科幻 vs B 矿井防爆门/悬疑，都算回收但推向不同方向）+逆序闭环（先写解释再出现对应物，v3.1 可延后）+轻量遥测（anomaly_created/resolved/type/chapters_to_resolution/same_anomaly_different_resolution）。真人关键观察=是否有人无提示主动保留 anomaly 不马上 Reset。继续冻结 6-10 章/LLM/自由输入"
+      "v2Note": "v2 复评 KEEP(2026-10-04 从 ITERATE 升级)：Eureka 结构成立——矛盾=暂时未解决的故事状态（非错误），后文赋予意义=「改写前文意义」的能力；玩家完成负状态→延迟→正状态的系统转换；出现「未来重新解释过去」的质变。新最大风险=Eureka 重复发生不依赖唯一配方（气闸→殖民飞船若成固定配对则与脆墙+石头趋同）。v3 只做一个核心实验：同一 anomaly ≥2 种合法解释（气闸→A 伪装殖民飞船/科幻 vs B 矿井防爆门/悬疑，都算回收但推向不同方向）+逆序闭环（先写解释再出现对应物，v3.1 可延后）+轻量遥测（anomaly_created/resolved/type/chapters_to_resolution/same_anomaly_different_resolution）。真人关键观察=是否有人无提示主动保留 anomaly 不马上 Reset。继续冻结 6-10 章/LLM/自由输入",
+      "v3Review": "reviews/chatgpt-demo-10-v3-full.md",
+      "v3Note": "v3 复评 KEEP 维持+比 v2 更确定(2026-10-04)：红线正式关闭——「矛盾→圆回来变伏笔」已产生 Eureka Structure，双解释不再依赖唯一钥匙（规则相同叙事结果不同=小型语义状态网络）。Emergence 定性=Systemic Narrative Puzzle / authored-systemic hybrid（词与解释仍 authored 但已不重要）。信息缺口转移：从「机制成立吗」→「玩家第一次接触能否自己发现机制」。下一步=v3b 盲测构建（选择前隐藏 explain 答案提示，只给小说文字，点击后才反馈「原来这里是伏笔！」——防 UI 杀掉 Eureka）+3-5 人不知规则盲测（只说「修改小说让它能出版」；四数据 anomaly_created/resolved/type/unresolved_at_publish + 口头「原来前面那个是这个！」反应）。低优先代码实验=逆序关系（伏笔→兑现与异常→解释共享 tag relation）。继续冻结 6 章/第三解释/更多身份/LLM/自由输入"
     },
     "demo-11": {
       "url": "https://chatgpt.com/c/6ac16454-cfbc-83ec-a401-b8fb66635293",
