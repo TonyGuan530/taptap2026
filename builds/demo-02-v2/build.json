@@ -1,7 +1,7 @@
 {
-  "title": "物性变换谜题 v2",
-  "version": "demo-02-v2",
-  "date": "2026-10-03T18:53:05+08:00",
-  "author": "49321",
-  "notes": "v2 迭代（落实 ChatGPT 评审建议#1）：脆墙纯物理判定（撞击速度≥450 即碎，与词条解耦）；移除属性克制与指责文案"
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-02-v2",
+    "date":  "2026-10-03T19:02:11+08:00",
+    "author":  "49321",
+    "notes":  "修复导出错位(main_scene误指demo-06)+新增下一关按钮(通关后启用)+build.json去BOM"
 }

@@ -29,7 +29,9 @@ $meta = [ordered]@{
   author  = $env:USERNAME
   notes   = $Notes
 }
-$meta | ConvertTo-Json | Set-Content -Encoding UTF8 (Join-Path $buildDir "build.json")
+# PS5.1 的 Set-Content -Encoding UTF8 会写 BOM，站点 JSON.parse 读 BOM 会失败，必须无 BOM 写出
+$metaJson = $meta | ConvertTo-Json
+[System.IO.File]::WriteAllText((Join-Path $buildDir "build.json"), $metaJson + "`n")
 
 Write-Host ""
 Write-Host "OK: exported build builds/$Version" -ForegroundColor Green

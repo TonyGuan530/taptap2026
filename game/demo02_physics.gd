@@ -63,6 +63,7 @@ var ball: RigidBody2D
 var tag_buttons := []
 var msg_label: Label
 var level_label: Label
+var next_b: Button
 var hint := ""
 var stuck_time := 0.0
 var spring_ready := true
@@ -95,6 +96,15 @@ func _ready() -> void:
 	reset_b.size = Vector2(80, 36)
 	reset_b.pressed.connect(func() -> void: _reset_ball(true))
 	ui.add_child(reset_b)
+
+	# 关卡切换：通关前禁用，通关后可点（评审反馈：第二关缺入口）
+	next_b = Button.new()
+	next_b.text = "下一关"
+	next_b.position = Vector2(866, 50)
+	next_b.size = Vector2(80, 36)
+	next_b.disabled = true
+	next_b.pressed.connect(_next_level)
+	ui.add_child(next_b)
 
 	msg_label = Label.new()
 	msg_label.position = Vector2(16, VIEW.y - 32)
@@ -160,6 +170,7 @@ func _load_level(idx: int) -> void:
 	_apply_tag()
 	level_label.text = "%s　　参考解法：%s" % [lv.name, lv.solution]
 	hint = "选一个词条，球会立刻改变物理行为。把球送进金色 GOAL 区！"
+	_refresh_next_button()
 	queue_redraw()
 
 
@@ -230,6 +241,19 @@ func _reset_ball(keep_time := false) -> void:
 func _next_level() -> void:
 	if level_idx + 1 < LEVELS.size():
 		_load_level(level_idx + 1)
+	else:
+		_load_level(0)   # 已到最后一关：从头再来
+
+
+func _refresh_next_button() -> void:
+	## 通关前禁用「下一关」，通关后启用；最后一关通关后变为「从头再来」
+	var has_next := level_idx + 1 < LEVELS.size()
+	if goal_reached:
+		next_b.disabled = false
+		next_b.text = "下一关" if has_next else "从头再来"
+	else:
+		next_b.disabled = true
+		next_b.text = "下一关"
 
 
 # ---------------- 每帧 ----------------
@@ -249,7 +273,11 @@ func _physics_process(delta: float) -> void:
 	# 目标区
 	if (Rect2(lv.goal) as Rect2).has_point(ball.position):
 		goal_reached = true
-		msg_label.text = "✔ 通关！用时 %d 秒 —— 换个词条再玩一次，或看看别的词条会让它怎么动。" % int(elapsed)
+		if level_idx + 1 < LEVELS.size():
+			msg_label.text = "✔ 通关！用时 %d 秒 —— 点右上「下一关」继续挑战。" % int(elapsed)
+		else:
+			msg_label.text = "✔ 全部通关！用时 %d 秒 —— 点「从头再来」重温两关。" % int(elapsed)
+		_refresh_next_button()
 		return
 
 	# 失败：球几乎停住且不在目标区 / 飞出屏幕
