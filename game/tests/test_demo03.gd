@@ -30,9 +30,10 @@ func _run() -> void:
 			scene._try_build(2)
 	var win: bool = scene.state == "win"
 	var npcs: int = scene.npcs.size()
-	print("用例1: state=%s heat=%d npcs=%d elapsed=%.0f → %s" % [scene.state, int(scene.heat), npcs, scene.elapsed, "PASS" if win and npcs >= 2 else "FAIL"])
+	var acid_hit: int = scene.acid_events.filter(func(e): return e.announced).size()
+	print("用例1: state=%s heat=%d npcs=%d acid=%d elapsed=%.0f → %s" % [scene.state, int(scene.heat), npcs, acid_hit, scene.elapsed, "PASS" if win and npcs >= 2 and acid_hit >= 1 else "FAIL"])
 	# --- 用例 2：摆烂 ---
-	scene._restart()
+	scene._setup_round()
 	t0 = Time.get_ticks_msec()
 	while scene.state == "play" and Time.get_ticks_msec() - t0 < 20000:
 		await physics_frame

@@ -14,7 +14,10 @@ requirements/backlog.md 的 demo-03 节 + Miro 原始想法（requirements/miro-
 ## 当前状态
 - public/demos.json 的 demo-03 slot（buildId=demo-03，60 秒生存局已上线）
 - headless 平衡测试 game/tests/test_demo03.gd（会玩→胜 / 摆烂→败，双 PASS）
-- ChatGPT 监督对话尚未建立（本聊天即为起点，创建后把对话 URL 记入 reviews/chatgpt-conversations.json）
+- ChatGPT 监督对话尚未建立（创建包对话已于 2026-10-03 创建定时任务，首轮运行时建立 ChatGPT 对话并把 URL 记入 reviews/chatgpt-conversations.json）
+
+## 定时任务
+- 已创建（2026-10-03）：任务名「每30分钟：demo-03 岩浆降温的小人国度 开发迭代评审发布」，cron `10,40 * * * *`，ID automation-19713e80-d7b5-45c3-bb03-602904b10486，常驻于本专属对话
 
 ## 每轮流程
 1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。

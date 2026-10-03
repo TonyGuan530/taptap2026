@@ -1,7 +1,12 @@
 extends Node2D
-## 岩浆降温的小人国度：温度不断上升，建造/升级浇水设施降温，撑过 60 秒。
+## 岩浆降温的小人国度 v2：温度不断上升，建造/升级浇水设施降温，撑过 60 秒。
 ## 随进度涌现随机 NPC 村民帮忙提水。对应 Miro 玩法块 demo-03。
-## 纯代码实现、无外部资源；点击槽位建造（20💧）/升级（40💧）。
+## v2（Miro《最后的溪流》扩展）：
+##   难度阶段：早期威胁(0-20s) → 中期危局(20-40s) → 灭亡倒计时(40s+)，升温逐段加速
+##   酸雨事件：随机时刻天降酸雨，升温加剧（气象学家村民可把酸雨时长减半）
+##   村民职业：工程师(费用-5💧)/植物学家(降温+0.4/s)/气象学家(酸雨减半)/搬运工(水滴+1.5/s)
+##   村民升级：点击村民花 30💧 升为精英村民，+0.7/s 降温
+## 纯代码实现、无外部资源。
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
@@ -14,6 +19,29 @@ const COOL_L2 := 5.0
 const NPC_COOL := 0.8
 const NPC_TIMES := [20.0, 40.0]
 const NPC_NAMES := ["阿岩", "小露", "阿灰", "石头婶", "水生"]
+const NPC_UP_COST := 30
+const NPC_UP_COOL := 0.7
+
+## 难度阶段：until = 阶段结束时刻，base/slope = 升温速率
+const PHASES := [
+	{"until": 20.0, "base": 2.0, "slope": 0.04, "name": "早期威胁"},
+	{"until": 40.0, "base": 2.5, "slope": 0.06, "name": "中期危局"},
+	{"until": 999.0, "base": 3.2, "slope": 0.10, "name": "灭亡倒计时"},
+]
+
+## 酸雨事件：起始时刻（±3s 随机抖动）、基础时长、额外升温
+const ACID_TIMES := [22.0, 46.0]
+const ACID_JITTER := 3.0
+const ACID_DUR := 8.0
+const ACID_RISE := 2.0
+
+## 村民职业（Miro 小人系统的 demo 裁剪版）
+const PROFS := [
+	{"name": "工程师", "color": "ffd54f", "desc": "建造/升级费用 -5💧"},
+	{"name": "植物学家", "color": "81c784", "desc": "额外降温 +0.4/s"},
+	{"name": "气象学家", "color": "64b5f6", "desc": "酸雨时长减半"},
+	{"name": "搬运工", "color": "e0e0e0", "desc": "水滴收入 +1.5/s"},
+]
 
 ## 设施槽位
 const SLOTS := [
@@ -26,11 +54,13 @@ var heat := 40.0
 var water := 0.0
 var elapsed := 0.0
 var towers := [0, 0, 0]        # 每槽位等级 0/1/2
-var npcs := []                 # {name, x, phase}
+var npcs := []                 # {name, x, phase, prof, pcol, level}
 var npc_next := 0
+var acid_events := []          # {start, announced}
 var toasts := []               # {text, x, y, age}
 var state := "play"            # play / win / lose
 var pulse := 0.0
+var acid_was_on := false
 
 var overlay: CanvasLayer
 var overlay_title: Label
@@ -39,6 +69,25 @@ var overlay_body: Label
 
 func _ready() -> void:
 	_build_overlay()
+	_setup_round()
+
+
+func _setup_round() -> void:
+	heat = 40.0
+	water = 0.0
+	elapsed = 0.0
+	towers = [0, 0, 0]
+	npcs = []
+	npc_next = 0
+	toasts = []
+	acid_was_on = false
+	acid_events = [
+		{"start": ACID_TIMES[0] + randf_range(-ACID_JITTER, ACID_JITTER), "announced": false},
+		{"start": ACID_TIMES[1] + randf_range(-ACID_JITTER, ACID_JITTER), "announced": false},
+	]
+	state = "play"
+	if overlay_title:
+		overlay_title.get_parent().visible = false
 
 
 func _build_overlay() -> void:
@@ -63,9 +112,44 @@ func _build_overlay() -> void:
 	again.text = "再守一次"
 	again.position = Vector2(24, 146)
 	again.size = Vector2(160, 38)
-	again.pressed.connect(_restart)
+	again.pressed.connect(_setup_round)
 	panel.add_child(again)
 	overlay_title.get_parent().visible = false
+
+
+# ---------------- 查询 ----------------
+
+func _has_prof(p: String) -> bool:
+	for n in npcs:
+		if n.prof == p:
+			return true
+	return false
+
+
+func _build_cost() -> int:
+	return BUILD_COST - (5 if _has_prof("工程师") else 0)
+
+
+func _upgrade_cost() -> int:
+	return UPGRADE_COST - (5 if _has_prof("工程师") else 0)
+
+
+func _acid_dur() -> float:
+	return ACID_DUR * (0.5 if _has_prof("气象学家") else 1.0)
+
+
+func _acid_active() -> bool:
+	for e in acid_events:
+		if elapsed >= float(e.start) and elapsed < float(e.start) + _acid_dur():
+			return true
+	return false
+
+
+func _phase() -> Dictionary:
+	for p in PHASES:
+		if elapsed < float(p.until):
+			return p
+	return PHASES[PHASES.size() - 1]
 
 
 # ---------------- 交互 ----------------
@@ -75,6 +159,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var pos: Vector2 = event.position
+		# 先看是否点了村民（升级）
+		for n in npcs:
+			if Rect2(float(n.x) - 22.0, 326.0, 44.0, 60.0).has_point(pos):
+				_try_promote(n)
+				return
 		for i in SLOTS.size():
 			if (Rect2(SLOTS[i]) as Rect2).has_point(pos):
 				if towers[i] == 0:
@@ -87,37 +176,39 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _try_build(i: int) -> void:
-	if water < BUILD_COST:
-		_toast("水滴不够（需要 %d💧）" % BUILD_COST, SLOTS[i].position)
+	var c := _build_cost()
+	if water < c:
+		_toast("水滴不够（需要 %d💧）" % c, SLOTS[i].position)
 		return
-	water -= BUILD_COST
+	water -= c
 	towers[i] = 1
 	_toast("浇水设施建成！降温 %s/s" % COOL_L1, SLOTS[i].position)
 
 
 func _try_upgrade(i: int) -> void:
-	if water < UPGRADE_COST:
-		_toast("升级需要 %d💧" % UPGRADE_COST, SLOTS[i].position)
+	var c := _upgrade_cost()
+	if water < c:
+		_toast("升级需要 %d💧" % c, SLOTS[i].position)
 		return
-	water -= UPGRADE_COST
+	water -= c
 	towers[i] = 2
 	_toast("设施升级！降温 %s/s" % COOL_L2, SLOTS[i].position)
 
 
+func _try_promote(n: Dictionary) -> void:
+	if n.level >= 1:
+		_toast("%s 已经是精英村民啦" % n.name, Vector2(float(n.x) - 40.0, 330.0))
+		return
+	if water < NPC_UP_COST:
+		_toast("升级村民需要 %d💧" % NPC_UP_COST, Vector2(float(n.x) - 40.0, 330.0))
+		return
+	water -= NPC_UP_COST
+	n.level = 1
+	_toast("%s 升级为精英村民！降温 +%.1f/s" % [n.name, NPC_UP_COOL], Vector2(float(n.x) - 60.0, 330.0))
+
+
 func _toast(text: String, pos: Vector2) -> void:
 	toasts.append({text = text, x = pos.x, y = pos.y - 10, age = 0.0})
-
-
-func _restart() -> void:
-	heat = 40.0
-	water = 0.0
-	elapsed = 0.0
-	towers = [0, 0, 0]
-	npcs = []
-	npc_next = 0
-	toasts = []
-	state = "play"
-	overlay_title.get_parent().visible = false
 
 
 # ---------------- 每帧 ----------------
@@ -132,24 +223,46 @@ func _process(delta: float) -> void:
 		return
 	elapsed += delta
 
-	# 温度：随时间加速上升
-	var rise := 2.5 + 0.06 * elapsed
-	# 冷却：设施 + 村民
+	# 温度：阶段化上升 + 酸雨加剧
+	var ph: Dictionary = _phase()
+	var rise: float = float(ph.base) + float(ph.slope) * elapsed
+	var acid_on := _acid_active()
+	if acid_on:
+		rise += ACID_RISE
+		for e in acid_events:
+			if not e.announced and elapsed >= float(e.start):
+				e.announced = true
+				_toast("☔ 酸雨来袭！升温 +%s/s" % ACID_RISE, Vector2(VIEW.x / 2 - 70, 90))
+				break
+	acid_was_on = acid_on
+
+	# 冷却：设施 + 村民（职业加成 + 精英升级）
 	var cool := 0.0
 	for t in towers:
 		cool += COOL_L1 if t == 1 else (COOL_L2 if t == 2 else 0.0)
-	cool += npcs.size() * NPC_COOL
+	for n in npcs:
+		cool += NPC_COOL + (0.4 if n.prof == "植物学家" else 0.0) + float(n.level) * NPC_UP_COOL
 	heat = clamp(heat + (rise - cool) * delta, 0.0, 130.0)
 
-	# 水滴收入
-	var income := 5.0 + npcs.size() * 1.0
+	# 水滴收入：基础 + 村民（搬运工加成）
+	var income := 5.0
+	for n in npcs:
+		income += 1.0 + (1.5 if n.prof == "搬运工" else 0.0)
 	water += income * delta
 
-	# 村民涌现
+	# 村民涌现（随机职业）
 	if npc_next < NPC_TIMES.size() and elapsed >= NPC_TIMES[npc_next]:
-		var n := {"name": NPC_NAMES[npc_next % NPC_NAMES.size()], "x": randf_range(200, 760), "phase": randf() * TAU}
+		var prof: Dictionary = PROFS[randi() % PROFS.size()]
+		var n := {
+			"name": NPC_NAMES[npc_next % NPC_NAMES.size()],
+			"x": randf_range(200, 760),
+			"phase": randf() * TAU,
+			"prof": prof.name,
+			"pcol": prof.color,
+			"level": 0,
+		}
 		npcs.append(n)
-		_toast("村民 %s 提着水桶加入救火！（全体降温 +%s/s）" % [n.name, NPC_COOL], Vector2(n.x - 60, 320))
+		_toast("村民 %s（%s）加入：%s" % [n.name, prof.name, prof.desc], Vector2(n.x - 110, 320))
 		npc_next += 1
 
 	# 胜负
@@ -168,11 +281,12 @@ func _show_end(win: bool) -> void:
 		overlay_title.text = "🏡 国度守住了！"
 		overlay_body.text = "60 秒过去，岩浆在大家的努力下退了回去。\n剩余温度 %d 度 · 村民 %d 人 · 水滴 %d\n%s" % [
 			int(heat), npcs.size(), int(water),
-			"村民们的名字会被写进歌谣：" + ", ".join(npcs.map(func(n): return n.name)) if npcs.size() > 0 else "这一夜，全靠你一个人扛住了。"]
+			"村民们的名字会被写进歌谣：" + ", ".join(npcs.map(func(n): return n.name + ("★" if n.level >= 1 else ""))) if npcs.size() > 0 else "这一夜，全靠你一个人扛住了。"]
 		overlay_title.add_theme_color_override("font_color", Color("66bb6a"))
 	else:
 		overlay_title.text = "🔥 岩浆吞没了国度……"
-		overlay_body.text = "温度突破了 100 度（坚持了 %d 秒）。\n提示：开局尽快建第一座设施，15 秒前建起第二座，\n然后攒水滴把设施升到 2 级。村民会出现帮你！" % int(elapsed)
+		overlay_body.text = "温度突破了 100 度（坚持了 %d 秒，%s）。\n提示：开局尽快建第一座设施，15 秒前建起第二座，\n攒水滴升级；酸雨来时别慌，它会过去；村民能点一下升级！" % [
+			int(elapsed), str(_phase().name)]
 		overlay_title.add_theme_color_override("font_color", Color("ef5350"))
 
 
@@ -203,7 +317,7 @@ func _draw() -> void:
 			draw_rect(r, Color(1, 1, 1, 0.04))
 			draw_rect(r, Color("8b94a7"), false, 2)
 			draw_string(FONT, r.position + Vector2(14, 34), "空槽位", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("8b94a7"))
-			draw_string(FONT, r.position + Vector2(14, 56), "建造 %d💧" % BUILD_COST, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("4fc3f7"))
+			draw_string(FONT, r.position + Vector2(14, 56), "建造 %d💧" % _build_cost(), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("4fc3f7"))
 		else:
 			var h := 34.0 if t == 1 else 52.0
 			var bw := 26.0 if t == 1 else 34.0
@@ -221,15 +335,26 @@ func _draw() -> void:
 					var dx := r.position.x + 18 + k * 28.0
 					var dy := r.position.y + 10 + fposmod(pulse * 40 + k * 17, 26)
 					draw_circle(Vector2(dx, dy), 2.5, Color(0.4, 0.8, 1.0, 0.8))
-	# 村民小人
+	# 村民小人（职业配色 + 精英星标）
 	for n in npcs:
 		var bob := 3.0 * sin(pulse * 2.0 + n.phase)
 		var px: float = n.x
 		var py := 356.0 + bob
 		draw_circle(Vector2(px, py - 18), 7, Color("ffcc80"))          # 头
 		draw_rect(Rect2(px - 6, py - 10, 12, 22), Color("90a4ae"))      # 身体
-		draw_rect(Rect2(px - 10, py - 6, 4, 12), Color("90a4ae"))       # 水桶
-		draw_string(FONT, Vector2(px - 24, py + 26), n.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("c6cddc"))
+		draw_rect(Rect2(px - 10, py - 6, 4, 12), Color(n.pcol))         # 职业色水桶
+		if n.level >= 1:
+			draw_circle(Vector2(px, py - 28), 3.0, Color("ffd54f"))     # 精英星
+		var label := "%s·%s%s" % [n.name, n.prof, "★" if n.level >= 1 else ""]
+		draw_string(FONT, Vector2(px - 38, py + 26), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("c6cddc"))
+	# 酸雨（紫雨 + 提示）
+	if _acid_active() and state == "play":
+		draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color(0.55, 0.25, 0.75, 0.08))
+		for k in 26:
+			var rx := fposmod(k * 41.0 + pulse * 60.0, VIEW.x + 40.0) - 20.0
+			var ry := fposmod(k * 97.0 + pulse * 100.0, VIEW.y)
+			draw_line(Vector2(rx, ry), Vector2(rx - 5.0, ry + 15.0), Color(0.78, 0.45, 0.95, 0.5), 2.0)
+		draw_string(FONT, Vector2(VIEW.x / 2 - 88, 70), "☔ 酸雨来袭！升温 +%s/s" % ACID_RISE, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ce93d8"))
 	# 温度条
 	var bw2 := 360.0
 	var bx2 := (VIEW.x - bw2) / 2
@@ -242,6 +367,14 @@ func _draw() -> void:
 	# 水滴与时间
 	draw_string(FONT, Vector2(16, 28), "💧 %d" % int(water), HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("4fc3f7"))
 	draw_string(FONT, Vector2(VIEW.x - 110, 28), "⏱ %d/%d 秒" % [int(elapsed), int(GAME_TIME)], HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("e8ecf4"))
+	# 阶段横幅
+	var ph: Dictionary = _phase()
+	var pcol := Color("aed581")
+	if elapsed >= 40.0:
+		pcol = Color("ef5350")
+	elif elapsed >= 20.0:
+		pcol = Color("ffd54f")
+	draw_string(FONT, Vector2(VIEW.x - 250, 50), "阶段：%s" % ph.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, pcol)
 	# 提示
 	if state == "play" and elapsed < 6.0:
 		draw_string(FONT, Vector2(230, 70), "温度会越升越快！点击空槽位建造浇水设施，撑过 60 秒！", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ffcc80"))

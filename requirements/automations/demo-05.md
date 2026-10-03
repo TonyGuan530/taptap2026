@@ -16,6 +16,7 @@ requirements/backlog.md 的 demo-05 节 + Miro 原始想法（现代恐龙意识
 - headless 平衡测试 game/tests/test_demo05.gd（分散储备富余存活 / 全押河谷遇雨储备尽失，双 PASS）
 - ChatGPT 监督对话尚未建立（本聊天即为起点，创建后把对话 URL 记入 reviews/chatgpt-conversations.json）
 - ITERATE 反馈（demo-05 监督评审）：验证「玩家连玩 5 局会出现 3-4 种都成立的策略」——需要策略多样性扩展（酸雨事件/建筑系统等 Miro 扩展贴纸）
+- ✅ 定时任务已创建（2026-10-03，本对话，automation-684bb086）：cron `20,50 * * * *`，任务名「每30分钟：demo-05 恐龙火山生存 开发迭代评审发布」。本对话 URL：待填
 
 ## 每轮流程
 1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。

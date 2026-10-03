@@ -1,45 +1,101 @@
 extends Node2D
 ## SOUP 2.0：和外星生物 DNA 融合改造自身，逃离危险的异星。
-## 横版跑到右侧逃生舱；3 个外星生物各给一种 DNA 能力，
-## 地形按顺序强制用能力：高台(跳高) → 长沟(二段跳) → 黑暗裂谷(发光照明)。
-## 对应 Miro 玩法块 demo-04。纯代码实现、无外部资源。
+## v2：3 个关卡（裂谷长跑/夜翼峡谷/融合之巅）+ DNA 组合效果 + 基因碎片收集与评级。
+## 横版跑到右侧逃生舱；3 种 DNA 能力，地形按顺序强制用能力：
+## 高台墙(高跳) → 长沟(二段跳) → 黑暗裂谷(荧光，摸黑移速大减) → 组合高墙(高跳+二段跳)。
+## 【玩家物理是手写的】AABB 简化解析，不是 move_and_slide——改地形前先读 LEVELS 和碰撞段。
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 const GROUND_Y := 470.0
-const GOAL_X := 3050.0
 const GRAV := 1500.0
 const WALK := 260.0
 const JUMP_V := 560.0
 
-## DNA 融合源（世界坐标固定）
-const ALIENS := [
-	{id = "highjump", name = "蹦蹦兽", col = Color("ab47bc"), x = 620.0,
-		dna = "弹簧腿 DNA", tip = "普通跳变高跳（按住跳跃键跳得更高）"},
-	{id = "double", name = "双翼虫", col = Color("4fc3f7"), x = 1500.0,
-		dna = "振翅 DNA", tip = "空中可再跳一次（二段跳）"},
-	{id = "glow", name = "灯灯菌", col = Color("ffd54f"), x = 2380.0,
-		dna = "荧光 DNA", tip = "身体发光，照亮黑暗裂谷"},
+## 每关数据：地形块(x,y,w,h)/融合源/坑/黑暗区/终点/基因碎片。地形设计顺序强制融合：
+## L1 高墙→长沟→黑暗裂谷；L2 高墙→组合高墙→黑暗长沟；L3 组合高墙→黑暗双沟→组合高墙。
+const LEVELS := [
+	{
+		name = "裂谷长跑",
+		blocks = [
+			[0, 470, 1000, 70],
+			[1000, 290, 60, 250],      # ① 高台墙：顶 y290，普通跳不够，必须高跳
+			[1060, 470, 640, 70],
+			[1900, 470, 700, 70],      # ② 长沟 1700→1900：普通跳差一点
+			[2900, 470, 150, 70],
+			[3050, 470, 300, 70],      # ③ 黑暗裂谷 2600→2900：无荧光摸黑跳不过
+		],
+		aliens = [
+			{id = "highjump", name = "蹦蹦兽", col = Color("ab47bc"), x = 620.0,
+				dna = "弹簧腿 DNA", tip = "普通跳变高跳（按住跳跃键跳得更高）"},
+			{id = "double", name = "双翼虫", col = Color("4fc3f7"), x = 1500.0,
+				dna = "振翅 DNA", tip = "空中可再跳一次（二段跳）"},
+			{id = "glow", name = "灯灯菌", col = Color("ffd54f"), x = 2380.0,
+				dna = "荧光 DNA", tip = "身体发光，照亮黑暗裂谷"},
+		],
+		pits = [Rect2(1700, 540, 200, 200), Rect2(2600, 540, 300, 200)],
+		dark = Vector2(2340.0, 3600.0),
+		goal_x = 3050.0,
+		shards = [Vector2(1030, 240), Vector2(1800, 400), Vector2(2750, 280)],
+	},
+	{
+		name = "夜翼峡谷",
+		blocks = [
+			[0, 470, 700, 70],
+			[700, 340, 50, 200],       # 墙1：高跳可翻
+			[750, 470, 150, 70],
+			[900, 190, 50, 350],       # 组合高墙：顶 y190，高跳不够，需高跳+二段跳
+			[950, 470, 500, 70],
+			[1750, 470, 600, 70],      # 黑暗长沟 1450→1750：需二段跳+荧光
+			[2350, 470, 300, 70],
+		],
+		aliens = [
+			{id = "highjump", name = "蹦蹦兽", col = Color("ab47bc"), x = 400.0,
+				dna = "弹簧腿 DNA", tip = "普通跳变高跳"},
+			{id = "double", name = "双翼虫", col = Color("4fc3f7"), x = 800.0,
+				dna = "振翅 DNA", tip = "空中可再跳一次"},
+			{id = "glow", name = "灯灯菌", col = Color("ffd54f"), x = 1350.0,
+				dna = "荧光 DNA", tip = "身体发光，照亮黑暗"},
+		],
+		pits = [Rect2(1450, 540, 300, 200)],
+		dark = Vector2(1300.0, 2400.0),
+		goal_x = 2350.0,
+		shards = [Vector2(925, 140), Vector2(1600, 280), Vector2(2150, 330)],
+	},
+	{
+		name = "融合之巅",
+		blocks = [
+			[0, 470, 400, 70],
+			[400, 200, 50, 340],       # 组合高墙1：顶 y200，需高跳+二段跳
+			[450, 470, 450, 70],
+			[1150, 470, 300, 70],      # 黑暗沟1 900→1150：需荧光（高跳可过）
+			[1700, 470, 450, 70],      # 黑暗沟2 1450→1700：需荧光+二段跳
+			[1850, 230, 50, 240],      # 组合高墙2：顶 y230，需高跳+二段跳
+			[2150, 470, 300, 70],
+		],
+		aliens = [
+			{id = "highjump", name = "蹦蹦兽", col = Color("ab47bc"), x = 200.0,
+				dna = "弹簧腿 DNA", tip = "普通跳变高跳"},
+			{id = "double", name = "双翼虫", col = Color("4fc3f7"), x = 300.0,
+				dna = "振翅 DNA", tip = "空中可再跳一次"},
+			{id = "glow", name = "灯灯菌", col = Color("ffd54f"), x = 650.0,
+				dna = "荧光 DNA", tip = "身体发光，照亮黑暗"},
+		],
+		pits = [Rect2(900, 540, 250, 200), Rect2(1450, 540, 250, 200)],
+		dark = Vector2(700.0, 1800.0),
+		goal_x = 2150.0,
+		shards = [Vector2(425, 150), Vector2(1025, 280), Vector2(1875, 180)],
+	},
 ]
 
-## 地形：墙/平台块（x, y, w, h）
-const BLOCKS := [
-	# 起点地面
-	[0, 470, 1000, 70],
-	# ① 高台墙（必须高跳翻过，顶 y=290）
-	[1000, 290, 60, 250],
-	# 中段地面
-	[1060, 470, 640, 70],
-	# ② 长沟（二段跳才能过去：1180→1560 是沟）
-	[1700, 470, 900, 70],
-	# ③ 黑暗裂谷区（2340 起天黑，沟 2600→2900 必须有光才敢跳）
-	[2600, 470, 900, 70],
-	# 逃生舱平台
-	[3050, 470, 300, 70],
-]
-## 裂谷（黑暗段中的坑）
-const PIT := Rect2(2600, 540, 300, 200)
-const DARK_ZONE := Vector2(2340.0, 3600.0)
+var level_idx := 0
+var blocks: Array = []
+var aliens: Array = []
+var pits: Array = []
+var dark := Vector2(2340.0, 3600.0)
+var goal_x := 3050.0
+var shards: Array = []
+var shard_got: Array = []
 
 var px := 120.0
 var py := GROUND_Y - 30.0
@@ -50,12 +106,21 @@ var dna := {}                    # id -> true
 var face := 1.0
 var born_dark := false           # 融合荧光后 permanently 亮
 var state := "play"              # play / win
-var elapsed := 0.0
+var elapsed := 0.0               # 本关用时
+var level_shards := 0
+var total_shards := 0
+var total_time := 0.0
+var ratings: Array = []          # 每关评级 S/A/B
 var toast := ""
 var toast_age := 99.0
 var pulse := 0.0
 var cam_x := 0.0
 var keys := {}
+
+var level_label: Label
+var dna_label: Label
+var shard_label: Label
+var win_btn: Button
 
 
 func _ready() -> void:
@@ -64,35 +129,123 @@ func _ready() -> void:
 	var title := Label.new()
 	title.text = "SOUP 2.0 · 融合外星 DNA，逃出异星"
 	title.position = Vector2(16, 8)
+	title.add_theme_font_override("font", FONT)
 	title.add_theme_font_size_override("font_size", 20)
 	title.add_theme_color_override("font_color", Color("ffd54f"))
 	ui.add_child(title)
 	var hint := Label.new()
 	hint.text = "←/→ 或 A/D 移动 · 空格/W/↑ 跳 · 走近外星生物按 E 融合"
 	hint.position = Vector2(16, 38)
+	hint.add_theme_font_override("font", FONT)
 	hint.add_theme_font_size_override("font_size", 14)
 	ui.add_child(hint)
-	var dna_label := Label.new()
+	dna_label = Label.new()
 	dna_label.name = "DnaLabel"
 	dna_label.position = Vector2(16, 62)
+	dna_label.add_theme_font_override("font", FONT)
 	dna_label.add_theme_font_size_override("font_size", 14)
 	dna_label.add_theme_color_override("font_color", Color("4fc3f7"))
 	ui.add_child(dna_label)
+	level_label = Label.new()
+	level_label.position = Vector2(16, 86)
+	level_label.add_theme_font_override("font", FONT)
+	level_label.add_theme_font_size_override("font_size", 14)
+	level_label.add_theme_color_override("font_color", Color("c6cddc"))
+	ui.add_child(level_label)
+	shard_label = Label.new()
+	shard_label.position = Vector2(VIEW.x - 190, 8)
+	shard_label.add_theme_font_override("font", FONT)
+	shard_label.add_theme_font_size_override("font_size", 13)
+	shard_label.add_theme_color_override("font_color", Color("7ee787"))
+	ui.add_child(shard_label)
 	var esc := Label.new()
 	esc.position = Vector2(VIEW.x - 130, 62)
 	esc.text = "→ 逃生舱在远方"
+	esc.add_theme_font_override("font", FONT)
 	esc.add_theme_font_size_override("font_size", 13)
 	ui.add_child(esc)
+	win_btn = Button.new()
+	win_btn.text = "下一关 →"
+	win_btn.position = Vector2(VIEW.x / 2 - 90, 330)
+	win_btn.size = Vector2(180, 46)
+	win_btn.visible = false
+	win_btn.add_theme_font_override("font", FONT)
+	win_btn.add_theme_font_size_override("font_size", 16)
+	win_btn.pressed.connect(_advance)
+	ui.add_child(win_btn)
+	_load_level(0)
+
+
+func _load_level(i: int) -> void:
+	level_idx = i
+	var L: Dictionary = LEVELS[i]
+	blocks = L.blocks
+	aliens = L.aliens
+	pits = L.pits
+	dark = L.dark
+	goal_x = L.goal_x
+	shards = L.shards
+	shard_got = []
+	for s in shards:
+		shard_got.append(false)
+	px = 120.0
+	py = GROUND_Y - 30.0
+	vy = 0.0
+	jumps_used = 0
+	dna = {}
+	born_dark = false
+	state = "play"
+	elapsed = 0.0
+	level_shards = 0
+	toast = "第 %d/%d 关 · %s" % [i + 1, LEVELS.size(), L.name]
+	toast_age = 0.0
+	cam_x = 0.0
+	dna_label.text = _dna_label_text()
+	level_label.text = "第 %d/%d 关 · %s" % [i + 1, LEVELS.size(), L.name]
+	_update_shard_label()
+	win_btn.visible = false
+
+
+func _update_shard_label() -> void:
+	shard_label.text = "基因碎片 %d/3 · 总计 %d" % [level_shards, total_shards]
 
 
 func _dna_label_text() -> String:
 	if dna.is_empty():
 		return "DNA：无（找到外星生物，按 E 融合）"
 	var parts := []
-	for a in ALIENS:
+	for a in aliens:
 		if dna.has(a.id):
 			parts.append(a.dna)
-	return "DNA：已融合 " + " + ".join(parts)
+	var t := "DNA：已融合 " + " + ".join(parts)
+	var combos := []
+	if dna.has("highjump") and dna.has("double"):
+		combos.append("超级弹跳")
+	if dna.has("double") and dna.has("glow"):
+		combos.append("夜翼")
+	if not combos.is_empty():
+		t += "（组合：" + "、".join(combos) + "）"
+	return t
+
+
+func _rating() -> String:
+	if level_shards >= 3 and elapsed <= 50.0:
+		return "S"
+	if elapsed <= 90.0:
+		return "A"
+	return "B"
+
+
+func _advance() -> void:
+	if state != "win":
+		return
+	if level_idx >= LEVELS.size() - 1:
+		total_shards = 0
+		total_time = 0.0
+		ratings = []
+		_load_level(0)
+	else:
+		_load_level(level_idx + 1)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -105,16 +258,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _try_fuse() -> void:
-	for a in ALIENS:
+	for a in aliens:
 		if not dna.has(a.id) and absf(px - a.x) < 60.0:
 			dna[a.id] = true
 			toast = "🧬 融合了 %s 的「%s」：%s" % [a.name, a.dna, a.tip]
 			toast_age = 0.0
-			if a.id == "glow":
-				born_dark = true
-			var lb := get_tree().root.find_child("DnaLabel", true, false) as Label
-			if lb:
-				lb.text = _dna_label_text()
+			dna_label.text = _dna_label_text()
 
 
 func _physics_process(delta: float) -> void:
@@ -132,28 +281,31 @@ func _physics_process(delta: float) -> void:
 		face = -1.0
 	if right:
 		face = 1.0
-	px = clamp(px + (float(right) - float(left)) * WALK * delta, 30.0, GOAL_X + 200.0)
+	px = clamp(px + (float(right) - float(left)) * WALK * delta, 30.0, goal_x + 200.0)
 
-	# 跳跃：土狼时间内可跳；有振翅 DNA 空中可再跳一次
+	# 跳跃：土狼时间内可跳；有振翅 DNA 空中可再跳一次；
+	# 组合·超级弹跳（高跳+振翅）：二段跳也享受高跳力度
 	if jump_pressed and on_floor:
 		vy = -JUMP_V * (1.45 if dna.has("highjump") else 1.0)
 		on_floor = false
 		jumps_used = 1
 	elif jump_pressed and not on_floor and dna.has("double") and jumps_used < 2:
-		vy = -JUMP_V * 0.95
+		var m := 0.95
+		if dna.has("highjump"):
+			m = 0.95 * 1.45
+		vy = -JUMP_V * m
 		jumps_used = 2
 
 	# 重力 + 位移
 	vy += GRAV * delta
 	py += vy * delta
 
-	# 地形碰撞（AABB 简化：先水平后垂直，逐块解析）
+	# 地形碰撞（AABB 简化：先垂直后水平，逐块解析）
 	var r := Rect2(px - 14, py - 30, 28, 30)
 	on_floor = false
-	for b in BLOCKS:
+	for b in blocks:
 		var br := Rect2(b[0], b[1], b[2], b[3])
 		if br.intersects(r):
-			# 从上方落到块顶
 			var prev_y := py - vy * delta
 			if vy >= 0.0 and prev_y - 30 <= br.position.y + 8:
 				py = br.position.y
@@ -169,36 +321,57 @@ func _physics_process(delta: float) -> void:
 					px = br.position.x - 14
 				else:
 					px = br.position.x + br.size.x + 14
-	# 沟底死亡 → 重置到沟前
+	# 掉坑 → 回到最近的地面边缘
 	if py > VIEW.y + 120:
-		px = maxf(120.0, (PIT.position.x - 220.0) if px > PIT.position.x else 1100.0)
+		var edge := 120.0
+		for b in blocks:
+			if b[1] >= 450 and b[1] <= 490 and b[0] + b[2] <= px + 20.0 and b[0] + b[2] > edge:
+				edge = b[0] + b[2]
+		px = maxf(120.0, edge - 40.0)
 		py = GROUND_Y - 30.0
 		vy = 0.0
+		jumps_used = 0
 		toast = "跌进裂谷……异星的苔藓接住了你（回到沟边）"
 		toast_age = 0.0
 
-	# 黑暗区：没有荧光 DNA 时大幅减速（不敢跑）
-	born_dark = dna.has("glow")
-	if px > DARK_ZONE.x and px < DARK_ZONE.y and not born_dark:
-		px -= (float(right) - float(left)) * WALK * 0.55 * delta   # 摸黑只能慢慢挪
+	# 黑暗区：没有荧光 DNA 时大幅减速（不敢跑）；
+	# 组合·夜翼（振翅+荧光）：黑暗中也能展翅疾行（减速惩罚减半）
+	if px > dark.x and px < dark.y and not dna.has("glow"):
+		var dark_slow := 0.55
+		if dna.has("double"):
+			dark_slow = 0.25
+		px -= (float(right) - float(left)) * WALK * dark_slow * delta
+
+	# 基因碎片收集
+	for i in shards.size():
+		if not shard_got[i] and absf(px - shards[i].x) < 48.0 and absf((py - 15.0) - shards[i].y) < 55.0:
+			shard_got[i] = true
+			level_shards += 1
+			toast = "🧬 基因碎片 %d/3" % level_shards
+			toast_age = 0.0
+			_update_shard_label()
 
 	# 到达逃生舱
-	if px >= GOAL_X + 40.0 and py <= GROUND_Y + 10.0:
+	if px >= goal_x + 40.0 and py <= GROUND_Y + 10.0:
 		state = "win"
+		total_shards += level_shards
+		total_time += elapsed
+		ratings.append(_rating())
+		win_btn.text = "下一关 →" if level_idx < LEVELS.size() - 1 else "再跑一次"
+		win_btn.visible = true
 
 	# 相机跟随
-	cam_x = clamp(px - VIEW.x / 2.0, 0.0, GOAL_X + 300.0 - VIEW.x)
+	cam_x = clamp(px - VIEW.x / 2.0, 0.0, goal_x + 300.0 - VIEW.x)
 	queue_redraw()
 
 
 func _draw() -> void:
 	var off := -cam_x
-	# 天空渐变（越靠近裂谷越暗）
-	var base := Color("171226")
-	draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), base)
+	# 天空渐变底色
+	draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color("171226"))
 	# 星星
 	for k in 26:
-		var sx := fposmod(k * 173.0, 3350.0) - cam_x
+		var sx := fposmod(k * 173.0, goal_x + 400.0) - cam_x
 		if sx > -10 and sx < VIEW.x + 10:
 			var sy := 30.0 + (k * 53) % 200
 			draw_circle(Vector2(sx, sy), 1.5, Color(1, 1, 1, 0.35))
@@ -208,20 +381,20 @@ func _draw() -> void:
 		if mx > -260 and mx < VIEW.x + 260:
 			draw_polygon(PackedVector2Array([Vector2(mx, 470), Vector2(mx + 240, 470), Vector2(mx + 120, 320)]), PackedColorArray([Color("241d3a")]))
 	# 地形
-	for b in BLOCKS:
+	for b in blocks:
 		var br := Rect2(b[0] + off, b[1], b[2], b[3])
 		if br.position.x > VIEW.x + 50 or br.end.x < -50:
 			continue
 		draw_rect(br, Color("3d3552"))
 		draw_rect(br, Color("241f36"), false, 2)
-	# 裂谷（黑暗中的坑：无光时几乎是黑的）
-	var pit_r := Rect2(PIT.position.x + off, 470, PIT.size.x, 200)
-	var dark := not born_dark
-	draw_rect(pit_r, Color("050308") if dark else Color("120b1a"))
+	# 坑（黑暗中的裂谷）
+	for p in pits:
+		var pr := Rect2(p.position.x + off, 470, p.size.x, 200)
+		draw_rect(pr, Color("050308") if not born_dark else Color("120b1a"))
 	# 黑暗区遮罩
-	if px > DARK_ZONE.x - 300 and px < DARK_ZONE.y:
-		var zone_l := DARK_ZONE.x + off
-		draw_rect(Rect2(zone_l, 0, DARK_ZONE.y - DARK_ZONE.x, VIEW.y), Color(0.01, 0.005, 0.02, 0.88 if not born_dark else 0.35))
+	if px > dark.x - 300 and px < dark.y:
+		var zone_l := dark.x + off
+		draw_rect(Rect2(zone_l, 0, dark.y - dark.x, VIEW.y), Color(0.01, 0.005, 0.02, 0.88 if not born_dark else 0.35))
 		# 玩家光圈
 		var pl := Vector2(px + off, py - 15)
 		if born_dark:
@@ -229,26 +402,37 @@ func _draw() -> void:
 				draw_circle(pl, radius, Color(1.0, 0.95, 0.6, 0.05))
 		else:
 			draw_circle(pl, 70.0, Color(1, 1, 1, 0.02))
+	# 基因碎片（脉动的绿钻）
+	for i in shards.size():
+		if shard_got[i]:
+			continue
+		var s: Vector2 = shards[i]
+		var ssx := s.x + off
+		if ssx < -30 or ssx > VIEW.x + 30:
+			continue
+		var bob := 4.0 * sin(pulse * 0.7 + i * 1.7)
+		var sc := Vector2(ssx, s.y + bob)
+		draw_polygon(PackedVector2Array([sc + Vector2(0, -10), sc + Vector2(8, 0), sc + Vector2(0, 10), sc + Vector2(-8, 0)]), PackedColorArray([Color("7ee787")]))
+		draw_polygon(PackedVector2Array([sc + Vector2(0, -4), sc + Vector2(3, 0), sc + Vector2(0, 4), sc + Vector2(-3, 0)]), PackedColorArray([Color("eafff0")]))
 	# 逃生舱
-	var gx := GOAL_X + 80.0 + off
+	var gx := goal_x + 80.0 + off
 	draw_rect(Rect2(gx - 40, 380, 100, 90), Color("2b3b4d"))
 	draw_polygon(PackedVector2Array([Vector2(gx - 50, 380), Vector2(gx + 70, 380), Vector2(gx + 10, 330)]), PackedColorArray([Color("4fc3f7")]))
 	draw_rect(Rect2(gx + 2, 420, 26, 50), Color("8de3ff"))
 	draw_string(FONT, Vector2(gx - 30, 368), "逃生舱", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("4fc3f7"))
 	# 外星生物（脉动）
-	for a in ALIENS:
+	for a in aliens:
 		var ax: float = a.x + off
 		if ax < -60 or ax > VIEW.x + 60:
 			continue
-		var bob := 5.0 * sin(pulse + a.x)
-		var ay := 445.0 + bob
+		var bob2 := 5.0 * sin(pulse + a.x)
+		var ay := 445.0 + bob2
 		var got: bool = dna.has(a.id)
 		var body_col: Color = a.col if not got else Color(a.col, 0.25)
 		draw_circle(Vector2(ax, ay - 18), 16, body_col)
 		draw_circle(Vector2(ax - 6, ay - 22), 3.5, Color(1, 1, 1, 0.9))
 		draw_circle(Vector2(ax + 6, ay - 22), 3.5, Color(1, 1, 1, 0.9))
 		draw_line(Vector2(ax - 6, ay - 10), Vector2(ax + 6, ay - 10), Color(0, 0, 0, 0.6), 2)
-		# 触须
 		draw_line(Vector2(ax - 10, ay - 30), Vector2(ax - 16, ay - 42), body_col, 2)
 		draw_line(Vector2(ax + 10, ay - 30), Vector2(ax + 16, ay - 42), body_col, 2)
 		var label: String = ("%s · %s" % [a.name, ("已融合" if got else "按 E 融合")]) if (absf(px - a.x) < 60.0 and not got) else a.name
@@ -260,9 +444,9 @@ func _draw() -> void:
 	draw_rect(Rect2(pl2.x - 8, pl2.y - 4, 16, 19), Color("7986cb"))
 	if born_dark:
 		draw_circle(Vector2(pl2.x, pl2.y - 12), 5, Color(1.0, 0.95, 0.6, 0.9))
-	# 黑暗遮罩最上层再压一次玩家名字提示
+	# 开场目标提示
 	if state == "play" and elapsed < 5.0:
-		draw_string(FONT, Vector2(16, 100), "目标：一路向右，抵达逃生舱。每种地形都需要对应的 DNA 能力。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ffcc80"))
+		draw_string(FONT, Vector2(16, 110), "目标：一路向右，抵达逃生舱。每种地形都需要对应的 DNA 能力。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ffcc80"))
 	# toast
 	if toast_age < 3.0:
 		var a2: float = clamp(3.0 - toast_age, 0.0, 1.0)
@@ -272,13 +456,19 @@ func _draw() -> void:
 	draw_string(FONT, Vector2(VIEW.x - 90, 28), "%d 秒" % int(elapsed), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("e8ecf4"))
 	# 胜利结算
 	if state == "win":
-		draw_rect(Rect2(180, 150, 600, 220), Color(0, 0, 0, 0.8))
-		draw_rect(Rect2(180, 150, 600, 220), Color("4fc3f7"), false, 3)
-		draw_string(FONT, Vector2(210, 195), "🚀 逃脱成功！", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color("4fc3f7"))
-		draw_string(FONT, Vector2(210, 240), "用时 %d 秒 · 融合 DNA %d/3 种" % [int(elapsed), dna.size()], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4"))
-		var names := ""
-		for a in ALIENS:
-			if dna.has(a.id):
-				names += a.name + " "
-		draw_string(FONT, Vector2(210, 270), "外星伙伴：" + (names if names != "" else "无（你是怎么飞过来的？！）"), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("8b94a7"))
-		draw_string(FONT, Vector2(210, 310), "刷新页面可再跑一次，试试不融合某个 DNA 会怎样。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("8b94a7"))
+		var final := level_idx >= LEVELS.size() - 1
+		draw_rect(Rect2(180, 140, 600, 250), Color(0, 0, 0, 0.82))
+		draw_rect(Rect2(180, 140, 600, 250), Color("4fc3f7"), false, 3)
+		if final:
+			draw_string(FONT, Vector2(210, 185), "🌍 全部逃脱成功！", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color("4fc3f7"))
+			var rt := ""
+			for i in ratings.size():
+				rt += "第%d关 %s   " % [i + 1, ratings[i]]
+			draw_string(FONT, Vector2(210, 228), "总碎片 %d/9 · 总用时 %d 秒" % [total_shards, int(total_time)], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4"))
+			draw_string(FONT, Vector2(210, 256), rt, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("7ee787"))
+			draw_string(FONT, Vector2(210, 296), "异星伙伴送你到最后一程。刷新页面可再跑一次。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("8b94a7"))
+			draw_string(FONT, Vector2(210, 322), "评级规则：S=3 碎片且 50 秒内 · A=90 秒内 · B=完成", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("8b94a7"))
+		else:
+			draw_string(FONT, Vector2(210, 185), "🚀 本关逃脱！", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color("4fc3f7"))
+			draw_string(FONT, Vector2(210, 228), "评级 %s · 碎片 %d/3 · 用时 %d 秒" % [_rating(), level_shards, int(elapsed)], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4"))
+			draw_string(FONT, Vector2(210, 262), "前方还有 %d 关，新地形会逼你融合更多 DNA。" % [LEVELS.size() - level_idx - 1], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("8b94a7"))

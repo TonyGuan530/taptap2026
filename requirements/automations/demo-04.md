@@ -14,7 +14,8 @@ requirements/backlog.md 的 demo-04 节 + Miro 原始想法。玩法：横版跑
 ## 当前状态
 - public/demos.json 的 demo-04 slot（buildId=demo-04，1 个长关已上线）
 - headless 通关验证 game/tests/test_demo04.gd（全 DNA 12 秒逃脱 + 无高跳卡墙对照，双 PASS）
-- ChatGPT 监督对话尚未建立（本聊天即为起点，创建后把对话 URL 记入 reviews/chatgpt-conversations.json）
+- 专属定时任务已创建（2026-10-03，cron `15,45 * * * *`，每小时 :15/:45 触发），由本对话承载
+- ChatGPT 监督对话尚未建立（首次运行时创建，把对话 URL 记入 reviews/chatgpt-conversations.json）
 
 ## 每轮流程
 1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。

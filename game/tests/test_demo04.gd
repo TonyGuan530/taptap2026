@@ -1,10 +1,10 @@
 extends SceneTree
-## demo-04 通关验证（headless）：模拟按键跑完全程。
-## 用例 1：融合全部 DNA → 能到逃生舱（PASS 条件：state==win）
-## 用例 2：不融合蹦蹦兽（无高跳）→ 60 秒内卡在高墙前（PASS 条件：px < 1060）
+## demo-04 v2 通关验证（headless）：反应式小机器人跑完全部关卡。
+## 用例 1：融合全部 DNA → 连过 3 关（PASS：wins>=3 且停在第 3 关胜利）
+## 用例 2：不融合蹦蹦兽（无高跳）→ 卡在 L1 高墙前（PASS：px < 1060）
+## 用例 3：融合高跳+振翅但不融合荧光 → 卡在黑暗裂谷（PASS：never win 且 max_px < 2900）
 ## 运行：godot --headless --path game -s res://tests/test_demo04.gd
 
-const LEFT := KEY_LEFT
 const RIGHT := KEY_RIGHT
 const JUMP := KEY_SPACE
 
@@ -29,79 +29,90 @@ func _press(key: Key, frames: int) -> void:
 func _tap(key: Key) -> void:
 	await _press(key, 2)
 
-func _run() -> void:
-	await process_frame
+func _hold_right() -> void:
+	if not scene.keys.get(RIGHT, false):
+		var ev := InputEventKey.new()
+		ev.keycode = RIGHT
+		ev.pressed = true
+		Input.parse_input_event(ev)
+
+func _ground_ahead(x: float) -> bool:
+	for b in scene.blocks:
+		if b[0] <= x and b[0] + b[2] >= x and b[1] >= 440 and b[1] <= 500:
+			return true
+	return false
+
+func _wall_ahead() -> bool:
+	for b in scene.blocks:
+		if b[0] > scene.px + 6 and b[0] < scene.px + 84 and b[1] < scene.py - 6:
+			return true
+	return false
+
+func _fuse_all(skip: String) -> void:
+	for a in scene.aliens:
+		if a.id != skip and not scene.dna.has(a.id) and absf(scene.px - a.x) < 55.0:
+			await _tap(KEY_E)
+
+func _spawn() -> void:
+	if scene:
+		scene.queue_free()
 	scene = load("res://demo04_soup.tscn").instantiate()
 	root.add_child(scene)
 	await physics_frame
-	Engine.time_scale = 4.0
 
-	# --- 用例 1：全 DNA 通关 ---
+func _bot(max_game_s: float, skip: String) -> Dictionary:
 	var t0 := Time.get_ticks_msec()
 	var jump_cd := 0
-	while scene.state == "play" and Time.get_ticks_msec() - t0 < 60000:
+	var max_px := 0.0
+	var wins := 0
+	var shard_sum := 0
+	while Time.get_ticks_msec() - t0 < 120000:
 		await physics_frame
 		jump_cd = maxi(0, jump_cd - 1)
-		var e := scene as Node2D
-		var px: float = e.px
-		# 持续向右
-		if not e.keys.get(RIGHT, false):
-			var ev := InputEventKey.new()
-			ev.keycode = RIGHT
-			ev.pressed = true
-			Input.parse_input_event(ev)
-		# 融合：靠近外星生物按 E
-		for a in e.ALIENS:
-			if not e.dna.has(a.id) and absf(px - a.x) < 55.0:
-				await _tap(KEY_E)
-		# ① 高墙前（x≈940）高跳
-		if px > 900 and px < 1000 and e.on_floor and jump_cd == 0 and e.dna.has("highjump"):
-			await _tap(JUMP)
-			jump_cd = 30
-		# ② 长沟边缘（x≈1660）二段跳：跳起后空中再跳
-		if px > 1640 and px < 1700 and jump_cd == 0 and e.dna.has("double"):
-			await _tap(JUMP)
-			jump_cd = 12
-		elif px > 1700 and px < 1800 and not e.on_floor and e.jumps_used == 1 and e.dna.has("double") and jump_cd == 0:
-			await _tap(JUMP)
-			jump_cd = 12
-		# ③ 裂谷边缘（x≈2560）先确保荧光，到边缘就跳
-		if px > 2560 and px < 2600 and e.on_floor and jump_cd == 0 and e.dna.has("glow"):
-			await _tap(JUMP)
-			jump_cd = 30
-	var won: bool = scene.state == "win"
-	var dna_count: int = scene.dna.size()
-	print("用例1: state=%s dna=%d/3 elapsed=%.0fs px=%.0f → %s" % [scene.state, dna_count, scene.elapsed, scene.px, "PASS" if won and dna_count == 3 else "FAIL"])
-	var win_elapsed: float = scene.elapsed
+		if scene.state == "win":
+			wins += 1
+			shard_sum += scene.level_shards
+			if wins >= 3:
+				break
+			scene._advance()
+			await physics_frame
+			continue
+		if scene.elapsed > max_game_s:
+			break
+		_hold_right()
+		await _fuse_all(skip)
+		if jump_cd == 0:
+			if scene.on_floor:
+				if (not _ground_ahead(scene.px + 50.0)) or (not _ground_ahead(scene.px + 110.0)) or _wall_ahead():
+					await _tap(JUMP)
+					jump_cd = 20
+			elif scene.dna.has("double") and scene.jumps_used == 1 and scene.vy > -40.0:
+				await _tap(JUMP)
+				jump_cd = 8
+		max_px = maxf(max_px, scene.px)
+	return {"wins": wins, "max_px": max_px, "final_px": scene.px, "shards": shard_sum, "level": scene.level_idx}
 
-	# --- 用例 2：不融合蹦蹦兽，应卡在高墙前 ---
-	scene.queue_free()
-	scene = load("res://demo04_soup.tscn").instantiate()
-	root.add_child(scene)
-	await physics_frame
-	t0 = Time.get_ticks_msec()
-	jump_cd = 0
-	while scene.state == "play" and scene.elapsed < 60.0 and Time.get_ticks_msec() - t0 < 45000:
-		await physics_frame
-		jump_cd = maxi(0, jump_cd - 1)
-		var px: float = scene.px
-		if not scene.keys.get(RIGHT, false):
-			var ev := InputEventKey.new()
-			ev.keycode = RIGHT
-			ev.pressed = true
-			Input.parse_input_event(ev)
-		for a in scene.ALIENS:
-			if a.id != "highjump" and not scene.dna.has(a.id) and absf(px - a.x) < 55.0:
-				await _tap(KEY_E)
-		# 只用普通跳试图翻墙（会失败）
-		if px > 900 and px < 1000 and scene.on_floor and jump_cd == 0:
-			await _tap(JUMP)
-			jump_cd = 30
-		if px > 1660 and px < 1700 and jump_cd == 0:
-			await _tap(JUMP)
-			jump_cd = 12
-	var stuck_at_wall: bool = scene.px < 1060.0
-	print("用例2: 无高跳 px=%.0f（墙在1000）elapsed=%.0f → %s" % [scene.px, scene.elapsed, "PASS（地形强制需要高跳 DNA）" if stuck_at_wall else "FAIL"])
-	print("SUMMARY: win_elapsed=%.0fs" % win_elapsed)
+func _run() -> void:
+	await process_frame
+	Engine.time_scale = 4.0
+
+	# --- 用例 1：全 DNA 连过 3 关 ---
+	await _spawn()
+	var r1: Dictionary = await _bot(400.0, "")
+	var pass1: bool = r1.wins >= 3 and r1.level == 2
+	print("用例1: wins=%d level=%d/3 碎片=%d/9 → %s" % [r1.wins, r1.level + 1, r1.shards, "PASS" if pass1 else "FAIL"])
+
+	# --- 用例 2：不融合蹦蹦兽，应卡在 L1 高墙前 ---
+	await _spawn()
+	var r2: Dictionary = await _bot(60.0, "highjump")
+	var pass2: bool = r2.final_px < 1060.0
+	print("用例2: 无高跳 final_px=%.0f（墙在1000）→ %s" % [r2.final_px, "PASS（地形强制需要高跳 DNA）" if pass2 else "FAIL"])
+
+	# --- 用例 3：不融合灯灯菌，应卡在黑暗裂谷前 ---
+	await _spawn()
+	var r3: Dictionary = await _bot(90.0, "glow")
+	var pass3: bool = r3.wins == 0 and r3.max_px < 2900.0
+	print("用例3: 无荧光 max_px=%.0f wins=%d → %s" % [r3.max_px, r3.wins, "PASS（黑暗裂谷强制需要荧光 DNA）" if pass3 else "FAIL"])
+
 	Engine.time_scale = 1.0
 	quit()
