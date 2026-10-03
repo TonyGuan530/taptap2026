@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-02-v5",
+    "date":  "2026-10-03T21:46:21+08:00",
+    "author":  "49321",
+    "notes":  "v5: lightweight telemetry (switch timing/resets/spring/route line on win) + physics feedback layer (tag flash light/heavy/bouncy, fragile impact speed vs threshold); no new systems"
+}
