@@ -104,6 +104,9 @@
 - 状态：v10 已上线（demo-04-v10；itch 已推修复版；builds/demo-04-v10 已入库供 Pages 镜像）；**待办=3-5 人真人盲测 + 修复 Movie 驱动后刷新视频**
 - v11（2026-10-04 04:20）：落实 GPT 盲测前清单①——裂纹墙 readability：持有碎岩 DNA 时裂纹墙微光脉动描边（可读不教程化；无碎岩时外观不变）；headless 七用例 PASS；视频经「测试机器人 + Movie Maker 60fps」重录为 v11（77 秒七用例全程含新 affordance）；Miro 板 raw 链接自动生效
 - 状态：v11 已上线（demo-04-v11；butler 频道确认）；**唯一待办=3-5 人真人盲测（数据到位优先消化）**
+- GPT 盲测前最终确认归档（reviews/chatgpt-demo-04-full.md）：**KEEP / BLINDTEST READY**——v11 无代码 blocker；实验设计要求=两类样本（campaign-first 测迁移复用 / lab-first 1-2 人测自发假设）+ 零提示规则 + 首玩数据分离（tester_id/run_index）+ 观察表补「脉动触发撞墙」项；遥测字段封顶不再加
+- v12（2026-10-04 04:35，盲测执行版）：**K 键内部入口**（战役中随时送入实验房——lab-first 样本的内部入口方案，操作员知晓、不告知玩家）；盲测手册按 GPT 要求更新（两类样本对照/零提示规则/首玩分离/观察项 3b 脉动触发）；headless 七用例 PASS（视觉外改动零逻辑影响）
+- 状态：v12 已上线（demo-04-v12；itch 已推，频道轮转至 demo-05-v14 属共享槽常态，pipeline-lite 按 demos.json 最新自愈）；**唯一待办=3-5 人真人盲测**
 
 ## demo-05 重生之我是恐龙·火山生存
 

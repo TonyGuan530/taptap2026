@@ -505,6 +505,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_reset_lab()
 		elif mode == "lab" and event.keycode == KEY_B:
 			_exit_lab()
+		elif mode == "campaign" and event.keycode == KEY_K:
+			_enter_lab()   # 盲测内部入口（lab-first 样本用）：操作员按 K，不告知玩家
 		elif mode == "lab" and event.keycode == KEY_G:
 			_cycle_tester_id()
 		elif mode == "lab" and event.keycode == KEY_T:
