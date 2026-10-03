@@ -41,3 +41,4 @@
 - [x] 【用户指令·Windows 计划任务停用】[00:49 执行] TapTap-LitePipeline 与 TapTap-KeepZCodeAlive 两个 Windows 计划任务已按用户指令禁用（停一下，不要自动的 Windows 控制命令）。 itch 自愈循环暂停——占位分发问题完全等 itch 服务端恢复，Pages 渠道不受影响。恢复方式：schtasks /change /tn <任务名> /enable。
 - [ ] 【开发中·demo-10/11】[03:10 用户批示] Miro 新增两 idea 认领开工：demo-10「修改小说」、demo-11「塞尔达式箱庭谜题」（标题级短想法，流水线自行扩规格）——走 reviews/supervisor-directive-2026-10-04-demo10-11.md，v1 ≥5 关+Pages+hub+demos.json，随后 GPT 首评建对话（目标映射 11/11）；同列《最后的溪流》长文归 demo-03 扩容取材。
 - [ ] 【催办·demo-02 Miro 去重】[03:26 督导] 重贴板面卡产生两张重叠的「demo-02 运行画面」贴纸（@(4400,6560)）——下轮 miro-post-shots 时移除旧贴纸保持板面整洁（属小瑕疵不影响链接有效性）。
+- [ ] 【催办·demo-04 Miro 去重】[03:46 督导] 「demo-04 运行画面」贴纸 @(4400,10560) 已累计 3 张（历史遗留 2+本轮重贴 1）——下轮 miro-post-shots 时移除旧贴纸；建议顺手把 miro-post-shots 改为幂等更新（先删旧卡再贴新），demo-02 的 @(4400,6560) 同理（2 张）。

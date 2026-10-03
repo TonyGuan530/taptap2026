@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/4 03:35:24 · 共 60 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/4 03:45:00 · 共 63 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -196,6 +196,14 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 &#x1f3ae; demo-04 运行画面 &#43; 录屏 ▼
 
+### [sticker] @(4400,10560)
+
+&#x1f3ae; demo-04 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,10700)
+
+&#x1f3ae; demo-04 SOUP 2.0 DNA 融合逃生
+
 ### [card] @(4400,10700)
 
 &#x1f3ae; demo-04 SOUP 2.0 DNA 融合逃生
@@ -211,6 +219,12 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 ### [sticker] @(2974,10751)
 
 <p>和​外星​生物​的​DN​A融合​改造​自身​以​逃离​危险​的​异星​</p>
+
+### [text] @(4400,10860)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04.mp4
+试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;
 
 ### [text] @(4400,10860)
 
