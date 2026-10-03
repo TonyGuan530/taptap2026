@@ -15,7 +15,7 @@ const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 ## 词条定义（jump=起跳速度 / flap=空中扑翼速度(0=不能扑) / air_a=横移加速度 / air_vmax=横移限速）
 const TAGS := [
 	{id = "feather", name = "羽毛", col = Color("e8e4d8"), g = 0.18, damp = 1.2, bounce = 0.2,
-		jump = 300.0, flap = -150.0, air_a = 420.0, air_vmax = 300.0,
+		jump = 300.0, flap = -280.0, air_a = 420.0, air_vmax = 300.0,
 		tip = "轻飘飘，慢飘+空中可扑翼横移"},
 	{id = "stone", name = "石头", col = Color("8d8d94"), g = 2.4, damp = 0.0, bounce = 0.08,
 		jump = 240.0, flap = 0.0, air_a = 90.0, air_vmax = 160.0,
@@ -70,10 +70,10 @@ const LEVELS := [
 			Rect2(620, 240, 40, 230),           # 舱室左壁
 			Rect2(470, 340, 40, 130),           # 坑中石柱（垫脚/障碍）
 		],
-		spring = Rect2(150, 440, 100, 30),      # 弹簧：原地高高起飞
-		spring_impulse = Vector2(140, -480),
+		spring = Rect2(150, 440, 100, 30),      # 弹簧：原地高高起飞（冲量需抵消羽毛的空气阻尼）
+		spring_impulse = Vector2(260, -660),
 		fragile = Rect2(660, 240, 300, 30),     # 舱室脆天花板：只能从正上方砸穿进入
-		goal = Rect2(700, 400, 200, 70),        # 舱内地板 = 目标区
+		goal = Rect2(680, 430, 270, 40),        # 舱底整条 = 目标区（砸穿即落在上面）
 		spawn = Vector2(200, 60),
 		solution = "弹簧 → 羽毛横漂 → 石头砸舱门",
 	},
@@ -274,15 +274,9 @@ func _reset_ball(keep_time := false) -> void:
 ## 跳跃只在校地时允许；横移全程可用（空中漂移是第三关的核心操作）。
 func _apply_input(delta: float, _lv: Dictionary) -> void:
 	var t: Dictionary = TAGS[tag_idx]
-	var grounded: bool = ground_ray != null and ground_ray.is_colliding()
 
 	if Input.is_action_just_pressed("ui_accept"):
-		if grounded:
-			ball.linear_velocity.y = -t.jump
-		elif t.flap != 0.0 and flap_cd <= 0.0:
-			# 羽毛专属：空中扑翼，只在下落/缓慢上升时给一次向上的速度
-			ball.linear_velocity.y = minf(ball.linear_velocity.y, t.flap)
-			flap_cd = FLAP_CD
+		_try_jump()
 
 	var dir := Input.get_axis("ui_left", "ui_right")
 	if dir != 0.0:
@@ -292,6 +286,17 @@ func _apply_input(delta: float, _lv: Dictionary) -> void:
 		else:
 			vx = maxf(vx, -t.air_vmax)
 		ball.linear_velocity.x = vx
+
+
+## 跳跃：校地起跳；羽毛在空中可扑翼（冷却限制），其余词条空中无跳。
+func _try_jump() -> void:
+	var t: Dictionary = TAGS[tag_idx]
+	var grounded: bool = ground_ray != null and ground_ray.is_colliding()
+	if grounded:
+		ball.linear_velocity.y = -t.jump
+	elif t.flap != 0.0 and flap_cd <= 0.0:
+		ball.linear_velocity.y = minf(ball.linear_velocity.y, t.flap)
+		flap_cd = FLAP_CD
 
 
 func _next_level() -> void:

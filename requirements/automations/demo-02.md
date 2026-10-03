@@ -14,9 +14,11 @@
 requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-export.md）。玩法：形状(圆球/长板/方块)×词条(Heavy/Float/Fire/Sticky)统一规则物理解谜，目标 3-4 关。
 
 ## 当前状态
-- public/demos.json 的 demo-02 slot（buildId=demo-02-v2，L1+L2 已上线）
-- ChatGPT 专属监督对话（迭代时在此续评）：https://chatgpt.com/c/6abf238d-6dc0-83ec-aa5e-43c62aebe892（结论 ITERATE）
-- 待办 v3：加跳跃输入系统，实现评审建议#2「组合测试房」（空中切词条：弹簧→Float→石头砸舱门）
+- public/demos.json 的 demo-02 slot（buildId=demo-02-v3，3 关已上线；v3=跳跃输入+组合测试房，headless 4/4 PASS）
+- itch：demo-02-v3 已推（butler build #2057309）但 CDN 持续故障（占位页 404，publish-qa FAIL）→ 本轮可玩链接走 GitHub Pages；pipeline-lite 每 5 分钟自愈重推
+- ChatGPT 专属监督对话（迭代时在此续评）：https://chatgpt.com/c/6abf238d-6dc0-83ec-aa5e-43c62aebe892（上轮结论 ITERATE；v3 已发复评请求）
+- 待办 v4：按 v3 复评结论迭代（关注：组合深度/涌现性是否成立、扑翼手感）
+- 已知坑新增：【羽毛 damp=1.2 会吃掉弹簧冲量】L3 弹簧冲量 (260,-660) 是抵消阻尼后的调参值，改词条参数需同步重调 L3 并跑 headless
 
 ## 每轮流程
 1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。

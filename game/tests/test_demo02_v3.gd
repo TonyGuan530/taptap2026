@@ -58,7 +58,7 @@ func _run() -> void:
 	scene.queue_free()
 	await physics_frame
 
-	# ③ L3 组合链路：弹簧起飞 → 空中切羽毛 + 按住→横漂 → 舱顶上方切石头砸穿
+	# ③ L3 组合链路：弹簧起飞 → 空中切羽毛，按住→横漂+扑翼续航 → 舱顶上方切石头砸穿
 	scene = load("res://demo02_physics.tscn").instantiate()
 	root.add_child(scene)
 	await physics_frame
@@ -68,12 +68,21 @@ func _run() -> void:
 	var falling := await _until(func(): return fired and scene.ball.linear_velocity.y > 0.0, 20000)
 	if falling:
 		Input.action_press("ui_right")   # 空中横移（v3 新输入）
-	var over := await _until(func(): return falling and scene.ball.position.x >= 700.0 and scene.ball.position.y < 235.0, 20000)
+	# 横漂途中羽毛会掉高度：下坠变快就扑翼续航（feather damp 会吃掉高度，扑翼是设计内操作）
+	var flaps := 0
+	while not scene.goal_reached and flaps < 12:
+		if scene.ball.position.x >= 720.0 and scene.ball.position.y < 230.0:
+			break   # 已到舱顶正上方
+		if scene.ball.linear_velocity.y > 80.0:
+			scene._try_jump()   # 空中扑翼
+			flaps += 1
+		await physics_frame
+	var over: bool = scene.ball.position.x >= 720.0 and scene.ball.position.y < 230.0
 	if over:
 		Input.action_release("ui_right")
 		scene._on_tag(1)   # 舱顶正上方切石头，自由落体砸穿
 	ok = await _until(func(): return scene.goal_reached, 20000)
-	_log("③ L3 弹簧→羽毛横漂→石头砸舱门: " + ("PASS" if ok else "FAIL") + " (fired=%s over=%s)" % [str(fired), str(over)])
+	_log("③ L3 弹簧→羽毛横漂→石头砸舱门: " + ("PASS" if ok else "FAIL") + " (fired=%s over=%s flaps=%d)" % [str(fired), str(over), flaps])
 	Input.action_release("ui_right")
 	scene.queue_free()
 	await physics_frame
