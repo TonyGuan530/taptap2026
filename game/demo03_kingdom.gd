@@ -22,7 +22,8 @@ extends Node2D
 ##   初火(0-12s 1.8+0.035t) → 干热风(12-25s 2.2+0.045t) → 裂地脉动(25-38s 2.7+0.055t)
 ##   → 岩浆涌潮(38-50s 3.1+0.07t) → 灭亡倒计时(50s+ 3.5+0.09t)；
 ##   阶段横幅/时间进度条改五段配色；开局更平缓、后期更陡（兼顾 snowball 顾虑）；
-##   风暴之夜酸雨结构不变（单变量原则）。平衡参数变更：全部用例重跑。
+##   风暴之夜酸雨结构不变（单变量原则）。
+## v8（美术管线续推）：小屋物件绿幕贴图化（ChatGPT 生图→chromakey→透明 PNG），窗灯闪烁保留为程序特效。
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
@@ -30,6 +31,7 @@ const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 const TEX_VILLAGER: Texture2D = preload("res://assets/demo03/villager.png")
 const TEX_TOWER_L1: Texture2D = preload("res://assets/demo03/tower_l1.png")
 const TEX_TOWER_L2: Texture2D = preload("res://assets/demo03/tower_l2.png")
+const TEX_HOUSE: Texture2D = preload("res://assets/demo03/house.png")
 
 const GAME_TIME := 60.0
 const BUILD_COST := 20
@@ -426,13 +428,12 @@ func _draw() -> void:
 	# 地面
 	draw_rect(Rect2(0, 250, VIEW.x, 210), Color("241a1c"))
 	draw_rect(Rect2(0, 250, VIEW.x, 4), Color("3a2a2c"))
-	# 远处的小屋（窗户透光）
+	# 远处的小屋（绿幕管线贴图 + 窗灯闪烁特效）
 	for k in 4:
 		var hx := 60 + k * 210.0
 		var lamp: float = 0.55 + 0.35 * sin(pulse * 1.1 + k * 1.9)
-		draw_rect(Rect2(hx, 330, 46, 30), Color("4a3b45"))
-		draw_polygon(PackedVector2Array([Vector2(hx - 6, 330), Vector2(hx + 52, 330), Vector2(hx + 23, 306)]), PackedColorArray([Color("5d4550")]))
-		draw_rect(Rect2(hx + 18, 340, 9, 8), Color("ffd54f", lamp * 0.8))
+		draw_texture_rect(TEX_HOUSE, Rect2(hx - 14.0, 296.0, 76.0, 64.0), false)
+		draw_circle(Vector2(hx + 35.0, 337.0), 5.0, Color("ffd54f", lamp * 0.55))
 
 	# 岩浆河：辉光随温度增强 + 翻滚上升的气泡
 	var heat_frac: float = clamp(heat / 130.0, 0.0, 1.0)
