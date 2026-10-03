@@ -88,7 +88,10 @@
 - v7（2026-10-03 22:05）：迭代美术（转向阶梯第三档，按用户绿幕工作流）——ChatGPT 生图四角色 2×2 设定图（#00ff00 绿幕）→ ffmpeg 象限切分+chromakey 抠绿 → 透明 PNG 部署（SOUP 小人/蹦蹦兽/双翼虫/灯灯菌，reviews/art/ 溯源 + game/assets/dna/ 部署）；玩家精灵按朝向镜像、外星生物已融合降透明度；headless 五用例 PASS（逻辑零改动）
 - v7 美术复评（reviews/chatgpt-demo-04-full.md）：玩法 KEEP + 美术小修；Gate「ART 足够支撑盲测」通过；资产 QA 程序化检验通过（GPT 绿底观察为误报，已留档）；采纳玩家显示尺寸 34→38；蹦蹦兽亮薰衣草紫调整留待盲测反馈
 - v8（2026-10-04 03:20，持续开发令：≥5 关 + 视频刷新）：L4「碎岩回廊」+ L5「终焉长廊」上线（共 5 关）；新增第 4 只外星生物恐龙兽（绿幕管线素材 dino.png）授予碎岩 DNA——撞击裂纹岩墙击碎（L4 双解法：碎岩直穿/组合跳越；L5 黑暗裂纹墙=碎岩唯一正解）；修复落体判定漏洞（身体顶部吸附翻墙，用例 6 抓到）改脚底判定；headless 六用例 PASS（用例 1 升级 5 关全通、用例 6 裂纹墙双向对照）；Miro 视频用 v8 重录（Movie Maker 离线渲染 5 关全程 + ffmpeg）
-- 状态：v8 已上线（demo-04-v8；Miro 板视频/截图已同步 v8）；待办=3-5 人盲测（数据到位优先消化）+ 归档 ChatGPT v8 评审
+- 状态：v8 已上线（demo-04-v8；Miro 板视频/截图已同步 v8）；归档 ChatGPT v8 评审 ✓
+- v8 复评归档（reviews/chatgpt-demo-04-full.md）：KEEP（近内容上限）——碎岩=健康扩展非 recipe creep（L4 双解法是关键）；五段式结构合理；L5 注意勿串联门锁化；**不要再加第 6 关/第 5 DNA**；盲测前三件事=裂纹墙 readability（现版已合格）+ 碎墙遥测 + 冻结进盲测
+- v9（2026-10-04 03:40）：落实 GPT 盲测前清单②——战役模式碎墙遥测（wall_broken/wall_broken with break、break_attempt 无碎岩硬撞，2s 节流，带 level 信封；每关一个 campaign 会话落 user://demo04_lab_log.json）；盲测手册补 HUD 密度与 L4 双解选择观察项；六用例 PASS；Miro 视频已重录为 v9（raw 链接自动生效，无需重贴）
+- 状态：v9 已上线（demo-04-v9；butler 频道确认）；**唯一待办=3-5 人真人盲测（全工具链就绪）**
 
 ## demo-05 重生之我是恐龙·火山生存
 

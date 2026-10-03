@@ -194,6 +194,7 @@ var lab_fuse_n := 0
 var lab_session := {}            # session_id / tester_id / run_index
 var lab_run_index := 0
 var lab_zone := ""               # spawn / dna_cluster / high_platform / gap / far_side
+var last_wall_attempt := -9.0    # 碎墙尝试遥测节流（GPT v8 复评：break_attempt/wall_broken）
 var on_floor_prev := false
 
 
@@ -288,6 +289,7 @@ func _load_level(i: int) -> void:
 	_update_shard_label()
 	win_btn.visible = false
 	lab_btn.visible = false
+	lab_events = [_lab_ev("session_start", {"mode": "campaign", "level": i + 1})]   # 战役遥测会话（碎墙行为分析用）
 
 
 func _update_shard_label() -> void:
@@ -374,7 +376,7 @@ func _enter_lab() -> void:
 	state = "play"
 	elapsed = 0.0
 	level_shards = 0
-	lab_events = [_lab_ev("session_start", {})]
+	lab_events = [_lab_ev("session_start", {"mode": "lab"})]
 	lab_fuse_n = 0
 	lab_zone = ""
 	on_floor_prev = false
@@ -474,9 +476,9 @@ func _exit_lab() -> void:
 	_load_level(0)
 
 func _save_lab_log() -> void:
-	if mode != "lab" or lab_events.is_empty():
+	if lab_events.is_empty():
 		return
-	lab_events.append(_lab_ev("session_end", {}))
+	lab_events.append(_lab_ev("session_end", {"mode": mode}))
 	var arr := []
 	var f := FileAccess.open("user://demo04_lab_log.json", FileAccess.READ)
 	if f:
@@ -576,9 +578,14 @@ func _physics_process(delta: float) -> void:
 		var b = blocks[bi]
 		var br := Rect2(b[0], b[1], b[2], b[3])
 		if br.intersects(r):
-			if b.size() > 4 and b[4] == 1 and dna.has("break"):
-				to_break.append(bi)   # 碎岩 DNA：接触即碎，不解析碰撞
-				continue
+			if b.size() > 4 and b[4] == 1:
+				if dna.has("break"):
+					to_break.append(bi)   # 碎岩 DNA：接触即碎，不解析碰撞
+				if lab_events.size() < 500 and elapsed - last_wall_attempt > 2.0:
+					last_wall_attempt = elapsed
+					lab_events.append(_lab_ev("wall_broken" if dna.has("break") else "break_attempt", {"level": level_idx + 1}))
+				if dna.has("break"):
+					continue   # 已碎：跳过碰撞解析
 			var prev_y := py - vy * delta
 			if vy >= 0.0 and prev_y <= br.position.y + 8:   # 脚底判定：防止高跳顶点身体过墙角被吸附上墙（v8 修复）
 				py = br.position.y
@@ -655,6 +662,7 @@ func _physics_process(delta: float) -> void:
 		total_shards += level_shards
 		total_time += elapsed
 		ratings.append(_rating())
+		_save_lab_log()   # 战役每关结束落一份遥测会话（mode=campaign）
 		win_btn.text = "下一关 →" if level_idx < LEVELS.size() - 1 else "再跑一次"
 		win_btn.visible = true
 		lab_btn.visible = level_idx >= LEVELS.size() - 1

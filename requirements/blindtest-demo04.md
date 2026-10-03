@@ -26,8 +26,12 @@
 ## 遥测数据（自动采集，勿干预）
 - 文件：浏览器下载的 demo04_lab.json（或 user://demo04_lab_log.json）
 - 事件信封：session_id / tester_id / run_index / elapsed_ms / event_type / player_x / player_y / facing / owned_dna
-- 事件类型：session_start, dna_fused(含 order), combo_discovered, jump, zone_enter(spawn/dna_cluster/high_platform/gap/far_side), platform_attempt/platform_reached, gap_attempt/gap_crossed, session_end
+- 事件类型：session_start(含 mode/level), dna_fused(含 order), combo_discovered, jump, zone_enter(spawn/dna_cluster/high_platform/gap/far_side), platform_attempt/platform_reached, gap_attempt/gap_crossed, **wall_broken / break_attempt(v9 新增：L4/L5 碎墙行为，区分「有碎岩击穿」与「没碎岩硬撞」)**, session_end
 - 禁止采集：每帧输入/鼠标轨迹/每帧位置/物理状态/FPS（GPT 明确排除）
+
+## 额外观察（GPT v8 复评要求）
+- HUD 密度：玩家是否频繁停下来读顶部文本、是否漏看 DNA 状态
+- L4 双解选择：走碎岩直穿还是组合跳越（遥测 wall_broken/break_attempt 可佐证）
 
 ## 交付
 - 每人：遥测 JSON + 观察表照片
