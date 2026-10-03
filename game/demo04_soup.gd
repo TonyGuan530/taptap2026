@@ -666,7 +666,7 @@ func _draw() -> void:
 	# 玩家（SOUP 小人）：v7 精灵图 34x33，按朝向镜像；脚底对齐 py
 	var pl2 := Vector2(px + off, py)
 	draw_set_transform(Vector2(pl2.x, pl2.y), 0.0, Vector2(face, 1.0))
-	draw_texture_rect(TEX_PLAYER, Rect2(-17, -33, 34, 33), false)
+	draw_texture_rect(TEX_PLAYER, Rect2(-19, -37, 38, 37), false)
 	draw_set_transform(Vector2(), 0.0, Vector2.ONE)
 	if born_dark:
 		draw_circle(Vector2(pl2.x, pl2.y - 22), 5, Color(1.0, 0.95, 0.6, 0.9))

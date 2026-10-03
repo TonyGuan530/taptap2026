@@ -62,6 +62,7 @@
 - ChatGPT v4 评审（reviews/chatgpt-demo-03-v4-full.md）：ITERATE 沿用——▲/▼不污染盲测、保留不回滚；盲测更名「最终形态可读性盲测」（游戏自带预警+状态反馈，≥3/5 第二局主动说明相对价值变化+行为迁移 → KEEP）；徽标只表状态不表策略答案、不再加教学文本；证据链已修（版本化 reviews/shots/demo-03-v4-acid.png）。若继续停滞：允许独立「风暴之夜」可选模式，仅改一个变量=酸雨频率（15/30/45s 短酸雨，其余全不动）。
 - v5 上线 2026-10-03（demo-03-v5）：「风暴之夜」可选实验模式上线——开始菜单选模式（经典 60 秒 / 风暴之夜·实验），风暴=15/30/45s±2s 三场 4 秒短酸雨（总暴露 16s→12s，强调切换次数），其余规则全冻结；结算面板可「选模式」返回；局内紫框模式徽标；spend_log 两模式通用。测试四行全 PASS（经典三行回归 + 风暴 win+3/3 场酸雨）。
 - ChatGPT v5 评审（reviews/chatgpt-demo-03-v5-full.md）：ITERATE——风暴单变量范围 PASS；Classic Regression Gate PASS；**盲测分组=≥2 人经典→经典 + ≥2 人经典→风暴**（区分 learning effect 与 storm effect），第 5 人自由；Gate 精确化：3-5 名首次玩家无外部解释、仅靠正式 UI/预警/▲▼ 完成两局，≥3/5 第二局主动说明相对价值变化且 telemetry 出现迁移 → **KEEP 并停止堆验证功能**。Mechanical Gate 已够，勿再加 bot/headless case；禁第三模式/第二种天气/新职业/建筑/岗位/90 秒/3D。
+- v6 上线 2026-10-03（demo-03-v6，督导指令·迭代美术工作流）：角色/物件贴图改走绿幕生图管线——ChatGPT 生图（#00ff00 背景原图 reviews/art/src/）→ ffmpeg chromakey+despill 抠绿（reviews/art/keyed/）→ game/assets/demo03/ 游戏尺寸透明 PNG；村民（职业色轻染）/水塔 L1/L2 贴图化；背景/特效保持程序绘制。零平衡/规则改动，测试四行 PASS。
 
 ## demo-04 SOUP 2.0：DNA 融合逃生
 
@@ -81,7 +82,8 @@
 - v6（2026-10-03 21:40）：遥测 v2 全量落实（统一信封+五区 zone_enter+platform/gap attempt vs success+G 键盲测编号 P01-P09+T 键导出 web 下载）；实验房地形加高台（仅超级弹跳）与 250px 沟——「组合发现→回头重测」行为链可测；S 评级改纯时间≤45s+全收集独立徽章（落实 GPT「S 不得强制捷径」）；headless 用例 5 断言信封/区域/持久化，五用例 PASS；盲测执行手册 requirements/blindtest-demo04.md
 - 事故记录（21:35）：并发竞争致 main_scene 被其他轮翻走，导出守卫正确拒绝，但 push-itch 无守卫把空目录推上 itch 频道（线上短暂损坏）——已重推正确 v6 覆盖，push-itch 加 index.html 存在性守卫
 - v7（2026-10-03 22:05）：迭代美术（转向阶梯第三档，按用户绿幕工作流）——ChatGPT 生图四角色 2×2 设定图（#00ff00 绿幕）→ ffmpeg 象限切分+chromakey 抠绿 → 透明 PNG 部署（SOUP 小人/蹦蹦兽/双翼虫/灯灯菌，reviews/art/ 溯源 + game/assets/dna/ 部署）；玩家精灵按朝向镜像、外星生物已融合降透明度；headless 五用例 PASS（逻辑零改动）
-- 状态：v7 已上线（demo-04-v7；itch CDN 平台故障持续第 7 轮记录）；待办=3-5 人盲测（工具/手册/观察表齐备）+ 归档 ChatGPT 美术评审
+- v7 美术复评（reviews/chatgpt-demo-04-full.md）：玩法 KEEP + 美术小修；Gate「ART 足够支撑盲测」通过；资产 QA 程序化检验通过（GPT 绿底观察为误报，已留档）；采纳玩家显示尺寸 34→38；蹦蹦兽亮薰衣草紫调整留待盲测反馈
+- 状态：v7b 已上线（玩家尺寸修正重推；itch 频道被后续轮次轮换属常态，pipeline-lite 按 demos.json 最新自愈）；**下一步=3-5 人盲测（唯一硬依赖真人）**
 
 ## demo-05 重生之我是恐龙·火山生存
 
