@@ -1,39 +1,39 @@
 {
-  "checkedAt": "2026-10-04T04:45:30+08:00",
-  "round": 58,
+  "checkedAt": "2026-10-04T04:56:00+08:00",
+  "round": 59,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "沿用 04:44 SKIP not-foreground（守卫 1 分钟前刚验，省额度不重跑）"
+    "thisRound": "沿用 04:44 SKIP not-foreground（守卫 SKIP 路径无风险，降频省额度）"
   },
   "automations": {
-    "supervisor": { "runCount": 57, "lastDispatch": "04:44", "next": "04:54" },
-    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中；demo-10/11 v2 迭代中" },
+    "supervisor": { "runCount": 58, "lastDispatch": "04:54", "next": "05:04" },
+    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中；demo-10 v3 迭代中（novel.gd 改动+subagent 会话活跃）" },
     "demo-02": { "cron": "5,35 * * * *", "runCount": 17, "evidence": "⚠️ 连续 2 轮守望空转——催办已备 reviews/…demo02-watch.md，05:05 轮核对消化" },
-    "demo-03": { "cron": "10,40 * * * *", "runCount": 17, "evidence": "🔄 04:40 轮长轮次推进中：kingdom.gd 04:44+movie_demo03.gd 改+builds/demo-03-v10/ 已建+截图刷新（v10 导出在途）" },
-    "demo-04": { "cron": "15,45 * * * *", "runCount": 19, "evidence": "04:45 轮触发中；dino 催办 reviews/…demo04-dino.md 待 [DONE] 回执" },
-    "demo-05": { "cron": "20,50 * * * *", "runCount": 17, "evidence": "🟢 恢复中：会话 210d6c01 重现活跃（04:45）、test_demo05_dominance.gd 04:45 被改——正在消化 reviews/…demo05-recovery.md（volcano.gd 仍 04:07 待收尾提交）；05:10 巡查核对发布/提交结果" },
-    "demo-06": { "cron": "25,55 * * * *", "runCount": 19, "evidence": "✅ v10+视频已刷新；04:55 下轮" }
+    "demo-03": { "cron": "10,40 * * * *", "runCount": 18, "evidence": "✅ v10 交付（e5afeb8：村民行走双帧动画绿幕管线+视频重录上板，零平衡改动 4 用例 PASS）" },
+    "demo-04": { "cron": "15,45 * * * *", "runCount": 19, "evidence": "🔄 04:45 轮进行中：soup.gd+test 改、builds/demo-04-v10/ 已建（v10 导出中，疑似 dino 素材轮）；[DONE] 回执待核" },
+    "demo-05": { "cron": "20,50 * * * *", "runCount": 18, "evidence": "✅ v9 五幕灾难链交付（0cd7be3：4/4 PASS+240局验证+视频重录；e31dfd8 存档）——恢复令消化成功；04:50 新轮进行中（volcano.gd 04:54）；⚠️ 观察项见 watch" },
+    "demo-06": { "cron": "25,55 * * * *", "runCount": 19, "evidence": "✅ v10+视频已刷新；04:55 槽触发中" }
   },
   "envSnapshot": {
-    "health": "ok builds=55（+1，CI 上新）",
+    "health": "ok builds=57（+2：demo-03 v10、demo-05 v9 已上 CI/Pages）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "60 条无新增（04:45 fetch OK）",
-    "feedback": "db.json 零反馈（grep 无 feedback 键，结构待下轮复核）",
-    "git": "本轮 HEAD 4ace1eb",
+    "miro": "60 条无新增（04:55 fetch OK）",
+    "feedback": "db.json 零反馈",
+    "git": "本轮 HEAD e31dfd8",
     "itch": "占位第 3 天（Pages 兜底全在线）"
   },
   "fiveHourPlan": {
-    "done": "demo-02/03/04/06 达标；demo-03 v9、demo-06 v10、demo-04 v9 已交付",
-    "running": "demo-03 v10 导出中；demo-05 恢复中（消化恢复令）；demo-10/11 v2",
+    "done": "demo-03 v10、demo-05 v9（≥5 阶段达标）、demo-06 v10、demo-04 v9 全交付",
+    "running": "demo-04 v10 导出中（dino 素材轮）；demo-05 新轮；demo-10 v3",
     "pipeline": "demo-08 补3关、demo-09 补1赛道在队"
   },
   "watch": [
     "【工具备忘】本会话无 CronUpdate 工具（仅 CronList）——催办/重锚走 reviews/ 指令文件通道；严禁连续重复调用 CronList",
-    "demo-05：🟢 恢复中——05:10 巡查核对提交/发布/[DONE] 回执",
+    "demo-05：⚠️【裁决预警】e31dfd8 预告「下轮预批准削 intel 双收益」——V8 参数冻结+Gate C 终裁「停止自动调参」约束在身；若其实际改动平衡数值（非内容层），下轮巡查写 reviews/ 裁决令重申冻结（改动+完整重验证可谈，但必须留档并通知真人 Gate 基准变更）",
     "demo-02：05:05 轮核对催办消化（守望空转第 3 次即再催办）",
-    "demo-03：v10 导出+发布+视频上板完成度下轮核对",
-    "demo-04：dino [DONE] 回执核对"
+    "demo-04：v10 发布后核 dino [DONE] 回执",
+    "demo-03：留两观察点（v9 备案）不动"
   ],
   "pending": [
     "【WATCH】itch 占位第 3 天（Pages 兜底）",
