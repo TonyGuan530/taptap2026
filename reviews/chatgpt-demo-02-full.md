@@ -719,3 +719,9 @@ ChatGPT 可能会出错。请核查重要信息。
 3. **再次冻结**，优先跑 Batch 01；不做 L6/第四词条/新机关/调 bounce（bounce 积分步长敏感是冻结它的理由，不是精调它的理由）；真人测试重点观察 L5：玩家看到皮球自己弹上去时是惊喜、困惑还是没意识到
 
 **总评：KEEP**
+
+================================================================================
+## demo-02 v7 报备（2026-10-04 04:15 自动化发送/抓取）
+
+- 报备：v6 复评三建议落实（冻结范围内 instrumentation，玩法/几何零改动）：①telemetry idle_completion 字段（零横移+零扑翼+开局选词条后无中局切换；headless 双向断言：L5 路线B 零输入弹跳=idle true / 路线A 有操作=idle false）②L5 定位「自由实验场」副标题 ③v7 起再次冻结等 Batch 01
+- ChatGPT：**报备确认。当前监督状态：KEEP / FROZEN — WAITING FOR PLAYTEST BATCH 01。** idle_completion 定义足以区分「主动操控路线」与「配置后系统自行演化路线」；progression 固定 L1/L2 教学→L3 组合→L4 systemic puzzle→L5 自由实验场；数据回来前只处理 crash/发布故障/telemetry 失真
