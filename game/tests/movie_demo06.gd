@@ -35,7 +35,8 @@ func _jump() -> void:
 	game.keys[KEY_SPACE] = true
 
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
+	# v12：驱动移入物理 tick——与测试 T12 的 await physics_frame 同拍（影片 fixed-fps 60 物理一致），跳跃窗直接复用测试参数
 	if game == null:
 		return
 	f += 1
@@ -182,7 +183,15 @@ func _level5() -> void:
 
 
 ## L6：双 Float 板串联登双塔（P1 顶 390 → 塔1 顶 330 → 步落 P2 顶 325 → 塔2 顶 260）——与 test T12 同参数
+var dbg6: FileAccess
+
 func _level6() -> void:
+	if dbg6 == null:
+		dbg6 = FileAccess.open("user://movie06_l6.txt", FileAccess.WRITE)
+	if lv_f % 10 == 0 and game.player != null:
+		dbg6.store_string("lv_f=%d px=%.0f py=%.0f floor=%s space=%s\n" % [lv_f,
+			game.player.position.x, game.player.position.y, str(game.on_floor), str(game.keys.get(KEY_SPACE, false))])
+		dbg6.flush()
 	if lv_f == 30:
 		game._on_shape(1)
 		game._on_word(1)
@@ -193,13 +202,19 @@ func _level6() -> void:
 		var px: float = game.player.position.x
 		var py: float = game.player.position.y
 		game.keys[KEY_D] = true
+		# 卡死自救：撞塔1 缘（步行越窗失败）→ 回出生点重走（影片专用兜底）
+		if game.on_floor and px > 285.0 and py > 420.0:
+			game.player.position = Vector2(70, 330)
+			game.player.velocity = Vector2.ZERO
+			game.keys[KEY_D] = false
+			game.keys[KEY_SPACE] = false
 		if game.on_floor:
 			var want := false
-			if px > 56.0 and px < 72.0 and py > 420.0:
-				want = true        # 地面 → P1（顶 390）
-			elif px > 240.0 and px < 275.0 and py > 350.0 and py < 400.0:
+			if px > 146.0 and px < 168.0 and py > 420.0:
+				want = true        # 地面 → P1（顶 390，跳点在板左缘前 9~19px）
+			elif px > 240.0 and px < 290.0 and py > 350.0 and py < 400.0:
 				want = true        # P1 → 塔1（顶 330）
-			elif px > 500.0 and px < 530.0 and py > 295.0 and py < 325.0:
+			elif px > 495.0 and px < 535.0 and py > 295.0 and py < 325.0:
 				want = true        # P2 → 塔2（顶 260）
 			if want:
 				_jump()
