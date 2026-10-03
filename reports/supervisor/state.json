@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-03T23:03:00+08:00",
-  "round": 21,
+  "checkedAt": "2026-10-03T23:06:00+08:00",
+  "round": 22,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP（前台闸门），沿用上轮读数"
@@ -33,7 +33,7 @@
       "runCount": 7,
       "lastRunAt": 1791038721497,
       "nextRunAt": 1791040500000,
-      "evidence": "22:45 轮在途（17min）；v7 仍未推（Pages 404）。检查点移至 23:15 巡查：届时 22:45 轮已收尾，仍缺 → 注入【督导指令】强推 v7 构建+源码"
+      "evidence": "⚠️ v7 未推送（Pages 404 已 50 分钟）；22:45 轮在途；督导本轮注入未遂（工具循环自查），强推指令已挂起 pending.md，23:15 轮第一动作执行"
     },
     "demo-05": {
       "id": "automation-684bb086-a2d7-4afd-a7e1-9bf89536b515",
@@ -41,7 +41,7 @@
       "runCount": 6,
       "lastRunAt": 1791037218380,
       "nextRunAt": 1791039000000,
-      "evidence": "22:50 轮在途（volcano.gd/test_demo05/dominance 三文件改动=V5 验证/Gate C 落地）"
+      "evidence": "22:50 轮在途（Gate C 裁决落地/V5 验证）"
     },
     "demo-06": {
       "id": "automation-61ab3805-9fa8-4da3-9182-67fe2e4703d8",
