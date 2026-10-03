@@ -1,29 +1,29 @@
 {
-  "checkedAt": "2026-10-04T07:36:00+08:00",
-  "round": 75,
+  "checkedAt": "2026-10-04T07:46:00+08:00",
+  "round": 76,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "沿用 07:25 SKIP not-foreground"
+    "thisRound": "guard SKIP not-foreground（07:45 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 73,
-      "lastDispatch": "07:34",
-      "next": "07:44"
+      "runCount": 74,
+      "lastDispatch": "07:44",
+      "next": "07:54"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "demo-10 v3b 盲测构建方向（复评指示）；demo-09 批示顺延排队——08:15 队列截止后转下时段头"
+      "evidence": "✅ demo-10 v3b 盲测构建交付（522c9fb：blind_mode 隐藏全部机械提示防 UI 杀 Eureka，107 断言）——demo-10 盲测就绪闭环"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "🔴 空转第 7 次（f439045）——失能维持等用户；其引用「基线无本 demo 新指令」进一步证实读基线抗命"
+      "evidence": "🔴 空转第 8 次（5523b51）——失能维持；新增观察：itch QA 异常 4→2 但工具降级（butler 网络/页面抓取失败）"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
       "runCount": 23,
-      "evidence": "07:10 轮短轮无提交（正常）；07:40 槽"
+      "evidence": "07:40 轮无新提交（正常）；08:10 槽"
     },
     "demo-04": {
       "cron": "15,45 * * * *",
@@ -33,7 +33,7 @@
     "demo-05": {
       "cron": "20,50 * * * *",
       "runCount": 23,
-      "evidence": "🔄 07:20 轮长轮次延续（volcano.gd+三截图 M）"
+      "evidence": "🔄 07:20 轮收尾中：volcano.gd 07:21+demo-05.mp4 重录+三截图——发布在途，07:50 槽将至"
     },
     "demo-06": {
       "cron": "25,55 * * * *",
@@ -42,24 +42,24 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=72（+3：demo-10 v3、demo-05 v14 等 CI 批量上线）",
+    "health": "ok builds=73（+1）",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD e26498e",
+    "git": "本轮 HEAD f807424",
     "itch": "占位第 3 天（Pages 兜底全在线）"
   },
   "fiveHourPlan": {
     "done": "demo-03 v12、demo-04 v11、demo-05 v12、demo-06 v12+影片、demo-08 v3+瘦身、demo-10/11 v2",
-    "running": "demo-10 v3b 盲测构建；demo-05 收尾",
-    "queue": "demo-09 补赛道（批示顺延，08:15 后转下时段头）；demo-11 冻结+盲测准备"
+    "running": "demo-05 收尾（发布在途）；demo-09 批示（08:15 后转下时段）",
+    "queue": "demo-09 补赛道（下时段头）；demo-11 冻结+盲测准备"
   },
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
-    "🔴【需用户决策】demo-02 会话失能；真人盲测物料已齐（demo-04/06 手册+demo-04 v12 BLINDTEST READY）——Batch 01 人选与排期决策价值最高",
-    "demo-05 收尾超 3 轮——07:44 核对，仍挂则按长轮次观察",
-    "demo-09 批示保持有效至队列截止"
+    "🔴【需用户决策】demo-02 会话失能；真人盲测物料全齐（demo-04 v12 BLINDTEST READY+demo-10 v3b+demo-06/04 手册）——Batch 01 人选与排期为最高价值决策",
+    "demo-05 发布结果 07:54 核对",
+    "itch 工具降级（butler 网络）观察——Pages 兜底不受影响"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
