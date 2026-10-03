@@ -9,9 +9,14 @@ echo [%date% %time%] === lite pipeline start === >> data\lite-pipeline.log
 REM 1. Miro sync
 node tools\miro-fetch.mjs >> data\lite-pipeline.log 2>&1
 
-REM 2. itch publish health check (demo-07 = last known good; auto re-push on FAIL)
+REM 2. itch publish health check (demo-07 = last known good; auto re-push on FAIL, throttled to 1/10min)
 node tools\publish-qa.mjs demo-07 >> data\lite-pipeline.log 2>&1
 if errorlevel 1 (
+  node -e "const f='data/last-repush.txt';const fs=require('fs');const now=Date.now();const last=fs.existsSync(f)?Number(fs.readFileSync(f,'utf8')):0;if(now-last<600000){process.exit(1)}fs.writeFileSync(f,String(now))"
+  if errorlevel 1 (
+    echo [%date% %time%] QA FAIL - re-push throttled (10min window) >> data\lite-pipeline.log
+    exit /b 0
+  )
   echo [%date% %time%] QA FAIL - auto re-push demo-07 >> data\lite-pipeline.log
   powershell -File tools\push-itch.ps1 -Version demo-07 >> data\lite-pipeline.log 2>&1
   node tools\publish-qa.mjs demo-07 >> data\lite-pipeline.log 2>&1
