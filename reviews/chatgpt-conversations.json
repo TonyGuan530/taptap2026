@@ -39,7 +39,9 @@
       "review": "reviews/chatgpt-demo-05-full.md",
       "verdict": "ITERATE",
       "v2Review": "reviews/chatgpt-demo-05-v2-full.md",
-      "v2Note": "v2 续评 ITERATE（性质升级）：三建议全落实、系统设计站住，4 个策略 archetype（情报/保险/投机/补救）理论成立；V3 不加玩法只做验证 Gate=①新玩家5局≥3种策略+≥2次主动换策略 ②盯防「高地开局」「灾后必抢运」dominant sequence ③headless 加 dominance simulation（8 个简单 policy 跑几百局）；数值平衡冻结"
+      "v2Note": "v2 续评 ITERATE（性质升级）：三建议全落实、系统设计站住，4 个策略 archetype（情报/保险/投机/补救）理论成立；V3 不加玩法只做验证 Gate=①新玩家5局≥3种策略+≥2次主动换策略 ②盯防「高地开局」「灾后必抢运」dominant sequence ③headless 加 dominance simulation（8 个简单 policy 跑几百局）；数值平衡冻结",
+      "v5Review": "reviews/chatgpt-demo05-v4-verify-full.md",
+      "v5Note": "V4 验证裁决(ITERATE)：雨天二元极化 → V5 窄授权只动泥流 severity；落地泥流吞50%后 Gate A/B PASS（4策略雨天47%落20-70区间、东西风差50-100pp）、Gate C FAIL（洞穴系三维并列双高，平顶评分+免疫致加税只能二元跳变）→ 待监督者在「评分含路线成本/北线随机事件」间裁决；真人5局Gate继续推迟"
     },
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",

@@ -132,7 +132,7 @@ func _run() -> void:
 	var weathers := [[true, true], [true, false], [false, true], [false, false]]
 	var stats := {}
 	for p in POLICIES:
-		stats[p.id] = {games = 0, win = 0, partial = 0, lose = 0, score = 0, strata = {}}
+		stats[p.id] = {games = 0, win = 0, partial = 0, lose = 0, score = 0, rainW = 0, rainN = 0, dryW = 0, dryN = 0, eastW = 0, eastN = 0, westW = 0, westN = 0}
 	var game_no := 0
 	for p in POLICIES:
 		for g in GAMES_PER_POLICY:
@@ -152,63 +152,76 @@ func _run() -> void:
 				_:
 					st.lose += 1
 			st.score += scene._score()
-			var key: String = ("e" if scene.wind == "east" else "w") + ("R" if scene.rain else "D")
-			if not st.strata.has(key):
-				st.strata[key] = {n = 0, win = 0}
-			st.strata[key].n += 1
-			if scene.result == "win":
-				st.strata[key].win += 1
+			if scene.rain:
+				st.rainN += 1
+				if scene.result == "win":
+					st.rainW += 1
+			else:
+				st.dryN += 1
+				if scene.result == "win":
+					st.dryW += 1
+			if scene.wind == "east":
+				st.eastN += 1
+				if scene.result == "win":
+					st.eastW += 1
+			else:
+				st.westN += 1
+				if scene.result == "win":
+					st.westW += 1
 			game_no += 1
 			if game_no % 40 == 0:
 				_log("进度 %d/240 局…" % game_no)
 			scene.queue_free()
 			await physics_frame
-	# ---- 汇总 ----
+	# ---- 汇总（V5 Gate：天气×风向拆分）----
 	_log("")
-	_log("==== demo-05 dominance simulation（%d policy × %d 局，time_scale %.0f）====" % [POLICIES.size(), GAMES_PER_POLICY, TIME_SCALE])
-	_log("policy             局  胜%%  惨胜%% 败%%  均分   | 东风雨    东风旱    西风雨    西风旱")
+	_log("==== demo-05 dominance simulation V5（%d policy × %d 局，time_scale %.0f）====" % [POLICIES.size(), GAMES_PER_POLICY, TIME_SCALE])
+	_log("policy             局  胜%%   雨天胜%%   旱天胜%%   东风胜%%   西风胜%%   均分")
 	var worst := {}
 	for p in POLICIES:
 		var st: Dictionary = stats[p.id]
 		if st.games == 0:
 			continue
 		var wr: float = 100.0 * st.win / st.games
-		var pr: float = 100.0 * st.partial / st.games
-		var lr: float = 100.0 * st.lose / st.games
+		var rn: int = st.rainN + st.dryN
+		var rw: float = 100.0 * st.rainW / maxi(1, st.rainN)
+		var dw: float = 100.0 * st.dryW / maxi(1, st.dryN)
+		var ew: float = 100.0 * st.eastW / maxi(1, st.eastN)
+		var ww: float = 100.0 * st.westW / maxi(1, st.westN)
 		var asc: float = 1.0 * st.score / st.games
-		var cells := ""
-		for key in ["eR", "eD", "wR", "wD"]:
-			var s: Dictionary = st.strata.get(key, {n = 0, win = 0})
-			cells += " %d/%-2d" % [s.win, s.n] if s.n > 0 else "  -/- "
-		_log("%-17s %3d %5.1f %5.1f %5.1f %6.1f |%s" % [p.id, st.games, wr, pr, lr, asc, cells])
-	# dominant 检验：某 policy 在全部有样本的天气象限里胜率都并列最高
+		_log("%-17s %3d %5.1f  %3.0f/%-2d(%3.0f%%)  %3.0f/%-2d(%3.0f%%)  %3.0f/%-2d(%3.0f%%)  %3.0f/%-2d(%3.0f%%)  %6.1f" % [p.id, st.games, wr, st.rainW, st.rainN, rw, st.dryW, st.dryN, dw, st.eastW, st.eastN, ew, st.westW, st.westN, ww, asc])
+	# ---- V5 Gate A/B/C ----
 	_log("")
-	var dominant := []
+	var top_surv := -1.0
+	var top_score := -1.0
 	for p in POLICIES:
 		var st: Dictionary = stats[p.id]
-		if st.games < GAMES_PER_POLICY / 2:
+		if st.games == 0:
 			continue
-		var is_top_everywhere := true
-		var checked := 0
-		for key in ["eR", "eD", "wR", "wD"]:
-			var mine: Dictionary = st.strata.get(key, {n = 0, win = 0})
-			if mine.n == 0:
-				continue
-			var best := -1
-			for q in POLICIES:
-				var qt: Dictionary = stats[q.id].strata.get(key, {n = 0, win = 0})
-				if qt.n == 0:
-					continue
-				best = maxi(best, qt.win)
-			checked += 1
-			if mine.win < best:
-				is_top_everywhere = false
-		if checked >= 3 and is_top_everywhere:
-			dominant.append(p.id)
-	if dominant.size() > 0:
-		_log("⚠ DOMINANT 候选（所有天气象限胜率并列最高）：%s —— 需要削" % ", ".join(dominant))
-	else:
-		_log("✅ 无 dominant policy：没有任何策略在全部天气象限同时登顶——策略空间健康")
+		top_surv = maxf(top_surv, 100.0 * st.win / st.games)
+		top_score = maxf(top_score, 1.0 * st.score / st.games)
+	var mid_rain := []
+	var wind_gap := {}
+	for p in POLICIES:
+		var st: Dictionary = stats[p.id]
+		if st.games == 0 or p.id == "all_cave":
+			continue
+		var rw: float = 100.0 * st.rainW / maxi(1, st.rainN)
+		if rw >= 20.0 and rw <= 70.0 and st.rainN >= 10:
+			mid_rain.append(p.id)
+		var gap: float = absf(100.0 * st.eastW / maxi(1, st.eastN) - 100.0 * st.westW / maxi(1, st.westN))
+		if gap >= 15.0:
+			wind_gap[p.id] = gap
+	_log("Gate A（≥2 非洞穴策略雨天胜率 20-70%）：%s → %s" % [", ".join(mid_rain), "PASS" if mid_rain.size() >= 2 else "FAIL"])
+	_log("Gate B（≥1 策略东西风胜率差 ≥15pp）：%s → %s" % [str(wind_gap), "PASS" if wind_gap.size() >= 1 else "FAIL"])
+	var c_fail := []
+	for p in POLICIES:
+		var st: Dictionary = stats[p.id]
+		if st.games == 0:
+			continue
+		if 100.0 * st.win / st.games >= top_surv and 1.0 * st.score / st.games >= top_score:
+			c_fail.append(p.id)
+	_log("Gate C（无「最高生存率+同最高均分」策略）：%s → %s" % [", ".join(c_fail), "PASS" if c_fail.size() == 0 else "FAIL"])
 	Engine.time_scale = 1.0
 	_log("==== 完成 ====")
 	quit()

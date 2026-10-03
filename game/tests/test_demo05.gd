@@ -31,15 +31,16 @@ func _tile_index(scene, id: String) -> int:
 	return 0
 
 
-## 秒级筛种子：先建场景读 pending_rain，不合要求立刻换种子重来
-func _make_scene(want_rain) -> Control:
+## 秒级筛种子：先建场景读 pending_wind/pending_rain，不合要求立刻换种子重来
+func _make_scene(want_east, want_rain) -> Control:
 	for attempt in 200:
 		seed(BASE_SEED + attempt * 17)
 		var s: Control = load("res://demo05_volcano.tscn").instantiate()
 		root.add_child(s)
 		await physics_frame
 		await physics_frame
-		if want_rain == null or s.pending_rain == want_rain:
+		var wind_ok: bool = want_east == null or (s.pending_wind == "east") == want_east
+		if wind_ok and (want_rain == null or s.pending_rain == want_rain):
 			return s
 		s.queue_free()
 		await physics_frame
@@ -93,7 +94,7 @@ func _run() -> void:
 	var fails := 0
 
 	# --- 用例1：分散储备（高地+洞穴），任意天气，按兵不动 ---
-	var s1: Control = await _make_scene(null)
+	var s1: Control = await _make_scene(null, null)
 	await _deposit(s1, "highland", 6)
 	await _deposit(s1, "cave", 6)
 	await _finish(s1, "skip", "")
@@ -105,20 +106,21 @@ func _run() -> void:
 	s1.queue_free()
 	await physics_frame
 
-	# --- 用例2：全押河谷 + 遇雨 + 不应急 → 储备尽失（只剩初始携带） ---
-	var s2: Control = await _make_scene(true)
+	# --- 用例2：全押河谷 + 遇雨(东风：灰先减半再泥流) + 不应急 → 储备尽失（只剩初始携带） ---
+	var s2: Control = await _make_scene(true, true)
 	await _deposit(s2, "valley", 10)
 	await _finish(s2, "skip", "")
 	var left2: int = s2.supply.food + s2.supply.water
-	var ok2: bool = left2 <= 8
-	_log("用例2 全押河谷(遇雨,不应急): result=%s 随身=%d → %s" % [s2.result, left2, "PASS（储备被泥流吞没，只剩初始携带）" if ok2 else "FAIL（储备未清零，联动失效）"])
+	# V5 判据：灰减半+泥流吞半后残余物资不足以满足任何路线需求 → 灭亡（押错天气且躺平的代价）
+	var ok2: bool = s2.result == "lose" and left2 <= 10
+	_log("用例2 全押河谷(东风遇雨,不应急): result=%s 随身=%d → %s" % [s2.result, left2, "PASS（上不了路，灭亡）" if ok2 else "FAIL（未产生失败压力）"])
 	passes += 1 if ok2 else 0
 	fails += 0 if ok2 else 1
 	s2.queue_free()
 	await physics_frame
 
 	# --- 用例3：全押森林 + 不遇雨 → 食×2 富余 win ---
-	var s3: Control = await _make_scene(false)
+	var s3: Control = await _make_scene(null, false)
 	await _deposit(s3, "forest", 10)
 	await _finish(s3, "skip", "")
 	var ok3: bool = s3.result == "win" and s3.supply.food >= 12
@@ -129,7 +131,7 @@ func _run() -> void:
 	await physics_frame
 
 	# --- 用例4：全押河谷 + 遇雨 + 灾后抢运进洞 → 大半救回存活 ---
-	var s4: Control = await _make_scene(true)
+	var s4: Control = await _make_scene(true, true)
 	await _deposit(s4, "valley", 10)
 	await _finish(s4, "relocate", "valley")
 	var total4: int = s4.supply.food + s4.supply.water

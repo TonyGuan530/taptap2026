@@ -413,8 +413,9 @@ func _resolve_disaster() -> void:
 		stored[id].food = int(stored[id].food / 2.0)
 		stored[id].water = int(stored[id].water / 2.0)
 	if rain:
-		_log_ev("河谷暴发泥流，河谷里的储备全部被吞没。")
-		stored.valley = {food = 0, water = 0}
+		_log_ev("河谷暴发泥流，河谷的储备被吞掉一半。")
+		stored.valley.food = int(stored.valley.food / 2.0)
+		stored.valley.water = int(stored.valley.water / 2.0)
 		_log_ev("湿地的水被灰烬污染，短期无法饮用。")
 		stored.wetland.water = int(stored.wetland.water / 2.0)
 		_log_ev("森林被雷火点燃，储备大半化为灰烬，只抢回四分之一。")
