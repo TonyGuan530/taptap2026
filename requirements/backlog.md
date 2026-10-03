@@ -78,7 +78,10 @@
 - v4（2026-10-03 20:50）：落实 GPT P0+P1——L3 新增「组合可选捷径」：发射台(顶170)仅超级弹跳可从地面跃上（普通高跳 277 不可达），上层跳过黑暗双沟+专属第 4 碎片（组合第二用途）；碎片/评级动态总数（S=集齐本关全部碎片且 50 秒内）；headless 新增用例 4 双向可达性验证（277 vs 109），四用例 PASS
 - v4 复评（reviews/chatgpt-demo-04-full.md）：继续 KEEP；捷径保留无需结构调整；盲测前三个轻量检查（视觉提示强度/上下路线风险差异/S 不得强制捷径）；下一 Gate=盲测玩家无教程主动把组合复用到旧环境或可选路线
 - v5（2026-10-03 21:20）：落实 GPT P2 工具面——新增「实验房」模式（三关通关后进入）：无目标沙盒、三生物聚拢、自由融合顺序；遥测持久化 user://demo04_lab_log.json（融合顺序/组合发现时刻/跳跃足迹）；R 重置 B 返回；headless 用例 5 验证自由顺序融合记录+持久化，五用例 PASS
-- 状态：v5 已上线（demo-04-v5；itch CDN 平台故障持续，QA 按预案记录待自愈）；待办=3-5 人盲测（遥测导出后发 ChatGPT 分析）
+- v5 复评（reviews/chatgpt-demo-04-full.md）：P2 工具面 KEEP；遥测补 6 类字段（统一 elapsed_ms 信封/关键事件坐标+owned_dna/zone_enter 五区/attempt 与 success 分离/tester_id+run_index）；明确不要每帧类采集；盲测必须配人工观察表 4 项
+- v6（2026-10-03 21:40）：遥测 v2 全量落实（统一信封+五区 zone_enter+platform/gap attempt vs success+G 键盲测编号 P01-P09+T 键导出 web 下载）；实验房地形加高台（仅超级弹跳）与 250px 沟——「组合发现→回头重测」行为链可测；S 评级改纯时间≤45s+全收集独立徽章（落实 GPT「S 不得强制捷径」）；headless 用例 5 断言信封/区域/持久化，五用例 PASS；盲测执行手册 requirements/blindtest-demo04.md
+- 事故记录（21:35）：并发竞争致 main_scene 被其他轮翻走，导出守卫正确拒绝，但 push-itch 无守卫把空目录推上 itch 频道（线上短暂损坏）——已重推正确 v6 覆盖，push-itch 加 index.html 存在性守卫
+- 状态：v6 已上线（demo-04-v6；itch CDN 平台故障持续第 6 轮记录）；待办=3-5 人盲测（手册+遥测+观察表齐备）
 
 ## demo-05 重生之我是恐龙·火山生存
 
