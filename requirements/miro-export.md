@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/3 22:24:11 · 共 51 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/3 22:35:35 · 共 54 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(-218,-185)
@@ -217,6 +217,20 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 ### [text] @(4400,12092)
 
 <p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-07.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-07.mp4 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;</p>
+
+### [sticker] @(4400,12180)
+
+&#x1f3ae; demo-07-v2 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,12320)
+
+&#x1f3ae; demo-07-v2 简单美食小摊 v2&#xff08;四关卡&#xff09;
+
+### [text] @(4400,12480)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-07-v2.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-07-v2.mp4
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-07-v2/index.html
 
 ### [sticker] @(1081,13586)
 
