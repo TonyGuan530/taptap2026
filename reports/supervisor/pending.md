@@ -11,8 +11,8 @@
 - [x] 【调度已修】[RESOLVED 2026-10-03 19:21 督导] cron 原为 `0 9 */1 * *`（每天仅 9 点一次），与 README 声明的每小时 :00/:30 不符，督导已 CronUpdate 修正为 `0,30 * * * *`。
 - [x] 【GPT 对话已建】[RESOLVED 2026-10-03 19:38 督导] 督导已在 ChatGPT 建立专属对话并发出背景：https://chatgpt.com/c/6ac0e884-8b84-83ec-a462-ce4f684cc310 → 下轮评审直接在此续评，回复存 reviews/chatgpt-demo-01-full.md。
 - [ ] 【NEEDS_WORK】旧评审要求真人试玩计时确认单局 2-3 分钟——需要时在汇报里提醒用户试玩。
-- [ ] 【提示词过时·待注入】[20:26] 其提示词仍是创始版（还在说「1 案件扩展到 3-4 个」），实际 v3 四案件已上线——有重复开发风险。下轮巡查由督导 CronUpdate 注入刷新上下文（v3 已上线、GPT 对话 URL、本轮必须存档 chatgpt-demo-01-full.md、停滞兜底阶梯）。注：本轮督导陷入核对循环未完成注入，勿再拖延。
-- [ ] 【GPT full 缺失】reviews/chatgpt-demo-01-full.md 不存在——20:30 轮起必须把 v3 版本说明+截图发专属对话并存档。
+- [x] 【提示词过时·注入取消】[RESOLVED 20:36 督导] demo-01 任务已自我进化为「每5分钟全局流水线」（健康自愈→停滞转向→subagent并行→发布QA），停滞四选一已纳入其转向阶梯并写入 README（6b0e5ad）——注入作废，督导适配新拓扑；灵感菇侦探的迭代改由流水线反馈跟进承担。
+- [ ] 【GPT full 缺失·归属流水线】reviews/chatgpt-demo-01-full.md 仍不存在——owner=每5分钟流水线（其评审步骤覆盖 reviews/chatgpt-*.md），20:45/20:50 巡查抽查；连续 3 轮无产出则催办。
 
 ## demo-03 岩浆降温的小人国度
 - [x] 【GPT 对话已建】[RESOLVED 2026-10-03 19:38 督导] https://chatgpt.com/c/6ac0e8c8-f34c-83ec-9c30-1cca9503c042 → 下轮（19:40 起）评审在此续评，回复存 reviews/chatgpt-demo-03-full.md。
