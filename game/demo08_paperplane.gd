@@ -33,6 +33,7 @@ const SAMPLE_STEP := 0.2        # 每 0.2s 采样一次飞行距离
 
 ## ---- 关卡表：ratio=纸宽高比 folds=可折次数 target_m=终点(米)
 ## wind: none/head/tail；reward=过关固定金币（另有距离金币 = 距离/10）
+## gate_x/gate_h=高空门（≥gate_h 穿过 +gate_bonus）；low_gate_x/low_gate_top=低空门（≤low_gate_top 穿过 +gate_bonus）；两门互斥一掷只吃其一
 const LEVELS := [
 	{name = "第 1 关 · 后山操场", short = "后山操场", ratio = 1.4, folds = 3, target_m = 30.0, wind = "none", reward = 0,
 		tip = "纸最宽好折大翼，终点 30 米，无风。折线画在纸的右侧偏上，30 度满力扔"},
@@ -40,7 +41,13 @@ const LEVELS := [
 		gate_x = 34.0, gate_h = 12.0, gate_bonus = 3, low_gate_x = 40.0, low_gate_top = 10.0,
 		tip = "逆风阻力 1.25 倍，终点 45 米；34 米高空门（12m 以上）+3、40 米低空门（10m 以下）+3——抬头吃高门、俯冲吃低门、求稳直通"},
 	{name = "第 3 关 · 河堤风口", short = "河堤风口", ratio = 0.8, folds = 5, target_m = 65.0, wind = "tail", reward = 10,
-		tip = "纸最窄可折 5 次，顺风给恒定推力，终点 65 米，过了就是全通关"},
+		tip = "纸最窄可折 5 次，顺风给恒定推力，终点 65 米，顺风送你一程"},
+	{name = "第 4 关 · 双门峡谷", short = "双门峡谷", ratio = 0.7, folds = 5, target_m = 55.0, wind = "head", reward = 12,
+		gate_x = 34.0, gate_h = 12.0, gate_bonus = 3, low_gate_x = 40.0, low_gate_top = 10.0,
+		tip = "逆风峡谷 55 米：34 米高空门（12m 以上）+3 与 40 米低空门（10m 以下）+3 一掷二选一——抬头吃高门、俯冲吃低门、求稳直通"},
+	{name = "第 5 关 · 远程投递", short = "远程投递", ratio = 0.6, folds = 6, target_m = 85.0, wind = "tail", reward = 14,
+		gate_x = 50.0, gate_h = 14.0, gate_bonus = 4,
+		tip = "顺风最长关 85 米，可折 6 次；50 米高空门（14m 以上）+4，折飘一点把门也一起收了"},
 ]
 
 ## 商店池（5 种，每次抽 3 个按价格升序展示）；unique=唯一强化，购后不再进池
@@ -163,12 +170,14 @@ func _build_ui() -> void:
 	mt.add_theme_font_size_override("font_size", 22)
 	mt.add_theme_color_override("font_color", Color("111111"))
 	menu_panel.add_child(mt)
+	# 5 键收窄布局：24 + 4*125 + 112 = 636 = 面板宽 660 - 24 右边距，恰好放下不溢出
 	for i in LEVELS.size():
 		var lb := Button.new()
 		lb.name = "LevelBtn%d" % i
-		lb.text = "第%d关 · %s" % [i + 1, String(LEVELS[i].short)]
-		lb.position = Vector2(24 + i * 208, 58)
-		lb.size = Vector2(196, 46)
+		lb.text = "第%d关·%s" % [i + 1, String(LEVELS[i].short)]
+		lb.position = Vector2(24 + i * 125, 58)
+		lb.size = Vector2(112, 46)
+		lb.add_theme_font_size_override("font_size", 13)
 		lb.pressed.connect(start_level.bind(i))
 		lb.mouse_entered.connect(_on_menu_hover.bind(i))
 		menu_panel.add_child(lb)
@@ -182,7 +191,7 @@ func _build_ui() -> void:
 	menu_tip.add_theme_color_override("font_color", Color("0d47a1"))
 	menu_panel.add_child(menu_tip)
 	var rules := Label.new()
-	rules.text = "规则：每关 折纸定参数 → 蓄力投掷 → 飞行结算，60 像素 = 1 米，到终点旗过关。\n折线中点越靠纸外侧升力越大；越靠上配平越正（抬头）；折线越长阻力越大。\n金币 = 飞行距离/10 + 过关奖励；关间商店买强化带入下一关；第 3 关过关即全通关。"
+	rules.text = "规则：每关 折纸定参数 → 蓄力投掷 → 飞行结算，60 像素 = 1 米，到终点旗过关。\n折线中点越靠纸外侧升力越大；越靠上配平越正（抬头）；折线越长阻力越大。\n金币 = 飞行距离/10 + 过关奖励；关间商店买强化带入下一关；第 5 关过关即全通关。"
 	rules.position = Vector2(24, 168)
 	rules.size = Vector2(612, 100)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -534,8 +543,8 @@ func _show_final() -> void:
 	state = "final"
 	settle_panel.visible = false
 	var owned_txt: String = ", ".join(owned) if owned.size() > 0 else "无特殊部件"
-	final_body.text = "三关全部飞过终点旗！\n总飞行 %d 米 · 最远一掷 %.1f 米 · 金币余额 %d\n强化：力气 x%d · 翼面 x%d · %s" % [
-		int(total_distance), best_distance, coins, int(upgrades.power), int(upgrades.wing), owned_txt]
+	final_body.text = "%d 关全部飞过终点旗！\n总飞行 %d 米 · 最远一掷 %.1f 米 · 金币余额 %d\n强化：力气 x%d · 翼面 x%d · %s" % [
+		LEVELS.size(), int(total_distance), best_distance, coins, int(upgrades.power), int(upgrades.wing), owned_txt]
 	final_panel.visible = true
 	_update_status()
 	queue_redraw()
@@ -592,7 +601,7 @@ func _update_status() -> void:
 		return
 	var L: Dictionary = LEVELS[level_idx]
 	if state == "menu":
-		status_label.text = "纸飞机模拟器 + 肉鸽 · 已通关 %d/3 关 · 金币 %d" % [unlocked, coins]
+		status_label.text = "纸飞机模拟器 + 肉鸽 · 已通关 %d/%d 关 · 金币 %d" % [unlocked, LEVELS.size(), coins]
 		hint_label.text = "选一关起飞：折纸定参数，蓄力投掷，看它飞过终点旗"
 	elif state == "fold":
 		status_label.text = "%s · 折纸：已折 %d/%d 条 · 目标 %.0f 米 · %s" % [
@@ -616,7 +625,7 @@ func _update_status() -> void:
 		status_label.text = "肉鸽商店 · 金币 %d · 买强化带入第 %d 关" % [coins, level_idx + 2]
 		hint_label.text = "买不起就点跳过；金币 = 上关飞行距离/10 + 过关奖励"
 	elif state == "final":
-		status_label.text = "全通关！三面终点旗都插上了 · 金币 %d" % coins
+		status_label.text = "全通关！%d 面终点旗都插上了 · 金币 %d" % [LEVELS.size(), coins]
 		hint_label.text = ""
 
 
@@ -726,9 +735,9 @@ func _fly_step(delta: float) -> void:
 	if sample_acc >= SAMPLE_STEP:
 		sample_acc -= SAMPLE_STEP
 		flight_distance = maxf(flight_distance, (plane_pos.x - START_X) / PX_PER_M)
-	# v2 高空得分门：在门的位置处于门高以上穿过 → 额外金币（一次性）
+	# v2 高空得分门：在门的位置处于门高以上穿过 → 额外金币（一次性；与低空门互斥，一掷只吃其一）
 	var gate_x_m: float = float(LEVELS[level_idx].get("gate_x", 0.0))
-	if gate_x_m > 0.0 and not gate_hit:
+	if gate_x_m > 0.0 and not gate_hit and not low_gate_hit:
 		var gate_px := START_X + gate_x_m * PX_PER_M
 		if prev_x < gate_px and plane_pos.x >= gate_px:
 			if plane_pos.y <= GROUND_Y - float(LEVELS[level_idx].gate_h) * PX_PER_M:
@@ -736,9 +745,9 @@ func _fly_step(delta: float) -> void:
 				var gb: int = int(LEVELS[level_idx].gate_bonus)
 				coins += gb
 				coins_earned += gb
-	# v3 低空快速门：在门的位置处于开通高度以下穿过 → 额外金币（一次性，奖励俯冲型）
+	# v3 低空快速门：在门的位置处于开通高度以下穿过 → 额外金币（一次性；与高空门互斥，一掷只吃其一）
 	var lg_x_m: float = float(LEVELS[level_idx].get("low_gate_x", 0.0))
-	if lg_x_m > 0.0 and not low_gate_hit:
+	if lg_x_m > 0.0 and not low_gate_hit and not gate_hit:
 		var lg_px := START_X + lg_x_m * PX_PER_M
 		if prev_x < lg_px and plane_pos.x >= lg_px:
 			if plane_pos.y >= GROUND_Y - float(LEVELS[level_idx].low_gate_top) * PX_PER_M:

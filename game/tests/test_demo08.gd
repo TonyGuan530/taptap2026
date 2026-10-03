@@ -7,7 +7,7 @@ extends SceneTree
 ## 用例5 过关判定：L1 两段外侧偏上折线 + 30° 满力应过 40 米终点
 ## 用例6 商店：过关后 state=shop、3 项强化，buy(0) 扣金币且生效
 ## 用例7 顺风逆风：等价折线+同角度力度，L3（顺风）距离 > L2（逆风）距离
-## 用例8 全通关：3 关依次过关 → state=final（全通关结算）
+## 用例8 全通关：5 关依次过关 → state=final（全通关结算）
 ## 运行：godot --headless --path game -s res://tests/test_demo08.gd
 
 const BASE_SEED := 808
@@ -177,10 +177,10 @@ func _run() -> void:
 	s2.queue_free()
 	await physics_frame
 
-	# --- 用例8 全通关：3 关依次过关 → state=final ---
+	# --- 用例8 全通关：5 关依次过关 → state=final ---
 	var s3: Control = await _new_scene()
 	var all_pass := true
-	for i in 3:
+	for i in 5:
 		s3.start_level(i)
 		var folds_n: int = int(s3.LEVELS[i].folds)
 		_good_folds(s3, folds_n)
@@ -193,11 +193,11 @@ func _run() -> void:
 		_log("  第%d关：飞行 %.1f 米（目标 %.0f 米）%s，金币 %d" % [i + 1, s3.flight_distance, tgt, "达标" if lv_pass else "未达标", s3.coins])
 		if not s3.last_pass:
 			break
-		s3.settle_continue()   # 前两关 → 商店；第 3 关 → 全通关结算
+		s3.settle_continue()   # 前四关 → 商店；第 5 关 → 全通关结算
 		if s3.state == "shop":
 			_greedy_buy(s3)
-	_check(all_pass, "用例8a 全程：三关依次达标（等价折线 + 30° 满力，关间贪婪购买强化）")
-	_check(s3.state == "final", "用例8b 全通关：第 3 关过关后 state=final（全通关结算面板）")
+	_check(all_pass, "用例8a 全程：五关依次达标（等价折线 + 30° 满力，关间贪婪购买强化）")
+	_check(s3.state == "final", "用例8b 全通关：第 5 关过关后 state=final（全通关结算面板）")
 	s3.queue_free()
 	await physics_frame
 
