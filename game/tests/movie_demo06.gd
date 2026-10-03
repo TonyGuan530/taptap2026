@@ -51,7 +51,7 @@ func _process(_delta: float) -> void:
 	# 旧面板 visible=false 但不释放，下一关再赢会重名，find_child 只找到旧的（踩过）
 	if game.state == "win":
 		win_wait += 1
-		if win_wait == 100 and game.level_idx < 4:
+		if win_wait == 100 and game.level_idx < 5:
 			for wp in game.get_tree().root.find_children("WinPanel", "Panel", true, false):
 				wp.queue_free()
 			game._load_level(game.level_idx + 1)
@@ -64,6 +64,7 @@ func _process(_delta: float) -> void:
 		2: _level3()
 		3: _level4()
 		4: _level5()
+		5: _level6()
 
 
 ## L1：Fire 圆球点燃栅栏，走向 GOAL
@@ -174,6 +175,32 @@ func _level5() -> void:
 				want = true        # 左岛缘直跳沟1（落中岛）
 			elif px > 548.0 and px < 560.0 and py > 370.0:
 				want = true        # 中岛缘起跳上板（顶 380）
+			if want:
+				_jump()
+			else:
+				game.keys[KEY_SPACE] = false
+
+
+## L6：双 Float 板串联登双塔（P1 顶 390 → 塔1 顶 330 → 步落 P2 顶 325 → 塔2 顶 260）——与 test T12 同参数
+func _level6() -> void:
+	if lv_f == 30:
+		game._on_shape(1)
+		game._on_word(1)
+		game._try_place(Vector2(220, 401))
+	elif lv_f == 90:
+		game._try_place(Vector2(535, 346))
+	elif lv_f > 120:
+		var px: float = game.player.position.x
+		var py: float = game.player.position.y
+		game.keys[KEY_D] = true
+		if game.on_floor:
+			var want := false
+			if px > 56.0 and px < 72.0 and py > 420.0:
+				want = true        # 地面 → P1（顶 390）
+			elif px > 240.0 and px < 275.0 and py > 350.0 and py < 400.0:
+				want = true        # P1 → 塔1（顶 330）
+			elif px > 500.0 and px < 530.0 and py > 295.0 and py < 325.0:
+				want = true        # P2 → 塔2（顶 260）
 			if want:
 				_jump()
 			else:

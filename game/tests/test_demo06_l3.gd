@@ -331,6 +331,68 @@ func _run() -> void:
 	_check("T10a L5 实机通关（单板解法·仅 GOAL 判定，无解法 trigger）", won5,
 		"state=%s player=%s" % [String(scene.state), str(scene.player.position)])
 
+	# ============ T11 L6「登天梯」几何（持续开发令·补充关卡，L3/L4/L5 未动） ============
+	scene._load_level(5)
+	await _wait(0.4)
+	var lv6: Dictionary = scene.LEVELS[5]
+	var t1: Rect2 = lv6.walls[4]
+	var t2: Rect2 = lv6.walls[5]
+	var r_t1: float = lv6.walls[3].position.y - t1.position.y   # 地面 470 → 塔1 顶 330
+	var r_t2: float = t1.position.y - t2.position.y             # 塔1 330 → 塔2 260
+	_check("T11a 塔1 抬升超跳高（必须架助）", r_t1 > jump_h, "抬升=%.0f 跳高=%.1f" % [r_t1, jump_h])
+	var g12: float = t2.position.x - t1.end.x   # 塔1/塔2 水平间隙
+	var reach70: float = 240.0 * ((520.0 + sqrt(520.0 * 520.0 - 4.0 * 800.0 * 70.0)) / 1600.0)   # 爬升 70 时的可达水平距离
+	_check("T11b 塔1→塔2 间隙超爬升 70 可达距离（直接跳不可达，须二级架助）", g12 > reach70,
+		"间隙=%.0f 可达=%.1f" % [g12, reach70])
+	var f1 := Rect2(220 - 65, 401 - 11, 130, 22)   # P1 顶 390（自地面抬升 80）
+	var f2 := Rect2(535 - 65, 346 - 11, 130, 22)   # P2 顶 325（自塔1 抬升 65，紧邻塔1 右缘）
+	_check("T11d P1 可从地面跳上（抬升 ≤ 跳高）", (lv6.walls[3].position.y - f1.position.y) <= jump_h,
+		"抬升=%.0f" % (lv6.walls[3].position.y - f1.position.y))
+	_check("T11e 塔1 可从 P1 跳上（抬升 ≤ 跳高）且 P1 不与塔1 相交",
+		(f1.position.y - t1.position.y) <= jump_h and not f1.intersects(t1),
+		"抬升=%.0f" % (f1.position.y - t1.position.y))
+	_check("T11f P2 紧邻塔1 右缘（步行可落，无跳）", f2.position.x <= t1.end.x and f2.end.x > t1.end.x
+		and f2.position.y >= t1.position.y - 10.0)
+	_check("T11g 塔2 可从 P2 跳上（抬升 ≤ 跳高）且 P2 不与塔2 相交",
+		(f2.position.y - t2.position.y) <= jump_h and not f2.intersects(t2),
+		"抬升=%.0f" % (f2.position.y - t2.position.y))
+	_check("T11h GOAL 在塔2 顶", lv6.goal.position.x >= t2.position.x and lv6.goal.end.y >= t2.position.y
+		and lv6.goal.position.y >= t2.position.y - 70.0)
+
+	# ============ T12 L6 实机通关（双板链·仅 GOAL 判定） ============
+	scene._on_shape(1)
+	scene._on_word(1)
+	scene._try_place(Vector2(220, 401))
+	scene._try_place(Vector2(535, 346))
+	await _wait(0.3)
+	var won6 := false
+	var jc6 := 0
+	var t6 := Time.get_ticks_msec()
+	while scene.state == "play" and Time.get_ticks_msec() - t6 < 45000:
+		await physics_frame
+		scene.keys[KEY_D] = true
+		jc6 = maxi(0, jc6 - 1)
+		var px6: float = scene.player.position.x
+		var py6: float = scene.player.position.y
+		if scene.on_floor and jc6 == 0:
+			var want := false
+			if px6 > 56.0 and px6 < 72.0 and py6 > 420.0:
+				want = true        # 地面 → P1（顶 390）
+			elif px6 > 240.0 and px6 < 275.0 and py6 > 350.0 and py6 < 400.0:
+				want = true        # P1 → 塔1（顶 330）
+			elif px6 > 500.0 and px6 < 530.0 and py6 > 285.0 and py6 < 325.0:
+				want = true        # P2 → 塔2（顶 260）
+			if want:
+				scene.keys[KEY_SPACE] = true
+				jc6 = 25
+			else:
+				scene.keys[KEY_SPACE] = false
+	won6 = scene.state == "win"
+	scene.keys[KEY_D] = false
+	scene.keys[KEY_SPACE] = false
+	_check("T12a L6 实机通关（双板链·仅 GOAL 判定，无解法 trigger）", won6,
+		"state=%s player=%s" % [String(scene.state), str(scene.player.position)])
+
 	Engine.time_scale = 1.0
 	_log("统计: PASS=%d FAIL=%d" % [pass_cnt, fail_cnt])
 	_log("ALL DONE")
