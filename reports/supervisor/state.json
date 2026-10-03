@@ -1,44 +1,44 @@
 {
-  "checkedAt": "2026-10-04T06:06:00+08:00",
-  "round": 66,
+  "checkedAt": "2026-10-04T06:15:00+08:00",
+  "round": 67,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（06:05 实跑）"
+    "thisRound": "guard SKIP not-foreground（06:15 实跑）"
   },
   "automations": {
-    "supervisor": { "runCount": 64, "lastDispatch": "06:04", "next": "06:14" },
-    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "✅ demo-10/11 双 v2 KEEP 7/11；demo-10 v3（一异常多解释）与 demo-11 冻结+盲测准备在途" },
-    "demo-02": { "cron": "5,35 * * * *", "runCount": 21, "evidence": "06:05 轮触发中——产出 06:14 巡查核对（最后判定）" },
-    "demo-03": { "cron": "10,40 * * * *", "runCount": 23, "evidence": "✅ v12 收尾备案（d329c56：职业贴图=有效增益非换皮；盲测=v12，观察=风格一致性+32px 辨识度）" },
-    "demo-04": { "cron": "15,45 * * * *", "runCount": 22, "evidence": "✅ 视频攻坚销账；dino 素材下一优先（06:15 轮核对）" },
-    "demo-05": { "cron": "20,50 * * * *", "runCount": 22, "evidence": "✅ v11 交付（f34ed8a：结局文风三变体 史诗体/幸存者日记/幼龙视角 开局随机——内容层 V10 冻结合规；4/4 PASS；main_scene 护栏第 5 次拦截成功；帧与视频已刷新）" },
-    "demo-06": { "cron": "25,55 * * * *", "runCount": 22, "evidence": "✅ v12 交付（983717b：L6 登天梯=6 关达成；L3/L4/L5 逐字节未动销案；59 断言 PASS）；⚠️ 影片暂含 L1-L5——L6 段物理步频漂移（30 vs 60）卡塔缘，下轮补录，可复用 demo-04 配方（fixed-fps 60，267b76c）" }
+    "supervisor": { "runCount": 65, "lastDispatch": "06:14", "next": "06:24" },
+    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "🔄 demo-08 补关开工（demo08_paperplane.gd+test 改动）——五小时队列消化中；demo-10 v3/demo-11 冻结在途" },
+    "demo-02": { "cron": "5,35 * * * *", "runCount": 22, "evidence": "🔴 空转第 5 次（6eb4c7c）——判定成立：会话失能（抗命型）。正式上报【需用户决策】" },
+    "demo-03": { "cron": "10,40 * * * *", "runCount": 23, "evidence": "✅ v12 收尾备案；06:10 轮无新产出（收尾轮短属正常）" },
+    "demo-04": { "cron": "15,45 * * * *", "runCount": 23, "evidence": "06:15 轮触发中——dino 素材核对（工作区暂无 demo04_soup.gd 改动）" },
+    "demo-05": { "cron": "20,50 * * * *", "runCount": 22, "evidence": "✅ v11 交付；06:20 槽" },
+    "demo-06": { "cron": "25,55 * * * *", "runCount": 24, "evidence": "🔄 影片管线根修（5aedf37：60fps Movie Maker 物理与测试同拍，L1-L5 重录 31s）+ v12 构建修正（5b26bd0 原子导出）；L6 段 60Hz 驱动时机下轮补；inkwords.gd 继续改动中" }
   },
   "envSnapshot": {
-    "health": "ok builds=65（+1：demo-06 v12）",
+    "health": "ok builds=65",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "60 条无新增（06:05 fetch OK）",
+    "miro": "60 条无新增（06:15 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD d329c56",
+    "git": "本轮 HEAD 26845da",
     "itch": "占位第 3 天（Pages 兜底全在线）"
   },
   "fiveHourPlan": {
-    "done": "demo-03 v12、demo-04 v10+视频、demo-05 v11、demo-06 v12（6 关）、demo-10/11 v2 全交付",
-    "running": "demo-06 L6 影片段补录；demo-02 06:05 轮",
-    "queue": "demo-04 dino 素材；demo-08 补3关、demo-09 补1赛道；demo-11 冻结+盲测准备；demo-10 v3"
+    "done": "demo-03 v12、demo-04 v10+视频、demo-05 v11、demo-06 v12+影片根修、demo-10/11 v2 全交付",
+    "running": "demo-08 补关（开工）；demo-06 L6 影片段；demo-04 dino 核对",
+    "queue": "demo-08 补3关（进行中）；demo-09 补1赛道；demo-11 冻结+盲测准备；demo-10 v3"
   },
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
-    "🔴【demo-02 判定】06:05 轮产出 06:14 核对——无 v8 发布即正式上报【需用户决策：会话失能】",
-    "demo-06：L6 影片段补录核对（若卡同款步频漂移→指路 demo-04 fixed-fps 60 配方）",
-    "demo-04：06:15 轮核对 dino 素材开工"
+    "🔴【需用户决策】demo-02 会话失能：连续 5 轮守望空转（e36c776/50df00a/a415cd7/832040b/6eb4c7c），reviews/ 指令文件、必读评审文件尾部、state.json 强判定三通道催办全部未消化（读得到但抗命）。请用户打开 demo-02 会话轻推一次（例：「按持续开发令执行转向阶梯并发布 demo-02-v8」）或授权督导重建该任务。其余 10 个 demo 全部健康。",
+    "demo-06：L6 影片段下轮补录核对",
+    "demo-04：dino 素材（06:15 轮产出待核）"
   ],
   "pending": [
+    "【需用户决策】demo-02 会话失能（见 watch）",
     "【WATCH】itch 占位第 3 天（Pages 兜底）",
-    "【WATCH】demo-08 pck 14.9MB 过滤；demo-08 补3关、demo-09 补1赛道",
-    "【WATCH】demo-02 贴纸 @(4400,6560) 2 张（随其转向轮处理）",
-    "【WATCH】demo-06 影片暂缺 L6 段（下轮补录）",
-    "【需用户决策】真人试玩/盲测排期+Batch 01 人选；itch A/B；预备项：demo-02 会话失能上报"
+    "【WATCH】demo-08 pck 14.9MB 过滤；demo-08 补3关（进行中）、demo-09 补1赛道",
+    "【WATCH】demo-06 影片 L6 段下轮补录",
+    "【需用户决策】真人试玩/盲测排期+Batch 01 人选；itch A/B"
   ]
 }
