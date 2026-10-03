@@ -60,6 +60,8 @@
 - ChatGPT v3 评审（reviews/chatgpt-demo-03-v3-full.md）：ITERATE（含义已变）——机制链「环境状态→相对价值→决策」成立 PASS；机器人数据定名 Mechanical Strategy Migration Gate（PASS，但非真人证据）。**下轮=冻结代码，做 3-5 人盲测**（每人 2 局、不提示机制，记录酸雨前/预警/酸雨期消费占比 + 口头归因）；Gate=≥3/5 第二局主动描述价值迁移 → KEEP 进候选机制池。条件性修改：玩家读不懂才强化 feedback；真人验证后才处理 snowball。
 - v4 上线 2026-10-03（demo-03-v4，用户"停滞转向阶梯"裁定→迭代美术）：纯表现层翻新（渐变星空/火山/岩浆气泡/震屏+闪电/预警药丸/三阶段进度条/踱步）+ 酸雨状态徽标（被压制设施▼蒙暗、被强化村民▲）。零平衡/规则改动，测试三行 PASS。
 - ChatGPT v4 评审（reviews/chatgpt-demo-03-v4-full.md）：ITERATE 沿用——▲/▼不污染盲测、保留不回滚；盲测更名「最终形态可读性盲测」（游戏自带预警+状态反馈，≥3/5 第二局主动说明相对价值变化+行为迁移 → KEEP）；徽标只表状态不表策略答案、不再加教学文本；证据链已修（版本化 reviews/shots/demo-03-v4-acid.png）。若继续停滞：允许独立「风暴之夜」可选模式，仅改一个变量=酸雨频率（15/30/45s 短酸雨，其余全不动）。
+- v5 上线 2026-10-03（demo-03-v5）：「风暴之夜」可选实验模式上线——开始菜单选模式（经典 60 秒 / 风暴之夜·实验），风暴=15/30/45s±2s 三场 4 秒短酸雨（总暴露 16s→12s，强调切换次数），其余规则全冻结；结算面板可「选模式」返回；局内紫框模式徽标；spend_log 两模式通用。测试四行全 PASS（经典三行回归 + 风暴 win+3/3 场酸雨）。
+- ChatGPT v5 评审（reviews/chatgpt-demo-03-v5-full.md）：ITERATE——风暴单变量范围 PASS；Classic Regression Gate PASS；**盲测分组=≥2 人经典→经典 + ≥2 人经典→风暴**（区分 learning effect 与 storm effect），第 5 人自由；Gate 精确化：3-5 名首次玩家无外部解释、仅靠正式 UI/预警/▲▼ 完成两局，≥3/5 第二局主动说明相对价值变化且 telemetry 出现迁移 → **KEEP 并停止堆验证功能**。Mechanical Gate 已够，勿再加 bot/headless case；禁第三模式/第二种天气/新职业/建筑/岗位/90 秒/3D。
 
 ## demo-04 SOUP 2.0：DNA 融合逃生
 

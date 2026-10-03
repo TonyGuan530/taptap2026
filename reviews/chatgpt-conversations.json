@@ -24,7 +24,9 @@
       "v3Review": "reviews/chatgpt-demo-03-v3-full.md",
       "v3Note": "v3 续评 ITERATE(含义已变)：机制链「环境状态→相对价值→决策」成立 PASS；40/0→40/30 定名 Mechanical Strategy Migration Gate PASS(机器人代理,非真人证据)。下轮=冻结代码,3-5人盲测(2局/人,不提示机制,记录酸雨前/预警/酸雨期消费占比+口头归因),Gate=≥3/5第二局主动描述价值迁移→KEEP进候选池。条件性:玩家读不懂才强化feedback(效率↓40%/↑50%状态标),真人才处理snowball。继续冻结:岗位分配/更多职业/第二种天气/建筑系统/90秒",
       "v4Review": "reviews/chatgpt-demo-03-v4-full.md",
-      "v4Note": "v4(美术迭代)续评 ITERATE 沿用：▲/▼徽标不污染盲测→保留不回滚,盲测更名「最终形态可读性盲测」(游戏自带预警+状态反馈下,≥3/5第二局主动说明相对价值变化+行为迁移→KEEP)；徽标只表状态不表策略答案；不再加教学文本；证据链已修(版本化 demo-03-v4-acid.png)；若继续停滞允许独立「风暴之夜」可选模式但仅改一个变量=酸雨频率(15/30/45s 短酸雨,其余全不动),禁多参数同改/岗位/建筑树/90秒/3D"
+      "v4Note": "v4(美术迭代)续评 ITERATE 沿用：▲/▼徽标不污染盲测→保留不回滚,盲测更名「最终形态可读性盲测」(游戏自带预警+状态反馈下,≥3/5第二局主动说明相对价值变化+行为迁移→KEEP)；徽标只表状态不表策略答案；不再加教学文本；证据链已修(版本化 demo-03-v4-acid.png)；若继续停滞允许独立「风暴之夜」可选模式但仅改一个变量=酸雨频率(15/30/45s 短酸雨,其余全不动),禁多参数同改/岗位/建筑树/90秒/3D",
+      "v5Review": "reviews/chatgpt-demo-03-v5-full.md",
+      "v5Note": "v5(风暴之夜)续评 ITERATE：单变量范围 PASS(低频长雨→高频短雨,总暴露16s→12s强调切换次数)；Classic Regression Gate PASS；盲测分组=≥2人经典→经典+≥2人经典→风暴(区分learning effect与storm effect),第5人自由；Gate=3-5名首次玩家无外部解释,仅靠正式UI/预警/▲▼完成两局,≥3/5第二局主动说明相对价值变化且telemetry出现迁移→KEEP并停止堆功能；Mechanical Gate已够,勿再加bot/headless case；禁第三模式/第二种天气/新职业/建筑/岗位/90秒/3D"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",
