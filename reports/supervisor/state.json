@@ -1,38 +1,39 @@
 {
-  "checkedAt": "2026-10-04T02:56:00+08:00",
-  "round": 45,
+  "checkedAt": "2026-10-04T03:07:00+08:00",
+  "round": 46,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard FAIL noring（第1次：前台但圆环未定位，零动作零风险）→ 沿用上轮读数；连续2轮FAIL再报告"
+    "thisRound": "guard SKIP（前台闸门）——noring 未再犯，FAIL 计数清零，沿用读数"
   },
   "automations": {
-    "supervisor": { "runCount": 46, "lastDispatch": "02:54", "next": "03:04" },
-    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "持续开发令已消化：demo-09 v2 诊断关交付（d1da6f7）" },
-    "demo-02": { "cron": "5,35 * * * *", "runCount": 14, "evidence": "持续开发令注入已验证（CronList 确认）；03:05 轮为首个带令轮（v4 三件套）" },
-    "demo-03": { "cron": "10,40 * * * *", "runCount": 15, "evidence": "注入已验证；03:10 首个带令轮" },
-    "demo-04": { "cron": "15,45 * * * *", "runCount": 15, "evidence": "02:45 轮暂无产出可见（无锁无 Godot）——观察中，03:15 轮仍无增量即按持续开发令督查催办" },
-    "demo-05": { "cron": "20,50 * * * *", "runCount": 15, "evidence": "注入已验证；02:50 轮先于注入派发（旧提示词），03:20 起为带令轮" },
-    "demo-06": { "cron": "25,55 * * * *", "runCount": 15, "evidence": "注入已验证；02:55 轮边界派发，03:25 起确定带令" }
+    "supervisor": { "runCount": 47, "lastDispatch": "03:04", "next": "03:14" },
+    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中；≥5关+视频令经 reviews/ 增补节消化中" },
+    "demo-02": { "cron": "5,35 * * * *", "runCount": 14, "evidence": "03:05 轮为旧提示词末轮（做了 itch 重推修复尝试）；03:35 起带 ≥5关+视频令（差 2 关）" },
+    "demo-03": { "cron": "10,40 * * * *", "runCount": 15, "evidence": "02:40 轮旧提示词末轮守望；03:10 起带令（差 2 阶段）" },
+    "demo-04": { "cron": "15,45 * * * *", "runCount": 15, "evidence": "02:45 轮空转已观察 1 轮；03:15 带令轮（差 1-2 关）——再无增量即催办" },
+    "demo-05": { "cron": "20,50 * * * *", "runCount": 15, "evidence": "03:20 带令轮（差 2 阶段）" },
+    "demo-06": { "cron": "25,55 * * * *", "runCount": 16, "evidence": "✅ 首个达标：v9 L5 双沟群岛上线（00c9e89），L1-L5 五关齐；五关结构重录视频+上板（两条新令一轮消化，51 断言 PASS）" }
   },
   "envSnapshot": {
-    "health": "ok builds=43（+1=demo-09-v2）",
+    "health": "ok builds=44（+1=demo-06-v9）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miroFresh": "02:50",
-    "git": "同步（HEAD d1da6f7）",
-    "itch": "占位第 3 天（服务端），Pages 兜底全在线"
+    "miroFresh": "03:00",
+    "videos": "demo-06.mp4 已刷新为五关版（最新）；其余 7 demo 视频仍旧版待各轮发布刷新",
+    "git": "同步（HEAD ea39efb）",
+    "itch": "占位第 3 天（demo-02 换新上传路径重推仍占位=纯服务端），Pages 兜底全在线"
   },
   "majorUpdates": {
-    "demo-09": "v2 诊断关交付：L4 450m 三物理问题叠加（三车型全通关六指标分明 10/21.8/13.4s）、轮胎总预算 Σπr²≤4300、遥测六指标结算面板+Garage 复制+Ghost 回放；21 断言全 PASS；Pages 上线",
-    "directive": "持续开发令注入验证通过（4/4 提示词确认）；流水线 reviews/ 通道消化速度达标"
+    "demo-06": "v9 达成 ≥5 关硬目标（L1-L5），视频/截图同步刷新上板——两条 03:00 用户指令的标杆交付",
+    "injections": "03:00 双指令（≥5关+视频新鲜度）提示词注入验证 5/5（02/03/04/05/06）"
   },
   "watch": [
-    "demo-04：02:45 轮无可见产出（第1轮）；03:15 轮仍无增量→督查催办",
-    "额度守卫：FAIL noring 第1轮；下轮再 FAIL→报告用户"
+    "demo-04：03:15 带令轮为关键观察点（02:45 空转 1 轮在账）",
+    "demo-02 报告再提【需用户决策：Batch 01 试玩人选】——归真人排期决策包"
   ],
   "pending": [
     "【WATCH】itch 占位第 3 天（Pages 兜底）",
-    "【WATCH】demo-08 pck 14.9MB 导出过滤",
-    "【需用户决策】真人试玩/盲测排期（仅影响 Gate 判定时点）；itch A/B"
+    "【WATCH】demo-08 pck 14.9MB 导出过滤；demo-08 需补 3 关、demo-09 需补 1 赛道至 5",
+    "【需用户决策】真人试玩/盲测排期+Batch 01 人选；itch A/B"
   ]
 }
