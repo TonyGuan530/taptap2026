@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-03-v3",
+    "date":  "2026-10-03T20:16:12+08:00",
+    "author":  "49321",
+    "notes":  "v3（ChatGPT 指引）：酸雨改双向 modifier（设施降温×0.6/村民降温×1.5，不再直接加温）+ 3秒酸雨预警 + 三窗口策略迁移遥测（spend_log）；平衡双用例+迁移指标 PASS"
+}

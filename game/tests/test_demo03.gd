@@ -19,19 +19,54 @@ func _run() -> void:
 	while scene.state == "play" and scene.elapsed < 70.0 and Time.get_ticks_msec() - t0 < 30000:
 		await physics_frame
 		var e: float = scene.elapsed
-		# 模拟玩家的合理操作
-		if e > 3.5 and scene.towers[0] == 0 and scene.water >= 20:
+		# v3 策略迁移代理：预警/酸雨期间优先投资村民（验证遥测与"局势改变决策"链路）
+		var in_acid_decision := false
+		for ev in scene.acid_events:
+			var s: float = float(ev.start)
+			if e >= s - 3.0 and e < s + 8.0:
+				in_acid_decision = true
+				break
+		var promoted := false
+		if in_acid_decision and scene.water >= scene.NPC_UP_COST:
+			for n in scene.npcs:
+				if n.level == 0:
+					scene._try_promote(n)
+					promoted = true
+					break
+		# 模拟玩家的合理建造节奏
+		if not promoted and e > 3.5 and scene.towers[0] == 0 and scene.water >= 20:
 			scene._try_build(0)
-		elif e > 12.0 and scene.towers[1] == 0 and scene.water >= 20:
+		elif not promoted and e > 12.0 and scene.towers[1] == 0 and scene.water >= 20:
 			scene._try_build(1)
-		elif e > 24.0 and scene.towers[0] == 1 and scene.water >= 40:
+		elif not promoted and e > 24.0 and scene.towers[0] == 1 and scene.water >= 40:
 			scene._try_upgrade(0)
-		elif e > 40.0 and scene.towers[2] == 0 and scene.water >= 20:
+		elif not promoted and e > 40.0 and scene.towers[2] == 0 and scene.water >= 20:
 			scene._try_build(2)
 	var win: bool = scene.state == "win"
 	var npcs: int = scene.npcs.size()
 	var acid_hit: int = scene.acid_events.filter(func(e): return e.announced).size()
 	print("用例1: state=%s heat=%d npcs=%d acid=%d elapsed=%.0f → %s" % [scene.state, int(scene.heat), npcs, acid_hit, scene.elapsed, "PASS" if win and npcs >= 2 and acid_hit >= 1 else "FAIL"])
+	# --- 用例1b：三窗口策略迁移遥测（酸雨前5s vs 预警+酸雨+后5s 的设施/村民投入）---
+	var a0: float = float(scene.acid_events[0].start)
+	var pre_tw := 0.0
+	var pre_nw := 0.0
+	var acd_tw := 0.0
+	var acd_nw := 0.0
+	for rec in scene.spend_log:
+		var rt: float = float(rec.t)
+		var amt: float = float(rec.amount)
+		if rt < a0 - 5.0:
+			if rec.kind == "promote":
+				pre_nw += amt
+			else:
+				pre_tw += amt
+		elif rt < a0 + 13.0:
+			if rec.kind == "promote":
+				acd_nw += amt
+			else:
+				acd_tw += amt
+	var migrated: bool = acd_nw > 0.0 and pre_tw > 0.0
+	print("用例1b 迁移遥测: 酸雨前[设施%d💧/村民%d💧] → 预警+酸雨+后5s[设施%d💧/村民%d💧] → %s" % [pre_tw, pre_nw, acd_tw, acd_nw, "PASS（投资重心迁向村民）" if migrated else "FAIL"])
 	# --- 用例 2：摆烂 ---
 	scene._setup_round()
 	t0 = Time.get_ticks_msec()
