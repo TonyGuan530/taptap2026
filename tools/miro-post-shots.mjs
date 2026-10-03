@@ -26,6 +26,8 @@ const SHOTS = [
 	{ id: 'demo-03', name: '岩浆降温的小人国度', img: 'demo-03.png', video: 'demo-03.mp4', x: 4400, y: 8460 },
 	{ id: 'demo-04', name: 'SOUP 2.0 DNA 融合逃生', img: 'demo-04.png', video: 'demo-04.mp4', x: 4400, y: 10560 },
 	{ id: 'demo-07', name: '简单美食小摊（绿幕版）', img: 'demo-07.png', video: 'demo-07.mp4', x: 4400, y: 11760 },
+	{ id: 'demo-07-v2', name: '简单美食小摊 v2（四关卡）', img: 'demo-07-v2.png', video: 'demo-07-v2.mp4', x: 4400, y: 12180,
+		link: 'https://tonyguan530.github.io/taptap2026/builds/demo-07-v2/index.html' },
 	{ id: 'demo-06', name: '词条涂鸦创造', img: 'demo-06.png', video: 'demo-06.mp4', x: 4400, y: 13660 },
 ];
 
@@ -48,11 +50,11 @@ async function postShot(s) {
 	await miro('POST', `${API}/boards/${BOARD}/widgets`, {
 		type: 'card', title: `🎮 ${s.id} ${s.name}`, x: s.x, y: s.y + 140,
 	});
-	await miro('POST', `${API}/boards/${BOARD}/widgets`, {
-		type: 'text',
-		text: `截图: ${imgUrl}\n录屏: ${vidUrl}\n试玩: https://sxguan.itch.io/taptap2026 （密码 taptap）`,
-		x: s.x, y: s.y + 300, width: 480,
-	});
+		await miro('POST', `${API}/boards/${BOARD}/widgets`, {
+			type: 'text',
+			text: `截图: ${imgUrl}\n录屏: ${vidUrl}\n试玩: ${s.link || 'https://sxguan.itch.io/taptap2026 （密码 taptap）'}`,
+			x: s.x, y: s.y + 300, width: 480,
+		});
 	console.log(`OK ${s.id} 已贴到 (${s.x}, ${s.y})`);
 }
 
