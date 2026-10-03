@@ -5,7 +5,7 @@ extends Node2D
 
 const VIEW := Vector2(960, 540)
 const BALL_R := 16.0
-const FRAGILE_SPEED := 900.0   # 脆墙被砸碎所需的最低撞击速度
+const FRAGILE_SPEED := 450.0   # 脆墙被砸碎所需的最低撞击速度（纯物理判定，与词条无关）
 
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 
@@ -54,6 +54,7 @@ const LEVELS := [
 		spawn = Vector2(410, 40),               # 出生点正对脆墙顶
 		solution = "石头",
 	},
+
 ]
 
 var level_idx := 0
@@ -201,15 +202,18 @@ func _spawn_ball(pos: Vector2) -> void:
 	add_child(ball)
 
 
+var prev_speed := 0.0   # 上一物理帧球速（撞击判定用，body_entered 里读到的已是求解后速度）
+
+
 func _on_ball_hit(other: Node) -> void:
 	var lv: Dictionary = LEVELS[level_idx]
 	if lv.fragile.size.x > 0 and other.name == "FragileWall" and ball != null:
-		# 重物（石头）砸到脆墙才碎——轻的东西碰上去只会被弹开
-		if TAGS[tag_idx].id == "stone":
+		# 纯物理判定：撞击速度够快就碎（石头自然砸得碎；皮球/羽毛物理上做不到）
+		if prev_speed >= FRAGILE_SPEED:
 			other.queue_free()
-			hint = "轰！脆墙被石头砸碎了！"
+			hint = "轰！高速撞击——脆墙碎了！"
 		else:
-			hint = "%s 太轻了，脆墙纹丝不动……" % TAGS[tag_idx].name
+			hint = "这次撞得太轻，脆墙纹丝不动……"
 
 
 func _reset_ball(keep_time := false) -> void:
@@ -235,6 +239,7 @@ func _physics_process(delta: float) -> void:
 		return
 	var lv: Dictionary = LEVELS[level_idx]
 	elapsed += delta
+	prev_speed = ball.linear_velocity.length()
 
 	# 弹簧区：进入给一次固定冲量
 	if lv.spring.size.x > 0 and spring_ready and (Rect2(lv.spring) as Rect2).has_point(ball.position):

@@ -13,7 +13,7 @@
       "id": "demo-02",
       "title": "物性变换谜题",
       "goal": "改变物品的单位/词条 → 物理属性随之改变来解谜（关联：塞尔达式箱庭谜题方向）",
-      "buildId": "demo-02",
+      "buildId": "demo-02-v2",
       "status": "done"
     },
     {
