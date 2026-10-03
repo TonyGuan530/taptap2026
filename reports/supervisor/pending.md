@@ -35,3 +35,4 @@
 - [x] 【LitePipeline 停转核查】[RESOLVED 23:07 督导] 根因=计划任务被禁用（模式:已禁用，19:41 后停摆）；已 schtasks enable + 手动触发一次。itch 自愈恢复运转，持续观察 pck/wasm 恢复。demo-06 的请核查请求已闭环。
 - [ ] 【WATCH·itch pck/wasm】LitePipeline 恢复后观察 1-2 轮是否全量匹配；匹配则【需用户决策】A/B 自动收敛为 A。
 - [ ] 【WATCH·demo-08/09】Miro 新增两条想法（纸飞机模拟器/赛车模拟器）已收录 backlog——待流水线找活认领或用户指示排期。
+- [x] 【用户指令·Windows 计划任务停用】[00:49 执行] TapTap-LitePipeline 与 TapTap-KeepZCodeAlive 两个 Windows 计划任务已按用户指令禁用（停一下，不要自动的 Windows 控制命令）。 itch 自愈循环暂停——占位分发问题完全等 itch 服务端恢复，Pages 渠道不受影响。恢复方式：schtasks /change /tn <任务名> /enable。
