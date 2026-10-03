@@ -1,43 +1,44 @@
 {
-  "checkedAt": "2026-10-04T05:56:00+08:00",
-  "round": 65,
+  "checkedAt": "2026-10-04T06:06:00+08:00",
+  "round": 66,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（05:55 实跑）"
+    "thisRound": "guard SKIP not-foreground（06:05 实跑）"
   },
   "automations": {
-    "supervisor": { "runCount": 63, "lastDispatch": "05:54", "next": "06:04" },
-    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "✅ demo-10/11 双 v2 复评 KEEP（ee4fac3）：demo-10 Eureka 成立（v3=一异常多解释）、demo-11 Gate 过（Emergence 70%→90% Systemic，下一步冻结+真人盲测）；KEEP 7/11" },
-    "demo-02": { "cron": "5,35 * * * *", "runCount": 20, "evidence": "🔴 空转第 4 次在账；强判定已写入本文件 watch 区（其会读）——06:05 轮最后期限，06:14 巡查判定" },
-    "demo-03": { "cron": "10,40 * * * *", "runCount": 22, "evidence": "✅ v12 交付（dfbfbeb：四职业村民绿幕贴图 PROF_TEX 映射+零平衡+四用例 PASS+v12 视频重录上板）" },
-    "demo-04": { "cron": "15,45 * * * *", "runCount": 22, "evidence": "✅ 视频攻坚成功（267b76c：fixed-fps 60+测试机器人 ts=4 → 4590 帧 5 关全通 76s mp4，板面刷新）+ 顺手清理 Miro demo-04 重复贴纸（删旧留新）；dino 素材为下一优先" },
-    "demo-05": { "cron": "20,50 * * * *", "runCount": 21, "evidence": "🔄 05:50 轮进行中（volcano.gd/test/demo-05-adjust.png/demos.json 改动）" },
-    "demo-06": { "cron": "25,55 * * * *", "runCount": 21, "evidence": "🔄 05:25 轮延续或 05:55 轮（inkwords.gd+movie_demo06.gd+test 改动中）" }
+    "supervisor": { "runCount": 64, "lastDispatch": "06:04", "next": "06:14" },
+    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "✅ demo-10/11 双 v2 KEEP 7/11；demo-10 v3（一异常多解释）与 demo-11 冻结+盲测准备在途" },
+    "demo-02": { "cron": "5,35 * * * *", "runCount": 21, "evidence": "06:05 轮触发中——产出 06:14 巡查核对（最后判定）" },
+    "demo-03": { "cron": "10,40 * * * *", "runCount": 23, "evidence": "✅ v12 收尾备案（d329c56：职业贴图=有效增益非换皮；盲测=v12，观察=风格一致性+32px 辨识度）" },
+    "demo-04": { "cron": "15,45 * * * *", "runCount": 22, "evidence": "✅ 视频攻坚销账；dino 素材下一优先（06:15 轮核对）" },
+    "demo-05": { "cron": "20,50 * * * *", "runCount": 22, "evidence": "✅ v11 交付（f34ed8a：结局文风三变体 史诗体/幸存者日记/幼龙视角 开局随机——内容层 V10 冻结合规；4/4 PASS；main_scene 护栏第 5 次拦截成功；帧与视频已刷新）" },
+    "demo-06": { "cron": "25,55 * * * *", "runCount": 22, "evidence": "✅ v12 交付（983717b：L6 登天梯=6 关达成；L3/L4/L5 逐字节未动销案；59 断言 PASS）；⚠️ 影片暂含 L1-L5——L6 段物理步频漂移（30 vs 60）卡塔缘，下轮补录，可复用 demo-04 配方（fixed-fps 60，267b76c）" }
   },
   "envSnapshot": {
-    "health": "ok builds=64（+2）",
+    "health": "ok builds=65（+1：demo-06 v12）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "60 条无新增（05:55 fetch OK）",
+    "miro": "60 条无新增（06:05 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD ee4fac3",
+    "git": "本轮 HEAD d329c56",
     "itch": "占位第 3 天（Pages 兜底全在线）"
   },
   "fiveHourPlan": {
-    "done": "demo-03 v12、demo-04 v10+视频修复、demo-05 v10、demo-06 v11、demo-10/11 v2+双 KEEP 全交付",
-    "running": "demo-05 05:50 轮；demo-06 轮",
-    "queue": "demo-04 dino 素材；demo-08 补3关、demo-09 补1赛道；demo-11 冻结+真人盲测（复评指示）；demo-02 转向（最后期限 06:05）"
+    "done": "demo-03 v12、demo-04 v10+视频、demo-05 v11、demo-06 v12（6 关）、demo-10/11 v2 全交付",
+    "running": "demo-06 L6 影片段补录；demo-02 06:05 轮",
+    "queue": "demo-04 dino 素材；demo-08 补3关、demo-09 补1赛道；demo-11 冻结+盲测准备；demo-10 v3"
   },
   "watch": [
-    "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json（demo-02 会读）",
-    "🔴【demo-02 督导判定】连续 4 轮空转成立，06:05 轮最后期限——06:14 巡查无 v8 发布即正式上报【需用户决策：demo-02 会话失能，请轻推或重建】",
-    "demo-04：dino 素材下一优先（视频已修复销账）",
-    "demo-06：L3 本体不动核对（提交信息说明改动性质）"
+    "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
+    "🔴【demo-02 判定】06:05 轮产出 06:14 核对——无 v8 发布即正式上报【需用户决策：会话失能】",
+    "demo-06：L6 影片段补录核对（若卡同款步频漂移→指路 demo-04 fixed-fps 60 配方）",
+    "demo-04：06:15 轮核对 dino 素材开工"
   ],
   "pending": [
     "【WATCH】itch 占位第 3 天（Pages 兜底）",
     "【WATCH】demo-08 pck 14.9MB 过滤；demo-08 补3关、demo-09 补1赛道",
-    "【WATCH】demo-02 贴纸 @(4400,6560) 2 张（demo-04 侧已清理，demo-02 幂等化随其转向轮处理）",
-    "【需用户决策】真人试玩/盲测排期+Batch 01 人选；itch A/B；预备项：demo-02 会话失能上报（06:14 判定）"
+    "【WATCH】demo-02 贴纸 @(4400,6560) 2 张（随其转向轮处理）",
+    "【WATCH】demo-06 影片暂缺 L6 段（下轮补录）",
+    "【需用户决策】真人试玩/盲测排期+Batch 01 人选；itch A/B；预备项：demo-02 会话失能上报"
   ]
 }

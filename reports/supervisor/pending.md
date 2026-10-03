@@ -46,5 +46,5 @@
 ## 04:40 督导第 56 轮新增催办（CronUpdate 工具不可用，指令走 reviews/ 文件通道）
 - [ ] 【催办】demo-02 连续 2 轮守望空转 → reviews/supervisor-directive-2026-10-04-demo02-watch.md（转向：美术绿幕/Miro 去重/内容增量，下轮必发布）
 - [x] 【催办】demo-05 长轮次收尾 → reviews/supervisor-directive-2026-10-04-demo05-recovery.md [RESOLVED 04:55 督导：v9 五幕灾难链交付 0cd7be3——4用例4/4 PASS+240局确定性验证+视频重录上板，恢复令消化成功]
-- [ ] 【催办】demo-04 dino.png 绿幕素材部署 → reviews/supervisor-directive-2026-10-04-demo04-dino.md（玩法零改动；05:15 核对 [DONE] 回执）
+- [ ] 【催办】demo-04 dino.png 绿幕素材部署 → reviews/supervisor-directive-2026-10-04-demo04-dino.md（视频已修复，dino 为下一优先；历轮跳票在账）
 - [备忘] 本会话无 CronUpdate 工具（仅 CronList）：禁止连续重复调用 CronList（第 22/55 轮循环故障判例），催办/重锚一律写 reviews/supervisor-directive-*.md
