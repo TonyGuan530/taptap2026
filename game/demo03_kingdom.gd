@@ -25,6 +25,7 @@ extends Node2D
 ##   风暴之夜酸雨结构不变（单变量原则）。
 ## v8（美术管线续推）：小屋物件绿幕贴图化（ChatGPT 生图→chromakey→透明 PNG），窗灯闪烁保留为程序特效。
 ## v9（持续开发令·氛围渐进）：五阶段可感知化——天空转血红/星星隐去/火山辉光增强/岩浆变深变亮，随阶段连续插值；纯特效零平衡。
+## v11（持续开发令·状态反馈补全）：酸雨结束转场——天光渐亮+「☀ 酸雨过了」提示（对称开始侧震屏/闪电）；菜单两侧贴图装饰。纯表现零平衡。
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
@@ -98,6 +99,7 @@ var pulse := 0.0
 var acid_was_on := false
 var shake := 0.0               # 纯装饰：酸雨落地屏幕震动
 var flash := 0.0               # 纯装饰：闪电白幕
+var sky_bright := 0.0          # 纯装饰：酸雨结束后的天光渐亮
 
 var overlay: CanvasLayer
 var overlay_title: Label
@@ -317,6 +319,7 @@ func _process(delta: float) -> void:
 	pulse += delta * 4.0
 	shake = maxf(0.0, shake - delta * 2.2)
 	flash = maxf(0.0, flash - delta * 1.6)
+	sky_bright = maxf(0.0, sky_bright - delta * 0.8)
 	for t in toasts:
 		t.age += delta
 	toasts = toasts.filter(func(t): return t.age < 2.0)
@@ -339,6 +342,9 @@ func _process(delta: float) -> void:
 			flash = 0.8
 			_toast("☔ 酸雨来袭！设施降温 ×%s · 村民降温 ×%s" % [ACID_TOWER_MULT, ACID_NPC_MULT], Vector2(VIEW.x / 2 - 110, 90))
 			break
+	if acid_was_on and not acid_on:
+		sky_bright = 1.0
+		_toast("☀ 酸雨过了！设施恢复 · 村民回落", Vector2(VIEW.x / 2 - 100, 90))
 	acid_was_on = acid_on
 
 	# 冷却：设施 + 村民（职业加成 + 精英升级）；酸雨期间双向修正
@@ -419,6 +425,10 @@ func _draw() -> void:
 	# 夜空：垂直渐变（随阶段转血红）+ 闪烁星（后期隐去）
 	var sky_top := Color("2b1738").lerp(Color("4a1118"), at)
 	var sky_bot := Color("55293b").lerp(Color("701c22"), at)
+	if sky_bright > 0.0:
+		# v11 酸雨结束天光：短暂放晴（纯特效）
+		sky_top = sky_top.lerp(Color("8fa8d0"), sky_bright * 0.4)
+		sky_bot = sky_bot.lerp(Color("a8bcd8"), sky_bright * 0.4)
 	draw_polygon(
 		PackedVector2Array([Vector2(0, 0), Vector2(VIEW.x, 0), Vector2(VIEW.x, 250), Vector2(0, 250)]),
 		PackedColorArray([sky_top, sky_top, sky_bot, sky_bot])
@@ -576,3 +586,9 @@ func _draw() -> void:
 	for t in toasts:
 		var a: float = clamp(2.0 - t.age, 0.0, 1.0)
 		draw_string(FONT, Vector2(t.x, t.y), t.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 1, 1, a))
+	# v11 菜单展示装饰（选模式界面两侧陈列现有贴图）
+	if state == "menu":
+		draw_texture_rect(TEX_TOWER_L1, Rect2(70.0, 398.0, 84.0, 84.0), false)
+		draw_texture_rect(TEX_VILLAGER_WALK, Rect2(168.0, 398.0, 40.0, 70.0), false)
+		draw_texture_rect(TEX_VILLAGER, Rect2(748.0, 398.0, 40.0, 70.0), false)
+		draw_texture_rect(TEX_TOWER_L2, Rect2(796.0, 390.0, 94.0, 94.0), false)
