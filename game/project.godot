@@ -6,7 +6,7 @@ config_version=5
 [application]
 
 config/name="TapTap2026 Demo"
-run/main_scene="res://demo04_soup.tscn"
+run/main_scene="res://demo03_kingdom.tscn"
 config/features=PackedStringArray("4.7")
 config/icon="res://icon.svg"
 

@@ -9,7 +9,6 @@ extends Node2D
 const VIEW := Vector2(960, 540)
 const BALL_R := 16.0
 const FRAGILE_SPEED := 450.0   # 脆墙被砸碎所需的最低撞击速度（纯物理判定，与词条无关）
-const FLAP_CD := 0.5           # 羽毛扑翼冷却（秒；每次滞空仍只限一次）
 
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 
@@ -78,6 +77,24 @@ const LEVELS := [
 		spawn = Vector2(200, 60),
 		solution = "弹簧 → 羽毛横漂 → 石头砸舱门",
 	},
+	{
+		name = "第四关 · 开放解法房",
+		walls = [
+			Rect2(-40, -300, 1040, 260),        # 天花板
+			Rect2(-40, 0, 40, 540),             # 左墙
+			Rect2(960, 0, 40, 540),             # 右墙
+			Rect2(0, 470, 440, 70),             # 左发射台（x440..620 是深坑）
+			Rect2(620, 470, 340, 70),           # 舱室地板
+			Rect2(400, 180, 40, 290),           # 中央高墙（顶 y=180，下方过不去）
+			Rect2(620, 280, 30, 190),           # 舱室左壁（顶 y=280）
+		],
+		spring = Rect2(150, 440, 100, 30),      # 同一个弹簧服务所有路线：高度来自环境
+		spring_impulse = Vector2(240, -660),
+		fragile = Rect2(650, 250, 100, 30),     # 舱顶脆板只盖左半（650..750），右侧 750..960 敞开
+		goal = Rect2(660, 420, 280, 50),        # 舱底整条 = 目标区（只查这个，不查路线）
+		spawn = Vector2(200, 60),
+		solution = "开放题：右敞口横漂入舱 / 脆板上方转石头砸入（皮球弹跳路线待玩家发现）",
+	},
 
 ]
 
@@ -93,8 +110,8 @@ var stuck_time := 0.0
 var spring_ready := true
 var goal_reached := false
 var elapsed := 0.0
-var flap_cd := 0.0            # 羽毛扑翼冷却
-var ground_ray: RayCast2D     # 球脚下的接地检测（跳跃用）
+var flap_used := false         # 羽毛扑翼：每次滞空限一次（落地重置）
+var ground_ray: RayCast2D      # 球脚下的接地检测
 
 
 func _ready() -> void:
@@ -188,6 +205,7 @@ func _load_level(idx: int) -> void:
 	spring_ready = true
 	stuck_time = 0.0
 	elapsed = 0.0
+	flap_used = false
 	for c in get_children():
 		if c is RigidBody2D or c is StaticBody2D or c is Area2D:
 			c.queue_free()
@@ -197,8 +215,8 @@ func _load_level(idx: int) -> void:
 		_add_fragile(lv.fragile)
 	_spawn_ball(lv.spawn)
 	_apply_tag()
-	level_label.text = "%s　　参考解法：%s" % [lv.name, lv.solution]
-	hint = "空格=跳（羽毛可空中扑翼） ←→=横移｜点词条实时改变物理，把球送进金色 GOAL 区！"
+	level_label.text = lv.name + (("　　参考解法：" + lv.solution) if OS.is_debug_build() else "")
+	hint = "←→=空中横移｜空格=羽毛轻扑翼（滞空限一次）｜点词条实时改变物理，送球进金色 GOAL！"
 	_refresh_next_button()
 	queue_redraw()
 
@@ -268,7 +286,7 @@ func _reset_ball(keep_time := false) -> void:
 	goal_reached = false
 	spring_ready = true
 	stuck_time = 0.0
-	flap_cd = 0.0
+	flap_used = false
 
 
 ## v3 输入系统：空格=跳（羽毛空中还能扑翼） / ←→=横移（力度按词条区分）。
@@ -289,15 +307,16 @@ func _apply_input(delta: float, _lv: Dictionary) -> void:
 		ball.linear_velocity.x = vx
 
 
-## 跳跃：校地起跳；羽毛在空中可扑翼（冷却限制），其余词条空中无跳。
+## v4：通用跳跃已删（评审指令——高度一律来自环境物理：弹簧/坠落/反弹）。
+## 羽毛保留空中扑翼：每次滞空一次的轻量升力修正，不可连续悬停。
 func _try_jump() -> void:
 	var t: Dictionary = TAGS[tag_idx]
-	var grounded: bool = ground_ray != null and ground_ray.is_colliding()
-	if grounded:
-		ball.linear_velocity.y = -t.jump
-	elif t.flap != 0.0 and flap_cd <= 0.0:
-		ball.linear_velocity.y = minf(ball.linear_velocity.y, t.flap)
-		flap_cd = FLAP_CD
+	if t.flap == 0.0 or flap_used:
+		return
+	if ground_ray != null and ground_ray.is_colliding():
+		return
+	ball.linear_velocity.y = minf(ball.linear_velocity.y, t.flap)
+	flap_used = true
 
 
 func _next_level() -> void:
@@ -326,9 +345,10 @@ func _physics_process(delta: float) -> void:
 	var lv: Dictionary = LEVELS[level_idx]
 	elapsed += delta
 	prev_speed = ball.linear_velocity.length()
-	flap_cd = maxf(0.0, flap_cd - delta)
 
 	_apply_input(delta, lv)
+	if ground_ray != null and ground_ray.is_colliding():
+		flap_used = false   # 落地即恢复扑翼次数
 
 	# 弹簧区：进入给一次固定冲量
 	if lv.spring.size.x > 0 and spring_ready and (Rect2(lv.spring) as Rect2).has_point(ball.position):
