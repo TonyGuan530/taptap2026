@@ -120,6 +120,8 @@ var keys := {}
 var jumps_used := 0
 
 var ui_labels := {}
+var ui_layer: CanvasLayer = null   # v4：直接持有 UI 层引用——旧 find_child("CanvasLayer")
+                                   # 查不到自动名 "@CanvasLayer@2"，致通关面板从未显示（线上实测发现）
 
 # ---------------- 盲测 telemetry（本地记录，无后台） ----------------
 var tel_pid := "P01"        # 受试编号（数据面板可改，随记录保留）
@@ -142,6 +144,8 @@ func _find(n: String) -> Node:
 
 func _build_ui() -> void:
 	var ui := CanvasLayer.new()
+	ui.name = "UI"
+	ui_layer = ui
 	add_child(ui)
 	var title := Label.new()
 	title.text = "词条涂鸦创造 · 形状×词条=万物（demo-06）"
@@ -513,7 +517,7 @@ func _win() -> void:
 	panel.add_theme_stylebox_override("panel", style)
 	panel.position = Vector2(240, 180)
 	panel.size = Vector2(480, 180)
-	var ui := get_tree().root.find_child("CanvasLayer", true, false)
+	var ui := get_tree().root.find_child("UI", true, false)
 	if ui:
 		ui.add_child(panel)
 	var t := Label.new()
@@ -593,9 +597,9 @@ func _tel_restore() -> void:
 
 ## 📦数据面板：受试编号 + JSON 查看/复制（盲测后取数用）
 func _on_tel_panel() -> void:
-	var ui := get_tree().root.find_child("CanvasLayer", true, false)
-	if ui == null or ui.has_node("TelPanel"):
+	if ui_layer == null or not is_instance_valid(ui_layer) or ui_layer.has_node("TelPanel"):
 		return
+	var ui := ui_layer
 	var panel := Panel.new()
 	panel.name = "TelPanel"
 	var style := StyleBoxFlat.new()
