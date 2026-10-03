@@ -25,9 +25,9 @@
       "v3Note": "v3 续评 ITERATE(含义已变)：机制链「环境状态→相对价值→决策」成立 PASS；40/0→40/30 定名 Mechanical Strategy Migration Gate PASS(机器人代理,非真人证据)。下轮=冻结代码,3-5人盲测(2局/人,不提示机制,记录酸雨前/预警/酸雨期消费占比+口头归因),Gate=≥3/5第二局主动描述价值迁移→KEEP进候选池。条件性:玩家读不懂才强化feedback(效率↓40%/↑50%状态标),真人才处理snowball。继续冻结:岗位分配/更多职业/第二种天气/建筑系统/90秒"
     },
     "demo-04": {
-      "url": "待建（OpenAI 额度 429，2026-10-03 20:15 轮跳过；恢复后 gpt-review 或专属对话补评）",
-      "review": "",
-      "verdict": ""
+      "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",
+      "review": "reviews/chatgpt-demo-04-full.md",
+      "verdict": "KEEP"
     },
     "demo-05": {
       "url": "https://chatgpt.com/c/6abf4a9c-3e7c-83ec-a5f5-6a87251014dd",

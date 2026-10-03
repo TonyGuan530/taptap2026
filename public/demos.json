@@ -26,8 +26,8 @@
     {
       "id": "demo-04",
       "title": "SOUP 2.0：DNA 融合逃生",
-      "goal": "和外星生物 DNA 融合改造自身，逃离危险的异星（v2：3 关卡 + DNA 组合效果 + 基因碎片评级）",
-      "buildId": "demo-04-v2",
+      "goal": "和外星生物 DNA 融合改造自身，逃离危险的异星（v3：3 关卡 + DNA 组合 + 组合发现式揭晓 + 碎片评级；GPT 复评 KEEP）",
+      "buildId": "demo-04-v3",
       "status": "done"
     },
     {
