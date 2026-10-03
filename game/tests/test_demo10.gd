@@ -344,13 +344,26 @@ func _run() -> void:
 	_check(s11.chapter_idx == 1, "用例11a 记者线进入第 2 章")
 	s11._open_popup(1)
 	var ann_ok := false
+	var ann_hidden_blind := true
 	for c in s11.popup_box.get_children():
 		if c is Button:
 			var btxt: String = str(c.text)
 			if btxt.contains("旧照片") and btxt.contains("记者视角：证据"):
 				ann_ok = true
+			if btxt.contains("记者视角"):
+				ann_hidden_blind = false
 	s11._close_popup()
-	_check(ann_ok, "用例11b 候选 UI 显示派生含义（泛黄的旧照片（记者视角：证据））")
+	# v3b：盲测默认下派生义标注隐藏（只给小说文字）；set_blind(false) 后显示
+	_check(ann_hidden_blind, "用例11b-v3b 盲测模式：候选 UI 不显示派生含义标注（防 UI 杀 Eureka）")
+	s11.set_blind(false)
+	s11._open_popup(1)
+	var ann_ok2 := false
+	for c in s11.popup_box.get_children():
+		if c is Button and str(c.text).contains("旧照片") and str(c.text).contains("记者视角：证据"):
+			ann_ok2 = true
+	s11._close_popup()
+	s11.set_blind(true)
+	_check(ann_ok2, "用例11b set_blind(false)：候选 UI 显示派生含义（泛黄的旧照片（记者视角：证据））")
 	s11.choose(1, 1)   # 泛黄的旧照片 → 按身份派生
 	_check(str(s11.flags.get("evidence", "")) == "证据" and int(s11.stats.warm) == 1,
 		"用例11c 记者+照片 → evidence=证据 且 温情 +1")
@@ -512,6 +525,21 @@ func _run() -> void:
 	_check(int(s15.stats.sci) == 3 and int(s15.stats.warm) == 0 and int(s15.stats.susp) == 0,
 		"用例15h 盲测只改显示层：内部数值照常（3/0/0）")
 	s15.set_blind(true)
+	# --- v3b：explain 候选提示隐藏断言（到第 4 章异常处验证，盲测下只给小说文字） ---
+	var s15b: Control = await _new_scene()
+	_reach_ch4_anomaly(s15b)
+	s15b._open_popup(0)
+	var ex_leak := false
+	var plain_ok := false
+	for c in s15b.popup_box.get_children():
+		if c is Button:
+			var bt: String = str(c.text)
+			if bt.contains("殖民飞船") or bt.contains("防爆隔离门"):
+				plain_ok = plain_ok or (not bt.contains("伏笔回收") and not bt.contains("解读："))
+			if bt.contains("伏笔回收") or bt.contains("解读："):
+				ex_leak = true
+	s15b._close_popup()
+	_check(plain_ok and not ex_leak, "用例15h v3b 盲测：explain 候选只显示小说文字（无 伏笔回收/解读 提示泄露）");
 	var t_sci3: String = str((s15.tone_labels[0] as Label).text)
 	_check(t_sci3.contains("高") and not t_sci3.contains("+"), "用例15i 重新开启盲测：回到三档文字")
 	await _drop(s15)

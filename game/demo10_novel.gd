@@ -814,7 +814,7 @@ func _refresh_ui() -> void:
 		if int(sl.chosen) >= 0:
 			done += 1
 	var st := "%s · 词槽 %d/%d · 读者抗议 ×%d" % [str(ch.name), done, slots.size(), contradictions]
-	if not anomalies.is_empty():
+	if not anomalies.is_empty() and not blind_mode:
 		st += " · 待圆回矛盾 ×%d" % anomalies.size()
 	if state == "final":
 		st += " · 已过审出版"
@@ -915,16 +915,18 @@ func _open_popup(i: int) -> void:
 		var b := Button.new()
 		var mark := "（已选）" if int(sl.chosen) == k else ""
 		var btxt := str(opt.text) + mark
+		# v3b 盲测构建（监督复评最高优先）：blind_mode 下选择前只给小说文字——
+		# 派生义/可圆回提示/解读方向全部隐藏，防「UI 杀掉 Eureka」；点击后才反馈「原来这里是伏笔！」
 		# v2 变化 1：派生候选标注当前身份下的派生义，让因果可见（如「泛黄的旧照片（记者视角：证据）」）
 		var dv = opt.get("derive")
-		if dv != null:
+		if dv != null and not blind_mode:
 			var role: String = str(flags.get("role", ""))
 			var dtable: Dictionary = dv.table
 			if dtable.has(role):
 				btxt += "（%s视角：%s）" % [role, str(dtable[role])]
 		# v2 变化 2：圆回候选标注当前是否有可回收的矛盾
 		var ex_key: String = str(opt.get("explain", ""))
-		if ex_key != "":
+		if ex_key != "" and not blind_mode:
 			var pending := false
 			for a in anomalies:
 				if str(a.flag) == ex_key:
