@@ -74,6 +74,13 @@
       "v2Note": "v2 复评 KEEP(2026-10-04)：三 archetype 成立（俯冲低平/稳定通关/抬头吃门），从参数优化器跨到有系统选择的 toy，核心假设过最低成立线。遗留唯一问题=用途网络太薄（仅 L2 一个门证明分化，警惕退化成机型克制表）。v3 只做两件：①L2 复合场景=加低空快速门（25m 处离地 3m +3 金币），同关 3 种合理策略（抬头吃高门/俯冲吃低门/稳定直通）且无严格支配——第一件做完即可再评 ②稳定型独立价值=稳定区投掷角误差容忍度增加（±5° 内距离衰减小）。禁扩商店/部件 build/真实气动。下阶段命题=系统能否不堆内容持续产生多解",
       "v3Review": "reviews/chatgpt-demo-08-v3-full.md",
       "v3Note": "v3 复评 KEEP 维持+阶段切换(2026-10-04)：三 archetype 同关多解无支配（收益 13/13/13 极差 0）——系统验证三连完毕（v1 影响/v2 性格/v3 多解），不做 v4 系统扩展，进入真人验证。方案=3-5 名新玩家各玩 3 关不解释 archetype，记录 6 字段（first_fold_strategy/strategy_changes/L2_route/discovery_source/retry_voluntary/unexpected_solution）+玩家原话追问。Gate：A≥3/5 主动换折法 B≥2/5 自发现≥2 策略 C≥2/5 自发再试；全过=最终候选 mechanic；AB 过 C 不过=一次小表现迭代；A/B 不过=回查折纸输入。警惕：真人类外出现第四种行为（稳定机蹭低门/怪折法/超远机）才是最强 Emergence 证据"
+    },
+    "demo-09": {
+      "url": "https://chatgpt.com/c/6ac149b7-71ec-83ec-b5d3-aa115787eaf5",
+      "review": "reviews/chatgpt-demo-09-v1-full.md",
+      "verdict": "ITERATE",
+      "note": "v1 首轮评审(2026-10-04)：造车 toy 成立（轮胎自由度真实落到物理，非 UI 假自由）但只证明「设计会改变车」，未证明「不同设计长期都有意义」。最大问题=假选择/万能解风险（自由度可能坍缩成「把轮胎摆正确」）。v2 只做 3 件：①诊断关（300-500m 三物理问题：密集小颠簸/短陡坡沟/高速平路），验收记录 finish_time/max_pitch/airtime/bottom_out_count/rollover/wheel_contact_ratio 证明 ≥3 类 build trade-off ②Garage 一键复制上一版+Ghost 对比（上一趟时间显示）③轮胎总预算（总面积/总质量 ≤X 制造取舍，systemic 化原始想法的面积上限）。禁做：自由画车身/AI 对手/碰撞/更多赛道/美术/零件商店。v2 唯一命题=玩家理解系统后会不会主动造第二三种完全不同的车；会→接近 KEEP",
+      "archivedAt": "2026-10-04T03:20+08:00"
     }
   }
 }
