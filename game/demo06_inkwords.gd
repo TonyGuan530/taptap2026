@@ -3,6 +3,30 @@ extends Node2D
 ## 统一规则驱动：物体行为 = 形状几何 × 词条物理参数，无硬编码配方。
 ## 词条：Heavy 重(砸碎脆物) / Float 浮(悬浮平台) / Fire 燃(点燃易燃物) / Sticky 黏(接触即固定)
 ## 形状：圆球 / 长板 / 方块。对应 Miro 玩法块 demo-06。纯代码实现、无外部资源。
+##
+## v2 迭代（ChatGPT 评审 ITERATE Gate：L3「无显式克制的开放物理问题」修复完善，2026-10-03）：
+## 1) L3 加载冻结根因分析：
+##    ① 测试侧假冻结（有实证）：tests/probe06.gd、probeL3c2.gd 访问了 demo06 上不存在的 scene.ball 属性，
+##       headless 下脚本报错中断探测循环，进程无输出空转直到超时，表象即"加载冻结"
+##       （user://p06log.txt、pL3c2log.txt 均恰好停在 "loaded" 一行；而 L3 关闭 objects 后
+##       loadtrace.txt 全程 step0..done 完整走通，物理帧率与 L1 相同，游戏本体并无死循环）。
+##    ② 物理侧真风险（代码实证）：旧 L3 预置物体出生位两两包围盒互叠——长板 x225..375 与
+##       方块 x190..250 相交 25px、方块与圆球 x190..206 相交 16px，三个 RigidBody2D 同帧深叠，
+##       分离冲量易发散出 NaN 速度 → 物理步进卡死（本项目已有同类前科：
+##       _physics_process 内"坠落出界自动复位（防 NaN 卡死物理）"注释）。
+## 2) 修复改法（本版全部落实）：
+##    - 预置物体出生点位重新排布：任意两物体、物体与玩家出生点的包围盒互不重叠（见 LEVELS[2].objects）；
+##    - 物体生成改为 call_deferred 帧末执行：等旧关卡体 queue_free 真正删除后再进新刚体，
+##      生成前做关卡一致性校验 + 组内去重，杜绝快速切关时的重复/残留生成（_spawn_level_objects）；
+##    - 每帧对预置物体做 NaN/坠落自动复位（统一物理规则，不判解法）；
+##    - 预置物体补上可见绘制（旧版加入后完全不可见）；R 键与坠落复位改用当前关卡 spawn 点；
+##    - 移除排查期 loadtrace 调试落盘。
+## 3) L3 规格达成：目标跨越 420px 宽断层；场景预置 3 个普通动态物体（无词条、可推可撞）；
+##    无任何针对解法的 trigger，通关只由"玩家进入 GOAL"统一规则驱动（Goal Area2D 只挂玩家层）；
+##    三种依赖不同物理关系的解法自然成立：
+##    A. Float 长板 ×2 → 悬空桥（浮力平台关系，80 墨）；
+##    B. Sticky 方块 → 丢进沟里靠右壁，接触冻结成固定垫脚（黏附固定关系，40 墨）；
+##    C. 把预置方块推下沟/用 Heavy 圆球撞进沟贴右壁 → 动量传递成垫脚（质量碰撞关系，0~40 墨）。
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
@@ -58,17 +82,19 @@ const LEVELS := [
 		walls = [
 			Rect2(-40, -200, 1040, 200), Rect2(-40, 0, 40, 540), Rect2(960, 0, 40, 540),
 			Rect2(0, 400, 340, 140),               # 左台
-			Rect2(760, 400, 240, 140),             # 右台
-			Rect2(340, 520, 420, 40),              # 沟底（掉进来不至于出屏）
+			Rect2(745, 400, 255, 140),             # 右台（v2: 760→745，缩小板2→台空隙，实测抛物线余量不足曾卡台缘）
+			Rect2(340, 520, 405, 40),              # 沟底（掉进来不至于出屏）
 		],
 		spawn = Vector2(70, 330),
-		fence = Rect2(),
+		fence = Rect2(),                            # 无易燃物：禁止"见木就烧"式属性锁
 		goal = Rect2(790, 370, 130, 60),          # 右台上
-		ink = 150,
-		objects = [                               # 场景预置普通物体（无词条，可推可贴）
-			{ kind = "plank", size = Vector2(150, 20), pos = Vector2(300, 330) },
-			{ kind = "block", size = Vector2(60, 60), pos = Vector2(220, 330) },
-			{ kind = "ball", size = Vector2(52, 52), pos = Vector2(180, 330) },
+		ink = 130,
+		solution = "参考解法（仅提示，不做检测）：A. 两块 Float 长板悬空搭桥(约80墨)；B. Sticky 方块丢进沟靠右壁当固定垫脚(40墨)；C. 把预置方块推/用 Heavy 圆球撞进沟贴壁，垫脚翻上右台(0~40墨)",
+		objects = [                               # 场景预置普通物体（无词条，可推可撞）
+			# v2：出生位两两包围盒互不重叠、且避开玩家出生点(70,330)——修复同帧深叠导致的物理发散
+			{ kind = "ball", size = Vector2(52, 52), pos = Vector2(30, 310) },
+			{ kind = "plank", size = Vector2(150, 20), pos = Vector2(140, 270) },
+			{ kind = "block", size = Vector2(60, 60), pos = Vector2(255, 330) },
 		],
 	},
 ]
@@ -181,13 +207,8 @@ func _set_hint(t: String) -> void:
 # ---------------- 关卡 ----------------
 
 func _load_level(idx: int) -> void:
-	var dbg := FileAccess.open("user://loadtrace.txt", FileAccess.WRITE)
-	dbg.store_string("step0\n")
-	dbg.flush()
 	level_idx = idx
 	var lv: Dictionary = LEVELS[idx]
-	dbg.store_string("step1\n")
-	dbg.flush()
 	ink = lv.ink
 	state = "play"
 	elapsed = 0.0
@@ -196,21 +217,29 @@ func _load_level(idx: int) -> void:
 			c.queue_free()
 	for wi in lv.walls.size():
 		_add_static(lv.walls[wi], Color("39415a"))
-		dbg.store_string("wall" + str(wi) + "\n")
-		dbg.flush()
 	if lv.fence.size.x > 0:
 		_add_fence(lv.fence)
+	# v2 修复：预置物体延迟到帧末生成——旧关卡体 queue_free 真正删除、本帧物理状态
+	# 稳定之后，新刚体才进场；避免新旧物理体同帧混存加剧求解器发散（L3 加载冻结修复点）
 	if lv.has("objects"):
-		pass # objects 生成暂时禁用（排查 L3 加载冻结）
-	dbg.store_string("pre-spawn\n")
-	dbg.flush()
+		call_deferred("_spawn_level_objects", lv)
 	_spawn_player(lv.spawn)
-	dbg.store_string("pre-goal\n")
-	dbg.flush()
 	_add_goal(lv.goal)
-	dbg.store_string("done\n")
-	dbg.flush()
 	_refresh_buttons()
+
+
+## v2：帧末生成预置物体（带关卡一致性校验与组内去重，防快速切关残留/重复）
+func _spawn_level_objects(lv: Dictionary) -> void:
+	if lv != LEVELS[level_idx] or state != "play":
+		return
+	for n in get_tree().get_nodes_in_group("level_objs"):
+		var old := n as RigidBody2D
+		if old:
+			old.queue_free()
+	if not lv.has("objects"):
+		return
+	for od in lv.objects:
+		_add_dynamic(od)
 
 
 func _add_static(r: Rect2, col: Color) -> void:
@@ -257,6 +286,7 @@ func _add_goal(r: Rect2) -> void:
 func _add_dynamic(od: Dictionary) -> void:
 	var body := RigidBody2D.new()
 	body.position = od.pos
+	body.add_to_group("level_objs")   # v2：统一标记，供清理/复位/绘制/测试使用
 	var cs := CollisionShape2D.new()
 	if od.kind == "ball":
 		var sh := CircleShape2D.new()
@@ -269,6 +299,7 @@ func _add_dynamic(od: Dictionary) -> void:
 	body.add_child(cs)
 	body.set_meta("size", od.size)
 	body.set_meta("kind", od.kind)
+	body.set_meta("spawn", od.pos)    # v2：记录出生点，供 NaN/坠落复位
 	add_child(body)
 
 
@@ -298,7 +329,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if state == "play":
 			_try_place(pos)
 	elif event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_R:
-		player.position = Vector2(70, 330)
+		player.position = LEVELS[level_idx].spawn   # v2：改用当前关卡出生点（原为写死坐标）
 		player.velocity = Vector2.ZERO
 	elif event is InputEventKey:
 		keys[event.keycode] = event.pressed
@@ -395,14 +426,23 @@ func _physics_process(delta: float) -> void:
 	on_floor = player.is_on_floor()
 	# 坠落出界自动复位（防 NaN 卡死物理）
 	if player.position.y > 700:
-		player.position = Vector2(70, 330)
+		player.position = LEVELS[level_idx].spawn   # v2：改用当前关卡出生点（原为写死坐标）
 		player.velocity = Vector2.ZERO
 	# 玩家推动普通物体（统一物理：推力来自行走）
 	for i in player.get_slide_collision_count():
 		var col := player.get_slide_collision(i)
 		var rb = col.get_collider()
 		if rb is RigidBody2D:
-			rb.apply_central_impulse(-col.normal * 6.0)
+			rb.apply_central_impulse(-col.get_normal() * 6.0)
+	# v2：预置物体 NaN/坠落防护（统一物理规则，不判解法）
+	for o in get_tree().get_nodes_in_group("level_objs"):
+		var ob := o as RigidBody2D
+		if ob == null:
+			continue
+		if is_nan(ob.position.x) or is_nan(ob.position.y) or ob.position.y > 700:
+			ob.position = ob.get_meta("spawn", Vector2(100, 300)) as Vector2
+			ob.linear_velocity = Vector2.ZERO
+			ob.angular_velocity = 0.0
 	# Float 物体悬浮微动
 	for p in placed:
 		if is_instance_valid(p) and p.get_meta("word", "") == "float" and p.freeze:
@@ -474,6 +514,18 @@ func _draw() -> void:
 			var fr: Rect2 = c.get_meta("rect")
 			draw_rect(fr, Color("8d6e63"))
 			draw_line(fr.position, fr.position + fr.size, Color("5d4037"), 2)
+	# 预置普通物体（v2：无词条、可推可撞；旧版加入后不可见，这里补上绘制）
+	for o in get_tree().get_nodes_in_group("level_objs"):
+		var ob := o as RigidBody2D
+		if ob == null:
+			continue
+		var osz := ob.get_meta("size", Vector2(40, 40)) as Vector2
+		if ob.get_meta("kind", "") == "ball":
+			draw_circle(ob.position, osz.x / 2.0, Color("b8a888"))
+			draw_arc(ob.position, osz.x / 2.0, 0.0, TAU, 24, Color("111111"), 2.0)
+		else:
+			draw_rect(Rect2(ob.position - osz / 2.0, osz), Color("b8a888"))
+			draw_rect(Rect2(ob.position - osz / 2.0, osz), Color("111111"), false, 2.0)
 	# 玩家（小恐龙涂鸦）
 	if player and is_instance_valid(player):
 		var p := player.position

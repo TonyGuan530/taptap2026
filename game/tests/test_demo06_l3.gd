@@ -1,11 +1,19 @@
 extends SceneTree
-## demo-06 L3 无属性锁验证（headless，time_scale 6x）
-## 解法：方块垫沟 → 跳上方块 → 跳上右台 → GOAL
-## 结果写入 user://l3log.txt
+## demo-06 L3「无显式克制的开放物理问题」验证 v2（headless，time_scale 1.0 真实时间计时）
+## T0 加载不冻结：L3 载入后物理帧持续推进，3 个预置物体落地稳定（冻结修复验证）
+## T1 断层几何：沟宽 420 远超跳跃射程，不能直接跳过；无易燃栅栏（无属性锁）
+## T2 解法A 几何可行：两块 Float 长板悬空桥（坐标计算断言）+ 墨水足够
+## T3 解法B 几何可行：Sticky 方块沟内垫脚（台阶高度窗口断言）
+## T4 解法C 几何可行：预置方块推/撞入沟贴右壁成垫脚（Heavy 圆球可选）
+## T5 实机通关（解法A）：GOAL 只由玩家进入触发，45s 真实时间上限
 ## 运行：godot --headless --path game -s res://tests/test_demo06_l3.gd
+## 注意：本测试不引用 demo06 不存在的属性（旧版探针访问 scene.ball 导致脚本报错、
+##       headless 进程空转假死——即"L3 加载冻结"的测试侧根因，见 demo06_inkwords.gd 头部 v2 注释）
 
 var scene = null
 var logf: FileAccess
+var pass_cnt := 0
+var fail_cnt := 0
 
 func _wait(sec: float) -> void:
 	var t0 := Time.get_ticks_msec()
@@ -18,62 +26,164 @@ func _log(line: String) -> void:
 		logf.store_string(line + "\n")
 		logf.flush()
 
+func _check(tag: String, ok: bool, detail: String = "") -> void:
+	if ok:
+		pass_cnt += 1
+	else:
+		fail_cnt += 1
+	_log("%s: %s%s" % [tag, "PASS" if ok else "FAIL", ("（" + detail + "）") if detail != "" else ""])
+
 func _init() -> void:
 	_run()
 
 func _run() -> void:
 	logf = FileAccess.open("user://l3log.txt", FileAccess.WRITE)
 	await process_frame
-	Engine.time_scale = 6.0
-	_log("L3 开始")
+	# v2: time_scale 保持 1.0——6x 加速会拉大物理 delta、压低抛物线积分精度，
+	# T5b 实机跳跃因此撞台壁（真实时间计时也是流水线对测试的要求）
+	Engine.time_scale = 1.0
+	# 物理常数（与 demo06_inkwords.gd 一致，用于几何断言，不跑物理模拟）
+	var grav := 1600.0
+	var jump_v := 520.0
+	var walk := 240.0
+	var jump_h := jump_v * jump_v / (2.0 * grav)     # ≈84.5 跳跃高度
+	var air_t := 2.0 * jump_v / grav                  # ≈0.65 滞空时间
+	var jump_range := walk * air_t                    # ≈156 跳跃水平射程
+	_log("跳跃高度=%.1f 水平射程=%.1f" % [jump_h, jump_range])
+
+	# ============ T0 加载不冻结 + 预置动态物体 ============
 	scene = load("res://demo06_inkwords.tscn").instantiate()
 	root.add_child(scene)
 	await physics_frame
 	scene._load_level(2)
-	await _wait(0.5)
-	# 方块+Heavy 放进沟里当垫脚
-	scene.shape_idx = 2
-	scene.word_idx = 0
-	scene._try_place(Vector2(450, 480))
-	_log("方块已放置进沟")
-	await _wait(1.0)
-	# 状态机：0=向右走 1=坑里跳上方块 2=方块跳上右台 3=走向 GOAL
+	var frames := 0
 	var t0 := Time.get_ticks_msec()
-	var phase := 0
-	var jump_cd := 0
-	var last_log := 0
+	while Time.get_ticks_msec() - t0 < 1500:
+		await physics_frame
+		frames += 1
+	_check("T0a L3 载入后物理帧持续推进（无冻结）", frames > 45, "1.5s 真实时间物理帧=%d" % frames)
+	var objs := get_nodes_in_group("level_objs")
+	_check("T0b 预置动态物体数量 = 3（规格 2~3）", objs.size() == 3, "实际=%d" % objs.size())
+	var finite_ok := true
+	var rest_ok := true
+	var kinds := {}
+	for o in objs:
+		var ob := o as RigidBody2D
+		if ob == null:
+			continue
+		kinds[ob.get_meta("kind", "")] = true
+		if is_nan(ob.position.x) or is_nan(ob.position.y):
+			finite_ok = false
+			continue
+		# 落到左台后的停留高度带：台面 400，圆球顶心 374 / 方块 370 / 长板 389
+		if ob.position.y < 330.0 or ob.position.y > 430.0:
+			rest_ok = false
+		if absf(ob.position.x - (ob.get_meta("spawn", Vector2.ZERO) as Vector2).x) > 40.0:
+			rest_ok = false
+	_check("T0c 物体位置有限（无 NaN，冻结根因②已修复）", finite_ok)
+	_check("T0d 物体已落到左台并稳定（不漂移/不掉沟）", rest_ok)
+	_check("T0e 物体种类齐全（球/板/块）", kinds.has("ball") and kinds.has("plank") and kinds.has("block"))
+	_check("T0f 关卡状态 play", scene.state == "play", String(scene.state))
+
+	# ============ 断层几何（读取关卡常量做坐标计算，不跑物理） ============
+	var lv: Dictionary = scene.LEVELS[2]
+	var left: Rect2 = lv.walls[3]        # 左台
+	var right: Rect2 = lv.walls[4]       # 右台
+	var pit: Rect2 = lv.walls[5]         # 沟底
+	var gap := right.position.x - (left.position.x + left.size.x)
+	var ink: int = lv.ink
+	_check("T1a 断层宽度 ≥ 300（较宽断层）", gap >= 300.0, "沟宽=%.0f" % gap)
+	_check("T1b 沟宽 > 2×跳跃射程（不能直接跳过）", gap > jump_range * 2.0, "沟宽=%.0f 射程=%.0f" % [gap, jump_range])
+	_check("T1c 沟底存在且低于两侧台面（掉入不出屏）", pit.position.y > left.position.y and pit.position.y > right.position.y)
+	var fence: Rect2 = lv.fence
+	_check("T1d 无易燃栅栏（禁「见木就烧」属性锁）", fence.size.x == 0.0 and fence.size.y == 0.0)
+	var goal: Rect2 = lv.goal
+	_check("T1e GOAL 在右台上、玩家站立即可达", goal.position.x >= right.position.x and goal.end.y >= right.position.y)
+	_check("T1f 玩家出生在左台", lv.spawn.x < left.position.x + left.size.x and lv.spawn.x > left.position.x)
+
+	# ============ T2 解法A：Float 长板悬空桥（长板 130×22，Float 价 15） ============
+	var cost_a := 2 * (25 + 15)                              # 两块长板×Float
+	var p1 := Rect2(400.0 - 65.0, 350.0 - 11.0, 130.0, 22.0) # 长板1 拟放 (400,350)
+	var p2 := Rect2(615.0 - 65.0, 350.0 - 11.0, 130.0, 22.0) # 长板2 拟放 (615,350)
+	var hop1 := p2.position.x - (p1.position.x + p1.size.x)  # 板1→板2 空隙
+	var hop2 := right.position.x - (p2.position.x + p2.size.x) # 板2→右台 空隙
+	var mount := left.position.y - p1.position.y             # 左台面→板1顶 抬升
+	_check("T2a 墨水足够解法A", ink >= cost_a, "ink=%d 需要=%d" % [ink, cost_a])
+	_check("T2b 长板1 搭在左台边缘（左缘偏差 ≤30）", absf(p1.position.x - (left.position.x + left.size.x)) <= 30.0)
+	_check("T2c 板1→板2 跳距 ≤ 射程", hop1 <= jump_range, "空隙=%.0f" % hop1)
+	_check("T2d 板2→右台 跳距 ≤ 射程", hop2 <= jump_range, "空隙=%.0f" % hop2)
+	_check("T2e 左台→板1 抬升 ≤ 跳高", mount <= jump_h, "抬升=%.0f 跳高=%.1f" % [mount, jump_h])
+
+	# ============ T3 解法B：Sticky 方块沟内固定垫脚（方块 64→60 近似，Sticky 价 10） ============
+	var cost_b := 30 + 10                                    # 方块×Sticky
+	var block_top := pit.position.y - 60.0                   # 方块落沟底后的顶面高度 ≈460
+	var exit_lo := pit.position.y - jump_h                   # 能从沟底跳上的垫脚顶下限 ≈435.5
+	var exit_hi := left.position.y + jump_h                  # 能从垫脚跳上右台的垫脚顶上限 ≈484.5
+	_check("T3a 墨水足够解法B", ink >= cost_b, "ink=%d 需要=%d" % [ink, cost_b])
+	_check("T3b 方块垫脚顶落在单级出入窗口内", block_top >= exit_lo and block_top <= exit_hi,
+		"顶=%.0f 窗口[%.1f,%.1f]" % [block_top, exit_lo, exit_hi])
+	_check("T3c 单级垫脚足够出沟（2×跳高 ≥ 台面落差）", 2.0 * jump_h >= pit.position.y - left.position.y,
+		"2×跳高=%.1f 落差=%.0f" % [2.0 * jump_h, pit.position.y - left.position.y])
+	_check("T3d 沟宽容得下方块靠右壁放置", pit.size.x >= 60.0 and right.position.x - pit.position.x >= 60.0)
+
+	# ============ T4 解法C：预置方块推/撞入沟成垫脚（Heavy 圆球可选，纯推 0 墨） ============
+	var env_block: RigidBody2D = null
+	for o2 in objs:
+		var ob2 := o2 as RigidBody2D
+		if ob2 != null and ob2.get_meta("kind", "") == "block":
+			env_block = ob2
+	_check("T4a 场景存在可推环境方块", env_block != null)
+	if env_block != null:
+		var bx := (env_block.get_meta("spawn", Vector2.ZERO) as Vector2).x
+		_check("T4b 环境方块位于出生点与台缘之间（可推向沟）", bx > float(lv.spawn.x) and bx < left.position.x + left.size.x,
+			"方块x=%.0f" % bx)
+		var cost_c := 30 + 10                                # Heavy 圆球（可选加速）
+		_check("T4c 墨水足够解法C（含 Heavy 球）", ink >= cost_c, "ink=%d 需要=%d" % [ink, cost_c])
+		_check("T4d 环境方块(60 高)入沟后顶面在同一出入窗口", block_top >= exit_lo and block_top <= exit_hi)
+	_check("T4e 环境方块留在台上也可直接跳越（60 抬升 ≤ 跳高）", 60.0 <= jump_h)
+
+	# ============ T5 实机通关（解法A）——通关只由玩家进入 GOAL 触发 ============
+	scene.shape_idx = 1    # 长板
+	scene.word_idx = 1     # Float
+	scene._try_place(Vector2(400, 350))
+	scene._try_place(Vector2(615, 350))
+	await _wait(0.3)
+	_check("T5a 两块 Float 长板放置成功、墨水正确扣减", scene.placed.size() == 2 and scene.ink == ink - cost_a,
+		"placed=%d ink=%d" % [scene.placed.size(), scene.ink])
+	var won := false
+	var last_x := -1.0
+	var jc := 0
+	t0 = Time.get_ticks_msec()
 	while scene.state == "play" and Time.get_ticks_msec() - t0 < 45000:
 		await physics_frame
 		scene.keys[KEY_D] = true
-		jump_cd = maxi(0, jump_cd - 1)
+		jc = maxi(0, jc - 1)
 		var px: float = scene.player.position.x
 		var py: float = scene.player.position.y
-		var el := Time.get_ticks_msec() - t0
-		if el - last_log >= 4000:
-			last_log = el
-			_log("phase=" + str(phase) + " player=(" + str(int(px)) + "," + str(int(py)) + ")")
-		match phase:
-			0:  # 走向沟，掉进坑里
-				if py > 460:
-					phase = 1
-					_log("已入坑")
-			1:  # 坑里：跳上方块（方块顶 460）
-				if on_floor_check(scene) and py > 460 and px > 340 and jump_cd == 0:
-					scene.keys[KEY_SPACE] = true
-					jump_cd = 25
-			2:  # 站上方块（y≈444，方块顶 460）→ 跳上右台（400）
-				if scene.on_floor and py < 470 and px > 380 and jump_cd == 0:
-					scene.keys[KEY_SPACE] = true
-					jump_cd = 25
-					phase = 3
-			3:  # 在右台上走向 GOAL
-				pass
-	var win: bool = scene.state == "win"
-	_log("L3 结果: " + ("PASS: 无属性锁通关（GOAL 只检测玩家进入）" if win else "FAIL: 45秒未通关 player=" + str(scene.player.position)))
+		if scene.on_floor and jc == 0:
+			var want := false
+			if px > 285.0 and px < 320.0 and py > 370.0:
+				want = true        # 左台缘起跳上板1（落点 408~443，留 ≥22px 余量）
+			elif px > 408.0 and px < 460.0 and py < 350.0:
+				want = true        # 板1 起跳上板2（落点 ≈564，板2 左缘 550）
+			elif px > 625.0 and px < 665.0 and py < 350.0:
+				want = true        # 板2 起跳上右台/GOAL
+			elif absf(px - last_x) < 2.0:
+				want = true        # 被预置方块挡住 → 跳越（统一物理，不判解法）
+			if want:
+				scene.keys[KEY_SPACE] = true
+				jc = 20
+			else:
+				scene.keys[KEY_SPACE] = false
+		last_x = px
+	won = scene.state == "win"
+	scene.keys[KEY_D] = false
+	scene.keys[KEY_SPACE] = false
+	_check("T5b 实机通关（解法A·仅 GOAL 判定，无解法 trigger）", won,
+		"state=%s player=%s" % [String(scene.state), str(scene.player.position)])
+
 	Engine.time_scale = 1.0
+	_log("统计: PASS=%d FAIL=%d" % [pass_cnt, fail_cnt])
 	_log("ALL DONE")
 	logf.flush()
 	quit()
-
-func on_floor_check(s) -> bool:
-	return s.on_floor

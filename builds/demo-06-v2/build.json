@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-06-v2",
+    "date":  "2026-10-03T19:29:41+08:00",
+    "author":  "49321",
+    "notes":  "ChatGPT ITERATE 落实：L3 断层验证关(无属性锁/三解法/2预置物体)+objects生成冻结修复+预置物体可见绘制+NaN防护"
+}
