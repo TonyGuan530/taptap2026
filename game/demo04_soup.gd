@@ -103,6 +103,7 @@ var vy := 0.0
 var on_floor := false
 var jumps_used := 0
 var dna := {}                    # id -> true
+var combos_found := {}           # 组合发现记录（跨关保留，发现式揭晓）
 var face := 1.0
 var born_dark := false           # 融合荧光后 permanently 亮
 var state := "play"              # play / win
@@ -219,14 +220,28 @@ func _dna_label_text() -> String:
 		if dna.has(a.id):
 			parts.append(a.dna)
 	var t := "DNA：已融合 " + " + ".join(parts)
+	# 组合效果只在玩家首次融合齐组件后才揭晓（发现式，不开局剧透）
 	var combos := []
-	if dna.has("highjump") and dna.has("double"):
+	if dna.has("highjump") and dna.has("double") and combos_found.has("superjump"):
 		combos.append("超级弹跳")
-	if dna.has("double") and dna.has("glow"):
+	if dna.has("double") and dna.has("glow") and combos_found.has("nightwing"):
 		combos.append("夜翼")
 	if not combos.is_empty():
 		t += "（组合：" + "、".join(combos) + "）"
 	return t
+
+
+## 融合后检查是否有新组合被发现；返回发现信息（无则空串）
+func _check_combo_discovery() -> String:
+	var found := ""
+	if dna.has("highjump") and dna.has("double") and not combos_found.has("superjump"):
+		combos_found["superjump"] = true
+		found = "🔍 组合发现：超级弹跳（弹簧腿+振翅）——二段跳也变高跳，能翻组合高墙！"
+	if dna.has("double") and dna.has("glow") and not combos_found.has("nightwing"):
+		combos_found["nightwing"] = true
+		var sep := "" if found == "" else "\n"
+		found += sep + "🔍 组合发现：夜翼（振翅+荧光）——黑暗中也能展翅疾行！"
+	return found
 
 
 func _rating() -> String:

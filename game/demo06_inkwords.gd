@@ -122,6 +122,7 @@ var jumps_used := 0
 var ui_labels := {}
 var ui_layer: CanvasLayer = null   # v4：直接持有 UI 层引用——旧 find_child("CanvasLayer")
                                    # 查不到自动名 "@CanvasLayer@2"，致通关面板从未显示（线上实测发现）
+var env_oid_n := 0                 # v5：预置物体实例 ID 计数（contact 链还原用）
 
 # ---------------- 盲测 telemetry（本地记录，无后台） ----------------
 var tel_pid := "P01"        # 受试编号（数据面板可改，随记录保留）
@@ -316,6 +317,8 @@ func _add_dynamic(od: Dictionary) -> void:
 	var body := RigidBody2D.new()
 	body.position = od.pos
 	body.add_to_group("level_objs")   # v2：统一标记，供清理/复位/绘制/测试使用
+	env_oid_n += 1
+	body.set_meta("oid", "env_%s_%02d" % [od.kind, env_oid_n])   # v5：实例 ID，盲测还原接触链
 	var cs := CollisionShape2D.new()
 	if od.kind == "ball":
 		var sh := CircleShape2D.new()
@@ -405,6 +408,7 @@ func _try_place(pos: Vector2) -> void:
 			if is_instance_valid(body):
 				body.queue_free())
 	body.set_meta("word", word.id)
+	body.set_meta("oid", "placed_%02d" % placed.size())   # v5：实例 ID
 	if word.id == "float":
 		body.collision_layer = 4
 		body.collision_mask = 1 | 2
@@ -431,13 +435,16 @@ func _try_place(pos: Vector2) -> void:
 	_set_hint("放置了 %s×%s（-%d💧）。%s" % [shape.name, word.name, cost, word.tip])
 
 
-func _tel_classify(n: Node) -> String:
+## v5：接触对象实例 ID（env/placed 带 oid，墙/栅栏/玩家用稳定名）
+func _tel_oid(n: Node) -> String:
 	if n == player:
 		return "player"
+	if n.has_meta("oid"):
+		return str(n.get_meta("oid"))
 	if n.name == "Fence":
 		return "fence"
 	if n is StaticBody2D:
-		return "static"
+		return "wall"
 	if n is RigidBody2D and n.is_in_group("level_objs"):
 		return "env"
 	if n is RigidBody2D:
@@ -447,9 +454,10 @@ func _tel_classify(n: Node) -> String:
 
 func _on_placed_contact(body_node: Node, placed_body: RigidBody2D) -> void:
 	var word_id: String = placed_body.get_meta("word", "")
-	if not placed_body.has_meta("tel_contacted"):   # 盲测：每放置物只记首次接触对象
-		placed_body.set_meta("tel_contacted", true)
-		_tel("contact", {"tag": word_id, "with": _tel_classify(body_node)})
+	# v5 盲测：contact_enter 序列——body_entered 天然只在“接触开始/分离后再接触”触发，
+	# 无逐帧重复；带双方实例 ID，可还原玩家构造的接触链
+	_tel("contact", {"oid": str(placed_body.get_meta("oid", "")),
+		"with": _tel_oid(body_node), "ev": "enter"})
 	# 统一规则：Fire 遇易燃物 → 烧毁；Heavy 重物遇脆物/栅栏 → 砸毁
 	if word_id == "fire" and (body_node.get_meta("flammable", false) or body_node.name == "Fence"):
 		body_node.queue_free()
