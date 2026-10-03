@@ -136,7 +136,7 @@ func _ready() -> void:
 	title.add_theme_color_override("font_color", Color("ffd54f"))
 	ui.add_child(title)
 	var hint := Label.new()
-	hint.text = "←/→ 或 A/D 移动 · 空格/W/↑ 跳 · 走近外星生物按 E 融合"
+	hint.text = "←/→ 或 A/D 移动 · 空格/W/↑ 跳 · 走近外星生物按 E 融合 · 同时融合多种 DNA……也许会有意外收获"
 	hint.position = Vector2(16, 38)
 	hint.add_theme_font_override("font", FONT)
 	hint.add_theme_font_size_override("font_size", 14)
@@ -259,6 +259,7 @@ func _advance() -> void:
 		total_shards = 0
 		total_time = 0.0
 		ratings = []
+		combos_found = {}   # 完整重开：组合重新进入「未发现」状态
 		_load_level(0)
 	else:
 		_load_level(level_idx + 1)
@@ -279,6 +280,9 @@ func _try_fuse() -> void:
 			dna[a.id] = true
 			toast = "🧬 融合了 %s 的「%s」：%s" % [a.name, a.dna, a.tip]
 			toast_age = 0.0
+			var discovery := _check_combo_discovery()
+			if discovery != "":
+				toast = discovery   # 组合发现覆盖融合提示（更值得玩家注意）
 			dna_label.text = _dna_label_text()
 
 

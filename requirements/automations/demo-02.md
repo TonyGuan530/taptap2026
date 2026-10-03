@@ -38,3 +38,14 @@ requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-
 - 【测试用文件日志】headless 测试的 print 在超时杀进程时会全丢——用 FileAccess 写 user://v2log.txt 并 flush（参考 game/tests/test_demo02_v2.gd）。
 - 【Float 词 g=0.05 缓降，不是 0】；脆墙判定是纯物理（撞击速度 ≥450）。
 - 【itch 平台故障期】若 publish-qa 持续 FAIL（CDN 404 占位页），跳过 itch 推送改用 GitHub Pages（自动 CI），并在报告注明。
+
+
+## 停滞即转向（扩展阶梯）
+
+本 demo 连续 2 轮没有实质进展时，按阶梯转向，选第一合适的：
+1. 扩展玩法：给现有机制加新组合
+2. 补充关卡：用现有机制加 1-2 个关卡
+3. 迭代美术：视觉/音效/反馈打磨
+4. 转 3D 尝试：仅玩法确实适合 3D 时，先说明可行性再动手
+
+转向时在报告注明「停滞转向：demo-0X → 阶梯项」。

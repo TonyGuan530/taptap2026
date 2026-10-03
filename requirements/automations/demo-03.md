@@ -33,3 +33,14 @@ requirements/backlog.md 的 demo-03 节 + Miro 原始想法（requirements/miro-
 - 【平衡性】温度上升 2.5+0.06t、设施降温 2/5、村民 +0.8——改任何参数后必须重跑 test_demo03.gd 双用例。
 - 【 headless 测试用真实时间计时】（time_scale 加速），按帧数计时毫无意义。
 - 【 Godot 严格模式】clamp 返回 Variant 需显式 : float；CanvasLayer 不能赋给 Control 变量。
+
+
+## 停滞即转向（扩展阶梯）
+
+本 demo 连续 2 轮没有实质进展时，按阶梯转向，选第一合适的：
+1. 扩展玩法：给现有机制加新组合
+2. 补充关卡：用现有机制加 1-2 个关卡
+3. 迭代美术：视觉/音效/反馈打磨
+4. 转 3D 尝试：仅玩法确实适合 3D 时，先说明可行性再动手
+
+转向时在报告注明「停滞转向：demo-0X → 阶梯项」。

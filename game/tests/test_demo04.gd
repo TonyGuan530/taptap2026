@@ -99,8 +99,8 @@ func _run() -> void:
 	# --- 用例 1：全 DNA 连过 3 关 ---
 	await _spawn()
 	var r1: Dictionary = await _bot(400.0, "")
-	var pass1: bool = r1.wins >= 3 and r1.level == 2
-	print("用例1: wins=%d level=%d/3 碎片=%d/9 → %s" % [r1.wins, r1.level + 1, r1.shards, "PASS" if pass1 else "FAIL"])
+	var pass1: bool = r1.wins >= 3 and r1.level == 2 and scene.combos_found.size() >= 2
+	print("用例1: wins=%d level=%d/3 碎片=%d/9 组合发现=%d/2 → %s" % [r1.wins, r1.level + 1, r1.shards, scene.combos_found.size(), "PASS" if pass1 else "FAIL"])
 
 	# --- 用例 2：不融合蹦蹦兽，应卡在 L1 高墙前 ---
 	await _spawn()
