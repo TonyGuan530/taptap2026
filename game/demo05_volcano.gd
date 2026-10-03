@@ -55,6 +55,7 @@ var route_bonus := 0          # 撤离需求修正：高地 -1 / 轻装 -2
 var events := []              # 末日故事事件链
 var route_chosen := -1
 var margin := 0               # v6 A'：撤离余量 = 行军消耗后剩余物资（结算评分用）
+var night_weather := ""       # v9 第五幕：萨满第二预言——"cold"=寒夜（撤离耗 1 水）/"mist"=稳雾
 var result := ""
 var pulse := 0.0
 var hovered := -1
@@ -182,6 +183,7 @@ func _restart() -> void:
 	relocating = false
 	scouted = false
 	route_bonus = 0
+	night_weather = ""
 	events = []
 	route_chosen = -1
 	for t in TILES:
@@ -273,7 +275,7 @@ func _process(delta: float) -> void:
 		_set_status("【灾害结算】连锁灾难正在发生……")
 		_set_hint("看看布局付出了什么代价。")
 	elif phase == "decide":
-		_set_status("【撤离】选择路线带领族群离开灾区")
+		_set_status("【撤离】选择路线带领族群离开灾区%s" % ("　❄ 萨满第二预言：今夜寒夜，路上额外耗 1 水" if night_weather == "cold" else "　萨满第二预言：撤离夜稳雾无风"))
 		_set_hint("需求%d已被修正（高地-1/轻装-2）。路线随机风险：侦察过就不再是赌博。" % (4 + route_bonus) if route_bonus != 0 else "各路线有随机风险，侦察过就不再是赌博。")
 	queue_redraw()
 
@@ -414,6 +416,34 @@ func _resolve_disaster() -> void:
 		stored.forest.water = int(stored.forest.water / 4.0)
 	else:
 		_log_ev("森林侥幸未燃，食物安然无恙——押注森林的族群赌赢了。")
+	# ===== 第四幕：余震与兽群（v9 内容层，洞穴深埋不受地裂）=====
+	var aftershock_hit := false
+	for t in TILES:
+		if aftershock_hit:
+			break
+		if t.id == "cave":
+			continue
+		if _tile_total(t.id) > 0:
+			var loss_f: int = int(stored[t.id].food / 4.0)
+			var loss_w: int = int(stored[t.id].water / 4.0)
+			stored[t.id].food = maxi(0, stored[t.id].food - loss_f)
+			stored[t.id].water = maxi(0, stored[t.id].water - loss_w)
+			_log_ev("次日余震震裂了%s的地面，四分之一的储备陷进了裂缝。" % t.name)
+			aftershock_hit = true
+	if not aftershock_hit:
+		_log_ev("次日余震只有轻微晃动，储备无恙。")
+	for t in TILES:
+		if _tile_total(t.id) > 0:
+			stored[t.id].food = maxi(0, stored[t.id].food - 1)
+			stored[t.id].food += 2
+			_log_ev("迁徙兽群路过%s，叼走 1 份储备，但族群猎杀了落单的巨兽——多了 2 份兽肉。" % t.name)
+			break
+	# ===== 第五幕：萨满第二预言（撤离窗口天气，v9 内容层）=====
+	night_weather = "cold" if randf() < 0.5 else "mist"
+	if night_weather == "cold":
+		_log_ev("萨满仰望星空，发出第二道预言：撤离之夜将是寒夜——族群要额外消耗 1 份水。")
+	else:
+		_log_ev("萨满预言撤离之夜稳雾无风，路上不会额外损耗。")
 
 
 func _tile_name(id: String) -> String:
@@ -451,6 +481,10 @@ func _choose_route(i: int) -> void:
 	var r: Dictionary = ROUTES[i]
 	var need: int = _route_need(i)
 	_log_ev("族群选择了%s：%s" % [r.name, r.risk])
+	# v9 第五幕：寒夜预言——撤离之夜额外消耗 1 份水
+	if night_weather == "cold":
+		supply.water = maxi(0, supply.water - 1)
+		_log_ev("寒夜如萨满所预言地降临，族群又耗掉了 1 份水取暖。")
 	# v6 A' 结算顺序修正：先路线随机事件 → 再算最终物资 → 判 need → 算余量 → 评分
 	if i == 1 and not scouted and randf() < 0.5:
 		supply.water = maxi(0, supply.water - 1)

@@ -217,7 +217,7 @@ func _run() -> void:
 		var st: Dictionary = stats[p.id]
 		if st.games == 0:
 			continue
-		var rw: float = 100.0 * 100.0 * (st.rainW + st.rainPartial) / maxi(1, st.rainN)
+		var rw: float = 100.0 * (st.rainW + st.rainP) / maxi(1, st.rainN)
 		if p.id != "all_cave" and rw >= 20.0 and rw <= 70.0 and st.rainN >= 10:
 			mid_rain.append(p.id)
 		var gap: float = absf(100.0 * st.eastW / maxi(1, st.eastN) - 100.0 * st.westW / maxi(1, st.westN))
