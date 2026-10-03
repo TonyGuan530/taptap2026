@@ -701,6 +701,10 @@ func _draw() -> void:
 			draw_line(Vector2(br.position.x + 10, br.position.y + 4), Vector2(br.end.x - 14, br.end.y - 8), Color("2c241c"), 2)
 			draw_line(Vector2(br.end.x - 12, br.position.y + 6), Vector2(br.position.x + 16, br.end.y - 4), Color("2c241c"), 2)
 			draw_line(Vector2(br.position.x + 20, br.position.y + 2), Vector2(br.position.x + 8, br.end.y - 2), Color("2c241c"), 2)
+			if dna.has("break"):
+				# GPT 盲测前清单①：持有碎岩后裂纹墙微光脉动（可读不教程化）
+				var glow_a := 0.18 + 0.12 * sin(pulse * 2.0)
+				draw_rect(Rect2(br.position + Vector2(3, 3), br.size - Vector2(6, 6)), Color(1.0, 0.85, 0.5, glow_a), false, 2)
 		else:
 			draw_rect(br, Color("3d3552"))
 			draw_rect(br, Color("241f36"), false, 2)
