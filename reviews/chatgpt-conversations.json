@@ -32,7 +32,9 @@
     "demo-05": {
       "url": "https://chatgpt.com/c/6abf4a9c-3e7c-83ec-a5f5-6a87251014dd",
       "review": "reviews/chatgpt-demo-05-full.md",
-      "verdict": "ITERATE"
+      "verdict": "ITERATE",
+      "v2Review": "reviews/chatgpt-demo-05-v2-full.md",
+      "v2Note": "v2 续评 ITERATE（性质升级）：三建议全落实、系统设计站住，4 个策略 archetype（情报/保险/投机/补救）理论成立；V3 不加玩法只做验证 Gate=①新玩家5局≥3种策略+≥2次主动换策略 ②盯防「高地开局」「灾后必抢运」dominant sequence ③headless 加 dominance simulation（8 个简单 policy 跑几百局）；数值平衡冻结"
     },
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
