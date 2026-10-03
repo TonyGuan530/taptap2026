@@ -14,13 +14,15 @@
 requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-export.md）。玩法：形状(圆球/长板/方块)×词条(Heavy/Float/Fire/Sticky)统一规则物理解谜，目标 3-4 关。
 
 ## 当前状态
-- public/demos.json 的 demo-02 slot（buildId=demo-02-v3，3 关已上线；v3=跳跃输入+组合测试房，headless 4/4 PASS）
-- ChatGPT 复评 v3 结论 **KEEP**（首次进入候选核心机制池）；完整结论存 reviews/chatgpt-demo-02-full.md 尾部
-- itch：demo-02-v3 已推（butler build #2057309）但 CDN 持续故障（占位页 404，publish-qa FAIL）→ 可玩链接走 GitHub Pages；pipeline-lite 每 5 分钟自愈重推
-- 待办 v4（按 KEEP 后指令）：①删 Space 通用跳，扑翼削为一次性轻 impulse，保留横移 ②开放 L4（只查 GOAL 不查词条序列，≥2 条合法路线）③公开 build 隐藏「参考解法」+ 3-5 人无提示试玩
-- v4 禁止：堆词条 / 加角色能力 / 传统 platformer 操作
-- 停滞兜底（用户指令）：轮次无可执行项或连续两轮无实质变化时，按序挑一项做——①扩展玩法（评审约束内）②补充关卡 ③迭代美术 ④转 3D 尝试（仅当 2D 到天花板且玩法合适，先征求 ChatGPT 评审意见）；所选方向写进报告与汇报
-- 已知坑新增：【羽毛 damp=1.2 会吃掉弹簧冲量】L3 弹簧冲量 (260,-660) 是抵消阻尼后的调参值，改词条参数需同步重调 L3 并跑 headless
+- public/demos.json 的 demo-02 slot（buildId=demo-02-v4，4 关已上线；v4=删通用跳+扑翼单次修正+开放 L4，headless 6/6 PASS）
+- ChatGPT 复评 v4 结论 **KEEP**（Systemic Puzzle Gate 通过：v1 Scripted→v4 Systemic solution space）；完整结论存 reviews/chatgpt-demo-02-full.md 尾部
+- itch CDN 故障持续（占位页）；可玩链接以 GitHub Pages 为准：https://tonyguan530.github.io/taptap2026/play.html?id=demo-02（v4 build.json 已验证 200）
+- 待办 v5（按 v4 KEEP 后指令）：①不新增 L5，做 3-5 人无提示真人试玩 + 轻量 telemetry（切换时间/重置次数/关键区域/最终路线）②物性变化最小即时反馈层（纯 UI/FX：轻/重/弹关键词、撞板速度反馈）③素材 URL 加版本参数防 raw CDN 缓存
+- v5 禁止：L5 / 第四词条 / 新技能 / 新机关族 / 大地图 / 刻意堆解法
+- 停滞兜底（用户指令）：轮次无可执行项或连续两轮无实质变化时，按序挑一项做——①扩展玩法（评审约束内）②补充关卡 ③迭代美术 ④转 3D 尝试（仅当 2D 到天花板且玩法合适，先征求 ChatGPT 评审意见）；所选方向写进报告与汇报。注意 v5 的信息瓶颈是真人数据，无可执行项时优先做反馈层/遥测类小活，不要扩张系统
+- 已知坑新增：【羽毛 damp=1.2 会吃掉弹簧冲量】L3 冲量 (250,-690)、L4 冲量 (240,-660) 都是抵消阻尼的调参值，改词条参数需同步重调并跑 headless
+- 已知坑新增：【L4 路线A 不需要弹簧】羽毛从出生直接横漂即可入舱（评审认可的涌现信号）；改地形前先跑 test_demo02_v4.gd 确认 A/B 双路线仍成立
+- 已知坑新增：【headless 测试扑翼计数】测试循环里尝试扑翼必须加 `and not scene.flap_used` 守卫，否则每帧递增提前退出循环（v4 踩过）
 
 ## 每轮流程
 1. 环境：curl -s http://localhost:8787/api/health；没响应就后台 node D:/GIT/taptap2026/server/server.js。（注意：测试验证不要用本地前端——直接用 GitHub Pages 公网链接 https://tonyguan530.github.io/taptap2026/play.html?id=<slotId> 或 itch 页面，截图/录屏也从公网页面取）
