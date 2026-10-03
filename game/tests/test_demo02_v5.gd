@@ -124,7 +124,7 @@ func _run() -> void:
 		Input.action_release("ui_right")
 		scene._on_tag(1)
 	ok = await _until(func(): return scene.goal_reached, 20000)
-	var tel_ok: bool = ok and scene.tel_spring and scene.tel_switches.size() >= 1 and scene.tel_switches[0].begins_with("石头") and scene.route_line.contains("路线")
+	var tel_ok: bool = ok and scene.tel_spring and scene.tel_switches.size() >= 1 and scene.tel_switches[0].begins_with("石头") and scene.route_line.contains("路线#") and scene.route_line.contains("[high_window]")
 	_log("⑤ L4 路线B 砸穿脆板: " + ("PASS" if ok else "FAIL") + "｜telemetry: " + ("PASS" if tel_ok else "FAIL") + " (%s)" % scene.route_line)
 	Input.action_release("ui_right")
 	scene.queue_free()

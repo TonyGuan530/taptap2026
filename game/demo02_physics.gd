@@ -115,10 +115,11 @@ var elapsed := 0.0
 var flap_used := false         # 羽毛扑翼：每次滞空限一次（落地重置）
 var ground_ray: RayCast2D      # 球脚下的接地检测
 # v5 telemetry：本局（自最近一次重置起）的行为轨迹
-var tel_switches: Array[String] = []   # ["羽毛@0.8s", ...]
+var tel_switches: Array[String] = []   # ["羽毛@0.8s[spawn]", ...]
 var tel_resets := 0                    # 失败自动重置次数（手动重置不计）
 var tel_hits: Array[String] = []       # ["脆墙@2.1s 撞612/450", ...]
 var tel_spring := false                # 本局是否借弹簧
+var tel_wins := 0                      # 本关通关次数（评审要求的 run_index）
 var route_line := ""                   # 通关后定格的路线结算行
 var flash_label: Label                 # 切换词条的即时报（轻/重/弹）
 var flash_t := 0.0
@@ -195,7 +196,7 @@ func _on_tag(i: int) -> void:
 	_refresh_tag_buttons()
 	if switched:
 		# v5 telemetry + 即时反馈：换词条才记录并闪现（点当前词条不刷屏）
-		tel_switches.append("%s@%.1fs" % [TAGS[i].name, elapsed])
+		tel_switches.append("%s@%.1fs[%s]" % [TAGS[i].name, elapsed, _zone_name()])
 		flash_label.text = "%s · %s" % [TAGS[i].name, TAGS[i].kw]
 		flash_label.add_theme_color_override("font_color", TAGS[i].col)
 		flash_label.modulate.a = 1.0
@@ -226,6 +227,7 @@ func _refresh_tag_buttons() -> void:
 # ---------------- 关卡 ----------------
 
 func _load_level(idx: int) -> void:
+	var prev_level := level_idx
 	level_idx = idx
 	var lv: Dictionary = LEVELS[idx]
 	goal_reached = false
@@ -238,6 +240,8 @@ func _load_level(idx: int) -> void:
 	tel_resets = 0
 	tel_spring = false
 	route_line = ""
+	if idx != prev_level:
+		tel_wins = 0   # run_index 语义：同关重玩保留通关次数，换关归零
 	for c in get_children():
 		if c is RigidBody2D or c is StaticBody2D or c is Area2D:
 			c.queue_free()
@@ -304,11 +308,31 @@ func _on_ball_hit(other: Node) -> void:
 		# 纯物理判定：撞击速度够快就碎（石头自然砸得碎；皮球/羽毛物理上做不到）
 		var spd := int(prev_speed)
 		tel_hits.append("脆墙@%.1fs 撞%d/%d" % [elapsed, spd, FRAGILE_SPEED])
+		# v5 冻结令修补：数字阈值只在 debug/telemetry 显示，release 改定性反馈（防"刷数字"心态）
 		if prev_speed >= FRAGILE_SPEED:
 			other.queue_free()
-			hint = "轰！撞击 %d ≥ %d——脆墙碎了！" % [spd, FRAGILE_SPEED]
+			hint = ("轰！撞击 %d ≥ %d——脆墙碎了！" % [spd, FRAGILE_SPEED]) if OS.is_debug_build() else "轰！猛烈撞击——脆墙碎了！"
 		else:
-			hint = "撞了 %d，还差 %d——脆墙纹丝不动……" % [spd, FRAGILE_SPEED - spd]
+			hint = ("撞了 %d，还差 %d——脆墙纹丝不动……" % [spd, FRAGILE_SPEED - spd]) if OS.is_debug_build() else "撞击太轻，脆墙纹丝不动……"
+
+
+## v5 telemetry：切换发生时的逻辑分区（评审要求 zone 标签；L4 按开放解法房划 4 区）
+func _zone_name() -> String:
+	if ball == null:
+		return "?"
+	var lv: Dictionary = LEVELS[level_idx]
+	var p := ball.position
+	if lv.goal.has_point(p):
+		return "goal"
+	if lv.spring.size.x > 0 and (lv.spring as Rect2).has_point(p):
+		return "spring"
+	if level_idx == 3:
+		if p.x < 400.0:
+			return "spawn"
+		if p.y < 230.0:
+			return "high_window" if p.x < 760.0 else "gap"   # 脆板上方瞄准区 / 右侧敞口
+		return "chamber" if p.x >= 620.0 else "pit"
+	return "field"
 
 
 func _reset_ball(keep_time := false, count_fail := false) -> void:
@@ -398,10 +422,11 @@ func _physics_process(delta: float) -> void:
 	# 目标区
 	if (Rect2(lv.goal) as Rect2).has_point(ball.position):
 		goal_reached = true
-		# v5 telemetry：路线结算行（切换时机/弹簧/失败重置），供真人试玩记录用
+		tel_wins += 1
+		# v5 telemetry：路线结算行（切换时机+zone/弹簧/失败重置/run 次数），供真人试玩记录用
 		var sw := "无切换" if tel_switches.is_empty() else "→".join(tel_switches)
-		route_line = "路线: %s%s｜重置%d" % [sw, "｜借弹簧" if tel_spring else "", tel_resets]
-		print("TEL|L%d|%s|%.1fs|%s" % [level_idx + 1, sw, elapsed, route_line])
+		route_line = "路线#%d: %s%s｜重置%d" % [tel_wins, sw, "｜借弹簧" if tel_spring else "", tel_resets]
+		print("TEL|L%d|run%d|%.1fs|%s|%s" % [level_idx + 1, tel_wins, elapsed, sw, route_line])
 		if level_idx + 1 < LEVELS.size():
 			msg_label.text = "✔ 通关！用时 %d 秒 —— 点右上「下一关」继续挑战。" % int(elapsed)
 		else:
