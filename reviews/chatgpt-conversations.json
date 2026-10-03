@@ -49,7 +49,8 @@
       "finalRuling": "reviews/chatgpt-demo05-final-ruling-full.md",
       "status": "数值冻结（V8）→ 等真人 5 局 Gate",
       "humanGate": "四指标：①策略发现≥3 ②学习链≥2 ③洞穴收敛判死线（理解后连3局≥2局全洞穴=behavioral dominance） ④应急理解（≥1次主动改写计划）；不加安全余量UI",
-      "v9Note": "v9 内容层发布（五幕灾难链：余震/兽群/第二预言寒夜）；V9 240 局：Gate A/B PASS、C intel 双料第一（100% 存活+63.4）→ 下轮按预批准削高地双收益（拟取消路线-1）后复测"
+      "v9Note": "v9 内容层发布（五幕灾难链：余震/兽群/第二预言寒夜）；V9 240 局：Gate A/B PASS、C intel 双料第一（100% 存活+63.4）→ 下轮按预批准削高地双收益（拟取消路线-1）后复测",
+      "v10Note": "v10：intel 削双收益（移除高地路线-1）+ 恐龙立绘部署；240 局：all_cave 100%活/49 垫底（安全地板达成）、highland 46.7%win/61.5 领先、intel 23.3%/56、relocate 100%惨胜复活维持；三 Gate 字面 C FAIL（highland 双料）→ 数据已交监督者裁决：接受前沿进真人 Gate 或授权 highland 微调"
     },
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
