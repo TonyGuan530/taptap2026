@@ -1,7 +1,31 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/2 14:02:51 · 共 17 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/3 17:20:26 · 共 40 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
+
+### [text] @(-218,-185)
+
+<p><strong>Feedback</strong></p>
+
+### [text] @(-218,-131)
+
+<p>for ​AL&#xff1a;​优先​阅读 ​如果​完成​请​自己​标注​</p>
+
+### [sticker] @(-334,-12)
+
+<p>发现​三​个​具体​问题&#xff1a;​<br />- demo-02-v2​ 导出​错位&#xff1a;​大厅​的​物性​谜题​卡片​指向​它&#xff0c;​但​资源​包​实际​启动​的​是​ demo-06。​上表​已​使用​正确​的​旧版​入口。​<br />-​ 物性​谜题​第二​关缺​少​入口&#xff1a;​源​码定​义​了​两​关&#xff0c;​但​“下​一​关”​函数​没有​绑定​按钮&#xff1b;​实际​第一​关​通关后​也​没有​切关​按钮。​<br />- demo-07 ​元​数​据​读取​失败&#xff1a;​bu​ild.json 带 ​BOM&#xff0c;​导致​站​点​丢失​标题、​版本​和​说明&#xff0c;​游戏​仍​能​运行。​</p>
+
+### [frame] @(0,0)
+
+Feedback Slide
+
+### [card] @(6300,2560)
+
+&#x1f3ae; demo-01 灵感菇侦探 · 运行画面&#xff08;点开下方链接&#xff09;
+
+### [sticker] @(6300,2560)
+
+&#x1f3ae; demo-01 运行画面 &#43; 录屏 ▼
 
 ### [sticker] @(642,2762)
 
@@ -19,6 +43,18 @@
 
 <p>场​景视角​和​风格​参考</p>
 
+### [text] @(6300,2912)
+
+<p>▶ demo-01 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-01.mp4</p>
+
+### [sticker] @(4400,4560)
+
+&#x1f3ae; demo-05 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,4700)
+
+&#x1f3ae; demo-05 恐龙火山生存
+
 ### [sticker] @(2925,4773)
 
 <p>玩家​以​现代人​的​意识​穿​越​到​白垩纪&#xff0c;​成为​一​只​体型​不大、​适应力​较​强​的​恐龙&#xff0c;​并​提前​意识​到​附近​即将​发生​毁灭性​的​火山​灾害。​游戏​采用​ 2D / UI ​驱动​的​短局​制生存策略​结构&#xff0c;​玩家​需要​在​火山​爆发前​有限​的​时间​里​探索​区域​地图&#xff0c;​判断​高地、​河谷、​森林、​洞穴、​湿地​等​不同​地形​的​风险&#xff0c;​寻找​食物、​水源、​避难​地点、​迁徙​路线​和​其他​恐龙&#xff0c;​并​将​资源​分散​储​存在​不同​地点。​火山​爆​发后&#xff0c;​地图​进入​动态​灾害​阶段&#xff1a;​风向​决定​火山​灰​扩散&#xff0c;​降雨​可能​引发泥流&#xff0c;​森林​可能​燃烧&#xff0c;​水源​可能​被​污染&#xff0c;​植物​和​猎物​逐渐​减少&#xff0c;​其他​恐龙​也​会​因为​饥饿​和​恐惧​发生​迁徙。​玩家​没有​固定​的​“正确​避难所”&#xff0c;​而​是​不断​根据​自己​之前​建立​的​资源​网络、​路线​和​群体​状态​调整​计划。​游戏​核心乐趣​来自​“提前​准备​一​个​生存​方案&#xff0c;​再​看​它​如何​在​灾难​压力​下​发生​连锁变化”。​玩家​最​终​经历​的​不​是​固定​事件​脚本&#xff0c;​而​是​一​段​由​地形、​天气、​资源​位置、​恐龙​行为​与​自身​决策​共同​形成​的​末日​故事。​单局​约​ 20~30 ​分钟&#xff0c;​目标​是​带领​自己​或​小型​恐龙​群体​离开​严重​受​灾​区域&#xff0c;​并​找到​能够​支持​长期​生存​的​新​生​态区。​</p>
@@ -26,6 +62,10 @@
 ### [sticker] @(642,4829)
 
 <p>重生​之​我​是​恐龙​·学好​数理化</p>
+
+### [text] @(4400,4892)
+
+<p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-05.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-05.mp4 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;</p>
 
 ### [sticker] @(5714,5732)
 
@@ -39,6 +79,14 @@
 
 <p>角色​参考</p>
 
+### [sticker] @(4400,6560)
+
+&#x1f3ae; demo-02 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,6700)
+
+&#x1f3ae; demo-02 物性变换谜题
+
 ### [sticker] @(671,6749)
 
 <p>Unit-Testing</p>
@@ -47,9 +95,21 @@
 
 <p>通过​改变​物品​的​单位​/词​条&#xff0c;​改变​物体​的​物理​属性&#xff0c;​以​此​</p>
 
+### [text] @(4400,6892)
+
+<p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-02.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-02.mp4 试玩: <a href="https://sxguan.itch.io/taptap2026">https://sxguan.itch.io/taptap2026</a> &#xff08;密码 taptap&#xff09;</p>
+
 ### [sticker] @(5714,7509)
 
 <p>塞尔​达式​箱庭​谜题​</p>
+
+### [sticker] @(4400,8460)
+
+&#x1f3ae; demo-03 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,8600)
+
+&#x1f3ae; demo-03 岩浆降温的小人国度
 
 ### [sticker] @(671,8669)
 
@@ -59,6 +119,22 @@
 
 <p>通过​强化​/​自动化​更​强​的​浇水​/​降温&#xff0c;​来​达成​维持​温度​的​目的。​中途会​随​进度​解锁​&#xff08;涌现&#xff09;​随机N​PC​小人​</p>
 
+### [text] @(4400,8792)
+
+<p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-03.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-03.mp4 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;</p>
+
+### [sticker] @(5714,9319)
+
+<p>随机​系统​酸雨&#xff1a;​降雨​速度​提升&#xff0c;​植物​死亡​地​下​水​爆​发&#xff1a;​获得​大量​水​建筑​系统​初始​建筑&#xff1a;​山洞​外平​台​作为​基地、​溪流​水库&#xff1a;​储水​系统气象​台&#xff1a;​人工降雨蒸​汽​工坊&#xff1a;​蒸汽转化​为​动力八、​ 小​人​系统​黄色​小人​&#xff08;工程师&#xff09;&#xff1a;​修复​建造​白色​小人​&#xff08;搬运&#xff09;&#xff1a;​运输​速度​&#43;100%​蓝色​小人​&#xff08;气象学家&#xff09;&#xff1a;​提高​降雨概率​绿色​小人​&#xff08;植物​学家&#xff09;&#xff1a;​生态恢复​速度​提高​橙色​小人​&#xff08;探险家&#xff09;&#xff1a;​发现​隐藏物品七、​ 道​具​设计1、​主动​道​具A、​人工降雨弹​&#xff08;降雨​10秒&#xff0c;​快速​获得​水源&#xff09;B、​冰霜​&#xff08;冻结​一​片​熔岩5秒&#xff09;​C、​超级​水桶​&#xff08;一​次​携带5​倍​水量&#xff0c;​持续​20秒&#xff09;​2、​战略道​具A、​蒸汽​发动​机​&#xff08;产生​动力&#xff09;​B、​云层催化器​&#xff08;增加​自然​降雨概率&#xff09;​六、​ ​希望值​&#xff08;操纵​其他​小人&#xff09;​五、​ 三​大​资源体​系水、​蒸汽、​希望​值A、​水​来源&#xff1a;​溪流、​雨水。​用途&#xff1a;​降温。​B、​转化​水源C、​ 涌​现机制A&#xff1a;​居民​AI自​主行​为​&#xff08;打水、​浇灌、​运资源、​建造&#xff09;​例如&#xff1a;​救出​工程师​&#xff08;小黄人&#xff09;​没​路→​修桥​→​其他​居民​通过​→​运远​水→​温度​下​降​效率​提高。​B&#xff1a;​环境​连锁​反应例如&#xff1a;​岩浆​降温→形​成矿石​→探索​获得​资源C&#xff1a;​生态​恢复​降水​又​产生​更​多​资源​形成​正​反馈。​&#xff08;灌木、​丛林……&#xff09;​四、​ 核心循​环​小人​打水​&#xff08;一步骤&#xff09;&#xff1a;​水桶​→溪流→浇灌岩浆→岩浆降温→​获得​奖励​奖励​触​发​&#xff08;二步骤&#xff09;&#xff1a;​水蒸气、​气泡、​被​困​小​人​小人​加入​&#xff08;三​步骤&#xff09;&#xff1a;​山洞​出现​小人&#xff0c;​自动​帮助​打水​浇​灌岩浆​建筑​升级​&#xff08;四步骤&#xff09;&#xff1a;​获得​更​大​规模​降温​能力→​温度​下降​→​解锁​新​生态三、​ ​世界​恢复​生态二、​ 河​流​扩张​35​℃ 云层形成50℃ ​出现​少量​植物​60℃ 熔岩覆盖​世界​80℃ ​世界​变化​100℃ 游戏目标玩家​通过​不断​浇水&#xff0c;​引发​小​人们、​生态、​天气​三​套​系统​互相​作用&#xff0c;​最​终​让​世界​从​100℃恢复​到​35℃。​温度​ ​《最后​的​溪流》​玩家​创造​生态→ ​生态​产生​资源​→ ​资源​解锁​新​个​体 →​新​个​体​形成​协作​→ ​协作​改变​世界​温度。​一、​</p>
+
+### [sticker] @(4400,10560)
+
+&#x1f3ae; demo-04 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,10700)
+
+&#x1f3ae; demo-04 SOUP 2.0 DNA 融合逃生
+
 ### [sticker] @(671,10751)
 
 <p>SOUP 2.0</p>
@@ -66,6 +142,24 @@
 ### [sticker] @(2974,10751)
 
 <p>和​外星​生物​的​DN​A融合​改造​自身​以​逃离​危险​的​异星​</p>
+
+### [text] @(4400,10860)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04.mp4
+试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;
+
+### [sticker] @(4400,11760)
+
+&#x1f3ae; demo-07 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,11900)
+
+&#x1f3ae; demo-07 简单美食小摊&#xff08;绿幕版&#xff09;
+
+### [text] @(4400,12092)
+
+<p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-07.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-07.mp4 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;</p>
 
 ### [sticker] @(1081,13586)
 
