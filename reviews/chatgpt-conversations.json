@@ -44,7 +44,7 @@
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
       "review": "reviews/chatgpt-demo-06-tel-full.md",
-      "verdict": "KEEP / READY FOR PLAYTEST（下一 Gate=真人盲测）",
+      "verdict": "L4 KEEP（transfer 诊断关）；SIZE=B 回退主线待 Gate 后恢复；整体 KEEP/READY FOR HUMAN PLAYTEST",
       "l3Review": "reviews/chatgpt-demo-06-l3-full.md",
       "l3Note": "L3 Gate 通过(ITERATE→KEEP)：去属性锁后 4词条×3形状可自然提供多物理关系路径；下一Gate=真人数据盲测(5~8人+轻量telemetry，不解法提示，不加新词条)"
     }
