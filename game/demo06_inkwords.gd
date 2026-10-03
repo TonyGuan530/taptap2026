@@ -332,7 +332,16 @@ func _add_dynamic(od: Dictionary) -> void:
 	body.set_meta("size", od.size)
 	body.set_meta("kind", od.kind)
 	body.set_meta("spawn", od.pos)    # v2：记录出生点，供 NaN/坠落复位
+	# v5（评审）：预置物体也上报 contact_enter——接触链必须包含环境物体
+	body.contact_monitor = true
+	body.max_contacts_reported = 4
+	body.body_entered.connect(_on_env_contact.bind(body))
 	add_child(body)
+
+
+func _on_env_contact(body_node: Node, env_body: RigidBody2D) -> void:
+	_tel("contact", {"oid": str(env_body.get_meta("oid", "")),
+		"with": _tel_oid(body_node), "ev": "enter"})
 
 
 func _spawn_player(pos: Vector2) -> void:
@@ -516,6 +525,7 @@ func _win() -> void:
 		return
 	state = "win"
 	_tel("goal", {"elapsed": snappedf(elapsed, 0.1), "ink_left": ink, "placements": placed.size()})
+	_tel("session_end", {"end_reason": "goal"})   # v5：通关自动封口（评审：未通关局由组织者在📦面板手动封口）
 	print("[demo-06 telemetry] " + tel_export_json())   # 盲测可只靠录屏+控制台取数
 	var panel := Panel.new()
 	panel.name = "WinPanel"
@@ -529,7 +539,8 @@ func _win() -> void:
 	if ui:
 		ui.add_child(panel)
 	var t := Label.new()
-	t.text = "🏁 过关！%s\n用时 %d 秒 · 剩余墨水 %d · 放置 %d 个物体\n\n试试用别的词条组合再通一次——每关不止一种解法。" % [
+	# v5：文案中性化（评审）——不暗示“多解/换组合”，避免污染受试者后续行为
+	t.text = "🏁 测试完成，请通知组织者。\n%s · 用时 %d 秒 · 剩余墨水 %d · 放置 %d 个物体" % [
 		LEVELS[level_idx].name, int(elapsed), ink, placed.size()]
 	t.position = Vector2(24, 20)
 	t.size = Vector2(430, 110)
@@ -639,6 +650,17 @@ func _on_tel_panel() -> void:
 		DisplayServer.clipboard_set(tel_export_json())
 		_set_hint("telemetry 已复制到剪贴板"))
 	panel.add_child(copy)
+	# v5（评审）：组织者操作的“结束本次测试”封口——照顾未通关/放弃局，点后自动复制
+	var endb := Button.new()
+	endb.text = "结束本次测试(未通关)"
+	endb.position = Vector2(400, 380)
+	endb.size = Vector2(170, 30)
+	endb.pressed.connect(func():
+		_tel("session_end", {"end_reason": "give_up"})
+		DisplayServer.clipboard_set(tel_export_json())
+		box.text = tel_export_json()
+		_set_hint("已封口（give_up）并复制 JSON——请交给组织者"))
+	panel.add_child(endb)
 	var clr := Button.new()
 	clr.text = "清空记录"
 	clr.position = Vector2(290, 380)

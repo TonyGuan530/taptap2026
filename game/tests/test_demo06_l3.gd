@@ -205,6 +205,29 @@ func _run() -> void:
 	_check("T6d 导出 JSON 可解析且事件数一致", evs_ok, "json_len=%d" % jtxt.length())
 	var pid_ok: bool = jparsed is Dictionary and str(jparsed.get("pid", "")) != ""
 	_check("T6e 记录含受试编号 pid（盲测区分受试者）", pid_ok)
+	var has_contact := false
+	var has_end := false
+	# T6f 驱动：放一个 Heavy 圆球进沟，等它撞上沟底（真实刚体→静态接触）
+	scene._on_shape(0)
+	scene._on_word(0)
+	scene._try_place(Vector2(500, 200))
+	var t3 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t3 < 6000:
+		await physics_frame
+		var hit_wall := false
+		for e9 in scene.tel_events:
+			if e9.get("type", "") == "contact" and str(e9.get("with", "")) == "wall":
+				hit_wall = true
+		if hit_wall:
+			break
+	for e3 in scene.tel_events:
+		if e3.get("type", "") == "contact" and str(e3.get("oid", "")).begins_with("placed_") \
+				and e3.get("ev", "") == "enter" and str(e3.get("with", "")) != "":
+			has_contact = true
+		if e3.get("type", "") == "session_end" and e3.get("end_reason", "") == "goal":
+			has_end = true
+	_check("T6f contact_enter 序列带双方实例 ID（还原接触链）", has_contact)
+	_check("T6g 通关自动 session_end(goal) 封口", has_end)
 
 	Engine.time_scale = 1.0
 	_log("统计: PASS=%d FAIL=%d" % [pass_cnt, fail_cnt])
