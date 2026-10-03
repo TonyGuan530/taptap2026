@@ -7,6 +7,9 @@ extends Node2D
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
+## v7 美术：ChatGPT 生图（#00ff00 绿幕）→ ffmpeg 抠绿透明 PNG（reviews/art/ 溯源）
+const TEX_PLAYER: Texture2D = preload("res://assets/dna/soup_player.png")
+const TEX_ALIEN := {"highjump": preload("res://assets/dna/alien_bouncy.png"), "double": preload("res://assets/dna/alien_wing.png"), "glow": preload("res://assets/dna/alien_glow.png")}
 const GROUND_Y := 470.0
 const GRAV := 1500.0
 const WALK := 260.0
@@ -655,22 +658,18 @@ func _draw() -> void:
 		var bob2 := 5.0 * sin(pulse + a.x)
 		var ay := 445.0 + bob2
 		var got: bool = dna.has(a.id)
-		var body_col: Color = a.col if not got else Color(a.col, 0.25)
-		draw_circle(Vector2(ax, ay - 18), 16, body_col)
-		draw_circle(Vector2(ax - 6, ay - 22), 3.5, Color(1, 1, 1, 0.9))
-		draw_circle(Vector2(ax + 6, ay - 22), 3.5, Color(1, 1, 1, 0.9))
-		draw_line(Vector2(ax - 6, ay - 10), Vector2(ax + 6, ay - 10), Color(0, 0, 0, 0.6), 2)
-		draw_line(Vector2(ax - 10, ay - 30), Vector2(ax - 16, ay - 42), body_col, 2)
-		draw_line(Vector2(ax + 10, ay - 30), Vector2(ax + 16, ay - 42), body_col, 2)
+		# v7 精灵图：40x40，已融合降透明度；底部长条保留作「落地基准线」
+		draw_texture_rect(TEX_ALIEN[a.id], Rect2(ax - 20, ay - 40, 40, 40), false, Color(1, 1, 1, 0.35 if got else 1.0))
+		draw_line(Vector2(ax - 14, ay + 2), Vector2(ax + 14, ay + 2), Color(0, 0, 0, 0.35), 2)
 		var label: String = ("%s · %s" % [a.name, ("已融合" if got else "按 E 融合")]) if (absf(px - a.x) < 60.0 and not got) else a.name
 		draw_string(FONT, Vector2(ax - 34, ay + 18), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("c6cddc") if not got else Color("566072"))
-	# 玩家（SOUP 小人）
-	var pl2 := Vector2(px + off, py - 15)
-	draw_circle(Vector2(pl2.x, pl2.y - 12), 10, Color("e8e4d8"))
-	draw_circle(Vector2(pl2.x + 3 * face, pl2.y - 14), 2, Color("333"))
-	draw_rect(Rect2(pl2.x - 8, pl2.y - 4, 16, 19), Color("7986cb"))
+	# 玩家（SOUP 小人）：v7 精灵图 34x33，按朝向镜像；脚底对齐 py
+	var pl2 := Vector2(px + off, py)
+	draw_set_transform(Vector2(pl2.x, pl2.y), 0.0, Vector2(face, 1.0))
+	draw_texture_rect(TEX_PLAYER, Rect2(-17, -33, 34, 33), false)
+	draw_set_transform(Vector2(), 0.0, Vector2.ONE)
 	if born_dark:
-		draw_circle(Vector2(pl2.x, pl2.y - 12), 5, Color(1.0, 0.95, 0.6, 0.9))
+		draw_circle(Vector2(pl2.x, pl2.y - 22), 5, Color(1.0, 0.95, 0.6, 0.9))
 	# 实验房横幅与遥测计数
 	if mode == "lab":
 		draw_string(FONT, Vector2(16, 132), "实验房：没有通关目标（R 重置 · B 返回战役 · G 换盲测编号 · T 导出遥测）", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("7ee787"))
