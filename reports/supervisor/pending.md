@@ -30,3 +30,4 @@
 - [ ] 【评论池为空】data/db.json 尚不存在 = 7 个 demo 零玩家评论。评论驱动环节暂无输入，属正常冷启动，无需行动。
 - [ ] 【WATCH·demo-07 留档 CI】[22:59] demo-07 会话遵照决策 #12 跑「v3 源码留档（不上线）」CI（run 37131617747 in_progress）。⚠️ 该 workflow 名为「导出并发布(Pages+itch.io)」——若完成后 demo-07 重新出现在 builds.json/Pages，督导立即 revert 并注入【督导指令】禁止再发布 demo-07。下轮巡查核验。
 - [x] 【用户指令·demo-07 下架】[22:59 已执行并验证] demos.json 移除 slot ✓、builds/demo-07* 删除 ✓、线上 builds.json 已无 demo-07（前5=demo-05v5/02v5/03v6/06v8/06v7）✓、live demos.json 0 处 demo-07 ✓。hub=1-6。
+- [ ] 【注入待执行·demo-04 v7 强推】[23:05] 检查点到达：v7 构建（builds/demo-04-v7/）仍未入库，Pages 指针 404 已 50 分钟，demos.json 指向 v7。**下轮巡查第一动作**：CronUpdate automation-d3f50080-356e-4958-a2f6-edfc516e67a4，在其 21:20 版提示词最前面注入——「【督导指令 2026-10-03 23:15·v7 部署补推】builds/demo-04-v7/ 与 dino 绿幕素材仍未入库，Pages 指针 404。本轮收尾必须：git add builds/demo-04-v7/ reviews/art/dino* 与 demo-04 相关文件，git push origin main 使 Pages v7 生效；若上轮已推则跳过。」注：本轮督导因工具循环未能完成注入（已自查），勿再拖延。
