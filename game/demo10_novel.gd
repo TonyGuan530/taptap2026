@@ -12,6 +12,17 @@ extends Control
 ##    第 5 章交稿时未圆回的 anomaly 每个转为 1 抗议（出版门槛语义=v2 的「无未圆回矛盾」）；
 ## ③ 盲测模式（默认开，set_blind 可关）——基调只显示 低/中/高 三档 + 一句氛围反馈，
 ##    内部数值与目标判定照常，只改显示层。
+## v3 实验版（监督者复评授权）两变化（仍冻结章节 5 与文本规模）：
+## ① 同一 anomaly 双解释——第 4 章对第 3 章的「气闸」anomaly（place 键）提供两个同槽互斥的
+##    解释候选：A「伪装的殖民飞船」（科幻 +1，secret=colony_ship）/ B「矿井旧防爆隔离门」
+##    （悬疑 +1，secret=mine_door）。二者都圆回同一 anomaly、都计伏笔回收，但把故事推向
+##    完全不同的方向：第 5 章结局按 flags.secret 插值不同 secret 段落——同一个异常不再有
+##    唯一正确钥匙，玩家选择「如何解释」决定故事走向；未圆回（无 secret）时结局维持现状
+##    并因抗议退稿。
+## ② 架构遥测（轻量 instrumentation）：anomaly_created / anomaly_resolved / resolution_type
+##    （最近一次：colony_ship / mine_door / 无）/ chapters_to_resolution（创建章→圆回章距离，
+##    未圆回 -1）/ unresolved_at_publish（第 5 章交稿时未圆回数）——内部计数 + 结算面板
+##    一行摘要，不落盘不上报。
 ## 第 4 章出现「越改越偏」陷阱候选（+2 高收益，但强设旗标并记一次抗议）；
 ## 每章目标达标可交稿过章，未达则「退稿重改」（可一键回滚到本章开始时的快照）；
 ## 第 5 章结局完全由状态拼装：最高基调选终稿模板 + 旗标插值，达标即「过审出版」。
@@ -21,7 +32,10 @@ const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 
 ## 旗标显示名（未列出的键原样显示）
-const FLAG_NAMES := {role = "身份", place = "地点", prop = "关键道具", case = "伏笔", note = "细节", forced = "强设", evidence = "实证"}
+const FLAG_NAMES := {role = "身份", place = "地点", prop = "关键道具", case = "伏笔", note = "细节", forced = "强设", evidence = "实证", secret = "秘密"}
+
+## v3 双解释的解读方向标注（候选浮层用）——同一 anomaly 的两把合法钥匙
+const SECRET_LABELS := {colony_ship = "飞船说", mine_door = "矿井说"}
 
 ## 三条基调的绘制定义：键 / 名 / 色
 const TONE_DEFS := [
@@ -134,7 +148,8 @@ const CHAPTERS := [
 				{text = "门缝里被塞进一份匿名卷宗", effects = {susp = 1, flag_case = "匿名卷宗"}},
 				{text = "老屋桌上留着一碗还温着的粥", effects = {warm = 1}},
 				{text = "空间站的应答器突然恢复信号", effects = {sci = 1}},
-				{text = "后山的「气闸」原来属于一艘伪装的殖民飞船", effects = {sci = 1}, explain = "place"},
+				{text = "后山的「气闸」原来属于一艘伪装的殖民飞船", effects = {sci = 1, flag_secret = "colony_ship"}, explain = "place"},
+				{text = "所谓「气闸」，其实是矿井旧防爆隔离门", effects = {susp = 1, flag_secret = "mine_door"}, explain = "place"},
 			]},
 			{original = "所有线索都指向同一个方向", options = [
 				{text = "所有线索都指向同一个真相", effects = {susp = 1}},
@@ -198,6 +213,11 @@ var contradictions := 0        # 读者来信抗议次数（陷阱改稿 + 终�
 var anomalies := []            # v2 待圆回矛盾 [{id, flag, wrote, tone, at_chapter, ch_name}]
 var foreshadow_payoff := 0     # v2 伏笔回收数（矛盾被 explain 候选圆回的次数）
 var anomaly_seq := 0           # anomaly 唯一 id 发放器（撤销后不回收，避免重挂撞号）
+## v3 架构遥测（内部计数，结算面板一行摘要；不落盘不上报）：
+## anomaly_created/anomaly_resolved=计数（随同槽反悔对称回退）；resolution_type=最近一次圆回
+## 的解读（colony_ship / mine_door / ""=无）；chapters_to_resolution=创建章→圆回章距离（未圆回 -1）；
+## unresolved_at_publish=末章交稿时的未圆回数
+var telemetry := {anomaly_created = 0, anomaly_resolved = 0, resolution_type = "", chapters_to_resolution = -1, unresolved_at_publish = 0}
 var blind_mode := true         # v2 盲测模式：基调只显示 低/中/高 + 氛围句（set_blind 可关）
 var chapter_idx := 0
 var slots := []                # 当前章词槽 [{original, options, chosen, applied}]
@@ -473,6 +493,7 @@ func choose(slot_idx: int, opt_idx: int) -> void:
 			}
 			anomalies.append(ano)
 			applied.anomaly = ano
+			telemetry.anomaly_created = int(telemetry.anomaly_created) + 1   # v3 遥测
 			_toast("读者皱眉：这里写岔了？（%s=%s 与前文矛盾，暂记一笔）" % [_flag_disp(cflag), str(cf.value)])
 	# v2 变化 2 圆回机会：候选带 explain=旗标键 → 自动圆回同键的未决矛盾（伏笔回收）
 	var ex_key: String = str(opt.get("explain", ""))
@@ -492,6 +513,12 @@ func choose(slot_idx: int, opt_idx: int) -> void:
 				stats[ptk] = clampi(pold + 1, -3, 3)
 				applied.delta[ptk] = int(stats[ptk]) - pold
 			applied.payoff = {id = int(ano2.id), tone = ptk, restore = ano2.duplicate(true)}
+			# v3 遥测：圆回计数 +1；解读方向取本候选刚种下的 secret（A/B 两把钥匙）；
+			# 圆回距离 = 圆回章 - 创建章（同键 anomaly 唯一存在，取首个即当前值）
+			telemetry.anomaly_resolved = int(telemetry.anomaly_resolved) + 1
+			if applied.flag_old.has("secret"):
+				telemetry.resolution_type = str(flags.get("secret", ""))
+			telemetry.chapters_to_resolution = int(chapter_idx + 1) - int(ano2.at_chapter)
 			_toast("原来这里是伏笔！矛盾圆回来了（伏笔回收 ×%d%s）" % [foreshadow_payoff, _tone_note(ptk)])
 	# 陷阱改稿：越改越偏，高收益但同样引来抗议（终章过审要求抗议为 0）
 	if bool(opt.get("trap", false)):
@@ -513,11 +540,13 @@ func submit_chapter() -> void:
 		return
 	# v2：末章交稿时结算——未圆回的矛盾每个转为 1 抗议，再进出版判定（第 5 章门槛=无未圆回 anomaly）
 	var settle_note := ""
-	if chapter_idx >= CHAPTERS.size() - 1 and not anomalies.is_empty():
-		var n: int = anomalies.size()
-		contradictions += n
-		anomalies.clear()
-		settle_note = "未圆回矛盾 ×%d 转为抗议；" % n
+	if chapter_idx >= CHAPTERS.size() - 1:
+		telemetry.unresolved_at_publish = anomalies.size()   # v3 遥测：交稿瞬间的未圆回数（含 0）
+		if not anomalies.is_empty():
+			var n: int = anomalies.size()
+			contradictions += n
+			anomalies.clear()
+			settle_note = "未圆回矛盾 ×%d 转为抗议；" % n
 	if _goal_ok():
 		chapter_pass = true
 		if chapter_idx >= CHAPTERS.size() - 1:
@@ -608,10 +637,15 @@ func _unapply_slot(i: int) -> void:
 			if int(anomalies[ai].id) == aid:
 				anomalies.remove_at(ai)
 				break
+		telemetry.anomaly_created = maxi(0, int(telemetry.anomaly_created) - 1)   # v3 遥测对称回退
 	# v2：撤销本槽完成的伏笔回收——矛盾重新挂回、回收数 -1（基调奖励已按 delta 回滚）
 	if ap.payoff != null:
 		foreshadow_payoff = maxi(0, foreshadow_payoff - 1)
 		anomalies.append((ap.payoff.restore as Dictionary).duplicate(true))
+		# v3 遥测对称回退：该次圆回被撤销，解读方向与距离一并清空
+		telemetry.anomaly_resolved = maxi(0, int(telemetry.anomaly_resolved) - 1)
+		telemetry.resolution_type = ""
+		telemetry.chapters_to_resolution = -1
 	sl.chosen = -1
 	sl.applied = EMPTY_APPLIED.duplicate(true)
 
@@ -672,13 +706,21 @@ func _ending_text() -> String:
 		dom = "warm"
 	elif int(stats.susp) > int(stats.sci) and int(stats.susp) > int(stats.warm):
 		dom = "susp"
+	# v3 双解释分化：同一「气闸」anomaly 的两种合法解读把结局段落推向不同方向——
+	# colony_ship=飞船说 / mine_door=矿井说；未圆回（无 secret 旗标）时无追加段，结局维持现状
+	var secret_seg := ""
+	match str(flags.get("secret", "")):
+		"colony_ship":
+			secret_seg = "而后山那道「气闸」终于露出真容——那是一艘伪装成废弃矿场的殖民飞船的登船闸，他没有失踪，他是第一批登船的人。"
+		"mine_door":
+			secret_seg = "而后山那道「气闸」从未通向星空——它只是矿井时代的防爆隔离门，门后封存着他当年亲手写下的停工真相。"
 	match dom:
 		"sci":
-			return "《回声》终稿：%s带着%s登上离开%s的飞船。舷窗外，%s映着舱内最后一点灯光——那是来自过去的问候，也是写给未来的信。" % [role, prop, place, evid]
+			return "《回声》终稿：%s带着%s登上离开%s的飞船。舷窗外，%s映着舱内最后一点灯光——那是来自过去的问候，也是写给未来的信。%s" % [role, prop, place, evid, secret_seg]
 		"warm":
-			return "《归途》终稿：%s回到%s，把%s和%s一起收进老屋的抽屉。灶上的汤还温着，灯为晚归的人亮着——原来最好的结局，是回来吃饭。" % [role, place, prop, evid]
+			return "《归途》终稿：%s回到%s，把%s和%s一起收进老屋的抽屉。灶上的汤还温着，灯为晚归的人亮着——原来最好的结局，是回来吃饭。%s" % [role, place, prop, evid, secret_seg]
 		_:
-			return "《井底的字条》终稿：多年以后，有人在%s的%s旁发现了新的字条，旁边还压着%s，落款只有一行小字：故事才刚刚开始。" % [place, prop, evid]
+			return "《井底的字条》终稿：多年以后，有人在%s的%s旁发现了新的字条，旁边还压着%s，落款只有一行小字：故事才刚刚开始。%s" % [place, prop, evid, secret_seg]
 
 
 func _tone_name(key: String) -> String:
@@ -822,8 +864,13 @@ func _show_end() -> void:
 	var pay_line := ""
 	if foreshadow_payoff > 0:
 		pay_line = "\n伏笔回收 ×%d —— 看似写岔的地方都圆了回来" % foreshadow_payoff
-	end_body.text = "%s\n\n基调：科幻 %+d · 温情 %+d · 悬疑 %+d\n读者抗议 %d 次 · 旗标 %d 条%s\n—— 前四章的每一次改词，共同拼出了这个结局。" % [
-		_ending_text(), int(stats.sci), int(stats.warm), int(stats.susp), contradictions, flags.size(), pay_line]
+	# v3 遥测摘要一行：双解释实验的结构观测（不落盘不上报）
+	var rtype := str(telemetry.resolution_type)
+	var tele_line := "\n遥测：anomaly_created=%d · anomaly_resolved=%d · resolution_type=%s · chapters_to_resolution=%d · unresolved_at_publish=%d" % [
+		int(telemetry.anomaly_created), int(telemetry.anomaly_resolved),
+		rtype if rtype != "" else "无", int(telemetry.chapters_to_resolution), int(telemetry.unresolved_at_publish)]
+	end_body.text = "%s\n\n基调：科幻 %+d · 温情 %+d · 悬疑 %+d\n读者抗议 %d 次 · 旗标 %d 条%s%s\n—— 前四章的每一次改词，共同拼出了这个结局。" % [
+		_ending_text(), int(stats.sci), int(stats.warm), int(stats.susp), contradictions, flags.size(), pay_line, tele_line]
 	end_panel.visible = true
 
 
@@ -834,6 +881,7 @@ func _restart() -> void:
 	anomalies = []
 	foreshadow_payoff = 0
 	anomaly_seq = 0
+	telemetry = {anomaly_created = 0, anomaly_resolved = 0, resolution_type = "", chapters_to_resolution = -1, unresolved_at_publish = 0}   # v3 遥测一并重置
 	chapter_pass = false
 	state = "play"
 	end_panel.visible = false
@@ -886,6 +934,10 @@ func _open_popup(i: int) -> void:
 			if pending:
 				ex_hint = "可圆回「%s」矛盾" % _flag_disp(ex_key)
 			btxt += "（伏笔回收：%s）" % ex_hint
+			# v3 双解释：标注本候选的解读方向——同一异常的两把钥匙，玩家二选一
+			var sec_v := str((opt.get("effects", {}) as Dictionary).get("flag_secret", ""))
+			if sec_v != "" and SECRET_LABELS.has(sec_v):
+				btxt += "（解读：%s）" % str(SECRET_LABELS[sec_v])
 		b.text = btxt
 		b.add_theme_font_size_override("font_size", 13)
 		b.position = Vector2(0, 30 + k * 44)

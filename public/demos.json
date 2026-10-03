@@ -61,9 +61,9 @@
     {
       "id": "demo-10",
       "title": "修改小说",
-      "goal": "v2 实验版（监督授权三变化）：①上下文派生词槽——旧照片随身份派生证据/案件线索/地球记忆并参与结局 ②矛盾圆回 UNRESOLVED_ANOMALY——矛盾记待圆回不即罚，后文 explain 候选圆回=伏笔回收+基调奖励，未圆回第 5 章交稿转抗议 ③盲测模式默认开（基调三档+氛围句）。冻结章节数量，唯一命题=矛盾圆回能否产生 Eureka",
+      "goal": "v3 多解释实验（KEEP 复评唯一必做）：同一气闸 anomaly 双合法解释——A 伪装殖民飞船（科幻，colony_ship）/ B 矿井防爆隔离门（悬疑，mine_door），都圆回都算回收但把故事推向不同方向（第 5 章结局按 secret 分化）；架构遥测五字段（created/resolved/type/chapters_to_resolution/unresolved_at_publish）进结算面板。105 断言全 PASS",
       "status": "done",
-      "buildId": "demo-10-v2"
+      "buildId": "demo-10-v3"
     },
     {
       "id": "demo-11",

@@ -17,6 +17,13 @@ extends SceneTree
 ## 用例13 圆回链（v2）：第 3 章舷梯矛盾 → 第 4 章 explain 候选圆回 → payoff/奖基调/结算「伏笔回收」/结局引用 evidence
 ## 用例14 未圆回转抗议（v2）：带 anomaly 进第 5 章交稿 → 转抗议、出版失败；reset 快照还原 anomalies
 ## 用例15 盲测模式（v2）：默认开——基调三档文字+氛围句、无精确数字；set_blind(false) 恢复精确显示
+## v3 实验版（监督者复评授权：同一 anomaly 双解释）：
+## 用例16 双解释互斥：第 4 章同槽 A/B 两把钥匙——选 A 后换 B，secret 由 colony_ship 翻转为
+##   mine_door、A 的科幻与圆回对称回退、anomaly 仍只消费一次（payoff 不重复计）
+## 用例17 B 线直选圆回：矿井门解释同样圆回 anomaly（payoff+1、悬疑+1）、resolution_type=mine_door
+## 用例18 结局分化：A/B 两线第 5 章结局文本不同（secret 段落差异：登船闸 vs 停工真相）
+## 用例19 遥测：anomaly_created/resolved/chapters_to_resolution 数值正确；
+##   未圆回场景 unresolved_at_publish=1 且结局不含 secret 段（维持现状+抗议退稿）
 ## 运行：godot --headless --path game -s res://tests/test_demo10.gd
 
 var passes := 0
@@ -62,6 +69,24 @@ func _play_line(s: Control, picks: Array) -> void:
 		s.submit_chapter()
 		if s.state == "final":
 			break
+
+
+## v3 前置：小镇记者线推到第 4 章并携带未圆回 anomaly（第 3 章舷梯气闸，place 键）
+## 到达时状态：sci=2 warm=2 susp=1、anomalies×1、payoff=0、抗议=0
+func _reach_ch4_anomaly(s: Control) -> void:
+	s.choose(0, 1)   # 记者
+	s.choose(1, 0)   # 小镇
+	s.choose(2, 3)   # 模糊照片（prop=旧照片）
+	s.submit_chapter()
+	s.choose(0, 2)   # 调阅日志 科幻+1
+	s.choose(1, 0)   # 黄铜钥匙（记者派生 温情+1）
+	s.choose(2, 0)   # 撤稿 悬疑+1
+	s.submit_chapter()
+	s.choose(0, 1)   # 想回家 温情+1→2
+	s.choose(1, 2)   # 磨平 悬疑-1→0
+	s.choose(2, 0)   # 别相信 悬疑+1→1
+	s.choose(3, 2)   # 舷梯 科幻+1→2，挂 anomaly
+	s.submit_chapter()
 
 
 func _run() -> void:
@@ -490,6 +515,130 @@ func _run() -> void:
 	var t_sci3: String = str((s15.tone_labels[0] as Label).text)
 	_check(t_sci3.contains("高") and not t_sci3.contains("+"), "用例15i 重新开启盲测：回到三档文字")
 	await _drop(s15)
+
+	# --- 用例16 双解释互斥（v3 核心）：同一「气闸」anomaly 的两把钥匙，同槽二选一 ---
+	var s16: Control = await _new_scene()
+	_reach_ch4_anomaly(s16)
+	_check(s16.chapter_idx == 3 and int(s16.anomalies.size()) == 1,
+		"用例16a 前置：带 place 键 anomaly 进入第 4 章")
+	var explain_n := 0
+	var secrets := {}
+	for o in s16.slots[0].options:
+		if str(o.get("explain", "")) == "place":
+			explain_n += 1
+			var fx: Dictionary = o.get("effects", {})
+			secrets[str(fx.get("flag_secret", ""))] = true
+	_check(explain_n == 2 and secrets.has("colony_ship") and secrets.has("mine_door"),
+		"用例16b 第 4 章 slot0 存在 A/B 两个解释候选（secret=colony_ship / mine_door）")
+	var sci16: int = int(s16.stats.sci)
+	var susp16: int = int(s16.stats.susp)
+	s16.choose(0, 3)   # A 线：伪装的殖民飞船
+	_check(str(s16.flags.get("secret", "")) == "colony_ship" and s16.anomalies.is_empty()
+		and int(s16.foreshadow_payoff) == 1,
+		"用例16c 选 A：secret=colony_ship、anomaly 圆回、伏笔回收 ×1")
+	_check(str(s16.telemetry.resolution_type) == "colony_ship",
+		"用例16d 选 A：遥测 resolution_type=colony_ship")
+	s16.choose(0, 4)   # 同槽反悔换 B 线：矿井旧防爆隔离门
+	_check(str(s16.flags.get("secret", "")) == "mine_door",
+		"用例16e 同槽换 B：secret 翻转为 mine_door（互斥，无残留双旗标）")
+	_check(int(s16.stats.sci) == sci16 + 1 and int(s16.stats.susp) == susp16 + 1,
+		"用例16f 同槽换 B：A 的科幻效果回滚（回 2）、B 悬疑 +1（候选），圆回奖励 +1 仍按 anomaly 的科幻基调落位")
+	_check(s16.anomalies.is_empty() and int(s16.foreshadow_payoff) == 1,
+		"用例16g 同槽换 B：anomaly 仍只消费一次（回收不重复计、矛盾不复活）")
+	_check(str(s16.telemetry.resolution_type) == "mine_door" and int(s16.telemetry.anomaly_resolved) == 1,
+		"用例16h 遥测：换 B 后 resolution_type=mine_door、resolved 计数对称回退后仍为 1")
+	s16.choose(1, 0)
+	s16.choose(2, 2)
+	s16.choose(3, 0)
+	s16.submit_chapter()
+	_check(s16.chapter_idx == 4, "用例16i B 线解释同样满足第 4 章双基调目标：过章进入第 5 章")
+	await _drop(s16)
+
+	# --- 用例17 B 线直选圆回（v3）：矿井门解释是另一把合法钥匙 ---
+	var s17: Control = await _new_scene()
+	_reach_ch4_anomaly(s17)
+	var sci17: int = int(s17.stats.sci)
+	var susp17: int = int(s17.stats.susp)
+	s17.choose(0, 4)   # 不经过 A，直接选 B
+	_check(s17.anomalies.is_empty() and int(s17.foreshadow_payoff) == 1
+		and int(s17.stats.susp) == susp17 + 1 and int(s17.stats.sci) == sci17 + 1,
+		"用例17a B 线直选圆回：anomaly 清空、伏笔回收 ×1、悬疑 +1（候选），圆回奖励 +1 按 anomaly 的科幻基调")
+	_check(str(s17.telemetry.resolution_type) == "mine_door" and int(s17.telemetry.chapters_to_resolution) == 1,
+		"用例17b 遥测：resolution_type=mine_door、chapters_to_resolution=1（第 3 章挂账 → 第 4 章圆回）")
+	_check(int(s17.telemetry.anomaly_created) == 1 and int(s17.telemetry.anomaly_resolved) == 1,
+		"用例17c 遥测：anomaly_created=1、anomaly_resolved=1")
+	await _drop(s17)
+
+	# --- 用例18 结局分化（v3）：同一 anomaly、两种解释 → 第 5 章结局走向不同 ---
+	var s18a: Control = await _new_scene()
+	_reach_ch4_anomaly(s18a)
+	s18a.choose(0, 3)   # A 飞船说
+	s18a.choose(1, 0)
+	s18a.choose(2, 2)
+	s18a.choose(3, 0)
+	s18a.submit_chapter()
+	_check(s18a.chapter_idx == 4, "用例18a A 线过第 4 章（双基调达标）")
+	for k in 5:
+		s18a.choose(k, 0)
+	s18a.submit_chapter()
+	_check(s18a.state == "final", "用例18b A 线过审出版")
+	var s18b: Control = await _new_scene()
+	_reach_ch4_anomaly(s18b)
+	s18b.choose(0, 4)   # B 矿井说——除了解释选择外全部与 A 线相同
+	s18b.choose(1, 0)
+	s18b.choose(2, 2)
+	s18b.choose(3, 0)
+	s18b.submit_chapter()
+	_check(s18b.chapter_idx == 4, "用例18c B 线过第 4 章（双基调达标）")
+	for k in 5:
+		s18b.choose(k, 0)
+	s18b.submit_chapter()
+	_check(s18b.state == "final", "用例18d B 线过审出版")
+	var endA: String = s18a.state_text()
+	var endB: String = s18b.state_text()
+	_check(endA.contains("登船闸") and not endA.contains("停工真相"),
+		"用例18e A 线结局含飞船说 secret 段（登船闸…第一批登船），无矿井说段")
+	_check(endB.contains("停工真相") and not endB.contains("登船闸"),
+		"用例18f B 线结局含矿井说 secret 段（防爆隔离门…封存…停工真相），无飞船说段")
+	_check(endA != endB, "用例18g 同一 anomaly 的两种合法解释：第 5 章结局文本完全不同")
+
+	# --- 用例19 架构遥测（v3）：数值正确性 + 结算面板摘要 + 未圆回场景 ---
+	# （19a/19b 依附 s18a 实例，须在其释放前断言）
+	var tA: Dictionary = s18a.telemetry
+	_check(int(tA.anomaly_created) == 1 and int(tA.anomaly_resolved) == 1
+		and str(tA.resolution_type) == "colony_ship" and int(tA.chapters_to_resolution) == 1
+		and int(tA.unresolved_at_publish) == 0,
+		"用例19a 遥测（已出版 A 线）：created/resolved=1/1、type=colony_ship、距离 1、未圆回 0")
+	var eb: String = str(s18a.end_body.text)
+	_check(eb.contains("anomaly_created=1") and eb.contains("anomaly_resolved=1")
+		and eb.contains("resolution_type=colony_ship") and eb.contains("chapters_to_resolution=1")
+		and eb.contains("unresolved_at_publish=0"),
+		"用例19b 结算面板含遥测摘要一行（五字段全量上屏）")
+	await _drop(s18a)
+	await _drop(s18b)
+
+	var s19: Control = await _new_scene()
+	_reach_ch4_anomaly(s19)
+	s19.choose(0, 0)   # 匿名卷宗——不走任何解释，anomaly 保持未圆回
+	s19.choose(1, 0)
+	s19.choose(2, 2)
+	s19.choose(3, 0)
+	s19.submit_chapter()
+	_check(s19.chapter_idx == 4, "用例19c 未圆回线照常过第 4 章（anomaly 随行）")
+	for k in 5:
+		s19.choose(k, 0)
+	s19.submit_chapter()
+	_check(not s19.chapter_pass and s19.state == "play" and int(s19.contradictions) == 1,
+		"用例19d 未圆回交稿：anomaly 转 1 抗议 → 退稿（无 secret 段、结局维持现状）")
+	var tU: Dictionary = s19.telemetry
+	_check(int(tU.anomaly_created) == 1 and int(tU.anomaly_resolved) == 0
+		and str(tU.resolution_type) == "" and int(tU.chapters_to_resolution) == -1
+		and int(tU.unresolved_at_publish) == 1,
+		"用例19e 遥测（未圆回）：created=1、resolved=0、type=无、距离 -1、unresolved_at_publish=1")
+	var et: String = s19._ending_text()
+	_check(not et.contains("登船闸") and not et.contains("停工真相"),
+		"用例19f 无 secret 旗标：结局不插值任何 secret 段落（维持 v2 模板现状）")
+	await _drop(s19)
 
 	_log("==== 汇总：%d PASS / %d FAIL ====" % [passes, fails])
 	quit(1 if fails > 0 else 0)
