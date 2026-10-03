@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-02-v7",
+    "date":  "2026-10-04T03:46:42+08:00",
+    "author":  "49321",
+    "notes":  "v7: telemetry idle_completion field (win with zero lateral input / flap / mid-play tag switch) + L5 positioned as free-experiment room (subtitle); gameplay untouched"
+}

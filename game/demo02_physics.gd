@@ -98,7 +98,7 @@ const LEVELS := [
 		solution = "开放题：右敞口横漂入舱 / 脆板上方转石头砸入（皮球弹跳路线待玩家发现）",
 	},
 	{
-		name = "第五关 · 高台弹跳",
+		name = "第五关 · 高台弹跳（自由实验场）",
 		walls = [
 			Rect2(-40, -300, 1040, 260),        # 天花板
 			Rect2(-40, 0, 40, 540),             # 左墙
@@ -137,6 +137,9 @@ var tel_resets := 0                    # 失败自动重置次数（手动重置
 var tel_hits: Array[String] = []       # ["脆墙@2.1s 撞612/450", ...]
 var tel_spring := false                # 本局是否借弹簧
 var tel_wins := 0                      # 本关通关次数（评审要求的 run_index）
+var tel_moved := false                 # v7：本局是否有过横移输入
+var tel_flapped := false               # v7：本局是否扑翼成功过
+var tel_mid_switch := false            # v7：开局选词条（<0.5s）之后是否主动切换过
 var route_line := ""                   # 通关后定格的路线结算行
 var flash_label: Label                 # 切换词条的即时报（轻/重/弹）
 var flash_t := 0.0
@@ -214,6 +217,8 @@ func _on_tag(i: int) -> void:
 	if switched:
 		# v5 telemetry + 即时反馈：换词条才记录并闪现（点当前词条不刷屏）
 		tel_switches.append("%s@%.1fs[%s]" % [TAGS[i].name, elapsed, _zone_name()])
+		if elapsed >= 0.5:
+			tel_mid_switch = true   # 开局选词条算配置，之后才算中局主动切换
 		flash_label.text = "%s · %s" % [TAGS[i].name, TAGS[i].kw]
 		flash_label.add_theme_color_override("font_color", TAGS[i].col)
 		flash_label.modulate.a = 1.0
@@ -256,6 +261,9 @@ func _load_level(idx: int) -> void:
 	tel_hits = []
 	tel_resets = 0
 	tel_spring = false
+	tel_moved = false
+	tel_mid_switch = false
+	tel_flapped = false
 	route_line = ""
 	if idx != prev_level:
 		tel_wins = 0   # run_index 语义：同关重玩保留通关次数，换关归零
@@ -358,6 +366,9 @@ func _reset_ball(keep_time := false, count_fail := false) -> void:
 	tel_switches = []
 	tel_hits = []
 	tel_spring = false
+	tel_moved = false
+	tel_mid_switch = false
+	tel_flapped = false
 	if ball != null:
 		ball.queue_free()
 	var lv: Dictionary = LEVELS[level_idx]
@@ -379,6 +390,7 @@ func _apply_input(delta: float, _lv: Dictionary) -> void:
 
 	var dir := Input.get_axis("ui_left", "ui_right")
 	if dir != 0.0:
+		tel_moved = true
 		var vx: float = ball.linear_velocity.x + dir * t.air_a * delta
 		if dir > 0.0:
 			vx = minf(vx, t.air_vmax)
@@ -397,6 +409,7 @@ func _try_jump() -> void:
 		return
 	ball.linear_velocity.y = minf(ball.linear_velocity.y, t.flap)
 	flap_used = true
+	tel_flapped = true
 
 
 func _next_level() -> void:
@@ -440,10 +453,12 @@ func _physics_process(delta: float) -> void:
 	if (Rect2(lv.goal) as Rect2).has_point(ball.position):
 		goal_reached = true
 		tel_wins += 1
+		# v7 telemetry：idle_completion（评审 v6 建议#1）——通关前无横移/扑翼/中局主动切换 = 零操作涌现通关
+		var idle := (not tel_moved) and (not tel_flapped) and (not tel_mid_switch)
 		# v5 telemetry：路线结算行（切换时机+zone/弹簧/失败重置/run 次数），供真人试玩记录用
 		var sw := "无切换" if tel_switches.is_empty() else "→".join(tel_switches)
-		route_line = "路线#%d: %s%s｜重置%d" % [tel_wins, sw, "｜借弹簧" if tel_spring else "", tel_resets]
-		print("TEL|L%d|run%d|%.1fs|%s|%s" % [level_idx + 1, tel_wins, elapsed, sw, route_line])
+		route_line = "路线#%d: %s%s｜重置%d%s" % [tel_wins, sw, "｜借弹簧" if tel_spring else "", tel_resets, "｜idle_completion" if idle else ""]
+		print("TEL|L%d|run%d|%.1fs|idle=%s|%s|%s" % [level_idx + 1, tel_wins, elapsed, str(idle), sw, route_line])
 		if level_idx + 1 < LEVELS.size():
 			msg_label.text = "✔ 通关！用时 %d 秒 —— 点右上「下一关」继续挑战。" % int(elapsed)
 		else:
