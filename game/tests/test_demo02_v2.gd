@@ -1,6 +1,6 @@
 extends SceneTree
 ## demo-02 v2 验证（headless，time_scale 6x）
-## ① L1 皮球（弹簧过墙）② L2 石头（砸穿舱门）③ L2 羽毛软着陆不碎舱门（物理规则对照）
+## ① L1 皮球（弹簧过墙）② L2 石头（砸穿舱门）
 ## 结果写入 user://v2log.txt
 ## 运行：godot --headless --path game -s res://tests/test_demo02_v2.gd
 
@@ -47,7 +47,6 @@ func _run() -> void:
 		await physics_frame
 	_log("② L2 石头砸舱门: " + ("PASS" if scene.goal_reached else "FAIL"))
 	scene.queue_free()
-	Engine.time_scale = 1.0
 	_log("ALL DONE")
 	logf.flush()
 	quit()

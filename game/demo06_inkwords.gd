@@ -53,6 +53,24 @@ const LEVELS := [
 		goal = Rect2(810, 240, 130, 70),          # 高台顶上
 		ink = 140,
 	},
+	{
+		name = "第三关 · 断层验证（无属性锁）",
+		walls = [
+			Rect2(-40, -200, 1040, 200), Rect2(-40, 0, 40, 540), Rect2(960, 0, 40, 540),
+			Rect2(0, 400, 340, 140),               # 左台
+			Rect2(760, 400, 240, 140),             # 右台
+			Rect2(340, 520, 420, 40),              # 沟底（掉进来不至于出屏）
+		],
+		spawn = Vector2(70, 330),
+		fence = Rect2(),
+		goal = Rect2(790, 370, 130, 60),          # 右台上
+		ink = 150,
+		objects = [                               # 场景预置普通物体（无词条，可推可贴）
+			{ kind = "plank", size = Vector2(150, 20), pos = Vector2(300, 330) },
+			{ kind = "block", size = Vector2(60, 60), pos = Vector2(220, 330) },
+			{ kind = "ball", size = Vector2(52, 52), pos = Vector2(180, 330) },
+		],
+	},
 ]
 
 var level_idx := 0
@@ -163,20 +181,35 @@ func _set_hint(t: String) -> void:
 # ---------------- 关卡 ----------------
 
 func _load_level(idx: int) -> void:
+	var dbg := FileAccess.open("user://loadtrace.txt", FileAccess.WRITE)
+	dbg.store_string("step0\n")
+	dbg.flush()
 	level_idx = idx
 	var lv: Dictionary = LEVELS[idx]
+	dbg.store_string("step1\n")
+	dbg.flush()
 	ink = lv.ink
 	state = "play"
 	elapsed = 0.0
 	for c in get_children():
 		if c is RigidBody2D or c is StaticBody2D or c is CharacterBody2D:
 			c.queue_free()
-	for w in lv.walls:
-		_add_static(w, Color("39415a"))
+	for wi in lv.walls.size():
+		_add_static(lv.walls[wi], Color("39415a"))
+		dbg.store_string("wall" + str(wi) + "\n")
+		dbg.flush()
 	if lv.fence.size.x > 0:
 		_add_fence(lv.fence)
+	if lv.has("objects"):
+		pass # objects 生成暂时禁用（排查 L3 加载冻结）
+	dbg.store_string("pre-spawn\n")
+	dbg.flush()
 	_spawn_player(lv.spawn)
+	dbg.store_string("pre-goal\n")
+	dbg.flush()
 	_add_goal(lv.goal)
+	dbg.store_string("done\n")
+	dbg.flush()
 	_refresh_buttons()
 
 
@@ -221,6 +254,24 @@ func _add_goal(r: Rect2) -> void:
 	set_meta("goal_rect", r)
 
 
+func _add_dynamic(od: Dictionary) -> void:
+	var body := RigidBody2D.new()
+	body.position = od.pos
+	var cs := CollisionShape2D.new()
+	if od.kind == "ball":
+		var sh := CircleShape2D.new()
+		sh.radius = od.size.x / 2.0
+		cs.shape = sh
+	else:
+		var sh2 := RectangleShape2D.new()
+		sh2.size = od.size
+		cs.shape = sh2
+	body.add_child(cs)
+	body.set_meta("size", od.size)
+	body.set_meta("kind", od.kind)
+	add_child(body)
+
+
 func _spawn_player(pos: Vector2) -> void:
 	player = CharacterBody2D.new()
 	player.name = "Player"
@@ -246,6 +297,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if state == "play":
 			_try_place(pos)
+	elif event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_R:
+		player.position = Vector2(70, 330)
+		player.velocity = Vector2.ZERO
 	elif event is InputEventKey:
 		keys[event.keycode] = event.pressed
 
@@ -339,6 +393,16 @@ func _physics_process(delta: float) -> void:
 	player.velocity.y += GRAV * delta if not player.is_on_floor() else 0.0
 	player.move_and_slide()
 	on_floor = player.is_on_floor()
+	# 坠落出界自动复位（防 NaN 卡死物理）
+	if player.position.y > 700:
+		player.position = Vector2(70, 330)
+		player.velocity = Vector2.ZERO
+	# 玩家推动普通物体（统一物理：推力来自行走）
+	for i in player.get_slide_collision_count():
+		var col := player.get_slide_collision(i)
+		var rb = col.get_collider()
+		if rb is RigidBody2D:
+			rb.apply_central_impulse(-col.normal * 6.0)
 	# Float 物体悬浮微动
 	for p in placed:
 		if is_instance_valid(p) and p.get_meta("word", "") == "float" and p.freeze:
