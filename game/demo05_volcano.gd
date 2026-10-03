@@ -27,6 +27,7 @@ const ROUTES := [
 	{name = "北线·翻山", risk = "耗体力大，但远离灰区", need = 12},
 	{name = "东线·沿河", risk = "快，但可能遇泥流改道", need = 14},
 	{name = "南线·密林", risk = "食物多，慢，易迷路", need = 16},
+	{name = "西线·兽道", risk = "兽群踏出的隐蔽古道，稳但绕远", need = 15},
 ]
 ## 灾后应急行动（仅一次）
 const ADJUST_CARDS := [
@@ -51,6 +52,11 @@ const END_STYLES := [
 		"win": "妈妈说，大火之后我们找到了长满果子的新家。我只记得天上一直下着灰，像下雪。",
 		"partial": "那天很冷，大家走得很慢。但妈妈说，我们到家了。",
 		"lose": "那天晚上，我靠着妈妈的背睡着了。梦里没有火山。",
+	}},
+	{name = "石碑铭文", lines = {
+		"win": "铭曰：火山之子，逾山西行，遂启新元。",
+		"partial": "铭曰：行者十二，归者七——骨留旧山，魂启新林。",
+		"lose": "铭曰：灰没其迹，风存其名。",
 	}},
 ]
 
@@ -268,7 +274,7 @@ func _unhandled_input(event: InputEvent) -> void:
 						return
 		elif phase == "decide" and route_chosen == -1:
 			for i in ROUTES.size():
-				if Rect2(60 + i * 290, 300, 270, 120).has_point(pos):
+				if Rect2(16 + i * 236, 300, 222, 120).has_point(pos):
 					_choose_route(i)
 					return
 
@@ -643,7 +649,7 @@ func _draw() -> void:
 		draw_string(FONT, Vector2(60, 285), "选择撤离路线（点击卡片）：", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("ffd54f"))
 		for i in ROUTES.size():
 			var rt: Dictionary = ROUTES[i]
-			var rr := Rect2(60 + i * 290, 300, 270, 120)
+			var rr := Rect2(16 + i * 236, 300, 222, 120)
 			draw_rect(rr, Color("2b3b4d"))
 			draw_rect(rr, Color("4fc3f7"), false, 2)
 			draw_string(FONT, rr.position + Vector2(14, 30), rt.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 17, Color("4fc3f7"))
