@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/3 21:47:57 · 共 50 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/3 22:02:28 · 共 51 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(-218,-185)
@@ -86,6 +86,14 @@ headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch C
 ### [sticker] @(5714,5732)
 
 <p>修改小​说​</p>
+
+### [text] @(4400,5840)
+
+&#x1f195; demo-02 v5 更新&#xff08;2026-10-03 深夜&#xff0c;落实 ChatGPT v4 KEEP 后指令&#xff09;&#xff1a;
+① 轻量 telemetry&#xff1a;记录词条切换时机/失败重置次数/借弹簧/脆墙撞击&#xff0c;通关时结算一行「路线: 石头&#64;6.7s&#xff5c;借弹簧&#xff5c;重置0」&#xff0c;供真人试玩记录实际路线。
+② 物性即时反馈层&#xff08;纯 UI/FX&#xff0c;无新系统&#xff09;&#xff1a;切换瞬间闪现「羽毛·轻 / 石头·重 / 皮球·弹」&#xff1b;撞脆板反馈「撞击 720 ≥ 450」或「还差 N」——帮玩家建立 输入→物理→结果 因果。
+③ L1-L4 玩法/几何零改动&#xff0c;headless 8/8 PASS&#xff08;含 telemetry 断言&#xff09;。
+试玩: https://tonyguan530.github.io/taptap2026/play.html?id&#61;demo-02 &#xff08;itch CDN 故障持续&#xff0c;Pages 为准&#xff09;
 
 ### [text] @(4400,6060)
 

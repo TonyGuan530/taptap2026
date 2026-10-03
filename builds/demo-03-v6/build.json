@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-03-v6",
+    "date":  "2026-10-03T22:02:09+08:00",
+    "author":  "49321",
+    "notes":  "v6 美术管线合规（督导指令）：角色/物件贴图走 ChatGPT 绿幕生图→ffmpeg chromakey 抠绿管线（村民/水塔L1/L2，原图存 reviews/art/），职业色轻染；背景/特效保持程序绘制；零规则改动，四用例 PASS"
+}

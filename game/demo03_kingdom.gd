@@ -14,10 +14,17 @@ extends Node2D
 ## v5（ChatGPT v4 批准的停滞出口）：「风暴之夜」可选实验模式——开始菜单选模式；
 ##   仅酸雨结构不同（15/30/45s±2s 三场短雨、各 4 秒），职业/建筑/价格/modifier/时长全部冻结；
 ##   经典 60 秒局保持原样（22/46s±3s 两场 8 秒雨）。
-## 纯代码实现、无外部资源。
+## v6（督导指令·迭代美术工作流）：角色/物件贴图改走绿幕生图管线——ChatGPT 生图
+##   （#00ff00 背景原图存 reviews/art/src/）→ ffmpeg chromakey 抠绿（reviews/art/keyed/）
+##   → game/assets/demo03/ 透明 PNG；村民按职业色轻染，水塔 L1/L2 贴图化；
+##   背景/特效（星空/火山/岩浆/酸雨/徽标）仍为程序绘制。零平衡/规则改动。
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
+# v6 美术管线：角色/物件贴图走 ChatGPT 绿幕生图 → ffmpeg chromakey 抠绿（reviews/art/），背景/特效仍为程序绘制
+const TEX_VILLAGER: Texture2D = preload("res://assets/demo03/villager.png")
+const TEX_TOWER_L1: Texture2D = preload("res://assets/demo03/tower_l1.png")
+const TEX_TOWER_L2: Texture2D = preload("res://assets/demo03/tower_l2.png")
 
 const GAME_TIME := 60.0
 const BUILD_COST := 20
@@ -441,19 +448,17 @@ func _draw() -> void:
 			draw_string(FONT, r.position + Vector2(14, 34), "空槽位", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("8b94a7"))
 			draw_string(FONT, r.position + Vector2(14, 56), "建造 %d💧" % _build_cost(), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("4fc3f7"))
 		else:
-			var h := 34.0 if t == 1 else 52.0
-			var bw := 26.0 if t == 1 else 34.0
-			var bx := r.position.x + r.size.x / 2 - bw / 2
-			# 水塔：底座 + 塔身 + 水箱
-			draw_rect(Rect2(bx - 6, r.position.y + r.size.y - 14, bw + 12, 12), Color("56789a"))
-			draw_rect(Rect2(bx + bw / 2 - 3, r.position.y + r.size.y - 14 - (h - 22), 6, h - 22), Color("56789a"))
-			draw_rect(Rect2(bx, r.position.y + r.size.y - 14 - h, bw, 24), Color("4fc3f7") if t == 2 else Color("7fb7d9"))
-			draw_rect(Rect2(bx + 4, r.position.y + r.size.y - 14 - h + 4, bw - 8, 8), Color("e1f5fe"))
+			var y0 := r.position.y + r.size.y - 12.0
+			var tsz := 58.0 if t == 1 else 74.0
+			var cx := r.position.x + r.size.x / 2.0
+			# 水塔贴图（绿幕管线素材）
+			var tex: Texture2D = TEX_TOWER_L1 if t == 1 else TEX_TOWER_L2
+			draw_texture_rect(tex, Rect2(cx - tsz / 2.0, y0 - tsz, tsz, tsz), false)
 			if t == 2:
 				draw_string(FONT, r.position + Vector2(8, 20), "II 级", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("ffd54f"))
 			if acid_on and state == "play":
 				# 压制标记：整体蒙暗 + ▼
-				draw_rect(Rect2(bx - 8, r.position.y + r.size.y - 20 - h, bw + 16, h + 18), Color(0.08, 0.04, 0.16, 0.4))
+				draw_rect(Rect2(cx - tsz / 2.0 - 6.0, y0 - tsz - 4.0, tsz + 12.0, tsz + 12.0), Color(0.08, 0.04, 0.16, 0.38))
 				var tcx := r.position.x + r.size.x - 14.0
 				draw_circle(Vector2(tcx, r.position.y + 15), 9.0, Color("4a148c", 0.92))
 				draw_colored_polygon(PackedVector2Array([Vector2(tcx - 4, r.position.y + 11), Vector2(tcx + 4, r.position.y + 11), Vector2(tcx, r.position.y + 19)]), Color("b39ddb"))
@@ -464,20 +469,20 @@ func _draw() -> void:
 					var dy := r.position.y + 10 + fposmod(pulse * 40 + k * 17, 26)
 					draw_circle(Vector2(dx, dy), 2.5, Color(0.4, 0.8, 1.0, 0.8))
 
-	# 村民小人（职业配色水桶 + 左右踱步 + 精英星 + 酸雨强化 ▲）
+	# 村民小人（贴图 + 职业色轻染 + 左右踱步 + 精英星 + 酸雨强化 ▲）
 	for n in npcs:
 		var bob := 3.0 * sin(pulse * 2.0 + n.phase)
 		var px: float = n.x + 2.5 * sin(pulse * 2.4 + n.phase)
 		var py := 356.0 + bob
-		draw_circle(Vector2(px, py - 18), 7, Color("ffcc80"))          # 头
-		draw_rect(Rect2(px - 6, py - 10, 12, 22), Color("90a4ae"))      # 身体
-		draw_rect(Rect2(px - 10, py - 6, 4, 12), Color(n.pcol))         # 职业色水桶
+		# 贴图小人（绿幕管线素材，职业色轻染）
+		var vtint: Color = Color(n.pcol).lerp(Color.WHITE, 0.74)
+		draw_texture_rect(TEX_VILLAGER, Rect2(px - 16.0, py - 44.0, 32.0, 56.0), false, vtint)
 		if n.level >= 1:
-			draw_circle(Vector2(px, py - 28), 3.0, Color("ffd54f"))     # 精英星
+			draw_circle(Vector2(px, py - 50.0), 3.0, Color("ffd54f"))     # 精英星
 		if acid_on and state == "play":
 			# 强化标记：▲ 绿色徽标
-			draw_circle(Vector2(px, py - 36), 8.0, Color("1b5e20", 0.9))
-			draw_colored_polygon(PackedVector2Array([Vector2(px - 4, py - 32), Vector2(px + 4, py - 32), Vector2(px, py - 40)]), Color("a5d6a7"))
+			draw_circle(Vector2(px, py - 58.0), 8.0, Color("1b5e20", 0.9))
+			draw_colored_polygon(PackedVector2Array([Vector2(px - 4, py - 54), Vector2(px + 4, py - 54), Vector2(px, py - 62)]), Color("a5d6a7"))
 		var label := "%s·%s%s" % [n.name, n.prof, "★" if n.level >= 1 else ""]
 		draw_string(FONT, Vector2(px - 38, py + 26), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("c6cddc"))
 
