@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-03-v10",
+    "date":  "2026-10-04T04:44:58+08:00",
+    "author":  "49321",
+    "notes":  "v10 美术管线续推：村民行走双帧动画——ChatGPT 绿幕生图第二帧（同角色迈步姿态）→chromakey→交替渲染；零平衡/规则改动，四用例 PASS"
+}

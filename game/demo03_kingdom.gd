@@ -33,6 +33,7 @@ const TEX_VILLAGER: Texture2D = preload("res://assets/demo03/villager.png")
 const TEX_TOWER_L1: Texture2D = preload("res://assets/demo03/tower_l1.png")
 const TEX_TOWER_L2: Texture2D = preload("res://assets/demo03/tower_l2.png")
 const TEX_HOUSE: Texture2D = preload("res://assets/demo03/house.png")
+const TEX_VILLAGER_WALK: Texture2D = preload("res://assets/demo03/villager_walk.png")
 
 const GAME_TIME := 60.0
 const BUILD_COST := 20
@@ -496,9 +497,12 @@ func _draw() -> void:
 		var bob := 3.0 * sin(pulse * 2.0 + n.phase)
 		var px: float = n.x + 2.5 * sin(pulse * 2.4 + n.phase)
 		var py := 356.0 + bob
-		# 贴图小人（绿幕管线素材，职业色轻染）
+		# 贴图小人（绿幕管线双帧行走动画，职业色轻染）
 		var vtint: Color = Color(n.pcol).lerp(Color.WHITE, 0.74)
-		draw_texture_rect(TEX_VILLAGER, Rect2(px - 16.0, py - 44.0, 32.0, 56.0), false, vtint)
+		var vtex: Texture2D = TEX_VILLAGER
+		if int(pulse * 2.2 + n.phase) % 2 == 1:
+			vtex = TEX_VILLAGER_WALK
+		draw_texture_rect(vtex, Rect2(px - 16.0, py - 44.0, 32.0, 56.0), false, vtint)
 		if n.level >= 1:
 			draw_circle(Vector2(px, py - 50.0), 3.0, Color("ffd54f"))     # 精英星
 		if acid_on and state == "play":
