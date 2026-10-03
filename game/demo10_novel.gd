@@ -4,7 +4,14 @@ extends Control
 ## 候选带隐性标签（基调增减 / 旗标 / 伏笔 / 地点冲突 / 陷阱改稿），替换实时改写隐藏的故事状态；
 ## 后续章节正文与候选按此前状态动态拼装——前几章的编辑决定后面读到的故事。
 ## 状态：三条基调（科幻 / 温情 / 悬疑，-3..+3）+ 旗标集合（身份/地点/关键道具/伏笔…）；
-## 第 3 章起有「矛盾检测」：与既有旗标冲突的改写会引来读者来信抗议并扣对应基调 1 点；
+## v2 实验版三变化（冻结章节数与文本规模，只改机制）：
+## ① 上下文派生词槽——第 2 章道具槽候选固定（钥匙/照片/手稿），效果不写死在候选上，
+##    而是按身份（记者/侦探/宇航员）运行时派生 evidence 旗标与基调；候选 UI 标注派生义，结局模板引用它；
+## ② 矛盾圆回来（UNRESOLVED_ANOMALY）——冲突不再立即抗议扣分，先记入 anomalies（读者皱眉）；
+##    后续带 explain 键的候选可圆回：anomaly 移除、foreshadow_payoff +1、奖对应基调 +1；
+##    第 5 章交稿时未圆回的 anomaly 每个转为 1 抗议（出版门槛语义=v2 的「无未圆回矛盾」）；
+## ③ 盲测模式（默认开，set_blind 可关）——基调只显示 低/中/高 三档 + 一句氛围反馈，
+##    内部数值与目标判定照常，只改显示层。
 ## 第 4 章出现「越改越偏」陷阱候选（+2 高收益，但强设旗标并记一次抗议）；
 ## 每章目标达标可交稿过章，未达则「退稿重改」（可一键回滚到本章开始时的快照）；
 ## 第 5 章结局完全由状态拼装：最高基调选终稿模板 + 旗标插值，达标即「过审出版」。
@@ -14,7 +21,7 @@ const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 
 ## 旗标显示名（未列出的键原样显示）
-const FLAG_NAMES := {role = "身份", place = "地点", prop = "关键道具", case = "伏笔", note = "细节", forced = "强设"}
+const FLAG_NAMES := {role = "身份", place = "地点", prop = "关键道具", case = "伏笔", note = "细节", forced = "强设", evidence = "实证"}
 
 ## 三条基调的绘制定义：键 / 名 / 色
 const TONE_DEFS := [
@@ -44,7 +51,10 @@ const ECHO_OPTIONS := [
 
 ## 五章内容表：goal 判定 + tip 目标文案 + body 正文（{i}=词槽占位）+ slots 词槽定义
 ## 词槽候选 effects：sci/warm/susp=基调增减（会 clamp 到 -3..+3）；flag_X=设置旗标；
-## conflict={flag,value,tone}=与既有旗标冲突则记抗议并扣 tone 1 点；trap=越改越偏陷阱（记抗议）
+## derive={flag,table,tone_by_role}=按当前身份派生旗标值与基调（v2 变化 1）；
+## conflict={flag,value,tone}=与既有旗标冲突则记为待圆回矛盾 anomalies（v2 不再立即扣分）；
+## explain="旗标键"=圆回同键的未决矛盾：伏笔回收 +1 并奖对应基调（v2 变化 2）；
+## trap=越改越偏陷阱（记抗议）
 const CHAPTERS := [
 	{
 		name = "第 1 章 · 开头", goal = {kind = "any"},
@@ -72,7 +82,7 @@ const CHAPTERS := [
 	{
 		name = "第 2 章 · 发展", goal = {kind = "any"},
 		tip = "改完即可交稿——注意呼应槽的候选随前文旗标变化",
-		body = "回到老家后的第一晚，{0}。台灯下，我翻出了一本蒙尘的{1}。窗外人影一闪，我确信——{2}。",
+		body = "回到老家后的第一晚，{0}。台灯下，我翻出了一样蒙尘的{1}。窗外人影一闪，我确信——{2}。",
 		slots = [
 			{original = "我彻夜未眠", options = [
 				{text = "我重读了三年前的案件卷宗", effects = {susp = 1}},
@@ -80,9 +90,9 @@ const CHAPTERS := [
 				{text = "我申请调阅空间站的旧日志", effects = {sci = 1}},
 			]},
 			{original = "旧物", options = [
-				{text = "母亲留下的针线盒", effects = {warm = 1}},
-				{text = "一把黄铜钥匙", effects = {susp = 1}},
-				{text = "一本褪色的航行手册", effects = {sci = 1}},
+				{text = "黄铜钥匙", derive = {flag = "evidence", table = {记者 = "上锁抽屉的钥匙", 侦探 = "储物间暗门的钥匙", 宇航员 = "休眠舱的应急钥匙"}, tone_by_role = {记者 = "warm", 侦探 = "susp", 宇航员 = "sci"}}},
+				{text = "泛黄的旧照片", derive = {flag = "evidence", table = {记者 = "证据", 侦探 = "案件线索", 宇航员 = "地球记忆"}, tone_by_role = {记者 = "warm", 侦探 = "susp", 宇航员 = "sci"}}},
+				{text = "未寄出的手稿", derive = {flag = "evidence", table = {记者 = "被撤稿的报道底稿", 侦探 = "死者最后的手记", 宇航员 = "手写的航行日志"}, tone_by_role = {记者 = "susp", 侦探 = "susp", 宇航员 = "sci"}}},
 			]},
 			{original = "有人在跟着我", dyn = "echo", options = []},
 		],
@@ -111,6 +121,7 @@ const CHAPTERS := [
 				{text = "我推开老屋的门，闻到饭菜的香气", effects = {warm = 1}},
 				{text = "我在档案架后发现第二串脚印", effects = {susp = 1}},
 				{text = "我登上舷梯，穿过气闸舱门", effects = {sci = 1}, conflict = {flag = "place", value = "空间站", tone = "sci"}},
+				{text = "我沿着气闸通道走向控制台", effects = {sci = 1}, conflict = {flag = "place", value = "空间站", tone = "sci"}},
 			]},
 		],
 	},
@@ -123,6 +134,7 @@ const CHAPTERS := [
 				{text = "门缝里被塞进一份匿名卷宗", effects = {susp = 1, flag_case = "匿名卷宗"}},
 				{text = "老屋桌上留着一碗还温着的粥", effects = {warm = 1}},
 				{text = "空间站的应答器突然恢复信号", effects = {sci = 1}},
+				{text = "后山的「气闸」原来属于一艘伪装的殖民飞船", effects = {sci = 1}, explain = "place"},
 			]},
 			{original = "所有线索都指向同一个方向", options = [
 				{text = "所有线索都指向同一个真相", effects = {susp = 1}},
@@ -176,15 +188,20 @@ const CHAPTERS := [
 ]
 
 ## 空的改动记录（回滚用）：delta=实际生效的基调增量；flag_old=旗标旧值（null=原本没有）；
-## contra=本次记下的抗议数；pen_key/pen_delta=冲突惩罚扣掉的基调与实际增量
-const EMPTY_APPLIED := {delta = {}, flag_old = {}, contra = 0, pen_key = "", pen_delta = 0}
+## contra=本次记下的抗议数；pen_key/pen_delta=冲突惩罚扣掉的基调与实际增量（v1 遗留，v2 矛盾不再使用）；
+## anomaly=本次记下的待圆回矛盾；payoff=本次完成的伏笔回收（含还原数据，供反悔）
+const EMPTY_APPLIED := {delta = {}, flag_old = {}, contra = 0, pen_key = "", pen_delta = 0, anomaly = null, payoff = null}
 
 var stats := {sci = 0, warm = 0, susp = 0}
-var flags := {}                # 旗标集合：role / place / prop / case / note / forced…
-var contradictions := 0        # 读者来信抗议次数（矛盾检测 + 陷阱改稿）
+var flags := {}                # 旗标集合：role / place / prop / case / note / forced / evidence…
+var contradictions := 0        # 读者来信抗议次数（陷阱改稿 + 终章结算时未圆回的矛盾）
+var anomalies := []            # v2 待圆回矛盾 [{id, flag, wrote, tone, at_chapter, ch_name}]
+var foreshadow_payoff := 0     # v2 伏笔回收数（矛盾被 explain 候选圆回的次数）
+var anomaly_seq := 0           # anomaly 唯一 id 发放器（撤销后不回收，避免重挂撞号）
+var blind_mode := true         # v2 盲测模式：基调只显示 低/中/高 + 氛围句（set_blind 可关）
 var chapter_idx := 0
 var slots := []                # 当前章词槽 [{original, options, chosen, applied}]
-var snap := {}                 # 本章开始时快照 {stats, flags, contradictions}
+var snap := {}                 # 本章开始时快照 {stats, flags, contradictions, anomalies, payoff}
 var chapter_pass := false
 var state := "play"            # play / final
 var active_slot := -1          # 候选浮层当前指向的词槽
@@ -287,7 +304,7 @@ func _build_ui() -> void:
 	popup_panel = Panel.new()
 	popup_panel.name = "PickPanel"
 	popup_panel.position = Vector2(556, 84)
-	popup_panel.size = Vector2(380, 244)
+	popup_panel.size = Vector2(380, 262)
 	var pp_style := StyleBoxFlat.new()
 	pp_style.bg_color = Color(0.13, 0.12, 0.18, 0.98)
 	pp_style.set_corner_radius_all(10)
@@ -299,7 +316,7 @@ func _build_ui() -> void:
 	popup_box = Control.new()
 	popup_box.name = "PickBox"
 	popup_box.position = Vector2(12, 10)
-	popup_box.size = Vector2(356, 224)
+	popup_box.size = Vector2(356, 242)
 	popup_panel.add_child(popup_box)
 
 	# 章节标题卡（纯视觉，不拦截点击）
@@ -393,7 +410,8 @@ func start_chapter(i: int) -> void:
 			applied = EMPTY_APPLIED.duplicate(true),
 		}
 		slots.append(sl)
-	snap = {stats = stats.duplicate(), flags = flags.duplicate(), contradictions = contradictions}
+	snap = {stats = stats.duplicate(), flags = flags.duplicate(), contradictions = contradictions,
+		anomalies = anomalies.duplicate(true), payoff = foreshadow_payoff}
 	chapter_pass = false
 	_close_popup()
 	_show_card(str(ch.name))
@@ -415,7 +433,7 @@ func choose(slot_idx: int, opt_idx: int) -> void:
 	var opt: Dictionary = opts[opt_idx]
 	slots[slot_idx].chosen = opt_idx
 	var applied := EMPTY_APPLIED.duplicate(true)
-	var fx: Dictionary = opt.effects
+	var fx: Dictionary = opt.get("effects", {})
 	for k in fx:
 		var key: String = str(k)
 		if key == "sci" or key == "warm" or key == "susp":
@@ -427,20 +445,54 @@ func choose(slot_idx: int, opt_idx: int) -> void:
 			var fname: String = key.substr(5)
 			applied.flag_old[fname] = flags.get(fname)   # 没有时为 null，回滚时删除
 			flags[fname] = str(fx[k])
-	# 矛盾检测：改写与既有旗标冲突（如小镇线写出空间站场景）→ 读者抗议 + 扣对应基调
+	# v2 变化 1 上下文派生：同一候选按当前身份派生旗标值与基调（不写死在候选上）
+	var dv = opt.get("derive")
+	if dv != null:
+		var role: String = str(flags.get("role", ""))
+		var dtable: Dictionary = dv.table
+		if dtable.has(role):
+			var dflag: String = str(dv.flag)
+			applied.flag_old[dflag] = flags.get(dflag)
+			flags[dflag] = str(dtable[role])
+			var dtk: String = str((dv.tone_by_role as Dictionary).get(role, ""))
+			if dtk != "":
+				var dold: int = int(stats[dtk])
+				stats[dtk] = clampi(dold + 1, -3, 3)
+				applied.delta[dtk] = int(stats[dtk]) - dold
+	# v2 变化 2 矛盾两段式：冲突先记为待圆回矛盾（读者皱眉），不立即抗议/扣分
 	var conflict = opt.get("conflict")
 	if conflict != null:
 		var cf: Dictionary = conflict
 		var cflag: String = str(cf.flag)
 		if flags.has(cflag) and str(flags[cflag]) != str(cf.value):
-			applied.contra = 1
-			contradictions += 1
-			var pk: String = str(cf.tone)
-			var po: int = int(stats[pk])
-			stats[pk] = clampi(po - 1, -3, 3)
-			applied.pen_key = pk
-			applied.pen_delta = int(stats[pk]) - po
-			_toast("读者来信抗议：故事写岔了（%s -1）" % _tone_name(pk))
+			anomaly_seq += 1
+			var ano := {
+				id = anomaly_seq, flag = cflag, wrote = str(cf.value),
+				tone = str(cf.tone), at_chapter = chapter_idx + 1,
+				ch_name = str(CHAPTERS[chapter_idx].name),
+			}
+			anomalies.append(ano)
+			applied.anomaly = ano
+			_toast("读者皱眉：这里写岔了？（%s=%s 与前文矛盾，暂记一笔）" % [_flag_disp(cflag), str(cf.value)])
+	# v2 变化 2 圆回机会：候选带 explain=旗标键 → 自动圆回同键的未决矛盾（伏笔回收）
+	var ex_key: String = str(opt.get("explain", ""))
+	if ex_key != "":
+		var hit := -1
+		for ai in anomalies.size():
+			if str(anomalies[ai].flag) == ex_key:
+				hit = ai
+				break
+		if hit >= 0:
+			var ano2: Dictionary = anomalies[hit]
+			anomalies.remove_at(hit)
+			foreshadow_payoff += 1
+			var ptk: String = str(ano2.tone)
+			if ptk != "":
+				var pold: int = int(stats[ptk])
+				stats[ptk] = clampi(pold + 1, -3, 3)
+				applied.delta[ptk] = int(stats[ptk]) - pold
+			applied.payoff = {id = int(ano2.id), tone = ptk, restore = ano2.duplicate(true)}
+			_toast("原来这里是伏笔！矛盾圆回来了（伏笔回收 ×%d%s）" % [foreshadow_payoff, _tone_note(ptk)])
 	# 陷阱改稿：越改越偏，高收益但同样引来抗议（终章过审要求抗议为 0）
 	if bool(opt.get("trap", false)):
 		applied.contra += 1
@@ -459,6 +511,13 @@ func submit_chapter() -> void:
 		_toast("还有词槽没改完——把每个高亮词都定下来再交稿")
 		_refresh_ui()
 		return
+	# v2：末章交稿时结算——未圆回的矛盾每个转为 1 抗议，再进出版判定（第 5 章门槛=无未圆回 anomaly）
+	var settle_note := ""
+	if chapter_idx >= CHAPTERS.size() - 1 and not anomalies.is_empty():
+		var n: int = anomalies.size()
+		contradictions += n
+		anomalies.clear()
+		settle_note = "未圆回矛盾 ×%d 转为抗议；" % n
 	if _goal_ok():
 		chapter_pass = true
 		if chapter_idx >= CHAPTERS.size() - 1:
@@ -471,7 +530,7 @@ func submit_chapter() -> void:
 			_toast("交稿通过，进入下一章")
 	else:
 		chapter_pass = false
-		_toast("退稿重改：" + str(CHAPTERS[chapter_idx].tip))
+		_toast("退稿重改：" + settle_note + str(CHAPTERS[chapter_idx].tip))
 	_refresh_ui()
 
 
@@ -483,6 +542,8 @@ func reset_chapter() -> void:
 	stats = {sci = int(ss.sci), warm = int(ss.warm), susp = int(ss.susp)}
 	flags = (snap.flags as Dictionary).duplicate()
 	contradictions = int(snap.contradictions)
+	anomalies = (snap.anomalies as Array).duplicate(true)   # v2：快照含 anomalies，回滚一并还原
+	foreshadow_payoff = int(snap.payoff)
 	for i in slots.size():
 		slots[i].chosen = -1
 		slots[i].applied = EMPTY_APPLIED.duplicate(true)
@@ -499,6 +560,13 @@ func state_text() -> String:
 	if state == "final":
 		t += "\n\n" + _ending_text()
 	return t
+
+
+## v2 变化 3 盲测开关：true=基调显示 低/中/高 三档 + 氛围句（默认）；false=恢复 v1 精确数值显示
+func set_blind(m: bool) -> void:
+	blind_mode = m
+	_refresh_ui()
+	queue_redraw()
 
 
 # ---------------- 状态与规则 ----------------
@@ -533,6 +601,17 @@ func _unapply_slot(i: int) -> void:
 	var pk: String = str(ap.pen_key)
 	if pk != "":
 		stats[pk] = clampi(int(stats[pk]) - int(ap.pen_delta), -3, 3)
+	# v2：撤销本槽记下的待圆回矛盾
+	if ap.anomaly != null:
+		var aid: int = int(ap.anomaly.id)
+		for ai in anomalies.size():
+			if int(anomalies[ai].id) == aid:
+				anomalies.remove_at(ai)
+				break
+	# v2：撤销本槽完成的伏笔回收——矛盾重新挂回、回收数 -1（基调奖励已按 delta 回滚）
+	if ap.payoff != null:
+		foreshadow_payoff = maxi(0, foreshadow_payoff - 1)
+		anomalies.append((ap.payoff.restore as Dictionary).duplicate(true))
 	sl.chosen = -1
 	sl.applied = EMPTY_APPLIED.duplicate(true)
 
@@ -587,6 +666,7 @@ func _ending_text() -> String:
 	var role: String = str(flags.get("role", "旅人"))
 	var place: String = str(flags.get("place", "小镇"))
 	var prop: String = str(flags.get("prop", "旧物"))
+	var evid: String = str(flags.get("evidence", "旧物"))   # v2：派生旗标 evidence 进入结局模板
 	var dom := "sci"
 	if int(stats.warm) > int(stats.sci) and int(stats.warm) >= int(stats.susp):
 		dom = "warm"
@@ -594,11 +674,11 @@ func _ending_text() -> String:
 		dom = "susp"
 	match dom:
 		"sci":
-			return "《回声》终稿：%s带着%s登上离开%s的飞船。舷窗外，星图亮起了最后一段坐标——那是来自过去的问候，也是写给未来的信。" % [role, prop, place]
+			return "《回声》终稿：%s带着%s登上离开%s的飞船。舷窗外，%s映着舱内最后一点灯光——那是来自过去的问候，也是写给未来的信。" % [role, prop, place, evid]
 		"warm":
-			return "《归途》终稿：%s回到%s，把%s放进老屋的抽屉。灶上的汤还温着，灯为晚归的人亮着——原来最好的结局，是回来吃饭。" % [role, place, prop]
+			return "《归途》终稿：%s回到%s，把%s和%s一起收进老屋的抽屉。灶上的汤还温着，灯为晚归的人亮着——原来最好的结局，是回来吃饭。" % [role, place, prop, evid]
 		_:
-			return "《井底的字条》终稿：多年以后，有人在%s的%s旁发现了新的字条，字迹似曾相识，落款只有一行小字：故事才刚刚开始。" % [place, prop]
+			return "《井底的字条》终稿：多年以后，有人在%s的%s旁发现了新的字条，旁边还压着%s，落款只有一行小字：故事才刚刚开始。" % [place, prop, evid]
 
 
 func _tone_name(key: String) -> String:
@@ -606,6 +686,51 @@ func _tone_name(key: String) -> String:
 		if str(t.key) == key:
 			return str(t.label)
 	return key
+
+
+## v2：旗标键的显示名（ FLAG_NAMES 查表）
+func _flag_disp(key: String) -> String:
+	return str(FLAG_NAMES.get(key, key))
+
+
+## v2：圆回 toast 的基调奖励附注
+func _tone_note(tk: String) -> String:
+	if tk == "":
+		return ""
+	return "，%s +1" % _tone_name(tk)
+
+
+## v2 变化 3：基调值 → 盲测三档文字（-3..-1 低 / 0..1 中 / 2..3 高，与目标门槛 ≥2 对齐）
+func _tone_tier(v: int) -> String:
+	if v <= -1:
+		return "低"
+	if v >= 2:
+		return "高"
+	return "中"
+
+
+## v2 变化 3：盲测氛围反馈——按当前最高基调给一句（替代精确数值的氛围读感）
+func _ambience_text() -> String:
+	var sv := int(stats.sci)
+	var wv := int(stats.warm)
+	var pv := int(stats.susp)
+	if sv == 0 and wv == 0 and pv == 0:
+		return "墨迹未干，基调尚平"
+	var dom := "sci"
+	var mv := sv
+	if wv > mv:
+		dom = "warm"
+		mv = wv
+	if pv > mv:
+		dom = "susp"
+		mv = pv
+	match dom:
+		"sci":
+			return "纸页间回响起引擎的低鸣，故事正在离开地面" if mv >= 2 else "笔尖带一点金属的凉意"
+		"warm":
+			return "字里行间都是灶上热汤的香气" if mv >= 2 else "纸上有一点旧日的暖意"
+		_:
+			return "故事逐渐显得冰冷而陌生" if mv >= 2 else "某个影子在句子里一闪而过"
 
 
 # ---------------- UI 刷新 ----------------
@@ -647,6 +772,8 @@ func _refresh_ui() -> void:
 		if int(sl.chosen) >= 0:
 			done += 1
 	var st := "%s · 词槽 %d/%d · 读者抗议 ×%d" % [str(ch.name), done, slots.size(), contradictions]
+	if not anomalies.is_empty():
+		st += " · 待圆回矛盾 ×%d" % anomalies.size()
 	if state == "final":
 		st += " · 已过审出版"
 	status_label.text = st
@@ -654,10 +781,17 @@ func _refresh_ui() -> void:
 	for i in TONE_DEFS.size():
 		var td: Dictionary = TONE_DEFS[i]
 		var v: int = int(stats[td.key])
-		var sign_c := "+" if v >= 0 else ""
-		(tone_labels[i] as Label).text = "%s %s%d" % [str(td.label), sign_c, v]
-		(tone_labels[i] as Label).add_theme_color_override("font_color", td.col)
-	flags_label.text = _flags_text()
+		var lbl: Label = tone_labels[i]
+		if blind_mode:
+			lbl.text = "%s · %s" % [str(td.label), _tone_tier(v)]   # v2 盲测：只给三档文字
+		else:
+			var sign_c := "+" if v >= 0 else ""
+			lbl.text = "%s %s%d" % [str(td.label), sign_c, v]
+		lbl.add_theme_color_override("font_color", td.col)
+	var ftxt := _flags_text()
+	if blind_mode:
+		ftxt = "基调氛围：" + _ambience_text() + "\n" + ftxt   # v2 盲测：氛围句替代精确读数
+	flags_label.text = ftxt
 	var tag := "待交稿"
 	if state == "final":
 		tag = "已出版"
@@ -685,8 +819,11 @@ func _toast(t: String) -> void:
 
 func _show_end() -> void:
 	end_title.text = _ending_text().substr(0, _ending_text().find("：")) + " · 过审出版"
-	end_body.text = "%s\n\n基调：科幻 %+d · 温情 %+d · 悬疑 %+d\n读者抗议 %d 次 · 旗标 %d 条\n—— 前四章的每一次改词，共同拼出了这个结局。" % [
-		_ending_text(), int(stats.sci), int(stats.warm), int(stats.susp), contradictions, flags.size()]
+	var pay_line := ""
+	if foreshadow_payoff > 0:
+		pay_line = "\n伏笔回收 ×%d —— 看似写岔的地方都圆了回来" % foreshadow_payoff
+	end_body.text = "%s\n\n基调：科幻 %+d · 温情 %+d · 悬疑 %+d\n读者抗议 %d 次 · 旗标 %d 条%s\n—— 前四章的每一次改词，共同拼出了这个结局。" % [
+		_ending_text(), int(stats.sci), int(stats.warm), int(stats.susp), contradictions, flags.size(), pay_line]
 	end_panel.visible = true
 
 
@@ -694,6 +831,9 @@ func _restart() -> void:
 	stats = {sci = 0, warm = 0, susp = 0}
 	flags = {}
 	contradictions = 0
+	anomalies = []
+	foreshadow_payoff = 0
+	anomaly_seq = 0
 	chapter_pass = false
 	state = "play"
 	end_panel.visible = false
@@ -726,7 +866,28 @@ func _open_popup(i: int) -> void:
 		var opt: Dictionary = opts[k]
 		var b := Button.new()
 		var mark := "（已选）" if int(sl.chosen) == k else ""
-		b.text = str(opt.text) + mark
+		var btxt := str(opt.text) + mark
+		# v2 变化 1：派生候选标注当前身份下的派生义，让因果可见（如「泛黄的旧照片（记者视角：证据）」）
+		var dv = opt.get("derive")
+		if dv != null:
+			var role: String = str(flags.get("role", ""))
+			var dtable: Dictionary = dv.table
+			if dtable.has(role):
+				btxt += "（%s视角：%s）" % [role, str(dtable[role])]
+		# v2 变化 2：圆回候选标注当前是否有可回收的矛盾
+		var ex_key: String = str(opt.get("explain", ""))
+		if ex_key != "":
+			var pending := false
+			for a in anomalies:
+				if str(a.flag) == ex_key:
+					pending = true
+					break
+			var ex_hint := "暂无可圆回的矛盾"
+			if pending:
+				ex_hint = "可圆回「%s」矛盾" % _flag_disp(ex_key)
+			btxt += "（伏笔回收：%s）" % ex_hint
+		b.text = btxt
+		b.add_theme_font_size_override("font_size", 13)
 		b.position = Vector2(0, 30 + k * 44)
 		b.size = Vector2(356, 38)
 		b.pressed.connect(_on_pick.bind(k))
@@ -766,7 +927,8 @@ func _draw() -> void:
 		draw_rect(track, Color("353148"))
 		var v: int = int(stats[td.key])
 		var cx := x + 75.0
-		if v != 0:
+		# v2 盲测：不画数值条（隐藏精确数值与位置），只留轨道与零点标记
+		if not blind_mode and v != 0:
 			var w := absf(float(v)) * 25.0
 			var fx := cx if v > 0 else cx - w
 			draw_rect(Rect2(fx, track.position.y, w, 10), td.col)
