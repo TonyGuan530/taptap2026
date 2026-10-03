@@ -24,6 +24,7 @@ extends Node2D
 ##   阶段横幅/时间进度条改五段配色；开局更平缓、后期更陡（兼顾 snowball 顾虑）；
 ##   风暴之夜酸雨结构不变（单变量原则）。
 ## v8（美术管线续推）：小屋物件绿幕贴图化（ChatGPT 生图→chromakey→透明 PNG），窗灯闪烁保留为程序特效。
+## v9（持续开发令·氛围渐进）：五阶段可感知化——天空转血红/星星隐去/火山辉光增强/岩浆变深变亮，随阶段连续插值；纯特效零平衡。
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
@@ -399,28 +400,41 @@ func _show_end(win: bool) -> void:
 
 func _draw() -> void:
 	# v4 美术层（纯表现，零规则改动）：屏幕震动 / 渐变星空 / 火山 / 岩浆气泡 / 状态标记 / 闪电
+	# v9 氛围渐进（纯特效）：天空转血红、星星隐去、火山/岩浆随五阶段连续增强——让阶段递进可被感知
 	var so := Vector2(randf_range(-1.0, 1.0) * 5.0 * shake, randf_range(-1.0, 1.0) * 4.0 * shake)
 	draw_set_transform(so, 0.0, Vector2.ONE)
 	var acid_on := _acid_active()
 
-	# 夜空：垂直渐变 + 闪烁星
+	# 五阶段氛围插值（连续，随时间 0→1 加深）
+	var sbounds := [0.0, 12.0, 25.0, 38.0, 50.0, 60.0]
+	var spos := 0.0
+	for sgi in 5:
+		if elapsed >= float(sbounds[sgi + 1]):
+			spos = float(sgi + 1)
+		elif elapsed >= float(sbounds[sgi]):
+			spos = float(sgi) + (elapsed - float(sbounds[sgi])) / (float(sbounds[sgi + 1]) - float(sbounds[sgi]))
+	var at: float = clamp(spos / 5.0, 0.0, 1.0)
+
+	# 夜空：垂直渐变（随阶段转血红）+ 闪烁星（后期隐去）
+	var sky_top := Color("2b1738").lerp(Color("4a1118"), at)
+	var sky_bot := Color("55293b").lerp(Color("701c22"), at)
 	draw_polygon(
 		PackedVector2Array([Vector2(0, 0), Vector2(VIEW.x, 0), Vector2(VIEW.x, 250), Vector2(0, 250)]),
-		PackedColorArray([Color("2b1738"), Color("2b1738"), Color("55293b"), Color("55293b")])
+		PackedColorArray([sky_top, sky_top, sky_bot, sky_bot])
 	)
 	for k in 26:
 		var sx := fposmod(k * 173.7, VIEW.x)
 		var sy := fposmod(k * 97.3, 170.0) + 8.0
-		var tw: float = 0.22 + 0.3 * (0.5 + 0.5 * sin(pulse * 1.7 + k * 1.3))
+		var tw: float = (0.22 + 0.3 * (0.5 + 0.5 * sin(pulse * 1.7 + k * 1.3))) * (1.0 - at * 0.6)
 		draw_circle(Vector2(sx, sy), 1.1 + (k % 3) * 0.4, Color(1, 1, 1, tw))
-	# 远山火山（右侧剪影 + 火口辉光 + 上升火星）
+	# 远山火山（右侧剪影 + 火口辉光随阶段增强 + 上升火星）
 	draw_polygon(
 		PackedVector2Array([Vector2(600, 252), Vector2(828, 104), Vector2(1056, 252)]),
-		PackedColorArray([Color("1c1118"), Color("241522"), Color("1c1118")])
+		PackedColorArray([Color("1c1118"), Color("2c1418").lerp(Color("3a1010"), at), Color("1c1118")])
 	)
-	var crater_glow: float = 0.5 + 0.3 * sin(pulse * 1.3)
-	draw_circle(Vector2(828, 110), 24.0, Color(1.0, 0.4, 0.12, crater_glow * 0.25))
-	draw_circle(Vector2(828, 110), 10.0, Color(1.0, 0.45, 0.15, crater_glow * 0.85))
+	var crater_glow: float = minf(1.0, (0.5 + 0.3 * sin(pulse * 1.3)) * (1.0 + at * 0.5))
+	draw_circle(Vector2(828, 110), 24.0 + at * 6.0, Color(1.0, 0.4, 0.12, crater_glow * 0.25))
+	draw_circle(Vector2(828, 110), 10.0 + at * 3.0, Color(1.0, 0.45, 0.15, crater_glow * 0.85))
 	for k in 5:
 		var ey := fposmod(pulse * 26.0 + k * 23.0, 118.0)
 		draw_circle(Vector2(828.0 + 7.0 * sin(pulse * 2.0 + k * 2.1), 110.0 - ey), 2.0, Color(1.0, 0.55, 0.2, (1.0 - ey / 118.0) * 0.8))
@@ -435,12 +449,12 @@ func _draw() -> void:
 		draw_texture_rect(TEX_HOUSE, Rect2(hx - 14.0, 296.0, 76.0, 64.0), false)
 		draw_circle(Vector2(hx + 35.0, 337.0), 5.0, Color("ffd54f", lamp * 0.55))
 
-	# 岩浆河：辉光随温度增强 + 翻滚上升的气泡
+	# 岩浆河：辉光随温度/阶段增强 + 翻滚上升的气泡
 	var heat_frac: float = clamp(heat / 130.0, 0.0, 1.0)
 	var glow := 0.5 + 0.2 * sin(pulse)
-	draw_rect(Rect2(0, 462, VIEW.x, 78), Color("d84315"))
-	draw_rect(Rect2(0, 462, VIEW.x, 78), Color(1.0, 0.45, 0.1, glow * 0.25 + heat_frac * 0.3))
-	draw_rect(Rect2(0, 478, VIEW.x, 42), Color("ff7043", 0.4 + heat_frac * 0.25))
+	draw_rect(Rect2(0, 462, VIEW.x, 78), Color("d84315").lerp(Color("a31515"), at))
+	draw_rect(Rect2(0, 462, VIEW.x, 78), Color(1.0, 0.45, 0.1, glow * 0.25 + heat_frac * 0.3 + at * 0.12))
+	draw_rect(Rect2(0, 478, VIEW.x, 42), Color("ff7043", 0.4 + heat_frac * 0.25 + at * 0.12))
 	for k in 12:
 		var cyc := fposmod(pulse * 26.0 + k * 37.0, 46.0)
 		var lx := fposmod(k * 89.0 + pulse * 14.0, VIEW.x)
