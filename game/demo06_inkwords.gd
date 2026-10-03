@@ -144,6 +144,7 @@ var ui_labels := {}
 var ui_layer: CanvasLayer = null   # v4：直接持有 UI 层引用——旧 find_child("CanvasLayer")
                                    # 查不到自动名 "@CanvasLayer@2"，致通关面板从未显示（线上实测发现）
 var env_oid_n := 0                 # v5：预置物体实例 ID 计数（contact 链还原用）
+var dino_tex: Texture2D = null     # v8：绿幕管线玩家素材（reviews/art/demo-06/ → game/art/），缺失时回落程序绘制
 
 # ---------------- 盲测 telemetry（本地记录，无后台） ----------------
 var tel_pid := "P01"        # 受试编号（数据面板可改，随记录保留）
@@ -737,14 +738,16 @@ func _draw() -> void:
 		else:
 			draw_rect(Rect2(ob.position - osz / 2.0, osz), Color("b8a888"))
 			draw_rect(Rect2(ob.position - osz / 2.0, osz), Color("111111"), false, 2.0)
-	# 玩家（小恐龙涂鸦）
+	# 玩家（绿幕管线素材：手绘蜡笔小恐龙，reviews/art/demo-06/ 同源；只换视觉呈现，碰撞体不变）
 	if player and is_instance_valid(player):
 		var p := player.position
-		draw_circle(Vector2(p.x, p.y - 14), 10, Color("66bb6a"))
-		draw_circle(Vector2(p.x + 4, p.y - 17), 2.5, Color("1b1b1b"))
-		draw_rect(Rect2(p.x - 9, p.y - 4, 18, 22), Color("43a047"))
-		draw_line(Vector2(p.x - 6, p.y + 18), Vector2(p.x - 6, p.y + 26), Color("2e7d32"), 3)
-		draw_line(Vector2(p.x + 6, p.y + 18), Vector2(p.x + 6, p.y + 26), Color("2e7d32"), 3)
+		if dino_tex == null:
+			dino_tex = load("res://art/demo06_player.png")
+		if dino_tex != null:
+			draw_texture_rect(dino_tex, Rect2(p.x - 28, p.y - 16, 56, 36), false)
+		else:
+			draw_circle(Vector2(p.x, p.y - 14), 10, Color("66bb6a"))
+			draw_rect(Rect2(p.x - 9, p.y - 4, 18, 22), Color("43a047"))
 	# 放置物
 	for b in placed:
 		if not is_instance_valid(b):
