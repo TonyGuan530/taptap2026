@@ -1,38 +1,35 @@
 {
-  "checkedAt": "2026-10-04T03:36:00+08:00",
-  "round": 49,
+  "checkedAt": "2026-10-04T03:46:00+08:00",
+  "round": 50,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP（前台闸门），沿用读数"
   },
   "automations": {
-    "supervisor": { "runCount": 50, "lastDispatch": "03:34", "next": "03:44" },
-    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中；demo-10/11 slots doing 开发中" },
-    "demo-02": { "cron": "5,35 * * * *", "runCount": 14, "evidence": "✅ v6 五关达标+视频重贴；03:35 轮触发中（下项：GPT 复评/Miro 去重）" },
-    "demo-03": { "cron": "10,40 * * * *", "runCount": 15, "evidence": "✅ v7 五阶段达标+评审备案收尾（301998b，盲测基线统一 v7）；03:40 下轮（美术/风暴之夜）" },
-    "demo-04": { "cron": "15,45 * * * *", "runCount": 16, "evidence": "03:15 带令轮 20 分钟进行中（无锁无 Godot=未导出）；⚠️ 03:45 轮仍无产出→连续空转催办" },
+    "supervisor": { "runCount": 51, "lastDispatch": "03:44", "next": "03:54" },
+    "demo-01(流水线)": { "cron": "*/5 * * * *", "evidence": "运转中；demo-10/11 开发中" },
+    "demo-02": { "cron": "5,35 * * * *", "runCount": 15, "evidence": "✅ v6 复评 KEEP 全链闭环（3cb321e：L5 达标/路线B=保留涌现/冻结跑 Batch 01）；v6 禁止清单=L6/新词条/调 bounce——下轮按令转美术绿幕或 Miro 去重" },
+    "demo-03": { "cron": "10,40 * * * *", "runCount": 15, "evidence": "✅ v7 五阶段达标；03:40 轮运行中（美术/风暴之夜）" },
+    "demo-04": { "cron": "15,45 * * * *", "runCount": 16, "evidence": "✅ 排除空转：03:32 改码活动确认（soup.gd mtime）——03:15 带令轮为长轮次；03:45 下轮接力" },
     "demo-05": { "cron": "20,50 * * * *", "runCount": 17, "evidence": "03:20 带令轮运行中（灾害链 ≥5 阶段）" },
-    "demo-06": { "cron": "25,55 * * * *", "runCount": 17, "evidence": "✅ 合规核验报告（8c4c193）：5 关达成+视频五关版+miro-post 补跑确认" }
+    "demo-06": { "cron": "25,55 * * * *", "runCount": 17, "evidence": "✅ 五关+合规报告；03:55 下轮（美术绿幕）" }
   },
   "envSnapshot": {
     "health": "ok builds=47",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "60 条/31 贴纸持平，无新增未认领",
+    "miro": "63 条/32 贴纸：+1 为 demo-04 重贴重复（@(4400,10560) 累计 3 张）；无新增未认领想法",
     "feedback": "db.json 零反馈",
-    "git": "同步（HEAD 6bd948b）",
+    "git": "同步（HEAD bde55aa）",
     "itch": "占位第 3 天（Pages 兜底全在线）"
   },
   "fiveHourPlan": {
-    "done": "demo-06 ✅5关、demo-03 ✅5阶段、demo-02 ✅5关",
-    "running": "demo-04（L4/L5）、demo-05（灾害链）、demo-02（复评/去重）、demo-06（美术绿幕）",
+    "done": "demo-02 ✅5关+复评KEEP、demo-03 ✅5阶段+备案、demo-06 ✅5关+合规报告",
+    "running": "demo-04（L4/L5 改码中）、demo-05（灾害链）、demo-03（美术轮）",
     "pipeline": "demo-10/11 开发中；demo-08 补3关、demo-09 补1赛道在队"
   },
-  "watch": [
-    "demo-04：03:15 带令轮已 20 分钟无提交——03:45 巡查仍无产出→按持续开发令催办"
-  ],
   "pending": [
-    "【催办·demo-02】Miro 板面「运行画面」贴纸重复去重（下轮 miro-post-shots 时处理）",
+    "【催办·Miro 去重】demo-04 ×3 张、demo-02 ×2 张重复「运行画面」贴纸——各 demo 下轮 miro-post-shots 去重，建议工具改幂等更新",
     "【WATCH】itch 占位第 3 天（Pages 兜底）",
     "【WATCH】demo-08 pck 14.9MB 过滤；demo-08 补3关、demo-09 补1赛道",
     "【需用户决策】真人试玩/盲测排期+Batch 01 人选；itch A/B"
