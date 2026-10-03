@@ -48,7 +48,8 @@
       "v8Note": "V8 已落地（cave tax 2/2：监督者 3/3 实测 all_cave 0% 存活违反 Gate1 意图故取 2/2 并声明偏差；抢运洒落 15%）+ tile-cap 撤销（v7）+ 确定性直呼驱动 harness。V8 数据：all_cave 100% 活/74 分垫底（安全地板达成）、relocate 复活（灭亡→惨胜）、intel 46.7%win/100%雨存活/63.4、策略前沿成形；存活率口径下待监督者对「cave 74 仍最高分」做终裁",
       "finalRuling": "reviews/chatgpt-demo05-final-ruling-full.md",
       "status": "数值冻结（V8）→ 等真人 5 局 Gate",
-      "humanGate": "四指标：①策略发现≥3 ②学习链≥2 ③洞穴收敛判死线（理解后连3局≥2局全洞穴=behavioral dominance） ④应急理解（≥1次主动改写计划）；不加安全余量UI"
+      "humanGate": "四指标：①策略发现≥3 ②学习链≥2 ③洞穴收敛判死线（理解后连3局≥2局全洞穴=behavioral dominance） ④应急理解（≥1次主动改写计划）；不加安全余量UI",
+      "v9Note": "v9 内容层发布（五幕灾难链：余震/兽群/第二预言寒夜）；V9 240 局：Gate A/B PASS、C intel 双料第一（100% 存活+63.4）→ 下轮按预批准削高地双收益（拟取消路线-1）后复测"
     },
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
