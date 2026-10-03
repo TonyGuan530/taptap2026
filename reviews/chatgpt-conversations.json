@@ -47,10 +47,11 @@
       "v6Note": "V6 A' 已落地（余量计分+行军真消耗+结算顺序修正，4用例4/4 PASS，惨胜/灭亡/富余三态分明）；dominance harness 有 deposit 间歇不执行的 bug（3/4 局 invested=0），240 局大样本验证受阻待修；itch CDN 故障第 2 天，Pages 主可达",
       "v8Note": "V8 已落地（cave tax 2/2：监督者 3/3 实测 all_cave 0% 存活违反 Gate1 意图故取 2/2 并声明偏差；抢运洒落 15%）+ tile-cap 撤销（v7）+ 确定性直呼驱动 harness。V8 数据：all_cave 100% 活/74 分垫底（安全地板达成）、relocate 复活（灭亡→惨胜）、intel 46.7%win/100%雨存活/63.4、策略前沿成形；存活率口径下待监督者对「cave 74 仍最高分」做终裁",
       "finalRuling": "reviews/chatgpt-demo05-final-ruling-full.md",
-      "status": "数值冻结（V8）→ 等真人 5 局 Gate",
+      "status": "数值迭代正式终止（认可 A）→ 等真人 5 局 Gate（行为学五指标+第6局意向问题）",
       "humanGate": "四指标：①策略发现≥3 ②学习链≥2 ③洞穴收敛判死线（理解后连3局≥2局全洞穴=behavioral dominance） ④应急理解（≥1次主动改写计划）；不加安全余量UI",
       "v9Note": "v9 内容层发布（五幕灾难链：余震/兽群/第二预言寒夜）；V9 240 局：Gate A/B PASS、C intel 双料第一（100% 存活+63.4）→ 下轮按预批准削高地双收益（拟取消路线-1）后复测",
-      "v10Note": "v10：intel 削双收益（移除高地路线-1）+ 恐龙立绘部署；240 局：all_cave 100%活/49 垫底（安全地板达成）、highland 46.7%win/61.5 领先、intel 23.3%/56、relocate 100%惨胜复活维持；三 Gate 字面 C FAIL（highland 双料）→ 数据已交监督者裁决：接受前沿进真人 Gate 或授权 highland 微调"
+      "v10Note": "v10：intel 削双收益（移除高地路线-1）+ 恐龙立绘部署；240 局：all_cave 100%活/49 垫底（安全地板达成）、highland 46.7%win/61.5 领先、intel 23.3%/56、relocate 100%惨胜复活维持；三 Gate 字面 C FAIL（highland 双料）→ 数据已交监督者裁决：接受前沿进真人 Gate 或授权 highland 微调",
+      "v10Ruling": "reviews/chatgpt-demo05-v10-frontier-full.md"
     },
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
