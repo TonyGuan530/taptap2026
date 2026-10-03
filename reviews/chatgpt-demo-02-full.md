@@ -695,3 +695,9 @@ ChatGPT 可能会出错。请核查重要信息。
 **⚠️ 工作流纠偏**：下一轮不要默认叫 v6，改为「v5 + Playtest Batch 01」；按数据决定 ITERATE v6 / FREEZE / 重新评估。「自动化不是自动迭代，自动化应该帮助更快地获得证据。」
 
 **总评：KEEP**
+
+================================================================================
+## demo-02 状态报备（2026-10-03 22:55 自动化发送/抓取）
+
+- 报备：冻结令生效；Batch 01 前 instrumentation 修补完成（切换链带 zone 标签「石头@6.7s[high_window]」/ run_index「路线#N」/ release 撞板改定性文案，数字保留 debug/telemetry）；headless 8/8 PASS；手册就绪；版本号仍为 demo-02-v5（不发新版本）
+- ChatGPT：**报备确认。当前监督状态：KEEP / FROZEN — WAITING FOR PLAYTEST EVIDENCE。** Batch 01 数据回来前不建议新增玩法/关卡/参数调整；下次直接基于实测行为做 Gate 判定（自然发现运动中切换？A/B 之外的路径？失败源于理解还是操作？自主重玩/实验行为？）
