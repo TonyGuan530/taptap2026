@@ -128,6 +128,10 @@ var level_label: Label
 var dna_label: Label
 var shard_label: Label
 var win_btn: Button
+var lab_btn: Button
+var mode := "campaign"           # campaign / lab（实验房：自由融合测试）
+var lab_events := []             # 遥测：融合顺序/组合发现/跳跃足迹
+var lab_fuse_n := 0
 
 
 func _ready() -> void:
@@ -180,6 +184,15 @@ func _ready() -> void:
 	win_btn.add_theme_font_size_override("font_size", 16)
 	win_btn.pressed.connect(_advance)
 	ui.add_child(win_btn)
+	lab_btn = Button.new()
+	lab_btn.text = "实验房：自由融合测试"
+	lab_btn.position = Vector2(VIEW.x / 2 - 90, 386)
+	lab_btn.size = Vector2(180, 40)
+	lab_btn.visible = false
+	lab_btn.add_theme_font_override("font", FONT)
+	lab_btn.add_theme_font_size_override("font_size", 14)
+	lab_btn.pressed.connect(_enter_lab)
+	ui.add_child(lab_btn)
 	_load_level(0)
 
 
@@ -211,6 +224,7 @@ func _load_level(i: int) -> void:
 	level_label.text = "第 %d/%d 关 · %s" % [i + 1, LEVELS.size(), L.name]
 	_update_shard_label()
 	win_btn.visible = false
+	lab_btn.visible = false
 
 
 func _update_shard_label() -> void:
@@ -270,11 +284,79 @@ func _advance() -> void:
 		_load_level(level_idx + 1)
 
 
+## —— 实验房（GPT P2）：无目标沙盒，自由融合顺序 + 遥测，供真人盲测 ——
+func _enter_lab() -> void:
+	mode = "lab"
+	blocks = [[-200, 470, 1600, 70]]
+	aliens = [
+		{id = "highjump", name = "蹦蹦兽", col = Color("ab47bc"), x = 300.0, dna = "弹簧腿 DNA", tip = "普通跳变高跳"},
+		{id = "double", name = "双翼虫", col = Color("4fc3f7"), x = 480.0, dna = "振翅 DNA", tip = "空中可再跳一次"},
+		{id = "glow", name = "灯灯菌", col = Color("ffd54f"), x = 660.0, dna = "荧光 DNA", tip = "身体发光，照亮黑暗"},
+	]
+	pits = []
+	dark = Vector2.ZERO
+	goal_x = 99999.0
+	shards = []
+	shard_got = []
+	px = 120.0
+	py = GROUND_Y - 30.0
+	vy = 0.0
+	jumps_used = 0
+	dna = {}
+	combos_found = {}
+	born_dark = false
+	state = "play"
+	elapsed = 0.0
+	level_shards = 0
+	lab_events = [{"t": 0.0, "ev": "enter"}]
+	lab_fuse_n = 0
+	toast = "实验房：自由融合，随便试（R 重置 · B 返回战役）"
+	toast_age = 0.0
+	dna_label.text = _dna_label_text()
+	level_label.text = "实验房 · 自由融合测试"
+	_update_shard_label()
+	win_btn.visible = false
+	lab_btn.visible = false
+
+func _reset_lab() -> void:
+	_save_lab_log()
+	_enter_lab()
+
+func _exit_lab() -> void:
+	_save_lab_log()
+	mode = "campaign"
+	total_shards = 0
+	total_time = 0.0
+	ratings = []
+	combos_found = {}
+	_load_level(0)
+
+func _save_lab_log() -> void:
+	if mode != "lab" or lab_events.is_empty():
+		return
+	lab_events.append({"t": snappedf(elapsed, 0.1), "ev": "exit"})
+	var arr := []
+	var f := FileAccess.open("user://demo04_lab_log.json", FileAccess.READ)
+	if f:
+		var parsed = JSON.parse(f.get_as_text())
+		if parsed.error == OK and parsed.result is Array:
+			arr = parsed.result
+		f.close()
+	arr.append(lab_events)
+	var w := FileAccess.open("user://demo04_lab_log.json", FileAccess.WRITE)
+	if w:
+		w.store_string(JSON.stringify(arr))
+		w.close()
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		keys[event.keycode] = true
 		if event.keycode == KEY_E:
 			_try_fuse()
+		elif mode == "lab" and event.keycode == KEY_R:
+			_reset_lab()
+		elif mode == "lab" and event.keycode == KEY_B:
+			_exit_lab()
 	elif event is InputEventKey and not event.pressed:
 		keys[event.keycode] = false
 
@@ -285,10 +367,17 @@ func _try_fuse() -> void:
 			dna[a.id] = true
 			toast = "🧬 融合了 %s 的「%s」：%s" % [a.name, a.dna, a.tip]
 			toast_age = 0.0
+			var before := combos_found.keys()
 			var discovery := _check_combo_discovery()
 			if discovery != "":
 				toast = discovery   # 组合发现覆盖融合提示（更值得玩家注意）
 			dna_label.text = _dna_label_text()
+			if mode == "lab":
+				lab_fuse_n += 1
+				lab_events.append({"t": snappedf(elapsed, 0.1), "ev": "fuse", "id": a.id, "order": lab_fuse_n})
+				for k in combos_found.keys():
+					if not before.has(k):
+						lab_events.append({"t": snappedf(elapsed, 0.1), "ev": "combo", "id": k})
 
 
 func _physics_process(delta: float) -> void:
@@ -316,6 +405,8 @@ func _physics_process(delta: float) -> void:
 		vy = -JUMP_V * (1.45 if dna.has("highjump") else 1.0)
 		on_floor = false
 		jumps_used = 1
+		if mode == "lab" and lab_events.size() < 500:
+			lab_events.append({"t": snappedf(elapsed, 0.1), "ev": "jump", "px": snappedf(px, 1.0)})
 	elif jump_pressed and not on_floor and dna.has("double") and jumps_used < 2:
 		var m := 0.95
 		if dna.has("highjump"):
@@ -378,14 +469,15 @@ func _physics_process(delta: float) -> void:
 			toast_age = 0.0
 			_update_shard_label()
 
-	# 到达逃生舱
-	if px >= goal_x + 40.0 and py <= GROUND_Y + 10.0:
+	# 到达逃生舱（仅战役模式；实验房无目标）
+	if mode == "campaign" and px >= goal_x + 40.0 and py <= GROUND_Y + 10.0:
 		state = "win"
 		total_shards += level_shards
 		total_time += elapsed
 		ratings.append(_rating())
 		win_btn.text = "下一关 →" if level_idx < LEVELS.size() - 1 else "再跑一次"
 		win_btn.visible = true
+		lab_btn.visible = level_idx >= LEVELS.size() - 1
 
 	# 相机跟随
 	cam_x = clamp(px - VIEW.x / 2.0, 0.0, goal_x + 300.0 - VIEW.x)
@@ -471,6 +563,10 @@ func _draw() -> void:
 	draw_rect(Rect2(pl2.x - 8, pl2.y - 4, 16, 19), Color("7986cb"))
 	if born_dark:
 		draw_circle(Vector2(pl2.x, pl2.y - 12), 5, Color(1.0, 0.95, 0.6, 0.9))
+	# 实验房横幅与遥测计数
+	if mode == "lab":
+		draw_string(FONT, Vector2(16, 132), "实验房：没有通关目标，融合顺序由你决定（R 重置 · B 返回战役）", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("7ee787"))
+		draw_string(FONT, Vector2(16, 154), "遥测：融合 %d 次 · 组合发现 %d · 事件 %d 条（退出时写入 user://demo04_lab_log.json）" % [lab_fuse_n, combos_found.size(), lab_events.size()], HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("8b94a7"))
 	# 开场目标提示
 	if state == "play" and elapsed < 5.0:
 		draw_string(FONT, Vector2(16, 110), "目标：一路向右，抵达逃生舱。每种地形都需要对应的 DNA 能力。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ffcc80"))
@@ -496,7 +592,7 @@ func _draw() -> void:
 				shards_max += L.shards.size()
 			draw_string(FONT, Vector2(210, 228), "总碎片 %d/%d · 总用时 %d 秒" % [total_shards, shards_max, int(total_time)], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4"))
 			draw_string(FONT, Vector2(210, 256), rt, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("7ee787"))
-			draw_string(FONT, Vector2(210, 296), "异星伙伴送你到最后一程。刷新页面可再跑一次。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("8b94a7"))
+			draw_string(FONT, Vector2(210, 296), "异星伙伴送你到最后一程。下方可进实验房自由融合测试。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("8b94a7"))
 			draw_string(FONT, Vector2(210, 322), "评级规则：S=3 碎片且 50 秒内 · A=90 秒内 · B=完成", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("8b94a7"))
 		else:
 			draw_string(FONT, Vector2(210, 185), "🚀 本关逃脱！", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color("4fc3f7"))

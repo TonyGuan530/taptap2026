@@ -11,6 +11,9 @@ extends Node2D
 ##   渐变星空+闪烁星、火山剪影（火口辉光+火星）、岩浆气泡（辉光随温度增强）、
 ##   小屋窗灯、村民踱步、酸雨落地震屏+闪电白幕、压制/强化状态徽标（▼设施/▲村民，
 ##   即 ChatGPT 条件性修改#2 的视觉层）、预警药丸横幅、三阶段时间进度条。
+## v5（ChatGPT v4 批准的停滞出口）：「风暴之夜」可选实验模式——开始菜单选模式；
+##   仅酸雨结构不同（15/30/45s±2s 三场短雨、各 4 秒），职业/建筑/价格/modifier/时长全部冻结；
+##   经典 60 秒局保持原样（22/46s±3s 两场 8 秒雨）。
 ## 纯代码实现、无外部资源。
 
 const VIEW := Vector2(960, 540)
@@ -42,6 +45,11 @@ const ACID_WARN := 3.0
 const ACID_TOWER_MULT := 0.6   # 酸雨期间设施降温效率
 const ACID_NPC_MULT := 1.5     # 酸雨期间村民降温效率
 
+## 「风暴之夜」可选模式（ChatGPT v4 批准的单变量实验：仅酸雨更频繁/更短，其余规则冻结）
+const STORM_TIMES := [15.0, 30.0, 45.0]
+const STORM_JITTER := 2.0
+const STORM_DUR := 4.0
+
 ## 村民职业（Miro 小人系统的 demo 裁剪版）
 const PROFS := [
 	{"name": "工程师", "color": "ffd54f", "desc": "建造/升级费用 -5💧"},
@@ -63,10 +71,11 @@ var elapsed := 0.0
 var towers := [0, 0, 0]        # 每槽位等级 0/1/2
 var npcs := []                 # {name, x, phase, prof, pcol, level}
 var npc_next := 0
-var acid_events := []          # {start, announced, warned}
+var acid_events := []          # {start, dur, announced, warned}
 var spend_log := []            # {t, kind: build/upgrade/promote, amount} 消费遥测
+var mode := "classic"          # classic / storm（风暴之夜：仅酸雨结构不同）
 var toasts := []               # {text, x, y, age}
-var state := "play"            # play / win / lose
+var state := "menu"            # menu / play / win / lose
 var pulse := 0.0
 var acid_was_on := false
 var shake := 0.0               # 纯装饰：酸雨落地屏幕震动
@@ -75,14 +84,22 @@ var flash := 0.0               # 纯装饰：闪电白幕
 var overlay: CanvasLayer
 var overlay_title: Label
 var overlay_body: Label
+var start_panel: Panel
 
 
 func _ready() -> void:
 	_build_overlay()
-	_setup_round()
+	_show_menu()
 
 
-func _setup_round() -> void:
+func _show_menu() -> void:
+	state = "menu"
+	start_panel.visible = true
+	overlay_title.get_parent().visible = false
+
+
+func _setup_round(p_mode: String = "classic") -> void:
+	mode = p_mode
 	heat = 40.0
 	water = 0.0
 	elapsed = 0.0
@@ -92,11 +109,25 @@ func _setup_round() -> void:
 	toasts = []
 	spend_log = []
 	acid_was_on = false
-	acid_events = [
-		{"start": ACID_TIMES[0] + randf_range(-ACID_JITTER, ACID_JITTER), "announced": false, "warned": false},
-		{"start": ACID_TIMES[1] + randf_range(-ACID_JITTER, ACID_JITTER), "announced": false, "warned": false},
-	]
+	shake = 0.0
+	flash = 0.0
+	var times: Array = ACID_TIMES
+	var jit: float = ACID_JITTER
+	var dur: float = ACID_DUR
+	if mode == "storm":
+		times = STORM_TIMES
+		jit = STORM_JITTER
+		dur = STORM_DUR
+	acid_events = []
+	for at in times:
+		acid_events.append({
+			"start": float(at) + randf_range(-jit, jit),
+			"dur": dur,
+			"announced": false,
+			"warned": false,
+		})
 	state = "play"
+	start_panel.visible = false
 	if overlay_title:
 		overlay_title.get_parent().visible = false
 
@@ -104,6 +135,40 @@ func _setup_round() -> void:
 func _build_overlay() -> void:
 	overlay = CanvasLayer.new()
 	add_child(overlay)
+	# 开始菜单（选模式）
+	start_panel = Panel.new()
+	start_panel.position = Vector2(230, 140)
+	start_panel.size = Vector2(500, 240)
+	overlay.add_child(start_panel)
+	var title := Label.new()
+	title.text = "岩浆降温的小人国度"
+	title.position = Vector2(104, 26)
+	title.add_theme_font_size_override("font_size", 26)
+	start_panel.add_child(title)
+	var sub := Label.new()
+	sub.text = "温度不断攀升，建造浇水设施、带领村民，撑过 60 秒！"
+	sub.position = Vector2(88, 72)
+	sub.add_theme_font_size_override("font_size", 14)
+	start_panel.add_child(sub)
+	var b_classic := Button.new()
+	b_classic.text = "经典 60 秒"
+	b_classic.position = Vector2(66, 116)
+	b_classic.size = Vector2(176, 46)
+	b_classic.pressed.connect(func(): _setup_round("classic"))
+	start_panel.add_child(b_classic)
+	var b_storm := Button.new()
+	b_storm.text = "风暴之夜（实验）"
+	b_storm.position = Vector2(258, 116)
+	b_storm.size = Vector2(176, 46)
+	b_storm.pressed.connect(func(): _setup_round("storm"))
+	start_panel.add_child(b_storm)
+	var mhint := Label.new()
+	mhint.text = "风暴之夜：酸雨更频繁（15/30/45 秒附近三场短雨），其余规则完全相同"
+	mhint.position = Vector2(58, 184)
+	mhint.add_theme_font_size_override("font_size", 12)
+	start_panel.add_child(mhint)
+	start_panel.visible = false
+	# 结算面板
 	var panel := Panel.new()
 	panel.position = Vector2(230, 170)
 	panel.size = Vector2(500, 200)
@@ -122,9 +187,15 @@ func _build_overlay() -> void:
 	var again := Button.new()
 	again.text = "再守一次"
 	again.position = Vector2(24, 146)
-	again.size = Vector2(160, 38)
-	again.pressed.connect(_setup_round)
+	again.size = Vector2(150, 38)
+	again.pressed.connect(func(): _setup_round(mode))
 	panel.add_child(again)
+	var switch := Button.new()
+	switch.text = "选模式"
+	switch.position = Vector2(190, 146)
+	switch.size = Vector2(120, 38)
+	switch.pressed.connect(_show_menu)
+	panel.add_child(switch)
 	overlay_title.get_parent().visible = false
 
 
@@ -145,13 +216,10 @@ func _upgrade_cost() -> int:
 	return UPGRADE_COST - (5 if _has_prof("工程师") else 0)
 
 
-func _acid_dur() -> float:
-	return ACID_DUR * (0.5 if _has_prof("气象学家") else 1.0)
-
-
 func _acid_active() -> bool:
 	for e in acid_events:
-		if elapsed >= float(e.start) and elapsed < float(e.start) + _acid_dur():
+		var d: float = float(e.dur) * (0.5 if _has_prof("气象学家") else 1.0)
+		if elapsed >= float(e.start) and elapsed < float(e.start) + d:
 			return true
 	return false
 
@@ -436,6 +504,13 @@ func _draw() -> void:
 	if flash > 0.0:
 		draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color(0.85, 0.75, 1.0, flash * 0.28))
 
+	# 模式标签
+	draw_rect(Rect2(16, 36, 118, 22), Color(0.1, 0.05, 0.2, 0.6))
+	if mode == "storm":
+		draw_rect(Rect2(16, 36, 118, 22), Color("ce93d8"), false, 1.0)
+		draw_string(FONT, Vector2(26, 52), "风暴之夜·实验", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("efc3f5"))
+	else:
+		draw_string(FONT, Vector2(26, 52), "经典 60 秒", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("9fb3c8"))
 	# 温度条
 	var bw2 := 360.0
 	var bx2 := (VIEW.x - bw2) / 2

@@ -229,6 +229,65 @@ func _run() -> void:
 	_check("T6f contact_enter 序列带双方实例 ID（还原接触链）", has_contact)
 	_check("T6g 通关自动 session_end(goal) 封口", has_end)
 
+	# ============ T7 L4「翻越高墙」几何（转向阶梯·补充关卡，L3 未动） ============
+	scene._load_level(3)
+	await _wait(0.5)
+	var lv4: Dictionary = scene.LEVELS[3]
+	var wall: Rect2 = lv4.walls[4]
+	var rise4: float = lv4.walls[3].position.y - wall.position.y   # 地面 470 → 墙顶 290
+	_check("T7a 墙体抬升远超跳高（不可直接跳过）", rise4 > jump_h * 2.0, "抬升=%.0f 跳高=%.1f" % [rise4, jump_h])
+	_check("T7b GOAL 在墙右侧地面", lv4.goal.position.x > wall.end.x and lv4.goal.end.y >= lv4.walls[3].position.y)
+	_check("T7c 墨水足够解法A（双 Float 板 80）", int(lv4.ink) >= 80, "ink=%s" % str(lv4.ink))
+	var q1 := Rect2(420 - 65, 401 - 11, 130, 22)   # 板1 顶 390
+	var q2 := Rect2(435 - 65, 356 - 11, 130, 22)   # 板2 顶 345（与板1 抬升 45、对板1 站立头部净空 29px）
+	_check("T7d 板1 可从地面跳上（抬升 ≤ 跳高）", (lv4.walls[3].position.y - q1.position.y) <= jump_h,
+		"抬升=%.0f" % (lv4.walls[3].position.y - q1.position.y))
+	_check("T7e 板2 可从板1 跳上（抬升 ≤ 跳高）且不撞板1 站立头部（净空 ≥ 12px）",
+		(q1.position.y - q2.position.y) <= jump_h and (q2.end.y - (q1.position.y - 52.0)) >= 12.0,
+		"抬升=%.0f 净空=%.0f" % [q1.position.y - q2.position.y, q2.end.y - (q1.position.y - 52.0)])
+	_check("T7f 板2 不与墙体相交", not q2.intersects(wall))
+	_check("T7g 从板2 可跳越墙顶（墙顶低于板2 顶且抬升 ≤ 跳高）",
+		wall.position.y < q2.position.y and (q2.position.y - wall.position.y) <= jump_h,
+		"越墙抬升=%.0f" % (q2.position.y - wall.position.y))
+	var objs4 := get_nodes_in_group("level_objs")
+	_check("T7h 预置物体 3 件（可推可站）", objs4.size() == 3, "实际=%d" % objs4.size())
+
+	# ============ T8 L4 实机通关（解法A·Float 双板阶梯，仅 GOAL 判定） ============
+	scene._on_shape(1)
+	scene._on_word(1)
+	scene._try_place(Vector2(420, 401))
+	scene._try_place(Vector2(435, 356))
+	await _wait(0.3)
+	var won4 := false
+	var jc4 := 0
+	var t4 := Time.get_ticks_msec()
+	while scene.state == "play" and Time.get_ticks_msec() - t4 < 45000:
+		await physics_frame
+		jc4 = maxi(0, jc4 - 1)
+		var px4: float = scene.player.position.x
+		var py4: float = scene.player.position.y
+		if scene.on_floor and jc4 == 0:
+			var want := false
+			if px4 > 262.0 and px4 < 274.0 and py4 > 420.0:
+				want = true        # 地面 → 板1（顶 390，起跳距板缘≥36px 弧线净空）
+			elif px4 > 395.0 and px4 < 425.0 and py4 > 340.0 and py4 < 420.0:
+				scene.keys[KEY_D] = false   # 板1 → 板2（正上方偏右 15px）：松 D 原地跳，落点不变
+				want = true
+			elif px4 > 455.0 and px4 < 485.0 and py4 < 330.0:
+				want = true        # 板2 → 越墙（抬升 55，弧线在墙缘净空 ≥14px）
+			if want:
+				scene.keys[KEY_SPACE] = true
+				jc4 = 25
+			else:
+				scene.keys[KEY_SPACE] = false
+		if scene.on_floor and py4 < 330.0 and px4 > 370.0:
+			scene.keys[KEY_D] = true   # 落上板2 后恢复向右
+	won4 = scene.state == "win"
+	scene.keys[KEY_D] = false
+	scene.keys[KEY_SPACE] = false
+	_check("T8a L4 实机通关（解法A·仅 GOAL 判定，无解法 trigger）", won4,
+		"state=%s player=%s" % [String(scene.state), str(scene.player.position)])
+
 	Engine.time_scale = 1.0
 	_log("统计: PASS=%d FAIL=%d" % [pass_cnt, fail_cnt])
 	_log("ALL DONE")

@@ -15,6 +15,7 @@ func _run() -> void:
 	var scene = load("res://demo03_kingdom.tscn").instantiate()
 	root.add_child(scene)
 	await physics_frame
+	scene._setup_round()  # 从菜单直入经典局
 	var t0 := Time.get_ticks_msec()
 	while scene.state == "play" and scene.elapsed < 70.0 and Time.get_ticks_msec() - t0 < 30000:
 		await physics_frame
@@ -74,5 +75,35 @@ func _run() -> void:
 		await physics_frame
 	var lose_fast: bool = scene.state == "lose" and scene.elapsed < 40.0
 	print("用例2: state=%s elapsed=%.0f → %s" % [scene.state, scene.elapsed, "PASS（摆烂会输，有压迫感）" if lose_fast else "FAIL"])
+	# --- 用例 3：风暴之夜（可选模式：仅酸雨更频 15/30/45s 短雨，其余规则冻结）---
+	scene._setup_round("storm")
+	t0 = Time.get_ticks_msec()
+	while scene.state == "play" and scene.elapsed < 70.0 and Time.get_ticks_msec() - t0 < 30000:
+		await physics_frame
+		var e3: float = scene.elapsed
+		var in_acid3 := false
+		for ev3 in scene.acid_events:
+			var s3: float = float(ev3.start)
+			if e3 >= s3 - 3.0 and e3 < s3 + 8.0:
+				in_acid3 = true
+				break
+		var promoted3 := false
+		if in_acid3 and scene.water >= scene.NPC_UP_COST:
+			for n3 in scene.npcs:
+				if n3.level == 0:
+					scene._try_promote(n3)
+					promoted3 = true
+					break
+		if not promoted3 and e3 > 3.5 and scene.towers[0] == 0 and scene.water >= 20:
+			scene._try_build(0)
+		elif not promoted3 and e3 > 12.0 and scene.towers[1] == 0 and scene.water >= 20:
+			scene._try_build(1)
+		elif not promoted3 and e3 > 24.0 and scene.towers[0] == 1 and scene.water >= 40:
+			scene._try_upgrade(0)
+		elif not promoted3 and e3 > 40.0 and scene.towers[2] == 0 and scene.water >= 20:
+			scene._try_build(2)
+	var win3: bool = scene.state == "win"
+	var acid3: int = scene.acid_events.filter(func(ev): return ev.announced).size()
+	print("用例3 风暴之夜: state=%s acid=%d/3 npcs=%d elapsed=%.0f → %s" % [scene.state, acid3, scene.npcs.size(), scene.elapsed, "PASS" if win3 and acid3 == 3 else "FAIL"])
 	Engine.time_scale = 1.0
 	quit()

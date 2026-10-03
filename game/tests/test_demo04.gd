@@ -158,5 +158,28 @@ func _run() -> void:
 	var pass4: bool = min_a > 180.0 and min_b <= 170.0
 	print("用例4: 单高跳 min_py=%.0f（需>180 不可达）超级弹跳 min_py=%.0f（需≤170 可达）→ %s" % [min_a, min_b, "PASS（捷径=组合可选路线， Mastery 而非 Requirement）" if pass4 else "FAIL"])
 
+	# --- 用例 5：实验房遥测——自由顺序融合（荧光→高跳→振翅）+ 持久化 ---
+	await _spawn()
+	scene._enter_lab()
+	await physics_frame
+	for id in ["glow", "highjump", "double"]:
+		for a in scene.aliens:
+			if a.id == id:
+				scene.px = a.x
+		await physics_frame
+		await _tap(KEY_E)
+	await physics_frame
+	var evs: Array = scene.lab_events
+	var fuses := evs.filter(func(e): return e.ev == "fuse")
+	var combos5 := evs.filter(func(e): return e.ev == "combo")
+	var order_ok: bool = fuses.size() == 3 and fuses[0].id == "glow" and fuses[1].id == "highjump" and fuses[2].id == "double"
+	scene._exit_lab()
+	await physics_frame
+	var lf := FileAccess.open("user://demo04_lab_log.json", FileAccess.READ)
+	var file_ok: bool = lf != null and lf.get_as_text().length() > 20
+	if lf: lf.close()
+	var pass5: bool = order_ok and combos5.size() == 2 and file_ok
+	print("用例5: 遥测 fuse=%d combo=%d 顺序正确=%s 持久化=%s → %s" % [fuses.size(), combos5.size(), order_ok, file_ok, "PASS（实验房自由融合遥测可用）" if pass5 else "FAIL"])
+
 	Engine.time_scale = 1.0
 	quit()

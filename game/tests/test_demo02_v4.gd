@@ -64,6 +64,7 @@ func _run() -> void:
 	await physics_frame
 
 	# ③ L3 组合链（弱化扑翼后回归）
+	_log("-- case 3 start")
 	scene = load("res://demo02_physics.tscn").instantiate()
 	root.add_child(scene)
 	await physics_frame
@@ -89,6 +90,7 @@ func _run() -> void:
 	await physics_frame
 
 	# ④ L4 路线A：弹簧→羽毛→右敞口入舱（不切石头，代码只查 GOAL）
+	_log("-- case 4 start")
 	scene = load("res://demo02_physics.tscn").instantiate()
 	root.add_child(scene)
 	await physics_frame
@@ -96,18 +98,27 @@ func _run() -> void:
 	scene._on_tag(0)
 	await _spring_and_drift(scene)
 	var flaps_a := 0
-	while not scene.goal_reached and flaps_a < 3:
+	var guard := 0
+	while not scene.goal_reached and flaps_a < 3 and is_instance_valid(scene.ball):
+		guard += 1
+		if guard > 60 * 30:
+			_log("-- case 4 GUARD EXIT (pos=%s vel=%s)" % [str(scene.ball.position), str(scene.ball.linear_velocity)])
+			break
+		if guard % 300 == 0:
+			_log("-- case 4 t=%d pos=(%d,%d) vel=(%d,%d) goal=%s spring_ready=%s lvl=%s" % [guard, int(scene.ball.position.x), int(scene.ball.position.y), int(scene.ball.linear_velocity.x), int(scene.ball.linear_velocity.y), str(scene.goal_reached), str(scene.spring_ready), str(scene.level_idx)])
 		if scene.ball.linear_velocity.y > 140.0 and scene.ball.position.x < 700.0:
 			scene._try_jump()
 			flaps_a += 1
 		await physics_frame
+	_log("-- case 4 loop done (goal=%s flaps=%d)" % [str(scene.goal_reached), flaps_a])
 	ok = await _until(func(): return scene.goal_reached, 20000)
 	_log("④ L4 路线A 羽毛漂入右敞口: " + ("PASS" if ok else "FAIL") + " (flaps=%d)" % flaps_a)
 	Input.action_release("ui_right")
 	scene.queue_free()
 	await physics_frame
 
-	# ⑤ L4 路线B：弹簧→羽毛→脆板上方(650..760, y<220)切石头砸穿
+	# ⑤ L4 路线B：弹簧→羽毛→（扑翼抬升）脆板上方(640..740, y<215)切石头砸穿
+	_log("-- case 5 start")
 	scene = load("res://demo02_physics.tscn").instantiate()
 	root.add_child(scene)
 	await physics_frame
@@ -116,16 +127,17 @@ func _run() -> void:
 	await _spring_and_drift(scene)
 	var flaps_b := 0
 	var over_b := false
-	while not scene.goal_reached and flaps_b < 3:
+	while not scene.goal_reached and flaps_b < 3 and is_instance_valid(scene.ball):
 		var px: float = scene.ball.position.x
 		var py: float = scene.ball.position.y
-		if px >= 650.0 and px <= 760.0 and py < 220.0:
+		if px >= 640.0 and px <= 740.0 and py < 215.0:
 			over_b = true
 			break
-		if scene.ball.linear_velocity.y > 140.0 and px < 650.0:
+		if scene.ball.linear_velocity.y > 60.0 and px < 620.0:
 			scene._try_jump()
 			flaps_b += 1
 		await physics_frame
+	_log("-- case 5 loop done (goal=%s over=%s flaps=%d)" % [str(scene.goal_reached), str(over_b), flaps_b])
 	if over_b:
 		Input.action_release("ui_right")
 		scene._on_tag(1)

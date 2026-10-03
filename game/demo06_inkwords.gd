@@ -52,6 +52,13 @@ const WORDS := [
 		tip = "接触即粘住：当垫脚台" },
 ]
 ## 形状：几何 + 墨水价
+## 尺寸：小/中/大（评审建议#2——尺寸影响墨水/质量/碰撞，统一缩放）
+const SIZES := [
+	{ id = "s", name = "小", mult = 0.7, cost_mult = 0.7 },
+	{ id = "m", name = "中", mult = 1.0, cost_mult = 1.0 },
+	{ id = "l", name = "大", mult = 1.4, cost_mult = 1.5 },
+]
+
 const SHAPES := [
 	{ id = "ball", name = "圆球", cost = 30, kind = "ball", size = Vector2(56, 56) },
 	{ id = "plank", name = "长板", cost = 25, kind = "plank", size = Vector2(130, 22) },
@@ -103,12 +110,35 @@ const LEVELS := [
 			{ kind = "block", size = Vector2(60, 60), pos = Vector2(255, 330) },
 		],
 	},
+	{
+		# L4（转向阶梯·补充关卡 2026-10-03）：翻越高墙。墙顶 290、抬升 180，远超跳高 84.5，
+		# 不可直接跳过；无属性锁、无解法 trigger，通关只判"玩家进 GOAL"。已知通路（不作检测）：
+		#   A. 两块 Float 长板阶梯（板1 顶 390 / 板2 顶 320）翻墙——80 墨；
+		#   B. 推环境方块贴墙垫脚 + Float 长板叠在其上——40 墨；
+		#   C. 玩家自创组合（涌现观察点）。
+		name = "第四关 · 翻越高墙",
+		walls = [
+			Rect2(-40, -200, 1040, 200), Rect2(-40, 0, 40, 540), Rect2(960, 0, 40, 540),
+			Rect2(0, 470, 960, 70),                  # 地面
+			Rect2(500, 290, 44, 180),                # 高墙（顶 290，x 500..544）
+		],
+		spawn = Vector2(70, 430),
+		fence = Rect2(),                            # 无易燃物：无"见木就烧"属性锁
+		goal = Rect2(790, 400, 110, 70),          # 墙右侧地面
+		ink = 150,
+		objects = [                               # 预置普通物体（可推可站），两两互不重叠、避开出生点
+			{ kind = "block", size = Vector2(60, 60), pos = Vector2(150, 430) },
+			{ kind = "plank", size = Vector2(140, 20), pos = Vector2(260, 425) },
+			{ kind = "ball", size = Vector2(52, 52), pos = Vector2(360, 425) },
+		],
+	},
 ]
 
 var level_idx := 0
 var ink := 100
 var shape_idx := 0
 var word_idx := 0
+var size_idx := 1   # 默认中
 var placed := []               # 放置的物体节点
 var state := "play"            # play / win
 var elapsed := 0.0
@@ -190,6 +220,16 @@ func _build_ui() -> void:
 		b2.pressed.connect(_on_word.bind(i))
 		b2.name = "WordBtn" + str(i)
 		ui.add_child(b2)
+	# 尺寸按钮（评审建议#2：小/中/大）
+	for i in SIZES.size():
+		var sb := Button.new()
+		sb.text = SIZES[i].name
+		sb.position = Vector2(560 + i * 100, 72)
+		sb.size = Vector2(96, 28)
+		sb.pressed.connect(_on_size.bind(i))
+		sb.name = "SizeBtn" + str(i)
+		ui.add_child(sb)
+
 	# 盲测数据导出入口（右下角小按钮，不进玩法区）
 	var tdb := Button.new()
 	tdb.text = "📦数据"
@@ -203,6 +243,9 @@ func _refresh_buttons() -> void:
 	for i in SHAPES.size():
 		var b = get_tree().root.find_child("ShapeBtn" + str(i), true, false)
 		if b: b.add_theme_color_override("font_color", Color("ffd54f") if i == shape_idx else Color("e8ecf4"))
+	for i in SIZES.size():
+		var sb = get_tree().root.find_child("SizeBtn" + str(i), true, false)
+		if sb: sb.add_theme_color_override("font_color", Color("ffd54f") if i == size_idx else Color("e8ecf4"))
 	for i in WORDS.size():
 		var b2 = get_tree().root.find_child("WordBtn" + str(i), true, false)
 		if b2: b2.add_theme_color_override("font_color", Color("ffd54f") if i == word_idx else Color("e8ecf4"))
@@ -219,6 +262,18 @@ func _on_word(i: int) -> void:
 	_tel("select", {"tag": WORDS[i].id})
 	_refresh_buttons()
 	_set_hint("%s：%s" % [WORDS[i].name, WORDS[i].tip])
+
+
+func _on_size(i: int) -> void:
+	size_idx = i
+	_refresh_buttons()
+	_set_hint("尺寸：%s（墨水 ×%.1f，质量随之变化）" % [SIZES[i].name, SIZES[i].cost_mult])
+
+
+func _refresh_size_buttons() -> void:
+	for i in SIZES.size():
+		var sb = get_tree().root.find_child("SizeBtn" + str(i), true, false)
+		if sb: sb.add_theme_color_override("font_color", Color("ffd54f") if i == size_idx else Color("e8ecf4"))
 
 
 func _set_status(t: String) -> void:
@@ -380,28 +435,30 @@ func _unhandled_input(event: InputEvent) -> void:
 func _try_place(pos: Vector2) -> void:
 	var shape: Dictionary = SHAPES[shape_idx]
 	var word: Dictionary = WORDS[word_idx]
-	var cost: int = shape.cost + word.cost
+	var sz: Dictionary = SIZES[size_idx]
+	var cost: int = int(ceil((shape.cost + word.cost) * sz.cost_mult))
 	if ink < cost:
 		_set_hint("墨水不够（需要 %d，剩 %d）" % [cost, ink])
 		return
 	ink -= cost
+	var eff_size: Vector2 = shape.size * sz.mult
 	var body := RigidBody2D.new()
 	body.position = pos
 	body.name = "Placed_" + word.id + "_" + shape.id + "_" + str(placed.size())
 	var cs := CollisionShape2D.new()
 	if shape.kind == "ball":
 		var sh := CircleShape2D.new()
-		sh.radius = shape.size.x / 2.0
+		sh.radius = eff_size.x / 2.0
 		cs.shape = sh
 	else:
 		var sh2 := RectangleShape2D.new()
-		sh2.size = shape.size
+		sh2.size = eff_size
 		cs.shape = sh2
 	body.add_child(cs)
 	# ---- 统一规则：词条决定物理参数（对任何形状都成立） ----
 	body.gravity_scale = word.g
 	if word.id == "heavy":
-		body.mass = 8.0
+		body.mass = 8.0 * sz.cost_mult
 	if word.id == "float":
 		body.gravity_scale = 0.0
 		body.can_sleep = false
