@@ -50,10 +50,14 @@ func _process(_delta: float) -> void:
 			if n.level == 0:
 				game._try_promote(n)
 				break
-	# 定格剧情：第一场准点、其余不出场（classic=22s，storm=15s）
-	var first_start := 15.0 if MODE == "storm" else 22.0
-	for i in game.acid_events.size():
-		game.acid_events[i].start = first_start if i == 0 else 999.0
+	# 定格剧情：classic 只留第一场 22s；storm 留前两场 15s/30s（31.5s 截图落在第二场），第三场取消
+	if MODE == "classic":
+		for i in game.acid_events.size():
+			game.acid_events[i].start = 22.0 if i == 0 else 999.0
+	else:
+		var storm_starts := [15.0, 30.0, 999.0]
+		for i in game.acid_events.size():
+			game.acid_events[i].start = float(storm_starts[i])
 	# 截图
 	if MODE == "classic":
 		if e >= 21.5 and not shot_saved:

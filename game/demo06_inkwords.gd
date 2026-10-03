@@ -127,9 +127,8 @@ const LEVELS := [
 		goal = Rect2(790, 400, 110, 70),          # 墙右侧地面
 		ink = 150,
 		objects = [                               # 预置普通物体（可推可站），两两互不重叠、避开出生点
-			{ kind = "block", size = Vector2(60, 60), pos = Vector2(150, 430) },
-			{ kind = "plank", size = Vector2(140, 20), pos = Vector2(260, 425) },
-			{ kind = "ball", size = Vector2(52, 52), pos = Vector2(360, 425) },
+			{ kind = "block", size = Vector2(60, 60), pos = Vector2(400, 430) },
+			{ kind = "ball", size = Vector2(52, 52), pos = Vector2(460, 428) },
 		],
 	},
 ]

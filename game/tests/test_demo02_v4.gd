@@ -25,13 +25,17 @@ func _until(cond: Callable, timeout_ms: int) -> bool:
 		await physics_frame
 	return false
 
-func _spring_and_drift(scene_ref) -> void:
+func _spring_and_drift(scene_ref) -> bool:
 	# 弹簧点火 → 上升转下落 → 按住→横漂，掉高度时扑翼（游戏侧限制滞空一次）
 	var fired: bool = await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y <= -400.0, 20000)
 	if not fired:
-		return
-	await _until(func(): return scene.ball.linear_velocity.y > 0.0, 20000)
+		_log("!! spring NOT fired")
+		return false
+	var falling: bool = await _until(func(): return scene.ball.linear_velocity.y > 0.0, 20000)
+	_log("!! drift start: falling=%s pressed_before=%s" % [str(falling), str(Input.is_action_pressed("ui_right"))])
 	Input.action_press("ui_right")
+	_log("!! drift press done: pressed_after=%s" % str(Input.is_action_pressed("ui_right")))
+	return falling
 
 func _init() -> void:
 	_run()
@@ -105,7 +109,7 @@ func _run() -> void:
 			_log("-- case 4 GUARD EXIT (pos=%s vel=%s)" % [str(scene.ball.position), str(scene.ball.linear_velocity)])
 			break
 		if guard % 300 == 0:
-			_log("-- case 4 t=%d pos=(%d,%d) vel=(%d,%d) goal=%s spring_ready=%s lvl=%s" % [guard, int(scene.ball.position.x), int(scene.ball.position.y), int(scene.ball.linear_velocity.x), int(scene.ball.linear_velocity.y), str(scene.goal_reached), str(scene.spring_ready), str(scene.level_idx)])
+			_log("-- case 4 t=%d pos=(%d,%d) vel=(%d,%d) goal=%s input_r=%s axis=%s" % [guard, int(scene.ball.position.x), int(scene.ball.position.y), int(scene.ball.linear_velocity.x), int(scene.ball.linear_velocity.y), str(scene.goal_reached), str(Input.is_action_pressed("ui_right")), str(Input.get_axis("ui_left", "ui_right"))])
 		if scene.ball.linear_velocity.y > 140.0 and scene.ball.position.x < 700.0:
 			scene._try_jump()
 			flaps_a += 1

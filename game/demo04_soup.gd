@@ -338,9 +338,9 @@ func _save_lab_log() -> void:
 	var arr := []
 	var f := FileAccess.open("user://demo04_lab_log.json", FileAccess.READ)
 	if f:
-		var parsed = JSON.parse(f.get_as_text())
-		if parsed.error == OK and parsed.result is Array:
-			arr = parsed.result
+		var j := JSON.new()
+		if j.parse(f.get_as_text()) == OK and j.data is Array:
+			arr = j.data
 		f.close()
 	arr.append(lab_events)
 	var w := FileAccess.open("user://demo04_lab_log.json", FileAccess.WRITE)

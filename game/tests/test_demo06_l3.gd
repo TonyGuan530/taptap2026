@@ -250,7 +250,7 @@ func _run() -> void:
 		wall.position.y < q2.position.y and (q2.position.y - wall.position.y) <= jump_h,
 		"越墙抬升=%.0f" % (q2.position.y - wall.position.y))
 	var objs4 := get_nodes_in_group("level_objs")
-	_check("T7h 预置物体 3 件（可推可站）", objs4.size() == 3, "实际=%d" % objs4.size())
+	_check("T7h 预置物体 2 件（可推可站，规格 2~3）", objs4.size() == 2, "实际=%d" % objs4.size())
 
 	# ============ T8 L4 实机通关（解法A·Float 双板阶梯，仅 GOAL 判定） ============
 	scene._on_shape(1)
