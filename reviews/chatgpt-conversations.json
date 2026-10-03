@@ -18,8 +18,9 @@
     "demo-03": {
       "url": "https://chatgpt.com/c/6ac0e8c8-f34c-83ec-9c30-1cca9503c042",
       "review": "reviews/chatgpt-demo-03-full.md",
-      "verdict": "待首轮评审",
-      "note": "督导于2026-10-03建立并发出背景，后续轮次在此续评"
+      "verdict": "ITERATE",
+      "v2Review": "reviews/chatgpt-demo-03-full.md",
+      "v2Note": "v2 续评 ITERATE：节奏层成立、系统网络开始出现；v3 只做三件事=酸雨双向modifier(设施×0.6/村民×1.5,不加温度)+3秒酸雨预警+三窗口策略迁移遥测；岗位分配暂缓(A PASS再议)；冻结建筑系统/更多职业/第二种天气；盯防snowball(会玩局0°)；v3 Gate=酸雨改变设施vs村民投入则考虑KEEP"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",
