@@ -1,7 +1,8 @@
 extends Control
-## 塞尔达式箱庭谜题（demo-11 v1）
-## 12x7 紧凑箱庭：推箱 / 冻冰 / 焚烧 / 磁石的工具组合解谜，5 个房间每房至少两条解法路线。
+## 塞尔达式箱庭谜题（demo-11 v2）
+## 12x7 紧凑箱庭：推箱 / 冻冰 / 焚烧 / 磁石的工具组合解谜，5 个房间；房间5 为开放实验房（冗余资源、不提示解法）。
 ## 开关 = 压力板：玩家踩住或箱子/铁块压住时导通，离开即断开；全部开关导通时终点门开启。
+## v2 新增系统传播：融冰结算（火把工具 & 火把倒计时共用）——冰上木箱沉成桥、冰上铁块沉底、冰上玩家退回最近地板。
 ## 格子状态机 + 手写移动插值（80ms 滑动），无刚体、无 PhysicsServer、无外部素材。
 
 const VIEW := Vector2(960, 540)
@@ -59,14 +60,14 @@ const ROOMS := [
 			"#.....#..G.#",
 			"############",
 		]},
-	{name = "房间5 · 组合考验", tools = ["ice", "fire", "magnet"], tip = "两个开关要同时压住门才开：木箱压上面、铁块用磁石拉到下面。人踩住也行但一走开就断——所以重物得都用上，还要先想办法过水。",
+	{name = "房间5 · 开放实验房", tools = ["ice", "fire", "magnet"], tip = "目标：让两个开关同时压住，抵达终点门。物件说明：木箱可以推动，推进水里会沉底变成桥面；铁块可以推动，也能被磁石隔空拉近；冰霜杖（F）把面前一格的水冻成可以走的冰面；冰面融化的瞬间，压在上面或踩在上面的事物会失去支撑。用什么组合，由你决定。",
 		map = [
 			"############",
-			"#P..~..S..G#",
 			"#...~......#",
-			"#...~..B...#",
-			"#...~..S..I#",
-			"#.B.~......#",
+			"#...~......#",
+			"#...~...G..#",
+			"#P..~..I.S.#",
+			"#.B.~...BSI#",
 			"############",
 		]},
 ]
@@ -366,8 +367,8 @@ func use_tool(tool: String, dir: String) -> bool:
 			queue_redraw()
 			return true
 		if _tile(tx, ty) == "ice":
-			_set_tile(tx, ty, "water")
 			_toast("火把：冰面融化还原成水")
+			_melt_ice_tile(tx, ty)   # 融化结算：冰上有物体/玩家时触发失去支撑传播，并覆盖上面的通用提示
 			_update_status()
 			queue_redraw()
 			return true
@@ -414,6 +415,76 @@ func _arm_torch_melt(x: int, y: int) -> void:
 			if not o.is_empty() and String(o.type) == "torch":
 				melt_queue.append({x = x, y = y, left = TORCH_MELT_TIME})
 				return
+
+
+## 融化结算：把一格冰还原成水，并结算冰面上事物失去支撑的系统传播。
+## 冰上有木箱 → 木箱沉入水格，该格变成永久桥面（木箱消失）；
+## 冰上有铁块 → 铁块沉入水底被移除，该格还原成不可走的水；
+## 玩家正站在冰上 → 退回相邻最近的可站立格（不惩罚，仅位移）。
+## 火把工具（G）与火把旁倒计时两条融化路径都在此处结算，传播链：冻水→物体上冰→融冰→物体与地形同时变化。
+func _melt_ice_tile(x: int, y: int) -> bool:
+	if _tile(x, y) != "ice":
+		return false
+	var occupant := _solid_at(x, y)
+	if not occupant.is_empty():
+		var ot := String(occupant.type)
+		if ot == "box":
+			objects.erase(occupant)
+			_set_tile(x, y, "bridge")
+			_toast("冰面融化：木箱失去支撑沉了下去，成了一座桥")
+			_update_status()
+			queue_redraw()
+			return true
+		if ot == "iron":
+			objects.erase(occupant)
+			_set_tile(x, y, "water")
+			_toast("冰面融化：铁块失去支撑沉入了水底")
+			_update_status()
+			queue_redraw()
+			return true
+	if int(player.x) == x and int(player.y) == y:
+		var spot := _nearest_standing_spot(x, y)
+		if not spot.is_empty():
+			player = {x = int(spot.x), y = int(spot.y)}
+			slide_t = 1.0
+			pushed_idx = -1
+		_set_tile(x, y, "water")
+		_toast("脚下的冰面融化了，你退回了旁边的地面")
+		_update_status()
+		queue_redraw()
+		return true
+	_set_tile(x, y, "water")
+	return true
+
+
+## 玩家脚下冰面融化时，按距离由近到远（环序：正交优先、同环上下左右）找第一个可站立格。
+func _nearest_standing_spot(x: int, y: int) -> Dictionary:
+	var ortho := [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]
+	var diag := [Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1)]
+	for r in range(1, ROOM_W + ROOM_H):
+		for off_v in ortho:
+			var off: Vector2i = off_v
+			var nx: int = x + off.x * r
+			var ny: int = y + off.y * r
+			if _in_bounds(nx, ny) and _standable(nx, ny):
+				return {x = nx, y = ny}
+		for off_v2 in diag:
+			var off2: Vector2i = off_v2
+			var nx2: int = x + off2.x * r
+			var ny2: int = y + off2.y * r
+			if _in_bounds(nx2, ny2) and _standable(nx2, ny2):
+				return {x = nx2, y = ny2}
+	return {}
+
+
+## 玩家可站立：非墙/水/坑、门已开、且无实体物件占据
+func _standable(x: int, y: int) -> bool:
+	var t := _tile(x, y)
+	if t == "wall" or t == "water" or t == "pit":
+		return false
+	if t == "gate" and not gate_open():
+		return false
+	return _solid_at(x, y).is_empty()
 
 
 func _slide_to(px: int, py: int) -> void:
@@ -491,14 +562,13 @@ func _process(delta: float) -> void:
 	toast_age += delta
 	if slide_t < 1.0:
 		slide_t = minf(1.0, slide_t + delta / SLIDE_TIME)
-	# 火把旁的冰面按倒计时融化还原成水
+	# 火把旁的冰面按倒计时融化，融化走统一结算（含冰上物体/玩家失去支撑的传播）
 	var k := melt_queue.size() - 1
 	while k >= 0:
 		var m: Dictionary = melt_queue[k]
 		m.left = float(m.left) - delta
 		if float(m.left) <= 0.0:
-			if _tile(int(m.x), int(m.y)) == "ice":
-				_set_tile(int(m.x), int(m.y), "water")
+			_melt_ice_tile(int(m.x), int(m.y))
 			melt_queue.remove_at(k)
 		k -= 1
 	_update_status()

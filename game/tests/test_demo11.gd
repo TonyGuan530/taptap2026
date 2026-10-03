@@ -4,6 +4,7 @@ extends SceneTree
 ## 用例4 冰霜杖冻冰 + 火把融冰；用例5 火把烧箱；用例6 磁石隔空拉铁
 ## 用例7 开关与门（箱压/人踩/离开 + 房间5 双开关需同时）
 ## 用例8 房间1 双解；用例9 房间2/4 各双解；用例10 能力门禁；用例11 全流程 5 房 → final + steps 一致
+## v2：房间5 改为开放实验房（水列 x=4，开关 (9,4)/(9,5)，终点门 (8,3)），相关序列与预算按新地图修正
 ## 运行：godot --headless --path game -s res://tests/test_demo11.gd
 
 ## 动作序列常量（right/down/left/up 为 move，ice:/fire:/magnet: 为 use_tool）
@@ -14,9 +15,10 @@ const SEQ_R2B := ["right", "right", "right", "ice:right", "right", "right", "dow
 const SEQ_R3A := ["down", "down", "down", "right", "right", "right", "right", "right", "up", "fire:left", "down", "left", "left", "left", "left", "left", "up", "up", "up", "right", "right", "down", "left", "down", "right", "right", "right", "down", "right", "right", "right", "right"]
 const SEQ_R4A := ["down", "down", "magnet:right", "magnet:right", "magnet:right", "magnet:right", "magnet:right", "magnet:right", "magnet:right", "down", "right", "right", "right", "right", "up", "right", "right", "down", "down", "right", "right"]
 const SEQ_R4B := ["down", "down", "right", "right", "right", "right", "right", "right", "up", "right", "right", "right", "down", "left", "left", "left", "left", "left", "left", "left", "down", "right", "right", "up", "right", "right", "down", "down", "right", "right"]
-const SEQ_R5A := ["right", "right", "ice:right", "right", "right", "down", "right", "down", "down", "right", "up", "up"]
-const SEQ_R5B := ["down", "down", "left", "left"]
-const SEQ_R5C := ["up", "right", "right", "up", "right", "right", "down", "down", "down", "right", "up", "up", "up", "up"]
+## 房间5 标准解法（箱桥流）：B2 沉水成桥过河 → I1 推上开关A(9,4) → B1 推上开关B(9,5) → 抵达门(8,3)
+const SEQ_R5A := ["down", "right", "right", "right", "right", "up", "right", "right", "right"]
+const SEQ_R5B := ["left", "down", "right"]
+const SEQ_R5C := ["up", "up"]
 
 var log_lines: Array = []
 var passes := 0
@@ -228,16 +230,20 @@ func _run() -> void:
 	_check(not g0 and press_box and g1 and g2 and g2b and not g3,
 		"用例7a 开关与门：箱压=开；人绕行箱仍压=开；把箱推离=关")
 	s.load_room(4)
-	var pre5: bool = _run_ops(s, SEQ_R5A)
-	var g_half: bool = s.gate_open()
-	var pre5b: bool = _run_ops(s, SEQ_R5B)
-	for k in 3:
-		_run_ops(s, ["magnet:right"])
+	# 冻冰过河（水列 x=4 的 (4,4)），把 I1 推到 (8,4)：此时尚无任何开关被压住
+	var pre5: bool = _run_ops(s, ["right", "right", "ice:right", "right", "right", "right", "right"])
+	var g_none: bool = s.gate_open()
+	# I1 推上开关A(9,4)：仅一处压住，门仍不开
+	var pre5b: bool = _run_ops(s, ["right"])
+	var g_one: bool = s.gate_open()
+	# 走到 (7,5)，磁石隔空把 I2(10,5) 拉上开关B(9,5)：双压才开门
+	_run_ops(s, ["left", "down"])
+	var mag_ok: bool = _run_ops(s, ["magnet:right"])
 	var g_both: bool = s.gate_open()
-	_run_ops(s, ["up"])
+	_run_ops(s, ["up", "left", "down"])
 	var g_stay: bool = s.gate_open()
-	_check(pre5 and pre5b and not g_half and g_both and g_stay,
-		"用例7b 房间5 双开关：仅箱压住一个时门不开；走到铁块同排磁拉上开关B后双压才开门，且人走开门保持开")
+	_check(pre5 and pre5b and not g_none and not g_one and mag_ok and g_both and g_stay,
+		"用例7b 房间5 双开关：无开关/仅铁块压住开关A时门均不开；磁石把铁块拉上开关B后双压才开门，且人走开门保持开")
 
 	# --- 用例8 房间1 双解 ---
 	s.load_room(0)
@@ -294,19 +300,17 @@ func _run() -> void:
 	var f4: bool = _run_ops(s, SEQ_R4A)
 	_check(f4 and s.room_idx == 4, "流程4 房间4（解法A 磁石拉铁）通过（进入房间5）")
 	var f5a: bool = _run_ops(s, SEQ_R5A)
-	var mid5: bool = f5a and s.room_idx == 4 and not s.gate_open() and _obj_at(s, "box", 7, 1)
-	_check(mid5, "流程5 房间5：冻冰过水+木箱压上开关A，单开关不足门仍关")
+	var mid5: bool = f5a and s.room_idx == 4 and not s.gate_open() and _obj_at(s, "iron", 9, 4)
+	_check(mid5, "流程5 房间5：B2沉水成桥过河+铁块推上开关A，单开关不足门仍关")
 	_run_ops(s, SEQ_R5B)
-	for k in 3:
-		_run_ops(s, ["magnet:right"])
-	var mid5b: bool = s.gate_open() and _obj_at(s, "iron", 7, 4)
-	_check(mid5b, "流程5 房间5：磁石把铁块拉上开关B，双开关同时压住门开")
+	var mid5b: bool = s.gate_open() and _obj_at(s, "box", 9, 5)
+	_check(mid5b, "流程5 房间5：木箱推上开关B，双开关同时压住门开")
 	var f5c: bool = _run_ops(s, SEQ_R5C)
 	_check(f5c and s.state == "final", "用例11a 全流程：5 个房间依次通关 → state=final")
 	_check(s.steps - base_steps == moves_made,
 		"用例11b 步数：steps 增量 %d 与成功移动次数 %d 一致（工具使用不计数）" % [s.steps - base_steps, moves_made])
-	_check(s.steps - base_steps == 12 + 11 + 31 + 1 + 14 + 29,
-		"用例11c 步数合计：全程 98 步（房间1=12 房间2=11 房间3=31+1 房间4=14 房间5=29）")
+	_check(s.steps - base_steps == 12 + 11 + 31 + 1 + 14 + 14,
+		"用例11c 步数合计：全程 83 步（房间1=12 房间2=11 房间3=31+1 房间4=14 房间5=14）")
 
 	_log("==== 汇总：%d PASS / %d FAIL ====" % [passes, fails])
 	quit(1 if fails > 0 else 0)
