@@ -3,8 +3,8 @@
 > 督导每 10 分钟巡查时逐条核对，已解决的标记 [RESOLVED]；新发现追加到末尾对应 demo 节。督导自己不开发。
 
 ## demo-06 词条涂鸦创造
-- [ ] 【视频缺失】reviews/videos/ 缺 demo-06.mp4（其余 6 个 build 都有）→ 下一轮录制游戏视频补上。
-- [ ] 【从未上 Miro 板】reviews/miro-post-log.json 无 demo-06 条目（demo-01~05、07 都上过）→ 下轮跑 node tools/miro-post-shots.mjs 时补上 SHOTS 表 demo-06 行。
+- [ ] 【视频缺失·第3次催办】reviews/videos/ 仍缺 demo-06.mp4（20:09 复查未补）→ 下一轮必须录制。
+- [ ] 【从未上 Miro 板·第3次催办】reviews/miro-post-log.json 仍无 demo-06 条目（20:09 复查未补）→ 下轮跑 node tools/miro-post-shots.mjs 补 SHOTS 表 demo-06 行。
 - [ ] 【L3 物理卡死】（老问题，任务提示已带）修复前 L3 不可上线。
 
 ## demo-01 灵感菇侦探
@@ -19,6 +19,7 @@
 - [x] 【GPT 对话已建】[RESOLVED 2026-10-03 19:38 督导] https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5 → 首轮 GPT 已预警「能力-障碍一一对应=脚本化谜题，涌现不足」，下轮把该意见纳入扩展（DNA 组合效果正是解法），回复存 reviews/chatgpt-demo-04-full.md。
 
 ## 全局
+- [ ] 【WATCH·demo-04 疑似滞留】[20:10] nextRunAt 19:45 过期未重锚（其余 5 任务均已重锚），lastRun 距今 50 分钟，其未提交文件被 demo-01/05 提交扫走、无独立报告/GPT full → 第 6 轮（20:15+）复查：仍无派发/产出则判卡住，排查其会话状态。
 - [ ] 【需用户决策·itch CDN 持续故障】19:36（QA FAIL×4）、19:41（重推节流中仍 FAIL）、19:50（demo-02 v3 放弃 itch 走 GitHub Pages 兜底）——三次连续观察确认故障持续 25 分钟以上，非 CDN 传播延迟。当前各任务按既有预案自愈（Pages 兜底 + LitePipeline 重推），未阻塞发布。**请用户决策**：A. 维持现状（Pages 兜底，itch 恢复后自动回归）；B. 正式切 GitHub Pages 为主发布渠道（需改 push-itch/publish-qa/LitePipeline 业务工具，督导不代改）。未决策前督导维持 A 现状。
 - [x] 【排队观察】[RESOLVED 19:55 督导] demo-01/02/05 的「过点未触发」实为长轮次合并排队：demo-01 第11轮已完成并推送（868cc47 三案件版），demo-02 首轮已产出 v3 并推送（c55430b），demo-03/04/05 首轮仍在跑且有持续文件活动。判定规则已补充：派发计数需用工作区活动佐证，有活动=长轮次进行中，不判卡死。
 - [ ] 【git 未提交】19:25 时 12 个改动 + 2 个未跟踪（含 demo-01/03/06 的 gd 与测试文件——各任务开发轮正在进行，属正常中间态）→ 各 demo 任务收尾时顺带提交；若连续 3 轮未动，督导再代提交。
