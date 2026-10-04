@@ -66,6 +66,9 @@ const LEVELS := [
 	{name = "第 10 关 · S 形走廊", short = "S 形走廊", ratio = 0.8, folds = 6, target_m = 75.0, wind = "side", wind_side = -1.0, shear_x = 30.0, wind_side2 = 1.0, shear_x2 = 50.0, wind_side3 = -1.0, reward = 14,
 		gate_x = 42.0, gate_h = 12.0, gate_bonus = 3, gate_side = 300.0,
 		tip = "双段切变 S 形：30 米前左风、30-50 米右风（趁势在 +5m 横位吃 42 米高空门 +3）、50 米后左风送你收尾 75 米。更多机制关卡（用户指令扩展）"},
+	{name = "第 11 关 · 摆动之门", short = "摆动之门", ratio = 0.9, folds = 6, target_m = 55.0, wind = "none", reward = 12,
+		gate_x = 45.0, gate_h = 12.0, gate_bonus = 3, gate_swing = 420.0, gate_period = 3.0,
+		tip = "门横位随时间摆动（±7m，3 秒一个来回）：数好节奏再穿越，45 米高空门（12m 以上）+3，55 米过关。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
@@ -302,7 +305,7 @@ func step(delta: float) -> String:
 	if gate_x_m > 0.0 and not gate_hit and not low_gate_hit:
 		var gate_px := START_X + gate_x_m * PX_PER_M
 		if prev_x < gate_px and plane_pos.x >= gate_px:
-			var gate_side: float = float(LEVELS[level_idx].get("gate_side", 0.0))
+			var gate_side: float = gate_side_at(flight_time)  # C10：含摆动项（穿越时刻的瞬时横位）
 			if plane_pos.y <= GROUND_Y - float(LEVELS[level_idx].gate_h) * PX_PER_M and absf(lateral - gate_side) <= GATE_HALF_PX:
 				gate_hit = true
 				var gb: int = int(LEVELS[level_idx].gate_bonus)
@@ -480,6 +483,17 @@ func wind_side2() -> float:
 ## 第二次切变后的侧风方向（未配置则与第二段相同）
 func wind_side3() -> float:
 	return float(LEVELS[level_idx].get("wind_side3", wind_side2()))
+
+
+## 阶段 C10 摆动门：门横位随飞行时间正弦摆动（gate_swing 振幅 px、gate_period 周期 s；0=静止）
+## 判定与场景渲染共用此函数，保证同一时刻同一横位
+func gate_side_at(t: float) -> float:
+	var base: float = float(LEVELS[level_idx].get("gate_side", 0.0))
+	var swing: float = float(LEVELS[level_idx].get("gate_swing", 0.0))
+	var period: float = float(LEVELS[level_idx].get("gate_period", 3.0))
+	if swing == 0.0 or period <= 0.0:
+		return base
+	return base + swing * sin(TAU * t / period)
 
 
 ## 阶段 C6 正交侧风（px/s²，带符号）：与 forward 风（head/tail/none）叠加，用于非 "side" 风型关卡

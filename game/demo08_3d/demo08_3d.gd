@@ -32,6 +32,7 @@ var camera: Camera3D
 var trail_mesh: MeshInstance3D
 var trail_imm: ImmediateMesh
 var level_props: Node3D
+var high_gate: Node3D = null       # C10：摆动门节点引用（每帧随 gate_side_at 更新）
 var sun: DirectionalLight3D
 
 ## HUD
@@ -221,11 +222,12 @@ func _apply_level_props() -> void:
 	level_props.add_child(finish)
 	var gate_x_m: float = float(L.get("gate_x", 0.0))
 	if gate_x_m > 0.0:
-		# 高门：基座 gate_frame 模型（原尺寸 2.2×2.4），缩放到门宽 6m × 门高；横位随 gate_side
+		# 高门：基座 gate_frame 模型（原尺寸 2.2×2.4），缩放到门宽 6m × 门高；横位随 gate_side（摆动关卡每帧更新）
 		var hg: Node3D = ModelLibrary.create_model("gate_frame")
 		hg.scale = Vector3(6.0 / 2.2, float(L.gate_h) / 2.4, 1.6)
 		hg.position = Vector3(float(L.get("gate_side", 0.0)) / PX_PER_M, 0.0, -gate_x_m)
 		level_props.add_child(hg)
+		high_gate = hg
 	var lg_x_m: float = float(L.get("low_gate_x", 0.0))
 	if lg_x_m > 0.0:
 		# 低门：自建 ComicObject（双柱 + 横杆，杆顶=low_gate_top）；横位随 low_gate_side
@@ -720,6 +722,9 @@ func _update_visuals() -> void:
 	# 偏航=航向角（表现），小滚转倾斜=横移视觉（相机不继承）
 	var bank: float = clampf(-float(core.lateral_vel) / float(core.LAT_VMAX), -1.0, 1.0) * 0.3
 	plane_visual.rotation = Vector3(-core.pitch, float(core.yaw_rad()), bank)
+	# C10 摆动门：高门横位每帧随 gate_side_at(flight_time)（与规则判定同一公式）
+	if high_gate != null and core.state == "fly":
+		high_gate.position.x = float(core.gate_side_at(float(core.flight_time))) / PX_PER_M
 	if core.state != "fly" and core.state != "settle":
 		cam_rig.position = Vector3(0.0, 1.2, 0.0)
 		cam_rig.rotation = Vector3(0.0, 0.0, 0.0)
