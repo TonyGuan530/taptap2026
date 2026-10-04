@@ -123,6 +123,7 @@ var _grounded_ticks := 0                     # 连续接地静止帧数（≥3 �
 var _prev_player_pos := Vector3.ZERO         # 上一帧玩家位置（传送帧检测）
 var stats := {"jumps": 0, "doubles": 0, "falls": 0, "dark_enter": 0, "fuses": 0}  # 会话聚合（遥测 v2）
 var _in_dark_prev := false
+var shard_vis: Array = []            # 碎片视觉节点（脉冲动画）
 
 var lbl_level: Label
 var lbl_dna: Label
@@ -260,6 +261,7 @@ func load_level(idx: int) -> void:
 	add_child(level_root)
 	alien_nodes = {}
 	cracks = []
+	shard_vis = []
 	ability.reset_level_state(true)   # 每关重教 DNA，组合发现跨关保留（对齐 2D）
 	var L: Dictionary = LEVELS[level_idx]
 
@@ -279,6 +281,21 @@ func load_level(idx: int) -> void:
 	for spos in L.shards:
 		_build_shard(spos)
 	_build_goal(L.goal)
+	# 暗区实体化：半透明黑暗体积（纯视觉无碰撞）——黑暗成为可见机制而非纯 HUD 文字
+	var dark: Array = L.dark
+	if dark.size() == 2:
+		var dv := MeshInstance3D.new()
+		dv.name = "DarkVisual"
+		var dm := BoxMesh.new()
+		dm.size = Vector3(dark[1] - dark[0], 7.0, 4.0)
+		dv.mesh = dm
+		dv.position = Vector3((dark[0] + dark[1]) / 2.0, 3.0, 0)
+		var dmat := StandardMaterial3D.new()
+		dmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		dmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		dmat.albedo_color = Color(0.02, 0.02, 0.05, 0.82)
+		dv.material_override = dmat
+		level_root.add_child(dv)
 	# 走廊侧壁（隐形碰撞）：可行动 z 压到 ±1.6，堵死「墙边侧绕」（指南 §198）
 	var x_end: float = L.goal + 2.0
 	for zs in [-2.25, 2.25]:
@@ -396,6 +413,7 @@ func _build_shard(spos: Vector3) -> void:
 	vis.material_override = mat
 	level_root.add_child(vis)
 	area.set_meta("vis", vis)
+	shard_vis.append(vis)
 
 func _build_goal(goal_x: float) -> void:
 	var pod := ComicObjectScript.new()
@@ -403,6 +421,21 @@ func _build_goal(goal_x: float) -> void:
 	level_root.add_child(pod)
 	pod.add_part(BoxMesh.new(), ML_COL.iron, Transform3D.IDENTITY)
 	pod.scale = Vector3(1.6, 2.0, 1.6)
+	var beacon := MeshInstance3D.new()
+	beacon.name = "GoalBeacon"
+	var bm := BoxMesh.new()
+	bm.size = Vector3(0.35, 9.0, 0.35)
+	beacon.mesh = bm
+	beacon.position = Vector3(goal_x, 4.5, 0)
+	var bmat := StandardMaterial3D.new()
+	bmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	bmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	bmat.albedo_color = Color(0.3, 0.95, 1.0, 0.5)
+	bmat.emission_enabled = true
+	bmat.emission = Color(0.3, 0.95, 1.0)
+	bmat.emission_energy_multiplier = 1.5
+	beacon.material_override = bmat
+	level_root.add_child(beacon)
 	var goal := Area3D.new()
 	goal.name = "Goal"
 	var gcs := CollisionShape3D.new()
@@ -451,6 +484,11 @@ func _physics_process(delta: float) -> void:
 		_grounded_ticks = 0
 	_update_fuse_candidate()
 	_check_crack_smash()
+	# 碎片呼吸脉冲
+	var pulse := 1.0 + 0.18 * sin(Time.get_ticks_msec() / 220.0)
+	for sv in shard_vis:
+		if is_instance_valid(sv):
+			sv.scale = Vector3(pulse, pulse, pulse)
 	if toast_age < 3.0:
 		toast_age += delta
 		if toast_age >= 3.0:
@@ -517,6 +555,7 @@ func _on_shard_entered(body: Node3D, area: Area3D) -> void:
 	area.set_meta("done", true)
 	var vis: Node = area.get_meta("vis")
 	if vis != null:
+		shard_vis.erase(vis)
 		vis.queue_free()
 	area.queue_free()
 	ability.collect_shard()

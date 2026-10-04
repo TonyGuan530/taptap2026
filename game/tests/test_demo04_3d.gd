@@ -509,6 +509,28 @@ func _run() -> void:
 	else:
 		_fail("重开状态异常：was_broken=%s restored=%s combos=%s" % [was_broken, crack_restored, ability.combos_found.has("superjump")])
 
+	# ---- 21. 可读性组件：暗区体积 + 终点信标 + 碎片脉冲（灰模可读性增强） ----
+	scene_root.load_level(1)
+	await physics_frame
+	await physics_frame
+	var dv := scene_root.get_node_or_null("LevelRoot/DarkVisual")
+	var gb := scene_root.get_node_or_null("LevelRoot/GoalBeacon")
+	var pulse_ok := false
+	var sv: MeshInstance3D = null
+	for c in scene_root.shard_vis:
+		if is_instance_valid(c):
+			sv = c
+			break
+	if sv != null:
+		var s1: Vector3 = sv.scale
+		await _settle(20)
+		var s2: Vector3 = sv.scale
+		pulse_ok = (s2 - s1).length() > 0.01
+	if dv != null and gb != null and pulse_ok:
+		_ok("可读性组件：暗区体积+终点信标存在，碎片脉冲生效")
+	else:
+		_fail("可读性组件异常：DarkVisual=%s GoalBeacon=%s pulse=%s" % [dv != null, gb != null, pulse_ok])
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:
