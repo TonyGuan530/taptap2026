@@ -144,3 +144,9 @@
 - FHD 1920×1080 与 360p 双端实拍：HUD 比例一致（canvas_items 拉伸早已配置且生效），无破版、无遮挡——Web 验收矩阵「缩放」项收口，零改动。
 - 证据入库主仓库；v7 仍为当前发布。
 - 剩余：正式资产（等素材通路）/原生导出（等模板）/ChatGPT 补送（等登录会话）。
+
+## 2026-10-05 08:20（轮29·原生导出解锁 ★）
+- 导出模板包自动安装（GitHub 官方 tpz 1.2GB → D 盘落地 → 只解压 Windows 双模板至 APPDATA，C 盘最小占用）。
+- Windows 原生导出成功：builds/native/demo04_3d.exe（109MB）+ pck（7.5MB）；pck 核对（main_scene/脚本/tour_driver）✓；exe headless 冒烟 EXIT=0。
+- Phase C 原生项完成。产物本地留存不入库（116MB 二进制，.gitignore 已加）。
+- 剩余：正式资产（等素材通路）/ChatGPT（等登录会话）。

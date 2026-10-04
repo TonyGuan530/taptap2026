@@ -26,3 +26,4 @@ Desktop.ini
 *.log
 .movie06/
 tools/node_modules/
+builds/native/
