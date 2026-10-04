@@ -1,0 +1,7 @@
+{
+    "title":  "TapTap2026 Demo",
+    "version":  "demo-11-v3",
+    "date":  "2026-10-04T08:36:21+08:00",
+    "author":  "49321",
+    "notes":  "v3 遥测 instrumentation（KEEP 复评轻量项，规则零改动）：七字段遥测（工具/移物/冻/融/烧/开关导通/完赛）+ solution family 五族归类（融冰传播/磁铁/箱桥/冻桥/纯走）+ 全通关结算显示解法家族"
+}
