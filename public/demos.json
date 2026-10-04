@@ -19,8 +19,8 @@
     {
       "id": "demo-02-3d",
       "title": "物性变换谜题 3D（第一人称漫画风）",
-      "goal": "DEMO2 3D 化 Phase B 全绿：三关卡 headless 5/5 PASS（L1 弹簧越墙/L2 错位砸板——板厚 0.5 防穿板+未砸板不入洞/L3 羽毛扑翼跨峡谷）；三关连打单实例验证（修碎板幽灵引用致 L2 后无法装载）。W/S 反馈修复；3d-shared 基座 comic 材质+ComicObject。",
-      "buildId": "demo-02-3d-v9",
+      "goal": "DEMO2 3D 化五关齐：L1 弹簧越墙/L2 错位砸板（未砸板不入洞）/L3 羽毛跨峡谷/L4 开放高台双路线（羽毛飘台/皮球弹板抛射）/L5 皮球零输入弹簧链穿环。headless 9/9 PASS；三关连打单实例验证（修碎板幽灵引用）。W/S 反馈修复；3d-shared 基座 comic 材质+ComicObject。",
+      "buildId": "demo-02-3d-v10",
       "status": "done"
     },
     {
