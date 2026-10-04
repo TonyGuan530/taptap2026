@@ -43,6 +43,14 @@ const BUILD_COLORS := {
 	"shelter": Color(0.45, 0.6, 0.4),
 }
 
+## 泥流低谷（阶段 C2：路径拓扑改变——夜漫显著减速，不复制灰区伤害）
+const MUD_X_MIN := -2.0
+const MUD_X_MAX := 9.0
+const MUD_Z_MIN := -9.0
+const MUD_Z_MAX := -1.0            # 南缘留 z∈[-1,1.5] 绕行道（岩石群在 z≥1.5）
+const MUD_SPEED_SCALE := 0.22
+const MUD_START_DAY := 2          # 首夜暴雨叙事后，第 2 夜起泥流漫谷（确定性）
+
 ## 岩石障碍
 const ROCKS := [
 	{pos = Vector3(0, 0.75, -2), size = Vector3(3, 1.5, 2)},
@@ -88,6 +96,10 @@ var sun_light: DirectionalLight3D
 var env_res: Environment
 var ash_node: MeshInstance3D
 var ash_front := ASH_FRONT_FAR
+var mud_node: MeshInstance3D
+var in_mud := false
+var telemetry := {"shelter_build_x": [], "ash_exposure_after_shelter": 0.0}
+var shelter_placed := false
 var dino: CharacterBody3D
 var cam_pivot: Node3D
 var berry_fruits: Array = []
@@ -264,6 +276,18 @@ func _build_world() -> void:
 	ash_node.material_override = amat
 	ash_node.visible = false
 	add_child(ash_node)
+	# 泥流带（固定低谷地形，夜漫昼干，只减速不扣血）
+	mud_node = MeshInstance3D.new()
+	var mbox := BoxMesh.new()
+	mbox.size = Vector3(MUD_X_MAX - MUD_X_MIN, 0.4, MUD_Z_MAX - MUD_Z_MIN)
+	mud_node.mesh = mbox
+	var mudmat := StandardMaterial3D.new()
+	mudmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mudmat.albedo_color = Color(0.4, 0.3, 0.18, 0.5)
+	mud_node.material_override = mudmat
+	mud_node.position = Vector3((MUD_X_MIN + MUD_X_MAX) * 0.5, 0.2, (MUD_Z_MIN + MUD_Z_MAX) * 0.5)
+	mud_node.visible = false
+	add_child(mud_node)
 
 func _build_dino() -> void:
 	dino = CharacterBody3D.new()
@@ -325,7 +349,7 @@ func _build_hud() -> void:
 	]
 	hud_prompt = _mk_label(hud, Vector2(16, 44), Color("ffe082"), 18)
 	hud_hint = _mk_label(hud, Vector2(16, 500), Color("8b94a7"), 14)
-	hud_hint.text = "WASD 移动 · E 交互 · Q 吃 · R 喝 · B 建造（1/2/3 选型，E 放置，Esc 取消）· 夜晚火山灰自东坡推进，灰区内受伤且不可交互"
+	hud_hint.text = "WASD 移动 · E 交互 · Q 吃 · R 喝 · B 建造（1/2/3 选型，E 放置，Esc 取消）· 夜晚火山灰自东坡推进（灰区受伤且不可交互）· 第 2 夜起低谷夜间泥流（大幅减速，绕行南侧）"
 
 func _process(delta: float) -> void:
 	# —— 昼夜 ——
@@ -336,6 +360,7 @@ func _process(delta: float) -> void:
 		day_time -= cycle
 		day_num += 1
 		slept_tonight = false
+		_flush_telemetry()
 	is_night = day_time >= DAY_LEN
 	# —— 昼夜视觉（光照渐变）——
 	night_amount = move_toward(night_amount, 1.0 if is_night else 0.0, delta * 4.0)
@@ -357,6 +382,13 @@ func _process(delta: float) -> void:
 			var aw := 20.0 - ash_front
 			ash_node.scale = Vector3(aw, 4.0, 40.0)
 			ash_node.position = Vector3(ash_front + aw * 0.5, 2.0, 0)
+	# —— 泥流低谷（C2：路径拓扑，减速不扣血）——
+	var mud_night := is_night and day_num >= MUD_START_DAY
+	if mud_node:
+		mud_node.visible = mud_night
+	in_mud = mud_night and dino != null \
+			and dino.position.x > MUD_X_MIN and dino.position.x < MUD_X_MAX \
+			and dino.position.z > MUD_Z_MIN and dino.position.z < MUD_Z_MAX
 	# —— 死亡 / 重开 ——
 	if dead:
 		hud_prompt.text = "你死了（第 %d 天）· 按 Enter 重来" % day_num
@@ -377,8 +409,9 @@ func _process(delta: float) -> void:
 	if Input.is_action_pressed("mv_down"):
 		mv.y += 1
 	if dino and mv != Vector2.ZERO:
-		dino.velocity.x = mv.x * MOVE_SPEED
-		dino.velocity.z = mv.y * MOVE_SPEED
+		var spd: float = MOVE_SPEED * (MUD_SPEED_SCALE if in_mud else 1.0)
+		dino.velocity.x = mv.x * spd
+		dino.velocity.z = mv.y * spd
 	elif dino:
 		dino.velocity.x = 0
 		dino.velocity.z = 0
@@ -412,6 +445,8 @@ func _process(delta: float) -> void:
 	# —— 灰区持续伤害 ——
 	if dino and is_night and dino.position.x > ash_front:
 		hp = maxf(0.0, hp - ASH_DPS * delta)
+		if shelter_placed:
+			telemetry.ash_exposure_after_shelter += delta
 	# —— 资源再生 ——
 	if berry_stock < BERRY_START_STOCK:
 		berry_regen += delta
@@ -472,6 +507,24 @@ func _process(delta: float) -> void:
 			hud_prompt.text = "⚠ 火山灰侵入——向西撤！ " + hud_prompt.text
 		elif ash_front < 14.0:
 			hud_prompt.text = "灰雾自火山坡推进（西界 %.0fm） " % ash_front + hud_prompt.text
+	if in_mud:
+		hud_prompt.text = "泥流漫谷——通行大幅减缓 " + hud_prompt.text
+
+## 学习链遥测（督导指定：shelter_build_x / 灰暴露时间）——每日滚动与重开时落盘
+func _flush_telemetry() -> void:
+	var f := FileAccess.open("user://hd2d_telemetry.jsonl", FileAccess.READ_WRITE)
+	if f == null:
+		f = FileAccess.open("user://hd2d_telemetry.jsonl", FileAccess.WRITE)
+	if f:
+		f.seek_end()
+		f.store_line(JSON.stringify({
+			"day": day_num,
+			"shelter_build_x": telemetry.shelter_build_x,
+			"ash_exposure_after_shelter_s": snappedf(telemetry.ash_exposure_after_shelter, 0.1),
+		}))
+		f.close()
+	telemetry.shelter_build_x = []
+	telemetry.ash_exposure_after_shelter = 0.0
 
 ## 目标点是否被灰潮覆盖（灰区内资源/设施不可交互）
 func _in_ash(p: Vector3) -> bool:
@@ -637,6 +690,9 @@ func _try_place() -> void:
 	body.position = ghost_pos
 	add_child(body)
 	buildings.append({kind = recipe.id, pos = ghost_pos, node = body})
+	if recipe.id == "shelter":
+		shelter_placed = true
+		telemetry.shelter_build_x.append(snappedf(ghost_pos.x, 0.1))
 	interact_prompt = "%s 建成（-木材 %d）" % [recipe.name, recipe.cost]
 	build_mode = false
 	if ghost:
@@ -668,4 +724,5 @@ func _reset_run() -> void:
 	dead = false
 	if dino:
 		dino.position = Vector3(0, 0.1, 4)
+	_flush_telemetry()
 	interact_prompt = "新的开始。"
