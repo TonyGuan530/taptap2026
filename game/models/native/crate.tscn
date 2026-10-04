@@ -1,0 +1,237 @@
+[gd_scene format=4]
+
+[ext_resource type="Script" path="res://comic_style/comic_object.gd" id="1_s5wec"]
+[ext_resource type="Script" path="res://comic_style/comic_style.gd" id="2_eblow"]
+[ext_resource type="Shader" path="res://comic_style/shaders/plain_toon.gdshader" id="3_q76ys"]
+[ext_resource type="Shader" path="res://comic_style/shaders/pixel_outline.gdshader" id="4_2ayvg"]
+
+[sub_resource type="Resource" id="Resource_oq6f3"]
+script = ExtResource("2_eblow")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hnq5d"]
+render_priority = 0
+shader = ExtResource("3_q76ys")
+shader_parameter/base_color = Color(0.8117647, 0.5372549, 0.34509805, 1)
+shader_parameter/light_threshold = null
+shader_parameter/shadow_band = null
+shader_parameter/lit_band = null
+shader_parameter/ambient_floor = null
+shader_parameter/plain_unlit = null
+
+[sub_resource type="BoxMesh" id="BoxMesh_apnvo"]
+size = Vector3(0.9, 0.9, 0.9)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t6aao"]
+render_priority = 0
+shader = ExtResource("4_2ayvg")
+shader_parameter/line_color = Color(0.14117648, 0.16078432, 0.20392157, 1)
+shader_parameter/outline_width = 4.0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_w6o11"]
+_surfaces = [{
+"aabb": AABB(-0.45, -0.45, -0.45, 0.9, 0.9, 0.9),
+"attribute_data": PackedByteArray("AAAAAAAAAACrqio/AAAAAKuqqj4AAAAAAACAPwAAAAAAAAAAAAAAP6uqKj8AAAA/q6qqPgAAAD8AAIA/AAAAP6uqqj4AAAAAAAAAAAAAAD+rqio/AAAAAKuqqj4AAAA/q6qqPgAAAD8AAAAAAACAP6uqKj8AAAA/q6qqPgAAgD+rqqo+AAAAP6uqKj8AAAA/q6oqPwAAAD8AAIA/AAAAP6uqqj4AAIA/q6oqPwAAgD+rqio/AACAPwAAgD8AAIA/"),
+"format": 34359742487,
+"index_count": 36,
+"index_data": PackedByteArray("AAACAAQAAgAGAAQAAQADAAUAAwAHAAUACAAKAAwACgAOAAwACQALAA0ACwAPAA0AEAASABQAEgAWABQAEQATABUAEwAXABUA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("ZmbmvmZm5j5mZuY+ZmbmPmZm5j5mZua+ZmbmPmZm5j5mZuY+ZmbmvmZm5j5mZua+ZmbmvmZm5r5mZuY+ZmbmPmZm5r5mZua+ZmbmPmZm5r5mZuY+ZmbmvmZm5r5mZua+ZmbmPmZm5j5mZuY+ZmbmvmZm5j5mZua+ZmbmPmZm5j5mZua+ZmbmvmZm5j5mZuY+ZmbmPmZm5r5mZuY+ZmbmvmZm5r5mZua+ZmbmPmZm5r5mZua+ZmbmvmZm5r5mZuY+ZmbmPmZm5j5mZuY+ZmbmvmZm5r5mZuY+ZmbmvmZm5j5mZuY+ZmbmPmZm5r5mZuY+ZmbmPmZm5j5mZua+ZmbmvmZm5r5mZua+ZmbmvmZm5j5mZua+ZmbmPmZm5r5mZua+VFWpqv///79U1VTVAAD/v6qqqqr///+/qipU1QAA/79UVVRV////v1TVqioAAP+/qapUVf///7+qKqoqAAD/v6qqqqr/////qipU1f9//79U1VTV/////1RVqar/f/+/qapUVf////+qKqoq/3//v1TVqir/////VFVUVf9//7+qqqqqAAD/v1RVVFX///+/VFWpqgAA/7+pqlRV////v1TVVNUAAP+/qiqqKv///7+qKlTVAAD/v1TVqir///+/")
+}]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tvhtc"]
+render_priority = 0
+shader = ExtResource("3_q76ys")
+shader_parameter/base_color = Color(0.58431375, 0.39215687, 0.26666668, 1)
+shader_parameter/light_threshold = null
+shader_parameter/shadow_band = null
+shader_parameter/lit_band = null
+shader_parameter/ambient_floor = null
+shader_parameter/plain_unlit = null
+
+[sub_resource type="BoxMesh" id="BoxMesh_n8ot0"]
+size = Vector3(1, 0.15, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rxlal"]
+render_priority = 0
+shader = ExtResource("4_2ayvg")
+shader_parameter/line_color = Color(0.14117648, 0.16078432, 0.20392157, 1)
+shader_parameter/outline_width = 4.0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_dqtnr"]
+_surfaces = [{
+"aabb": AABB(-0.5, -0.075, -0.5, 1, 0.15, 1),
+"attribute_data": PackedByteArray("AAAAAAAAAACrqio/AAAAAKuqqj4AAAAAAACAPwAAAAAAAAAAAAAAP6uqKj8AAAA/q6qqPgAAAD8AAIA/AAAAP6uqqj4AAAAAAAAAAAAAAD+rqio/AAAAAKuqqj4AAAA/q6qqPgAAAD8AAAAAAACAP6uqKj8AAAA/q6qqPgAAgD+rqqo+AAAAP6uqKj8AAAA/q6oqPwAAAD8AAIA/AAAAP6uqqj4AAIA/q6oqPwAAgD+rqio/AACAPwAAgD8AAIA/"),
+"format": 34359742487,
+"index_count": 36,
+"index_data": PackedByteArray("AAACAAQAAgAGAAQAAQADAAUAAwAHAAUACAAKAAwACgAOAAwACQALAA0ACwAPAA0AEAASABQAEgAWABQAEQATABUAEwAXABUA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAv5qZmT0AAAA/AAAAP5qZmT0AAAC/AAAAP5qZmT0AAAA/AAAAv5qZmT0AAAC/AAAAv5qZmb0AAAA/AAAAP5qZmb0AAAC/AAAAP5qZmb0AAAA/AAAAv5qZmb0AAAC/AAAAP5qZmT0AAAA/AAAAv5qZmT0AAAC/AAAAP5qZmT0AAAC/AAAAv5qZmT0AAAA/AAAAP5qZmb0AAAA/AAAAv5qZmb0AAAC/AAAAP5qZmb0AAAC/AAAAv5qZmb0AAAA/AAAAP5qZmT0AAAA/AAAAv5qZmb0AAAA/AAAAv5qZmT0AAAA/AAAAP5qZmb0AAAA/AAAAP5qZmT0AAAC/AAAAv5qZmb0AAAC/AAAAv5qZmT0AAAC/AAAAP5qZmb0AAAC/VFWpqv///79U1VTVAAD/v6qqqqr///+/qipU1QAA/79UVVRV////v1TVqioAAP+/qapUVf///7+qKqoqAAD/v6qqqqr/////qipU1f9//79U1VTV/////1RVqar/f/+/qapUVf////+qKqoq/3//v1TVqir/////VFVUVf9//7+qqqqqAAD/v1RVVFX///+/VFWpqgAA/7+pqlRV////v1TVVNUAAP+/qiqqKv///7+qKlTVAAD/v1TVqir///+/")
+}]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4l5ta"]
+render_priority = 0
+shader = ExtResource("3_q76ys")
+shader_parameter/base_color = Color(0.58431375, 0.39215687, 0.26666668, 1)
+shader_parameter/light_threshold = null
+shader_parameter/shadow_band = null
+shader_parameter/lit_band = null
+shader_parameter/ambient_floor = null
+shader_parameter/plain_unlit = null
+
+[sub_resource type="BoxMesh" id="BoxMesh_isrof"]
+size = Vector3(1, 0.15, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ra8yf"]
+render_priority = 0
+shader = ExtResource("4_2ayvg")
+shader_parameter/line_color = Color(0.14117648, 0.16078432, 0.20392157, 1)
+shader_parameter/outline_width = 4.0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_y6v27"]
+_surfaces = [{
+"aabb": AABB(-0.5, -0.075, -0.5, 1, 0.15, 1),
+"attribute_data": PackedByteArray("AAAAAAAAAACrqio/AAAAAKuqqj4AAAAAAACAPwAAAAAAAAAAAAAAP6uqKj8AAAA/q6qqPgAAAD8AAIA/AAAAP6uqqj4AAAAAAAAAAAAAAD+rqio/AAAAAKuqqj4AAAA/q6qqPgAAAD8AAAAAAACAP6uqKj8AAAA/q6qqPgAAgD+rqqo+AAAAP6uqKj8AAAA/q6oqPwAAAD8AAIA/AAAAP6uqqj4AAIA/q6oqPwAAgD+rqio/AACAPwAAgD8AAIA/"),
+"format": 34359742487,
+"index_count": 36,
+"index_data": PackedByteArray("AAACAAQAAgAGAAQAAQADAAUAAwAHAAUACAAKAAwACgAOAAwACQALAA0ACwAPAA0AEAASABQAEgAWABQAEQATABUAEwAXABUA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAv5qZmT0AAAA/AAAAP5qZmT0AAAC/AAAAP5qZmT0AAAA/AAAAv5qZmT0AAAC/AAAAv5qZmb0AAAA/AAAAP5qZmb0AAAC/AAAAP5qZmb0AAAA/AAAAv5qZmb0AAAC/AAAAP5qZmT0AAAA/AAAAv5qZmT0AAAC/AAAAP5qZmT0AAAC/AAAAv5qZmT0AAAA/AAAAP5qZmb0AAAA/AAAAv5qZmb0AAAC/AAAAP5qZmb0AAAC/AAAAv5qZmb0AAAA/AAAAP5qZmT0AAAA/AAAAv5qZmb0AAAA/AAAAv5qZmT0AAAA/AAAAP5qZmb0AAAA/AAAAP5qZmT0AAAC/AAAAv5qZmb0AAAC/AAAAv5qZmT0AAAC/AAAAP5qZmb0AAAC/VFWpqv///79U1VTVAAD/v6qqqqr///+/qipU1QAA/79UVVRV////v1TVqioAAP+/qapUVf///7+qKqoqAAD/v6qqqqr/////qipU1f9//79U1VTV/////1RVqar/f/+/qapUVf////+qKqoq/3//v1TVqir/////VFVUVf9//7+qqqqqAAD/v1RVVFX///+/VFWpqgAA/7+pqlRV////v1TVVNUAAP+/qiqqKv///7+qKlTVAAD/v1TVqir///+/")
+}]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1oibh"]
+render_priority = 0
+shader = ExtResource("3_q76ys")
+shader_parameter/base_color = Color(0.58431375, 0.39215687, 0.26666668, 1)
+shader_parameter/light_threshold = null
+shader_parameter/shadow_band = null
+shader_parameter/lit_band = null
+shader_parameter/ambient_floor = null
+shader_parameter/plain_unlit = null
+
+[sub_resource type="BoxMesh" id="BoxMesh_si14f"]
+size = Vector3(0.14, 0.72, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c5y0i"]
+render_priority = 0
+shader = ExtResource("4_2ayvg")
+shader_parameter/line_color = Color(0.14117648, 0.16078432, 0.20392157, 1)
+shader_parameter/outline_width = 4.0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vni71"]
+_surfaces = [{
+"aabb": AABB(-0.07, -0.36, -0.5, 0.14, 0.72, 1),
+"attribute_data": PackedByteArray("AAAAAAAAAACrqio/AAAAAKuqqj4AAAAAAACAPwAAAAAAAAAAAAAAP6uqKj8AAAA/q6qqPgAAAD8AAIA/AAAAP6uqqj4AAAAAAAAAAAAAAD+rqio/AAAAAKuqqj4AAAA/q6qqPgAAAD8AAAAAAACAP6uqKj8AAAA/q6qqPgAAgD+rqqo+AAAAP6uqKj8AAAA/q6oqPwAAAD8AAIA/AAAAP6uqqj4AAIA/q6oqPwAAgD+rqio/AACAPwAAgD8AAIA/"),
+"format": 34359742487,
+"index_count": 36,
+"index_data": PackedByteArray("AAACAAQAAgAGAAQAAQADAAUAAwAHAAUACAAKAAwACgAOAAwACQALAA0ACwAPAA0AEAASABQAEgAWABQAEQATABUAEwAXABUA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("KVyPvexRuD4AAAA/KVyPPexRuD4AAAC/KVyPPexRuD4AAAA/KVyPvexRuD4AAAC/KVyPvexRuL4AAAA/KVyPPexRuL4AAAC/KVyPPexRuL4AAAA/KVyPvexRuL4AAAC/KVyPPexRuD4AAAA/KVyPvexRuD4AAAC/KVyPPexRuD4AAAC/KVyPvexRuD4AAAA/KVyPPexRuL4AAAA/KVyPvexRuL4AAAC/KVyPPexRuL4AAAC/KVyPvexRuL4AAAA/KVyPPexRuD4AAAA/KVyPvexRuL4AAAA/KVyPvexRuD4AAAA/KVyPPexRuL4AAAA/KVyPPexRuD4AAAC/KVyPvexRuL4AAAC/KVyPvexRuD4AAAC/KVyPPexRuL4AAAC/VFWpqv///79U1VTVAAD/v6qqqqr///+/qipU1QAA/79UVVRV////v1TVqioAAP+/qapUVf///7+qKqoqAAD/v6qqqqr/////qipU1f9//79U1VTV/////1RVqar/f/+/qapUVf////+qKqoq/3//v1TVqir/////VFVUVf9//7+qqqqqAAD/v1RVVFX///+/VFWpqgAA/7+pqlRV////v1TVVNUAAP+/qiqqKv///7+qKlTVAAD/v1TVqir///+/")
+}]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xlurt"]
+render_priority = 0
+shader = ExtResource("3_q76ys")
+shader_parameter/base_color = Color(0.58431375, 0.39215687, 0.26666668, 1)
+shader_parameter/light_threshold = null
+shader_parameter/shadow_band = null
+shader_parameter/lit_band = null
+shader_parameter/ambient_floor = null
+shader_parameter/plain_unlit = null
+
+[sub_resource type="BoxMesh" id="BoxMesh_epyst"]
+size = Vector3(0.14, 0.72, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c0fl4"]
+render_priority = 0
+shader = ExtResource("4_2ayvg")
+shader_parameter/line_color = Color(0.14117648, 0.16078432, 0.20392157, 1)
+shader_parameter/outline_width = 4.0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_3jm65"]
+_surfaces = [{
+"aabb": AABB(-0.07, -0.36, -0.5, 0.14, 0.72, 1),
+"attribute_data": PackedByteArray("AAAAAAAAAACrqio/AAAAAKuqqj4AAAAAAACAPwAAAAAAAAAAAAAAP6uqKj8AAAA/q6qqPgAAAD8AAIA/AAAAP6uqqj4AAAAAAAAAAAAAAD+rqio/AAAAAKuqqj4AAAA/q6qqPgAAAD8AAAAAAACAP6uqKj8AAAA/q6qqPgAAgD+rqqo+AAAAP6uqKj8AAAA/q6oqPwAAAD8AAIA/AAAAP6uqqj4AAIA/q6oqPwAAgD+rqio/AACAPwAAgD8AAIA/"),
+"format": 34359742487,
+"index_count": 36,
+"index_data": PackedByteArray("AAACAAQAAgAGAAQAAQADAAUAAwAHAAUACAAKAAwACgAOAAwACQALAA0ACwAPAA0AEAASABQAEgAWABQAEQATABUAEwAXABUA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("KVyPvexRuD4AAAA/KVyPPexRuD4AAAC/KVyPPexRuD4AAAA/KVyPvexRuD4AAAC/KVyPvexRuL4AAAA/KVyPPexRuL4AAAC/KVyPPexRuL4AAAA/KVyPvexRuL4AAAC/KVyPPexRuD4AAAA/KVyPvexRuD4AAAC/KVyPPexRuD4AAAC/KVyPvexRuD4AAAA/KVyPPexRuL4AAAA/KVyPvexRuL4AAAC/KVyPPexRuL4AAAC/KVyPvexRuL4AAAA/KVyPPexRuD4AAAA/KVyPvexRuL4AAAA/KVyPvexRuD4AAAA/KVyPPexRuL4AAAA/KVyPPexRuD4AAAC/KVyPvexRuL4AAAC/KVyPvexRuD4AAAC/KVyPPexRuL4AAAC/VFWpqv///79U1VTVAAD/v6qqqqr///+/qipU1QAA/79UVVRV////v1TVqioAAP+/qapUVf///7+qKqoqAAD/v6qqqqr/////qipU1f9//79U1VTV/////1RVqar/f/+/qapUVf////+qKqoq/3//v1TVqir/////VFVUVf9//7+qqqqqAAD/v1RVVFX///+/VFWpqgAA/7+pqlRV////v1TVVNUAAP+/qiqqKv///7+qKlTVAAD/v1TVqir///+/")
+}]
+
+[node name="Crate" type="Node3D" unique_id=14926202]
+script = ExtResource("1_s5wec")
+interactive = true
+style = SubResource("Resource_oq6f3")
+metadata/model_id = "crate"
+metadata/size_m = Vector3(1, 0.90999997, 1)
+metadata/bounds_min = Vector3(-0.5, 0, -0.5)
+
+[node name="Part0" type="MeshInstance3D" parent="." unique_id=40478294]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.455, 0)
+material_override = SubResource("ShaderMaterial_hnq5d")
+mesh = SubResource("BoxMesh_apnvo")
+metadata/comic_color = Color(0.8117647, 0.5372549, 0.34509805, 1)
+
+[node name="ComicOutline" type="MeshInstance3D" parent="Part0" unique_id=2050190186]
+material_override = SubResource("ShaderMaterial_t6aao")
+cast_shadow = 0
+extra_cull_margin = 0.5
+mesh = SubResource("ArrayMesh_w6o11")
+
+[node name="Part1" type="MeshInstance3D" parent="." unique_id=494720042]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
+material_override = SubResource("ShaderMaterial_tvhtc")
+mesh = SubResource("BoxMesh_n8ot0")
+metadata/comic_color = Color(0.58431375, 0.39215687, 0.26666668, 1)
+
+[node name="ComicOutline" type="MeshInstance3D" parent="Part1" unique_id=794642724]
+material_override = SubResource("ShaderMaterial_rxlal")
+cast_shadow = 0
+extra_cull_margin = 0.5
+mesh = SubResource("ArrayMesh_dqtnr")
+
+[node name="Part2" type="MeshInstance3D" parent="." unique_id=1156654171]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.835, 0)
+material_override = SubResource("ShaderMaterial_4l5ta")
+mesh = SubResource("BoxMesh_isrof")
+metadata/comic_color = Color(0.58431375, 0.39215687, 0.26666668, 1)
+
+[node name="ComicOutline" type="MeshInstance3D" parent="Part2" unique_id=1297744807]
+material_override = SubResource("ShaderMaterial_ra8yf")
+cast_shadow = 0
+extra_cull_margin = 0.5
+mesh = SubResource("ArrayMesh_y6v27")
+
+[node name="Part3" type="MeshInstance3D" parent="." unique_id=238017467]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 0.455, 0)
+material_override = SubResource("ShaderMaterial_1oibh")
+mesh = SubResource("BoxMesh_si14f")
+metadata/comic_color = Color(0.58431375, 0.39215687, 0.26666668, 1)
+
+[node name="ComicOutline" type="MeshInstance3D" parent="Part3" unique_id=411114467]
+material_override = SubResource("ShaderMaterial_c5y0i")
+cast_shadow = 0
+extra_cull_margin = 0.5
+mesh = SubResource("ArrayMesh_vni71")
+
+[node name="Part4" type="MeshInstance3D" parent="." unique_id=610410724]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.42, 0.455, 0)
+material_override = SubResource("ShaderMaterial_xlurt")
+mesh = SubResource("BoxMesh_epyst")
+metadata/comic_color = Color(0.58431375, 0.39215687, 0.26666668, 1)
+
+[node name="ComicOutline" type="MeshInstance3D" parent="Part4" unique_id=1514335521]
+material_override = SubResource("ShaderMaterial_c0fl4")
+cast_shadow = 0
+extra_cull_margin = 0.5
+mesh = SubResource("ArrayMesh_3jm65")

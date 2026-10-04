@@ -1,0 +1,150 @@
+{
+	"models": [
+		{
+			"body_triangles": 60,
+			"bounds_min": [
+				-0.5,
+				0.0,
+				-0.5
+			],
+			"default_interactive": true,
+			"glb": "glb/crate.glb",
+			"id": "crate",
+			"native": "native/crate.tscn",
+			"outline_triangles": 60,
+			"size_m": [
+				1.0,
+				0.909999966621399,
+				1.0
+			]
+		},
+		{
+			"body_triangles": 24,
+			"bounds_min": [
+				-0.479999989271164,
+				0.0,
+				-0.479999989271164
+			],
+			"default_interactive": true,
+			"glb": "glb/iron_block.glb",
+			"id": "iron_block",
+			"native": "native/iron_block.tscn",
+			"outline_triangles": 24,
+			"size_m": [
+				0.959999978542328,
+				0.850000023841858,
+				0.959999978542328
+			]
+		},
+		{
+			"body_triangles": 48,
+			"bounds_min": [
+				-0.649999976158142,
+				0.0,
+				-0.577499985694885
+			],
+			"default_interactive": false,
+			"glb": "glb/rock.glb",
+			"id": "rock",
+			"native": "native/rock.tscn",
+			"outline_triangles": 48,
+			"size_m": [
+				1.29999995231628,
+				0.850000023841858,
+				1.15499997138977
+			]
+		},
+		{
+			"body_triangles": 128,
+			"bounds_min": [
+				-0.899999976158142,
+				0.0,
+				-0.899999976158142
+			],
+			"default_interactive": false,
+			"glb": "glb/tree.glb",
+			"id": "tree",
+			"native": "native/tree.tscn",
+			"outline_triangles": 128,
+			"size_m": [
+				1.79999995231628,
+				2.79999995231628,
+				1.79999995231628
+			]
+		},
+		{
+			"body_triangles": 96,
+			"bounds_min": [
+				-0.699999988079071,
+				0.0,
+				-0.5
+			],
+			"default_interactive": false,
+			"glb": "glb/bush.glb",
+			"id": "bush",
+			"native": "native/bush.tscn",
+			"outline_triangles": 96,
+			"size_m": [
+				1.45000004768372,
+				0.800000011920929,
+				1.0
+			]
+		},
+		{
+			"body_triangles": 144,
+			"bounds_min": [
+				-0.430000007152557,
+				0.0,
+				-0.430000007152557
+			],
+			"default_interactive": true,
+			"glb": "glb/barrel.glb",
+			"id": "barrel",
+			"native": "native/barrel.tscn",
+			"outline_triangles": 144,
+			"size_m": [
+				0.860000014305115,
+				1.14999997615814,
+				0.860000014305115
+			]
+		},
+		{
+			"body_triangles": 24,
+			"bounds_min": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"default_interactive": true,
+			"glb": "glb/pressure_plate.glb",
+			"id": "pressure_plate",
+			"native": "native/pressure_plate.tscn",
+			"outline_triangles": 24,
+			"size_m": [
+				1.29999995231628,
+				0.179999992251396,
+				1.29999995231628
+			]
+		},
+		{
+			"body_triangles": 36,
+			"bounds_min": [
+				-1.10000002384186,
+				0.0,
+				-0.174999997019768
+			],
+			"default_interactive": false,
+			"glb": "glb/gate_frame.glb",
+			"id": "gate_frame",
+			"native": "native/gate_frame.tscn",
+			"outline_triangles": 36,
+			"size_m": [
+				2.20000004768372,
+				2.40000009536743,
+				0.349999994039536
+			]
+		}
+	],
+	"origin": "ground_center",
+	"unit": "meter"
+}

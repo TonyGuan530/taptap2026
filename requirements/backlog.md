@@ -111,6 +111,7 @@
 - GPT 盲测前最终确认归档（reviews/chatgpt-demo-04-full.md）：**KEEP / BLINDTEST READY**——v11 无代码 blocker；实验设计要求=两类样本（campaign-first 测迁移复用 / lab-first 1-2 人测自发假设）+ 零提示规则 + 首玩数据分离（tester_id/run_index）+ 观察表补「脉动触发撞墙」项；遥测字段封顶不再加
 - v12（2026-10-04 04:35，盲测执行版）：**K 键内部入口**（战役中随时送入实验房——lab-first 样本的内部入口方案，操作员知晓、不告知玩家）；盲测手册按 GPT 要求更新（两类样本对照/零提示规则/首玩分离/观察项 3b 脉动触发）；headless 七用例 PASS（视觉外改动零逻辑影响）
 - 状态：v12 已上线（demo-04-v12；itch 已推，频道轮转至 demo-05-v14 属共享槽常态，pipeline-lite 按 demos.json 最新自愈）；**唯一待办=3-5 人真人盲测**
+- **方向变更（用户指令 2026-10-04 05:50）：第三人称 3D 迁移启动**——指南 D:/GIT/3D-GUIDE/taptap2026-demo04-3d-zcode-guide-2026-10-04.md；专用 worktree D:/GIT/taptap2026-demo04-3d（分支 demo04-3d）+ 定时任务已改写激活（automation-9219f711）；阶段 A 灰模 L1 → B 五关+实验房 → C 正式资产/Web → D 真人验证；2D v12 冻结为回归对照（盲测数据仍适用于 2D 基线）；3D 构建将用独立 ID demo-04-3d-vN
 
 ## demo-05 重生之我是恐龙·火山生存
 
