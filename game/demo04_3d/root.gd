@@ -178,6 +178,21 @@ func _ready() -> void:
 	ability.shards_changed.connect(_on_shards_changed)
 	load_level(0)
 	_log_ev("session_start", {"levels": LEVELS.size()})
+	_maybe_start_tour()
+
+func _maybe_start_tour() -> void:
+	## 调试巡游：Web ?tour=1 或原生 --tour 显式开启；真实输入驱动五关通关，
+	## 供无窗口录证（CDP）与回归演示。正常游玩永不激活。
+	var want := false
+	if OS.has_feature("web"):
+		var v = JavaScriptBridge.eval("new URLSearchParams(location.search).get('tour')", true)
+		want = str(v) == "1"
+	elif "--tour" in OS.get_cmdline_user_args() or "--tour" in OS.get_cmdline_args():
+		want = true
+	if want:
+		var drv := preload("res://demo04_3d/tour_driver.gd").new()
+		drv.game = self
+		add_child(drv)
 
 func _build_static() -> void:
 	# 灯光/环境：跨关常驻

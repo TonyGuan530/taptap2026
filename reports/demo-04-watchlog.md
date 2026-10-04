@@ -123,3 +123,9 @@
 - 已镜像主仓库（RAW 链接生效）+ Miro 真图卡上板。
 - 工具：tools/cdp-shot-demo04-3d.mjs（截图）/ tools/cdp-video-demo04-3d.mjs（录像+按键注入）。
 - 遗留：帧率低（SwiftShader 慢，22帧/25s≈0.9fps）——后续可试 GPU 栅格/headless 旧模式提帧；五关巡游的 web 版（JS 复刻路点）未做。
+
+## 2026-10-05 06:40（轮25·五关通关演示片 ★★）
+- 巡游引擎内置化：game/demo04_3d/tour_driver.gd（?tour=1 / --tour 显式调试组件，正常游玩永不激活）。
+- CDP 录得五关完整通关演示片：761 帧 / 219s 真实通关 / tourDone=0 → 33s 24fps 延时片 1.7MB；末帧 L5 四 DNA + 双组合 + 西侧栈道 12/17 碎片。
+- 发布 demo-04-3d-v5（Pages 换版仅留 v5；demos.json 槽→v5）；双回归 22/22 + 7/7 全绿；pck 核对通过。
+- Phase C 剩余：正式资产（等 imagegen/ChatGPT 素材）、鼠标捕获等交互实测（CDP 可做下轮）、原生导出（等模板）。
