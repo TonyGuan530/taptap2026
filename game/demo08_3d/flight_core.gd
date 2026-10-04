@@ -35,6 +35,7 @@ const LAT_VMAX := 320.0         # 横向速度上限 px/s
 const LAT_DAMP := 160.0         # 无输入横向阻尼 px/s^2
 const LAT_LIMIT_PX := 1200.0    # 横向边界半宽 20m
 const GATE_HALF_PX := 300.0     # 门横向有效半宽 5m
+const LAT_WIND := 60.0          # 阶段 C2 新机制：侧风恒定横向加速度 px/s²（wind="side" 时生效，方向由 wind_side）
 
 const LEVELS := [
 	{name = "第 1 关 · 后山操场", short = "后山操场", ratio = 1.4, folds = 3, target_m = 30.0, wind = "none", reward = 0,
@@ -50,6 +51,9 @@ const LEVELS := [
 	{name = "第 5 关 · 远程投递", short = "远程投递", ratio = 0.6, folds = 6, target_m = 85.0, wind = "tail", reward = 14,
 		gate_x = 50.0, gate_h = 14.0, gate_bonus = 4,
 		tip = "顺风最长关 85 米，可折 6 次；50 米高空门（14m 以上）+4，折飘一点把门也一起收了"},
+	{name = "第 6 关 · 侧风走廊", short = "侧风走廊", ratio = 0.9, folds = 5, target_m = 60.0, wind = "side", wind_side = -1.0, reward = 12,
+		gate_x = 35.0, gate_h = 11.0, gate_bonus = 3,
+		tip = "侧风向左推（60px/s²），按住 D 顶住风向保住中线；35 米高空门（11m 以上）+3，60 米过关。更多机制关卡（用户指令扩展，五关原始配置未动）"},
 ]
 
 const SHOP_POOL := [
@@ -218,9 +222,13 @@ func step(delta: float) -> String:
 	if state != "fly":
 		return ""
 	flight_time += delta
-	# 阶段 B1：横向独立运动学（不触碰下方旧纵向/高度积分，升力不耦合）
-	if lateral_input != 0.0:
-		lateral_vel += lateral_input * LAT_ACCEL * delta
+	# 阶段 B1/C2：横向独立运动学（不触碰下方旧纵向/高度积分，升力不耦合）
+	# C2 新增：wind="side" 时叠加恒定侧风加速度（方向 wind_side）；无侧风关卡路径与 B1 逐位一致
+	var wind_a: float = 0.0
+	if wind_mode() == "side":
+		wind_a = wind_side() * LAT_WIND
+	if lateral_input != 0.0 or wind_a != 0.0:
+		lateral_vel += (lateral_input * LAT_ACCEL + wind_a) * delta
 	else:
 		var ldamp: float = LAT_DAMP * delta
 		lateral_vel = 0.0 if absf(lateral_vel) <= ldamp else lateral_vel - signf(lateral_vel) * ldamp
@@ -405,3 +413,8 @@ func has_upgrade(id: String) -> bool:
 
 func wind_mode() -> String:
 	return String(LEVELS[level_idx].wind)
+
+
+## 侧风方向（-1=向左推，+1=向右推），仅 wind="side" 时有意义
+func wind_side() -> float:
+	return float(LEVELS[level_idx].get("wind_side", -1.0))

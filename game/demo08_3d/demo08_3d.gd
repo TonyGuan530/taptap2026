@@ -320,9 +320,10 @@ func _build_menu_panel() -> void:
 	for i in core.LEVELS.size():
 		var lb := Button.new()
 		lb.name = "LevelBtn%d" % i
-		lb.position = Vector2(24 + i * 125, 58)
-		lb.size = Vector2(112, 46)
-		lb.add_theme_font_size_override("font_size", 13)
+		# 6 关布局：面板宽 660-48 边距 → 每键 98 宽 + 102 步进（末键右缘 632 不溢出）
+		lb.position = Vector2(24 + i * 102, 58)
+		lb.size = Vector2(98, 46)
+		lb.add_theme_font_size_override("font_size", 12)
 		lb.pressed.connect(_on_level_pressed.bind(i))
 		lb.mouse_entered.connect(_on_menu_hover.bind(i))
 		menu_panel.add_child(lb)
@@ -873,6 +874,11 @@ func _draw_throw_ui() -> void:
 func _draw_wind_tag() -> void:
 	var w: String = core.wind_mode()
 	if w == "none":
+		return
+	if w == "side":
+		var left: bool = core.wind_side() < 0.0
+		paint.draw_string(FONT, Vector2(770.0, 60.0), "侧风 %s（A/D 顶风）" % ("←" if left else "→"),
+			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("5c6bc0"))
 		return
 	var head: bool = w == "head"
 	var col := Color("5c6bc0") if head else Color("43a047")

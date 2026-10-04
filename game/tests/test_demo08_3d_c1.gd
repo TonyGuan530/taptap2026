@@ -39,7 +39,7 @@ func _good_folds(c: Object, n: int) -> void:
 			pr.position + pr.size * Vector2(0.92, 0.54 + 0.06 * float(k)))
 
 
-## 各关配方：[折数, 角度, 力度, 转向dir, 转向保持秒]
+## 各关配方：[折数, 角度, 力度, 转向dir, 转向保持秒]（L6 为用户指令扩展关：顶风吃高门）
 func _recipe(i: int) -> Array:
 	match i:
 		0: return [2, 30.0, 1.0, 0.0, 0.0]
@@ -47,6 +47,7 @@ func _recipe(i: int) -> Array:
 		2: return [5, 35.0, 0.9, 0.0, 0.0]
 		3: return [4, 35.0, 1.0, -1.0, 1.2]
 		4: return [6, 45.0, 1.0, 0.0, 0.0]
+		5: return [4, 30.0, 1.0, 1.0, 0.4]
 	return [3, 30.0, 1.0, 0.0, 0.0]
 
 
@@ -73,7 +74,7 @@ func _run() -> void:
 	var best_d := 0.0
 	var coins_expect := 0
 	var all_pass := true
-	for i in 5:
+	for i in 6:
 		c.start_level(i)
 		_throw_and_fly(c)
 		var d: float = float(c.flight_distance)
@@ -85,18 +86,18 @@ func _run() -> void:
 		coins_expect += int(d / 10.0) + int(c.LEVELS[i].reward) + c.gate_coins
 		if not ok:
 			break
-		if i < 4:
+		if i < 5:
 			c.settle_continue()
 			if String(c.state) == "shop":
 				c.shop_skip()
-	_check(all_pass and String(c.state) == "settle" and c.level_idx == 4,
-		"C1-A 五关依次过关（L4 转向吃高门含在流程内）")
+	_check(all_pass and String(c.state) == "settle" and c.level_idx == 5,
+		"C1-A 六关依次过关（L4 转向吃高门含在流程内）")
 	var go: String = c.settle_continue()
-	_check(go == "final" and String(c.state) == "final", "C1-A2 L5 结算继续 → final")
+	_check(go == "final" and String(c.state) == "final", "C1-A2 L6 结算继续 → final")
 	_check(absf(float(c.total_distance) - sum_d) < 0.01 and absf(float(c.best_distance) - best_d) < 0.01,
 		"C1-A3 总里程/最远一致（%.1fm）" % float(c.total_distance))
 	_check(c.coins == coins_expect, "C1-A4 金币累计 %d = 各关门奖+结算之和" % c.coins)
-	_check(c.unlocked == 4, "C1-A5 解锁至第 5 关（unlocked=4）")
+	_check(c.unlocked == 5, "C1-A5 解锁至第 6 关（unlocked=5）")
 
 	# B 强化可解释性：力气 +1 级 → 初速比恰为 1.2，距离有可测变化
 	var base: Object = CoreScript.new()
