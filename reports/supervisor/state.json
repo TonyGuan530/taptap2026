@@ -1,24 +1,24 @@
 {
-  "checkedAt": "2026-10-04T09:36:00+08:00",
-  "round": 87,
+  "checkedAt": "2026-10-04T09:46:00+08:00",
+  "round": 88,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（09:35 实跑）"
+    "thisRound": "guard SKIP not-foreground（09:45 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 85,
-      "lastDispatch": "09:34",
-      "next": "09:44"
+      "runCount": 86,
+      "lastDispatch": "09:44",
+      "next": "09:54"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "守望轮第十/十一次零变更（稳态）"
+      "evidence": "守望轮第十二/十三次零变更（稳态）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "🔴 空转第 11 次（4a2b152）——失能维持"
+      "evidence": "🔴 空转第 12 次（819123b）——失能维持"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
@@ -47,7 +47,7 @@
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD b191f5d",
+    "git": "本轮 HEAD f346245",
     "itch": "故障形态回摆 CDN 占位页（整站层问题持续）；Pages 兜底全在线"
   },
   "fiveHourPlan": {
@@ -58,7 +58,7 @@
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
     "🔴【需用户决策】Batch 01 人选与排期（唯一阻塞点）；demo-02 会话失能；itch A/B（整站故障挂起）",
-    "守望稳态持续——各任务合规"
+    "守望稳态持续"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
