@@ -66,14 +66,16 @@ func _physics_process(_delta: float) -> void:
 		510:
 			_tap(KEY_ESCAPE)               # Esc 取消
 		520:
-			game.day_time = game.DAY_LEN + 2.0   # 入夜
+			game.day_time = game.DAY_LEN + 2.0   # 入夜（灰界尚在远处）
 			game.thirst = 15.0
 			game.hunger = 20.0
-		555:
-			for b in game.buildings:
-				if b.kind == "shelter":
-					game.dino.position = b.pos + Vector3(1.2, 0.1, 0)
-		600:
-			_tap(KEY_E)                    # 入睡 → 黎明
-		660:
+			game.hp = 60.0
+		530:
+			game.dino.position = Vector3(13, 0.1, -1)   # 停在东坡侧，等灰潮压境
+		560:
+			game.day_time = game.DAY_LEN + game.NIGHT_LEN * 0.45   # 灰潮推进至西界≈8，覆盖恐龙
+		640:
+			game.dino.position = Vector3(0, 0.1, 4)     # 撤到西半场
+			game.day_time = game.DAY_LEN + game.NIGHT_LEN - 1.2   # 黎明将至，灰潮退去
+		780:
 			get_tree().quit()
