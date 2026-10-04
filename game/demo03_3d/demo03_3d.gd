@@ -51,6 +51,7 @@ var menu_layer: Control
 var end_layer: Control
 var end_title: Label
 var end_body: Label
+var end_log_label: Label
 var toasts: Array[Dictionary] = []
 var tooltip_label: Label
 var cmd_button: Button
@@ -384,27 +385,59 @@ func _build_hud() -> void:
 	_button(menu_layer, Vector2(680, 300), Vector2(170, 50), "寒夜守卫（第 2 章）",
 			func() -> void: _start("hard"))
 	_label(menu_layer, Vector2(240, 380), "左键：点槽位建造/升级，点村民晋升｜F：灭火指挥（25💧 全队应急降温）｜滚轮缩放，Q/E 旋转，Home 复位", 14, Color("9fb3c8"))
-	# 结算
+	# 结算（v7：含本局消费遥测时间线 + 一键复制，服务真人盲测采集）
 	end_layer = Control.new()
 	end_layer.visible = false
 	hud.add_child(end_layer)
 	var panel := ColorRect.new()
 	panel.color = Color(0, 0, 0, 0.62)
-	panel.position = Vector2(240, 170)
-	panel.size = Vector2(480, 200)
+	panel.position = Vector2(240, 150)
+	panel.size = Vector2(480, 210)
 	end_layer.add_child(panel)
-	end_title = _label(end_layer, Vector2(280, 190), "", 30, Color("66bb6a"))
-	end_body = _label(end_layer, Vector2(280, 240), "", 16, Color("e8ecf4"))
-	_button(end_layer, Vector2(280, 310), Vector2(150, 42), "再守一次",
+	end_title = _label(end_layer, Vector2(280, 165), "", 30, Color("66bb6a"))
+	end_body = _label(end_layer, Vector2(280, 215), "", 15, Color("e8ecf4"))
+	_button(end_layer, Vector2(280, 268), Vector2(150, 40), "再守一次",
 			func() -> void:
 				_start(sim.mode))
-	_button(end_layer, Vector2(450, 310), Vector2(120, 42), "选模式",
+	_button(end_layer, Vector2(450, 268), Vector2(120, 40), "选模式",
 			func() -> void: _show_menu())
+	_button(end_layer, Vector2(590, 268), Vector2(120, 40), "复制记录",
+			func() -> void:
+				DisplayServer.clipboard_set(end_log_label.text)
+				_toast("已复制本局记录", Color("a5d6a7")))
+	var log_bg := ColorRect.new()
+	log_bg.color = Color(0, 0, 0, 0.5)
+	log_bg.position = Vector2(240, 316)
+	log_bg.size = Vector2(480, 150)
+	end_layer.add_child(log_bg)
+	end_log_label = _label(end_layer, Vector2(250, 322), "", 12, Color("cfd8dc"))
 
 
 func _toast(text: String, col: Color) -> void:
 	var l := _label(toast_box, Vector2.ZERO, text, 15, col)
 	toasts.append({"label": l, "age": 0.0})
+
+
+func mode_name(p_mode: String) -> String:
+	if p_mode == "storm":
+		return "风暴之夜"
+	if p_mode == "hard":
+		return "寒夜守卫"
+	return "经典 60 秒"
+
+
+## v7 结算遥测：spend_log → 可读时间线（☀/☔ 天气上下文 + 总结行），供真人盲测采集
+func _format_spend_log() -> String:
+	var kind_names := {"build": "建造", "upgrade": "升级", "promote": "晋升", "command": "灭火指挥"}
+	var lines: Array[String] = []
+	for rec: Dictionary in sim.spend_log:
+		var t: float = float(rec.t)
+		var weather := "☔" if sim.acid_at(t) else "☀"
+		lines.append("[%5.1fs] %s %s %d💧" % [t, weather, str(kind_names.get(str(rec.kind), str(rec.kind))), int(rec.amount)])
+	var result := "败" if sim.round_state == "lose" else ("胜" if sim.round_state == "win" else "—")
+	lines.append("── %s · %s · 终温 %d · 水滴 %d · 消费 %d 笔" % [
+		mode_name(sim.mode), result, int(sim.heat), int(sim.water), sim.spend_log.size()])
+	return "\n".join(lines)
 
 
 ## v4 灭火指挥入口（按钮/F 键共用）：成功/冷却中/缺水分支提示
@@ -472,6 +505,7 @@ func _on_sim_event(kind: String, p: Dictionary) -> void:
 				banner_label.text = ""
 		"round_ended":
 			end_layer.visible = true
+			end_log_label.text = _format_spend_log()
 			if bool(p.win):
 				end_title.text = "🏡 国度守住了！"
 				end_title.add_theme_color_override("font_color", Color("66bb6a"))

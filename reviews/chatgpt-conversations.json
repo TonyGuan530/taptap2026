@@ -35,7 +35,9 @@
       "phase3dV5Pending": "reviews/chatgpt-demo-03-3d-v5-pending.md",
       "phase3dV5Note": "v5 待发送（2026-10-05）：风暴之夜 3D 视觉辨识（紫黑夜空+环境细雨+酸雨双层叠加，对齐 2D v14），规则零改动；与 v4 备案一并待发（不弹窗约束）",
       "phase3dV6Pending": "reviews/chatgpt-demo-03-3d-v6-pending.md",
-      "phase3dV6Note": "v6 待发送（2026-10-05）：新增第 2 章「寒夜守卫」hard 模式（起始50/三场6s酸雨/村民30-50s，经济一致），经典风暴零改动；v4/v5/v6 三份备案一并待发（不弹窗约束）"
+      "phase3dV6Note": "v6 待发送（2026-10-05）：新增第 2 章「寒夜守卫」hard 模式（起始50/三场6s酸雨/村民30-50s，经济一致），经典风暴零改动；v4/v5/v6 三份备案一并待发（不弹窗约束）",
+      "phase3dV7Pending": "reviews/chatgpt-demo-03-3d-v7-pending.md",
+      "phase3dV7Note": "v7 待发送（2026-10-05）：结算遥测面板（spend_log 时间线+天气上下文+一键复制，服务真人盲测）；规则零改动；v4/v5/v6/v7 四份备案一并待发（不弹窗约束）"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",

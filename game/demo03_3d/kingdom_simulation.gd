@@ -142,9 +142,14 @@ func has_prof(prof_name: String) -> bool:
 
 ## 气象学家在场时酸雨有效时长减半（动态判定）
 func acid_active() -> bool:
+	return acid_at(elapsed)
+
+
+## 任意时刻是否处于酸雨（结算遥测/复盘用；与 acid_active 同规则）
+func acid_at(t: float) -> bool:
 	for e: Dictionary in acid_events:
 		var dur_eff: float = float(e.dur) * (0.5 if has_prof("气象学家") else 1.0)
-		if elapsed >= float(e.start) and elapsed < float(e.start) + dur_eff:
+		if t >= float(e.start) and t < float(e.start) + dur_eff:
 			return true
 	return false
 

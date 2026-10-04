@@ -81,16 +81,18 @@ func _run() -> void:
 
 	# ---- 1. 点击槽位 0 → 建造（走拾取管线）----
 	var p0 := screen_of(slot_world(0))
+	var w0: float = scene.sim.water
 	await click(p0)
 	check(scene.sim.towers[0] == 1, "点击槽位 0 → 建造")
-	check(approx(float(scene.sim.water), 80.0, 0.6), "建造扣 20（含收入漂移）", "got %.2f" % float(scene.sim.water))
+	check(approx(float(scene.sim.water), w0 - 20.0, 0.6), "建造扣 20（点击前后差值，免疫收入漂移）", "got %.2f" % float(scene.sim.water))
 	check(is_instance_valid(scene.comic_towers[0]), "水塔 ComicObject 可见")
 	shot("02-点击建造")
 
 	# ---- 2. 再点槽位 0 → 升级 ----
+	var w1: float = scene.sim.water
 	await click(p0)
 	check(scene.sim.towers[0] == 2, "点击槽位 0 → 升级 II")
-	check(approx(float(scene.sim.water), 40.0, 0.6), "升级扣 40（含收入漂移）", "got %.2f" % float(scene.sim.water))
+	check(approx(float(scene.sim.water), w1 - 40.0, 0.6), "升级扣 40（点击前后差值）", "got %.2f" % float(scene.sim.water))
 
 	# ---- 3. 时间推进到 20s → 村民出现 → 点击晋升 ----
 	sim_set_elapsed(20.0)
@@ -98,10 +100,11 @@ func _run() -> void:
 	await process_frame
 	check(scene.sim.villagers.size() == 1, "村民已加入")
 	var vpos := villager_world(0)
+	var w2: float = scene.sim.water
 	await click(screen_of(vpos))
 	var v: Dictionary = scene.sim.villagers[0]
 	check(int(v.level) == 1, "点击村民 → 晋升")
-	check(approx(float(scene.sim.water), 10.0, 0.6), "晋升扣 30（含收入漂移）", "got %.2f" % float(scene.sim.water))
+	check(approx(float(scene.sim.water), w2 - 30.0, 0.6), "晋升扣 30（点击前后差值）", "got %.2f" % float(scene.sim.water))
 	shot("03-点击晋升")
 
 	# ---- 4. 资金不足：水滴清零后点空槽 1 → 不建造不扣费 ----
@@ -193,6 +196,28 @@ func _run() -> void:
 			"真实点击寒夜守卫按钮开局", "%s/%s" % [scene.sim.round_state, scene.sim.mode])
 	check(not scene.menu_layer.visible, "开局后菜单隐藏")
 	check(String(scene.mode_label.text).contains("寒夜"), "模式标签更新", scene.mode_label.text)
+
+	# ---- 11. v7 结算遥测：spend_log 时间线 + 总结行 ----
+	scene._start("classic")
+	scene.sim.acid_events[0].start = 22.0
+	scene.sim.acid_events[1].start = 46.0
+	sim_set_water(100.0)
+	await click(screen_of(slot_world(0)))
+	check(scene.sim.towers[0] == 1, "遥测局真实点击建造一笔")
+	scene.sim.elapsed = 59.4
+	# headless 帧率不封顶，不能靠帧数等真实时间；用确定性 tick 推进到结算
+	var guard := 0
+	while scene.sim.round_state == "play" and guard < 120:
+		scene.sim.tick(1.0 / 60.0)
+		guard += 1
+	await process_frame
+	await process_frame
+	check(scene.sim.round_state == "win" and scene.end_layer.visible, "推进到胜利结算",
+			"%s guard=%d" % [scene.sim.round_state, guard])
+	var log_text := String(scene.end_log_label.text)
+	check(log_text.contains("建造 20💧") and log_text.contains("经典 60 秒 · 胜"),
+			"结算时间线含建造与总结行", log_text.replace("\n", " | "))
+	check(scene._format_spend_log().split("\n").size() >= 2, "格式化至少两行")
 
 	print("==== 3D 阶段 B 拾取测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)

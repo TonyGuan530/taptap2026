@@ -307,5 +307,15 @@ func _run() -> void:
 	s14.setup_round("storm", 7)
 	check(approx(s14.heat, 40.0, 0.001), "风暴起始仍 40 度")
 
+	# ---- 15. v7 acid_at：任意时刻酸雨判定（气象学家减半同规则）----
+	var s15 = Sim.new()
+	s15.setup_round("classic", 7)
+	s15.acid_events[0].start = 22.0
+	s15.acid_events[1].start = 46.0
+	check(not s15.acid_at(21.9) and s15.acid_at(22.0) and s15.acid_at(29.9) and not s15.acid_at(30.0),
+			"acid_at 边界（22 起 30 止，半开区间）")
+	s15.villagers.append({"id": 1, "name": "气", "prof": "气象学家", "level": 0, "x": 480.0})
+	check(s15.acid_at(25.9) and not s15.acid_at(26.0), "acid_at 气象学家减半（22~26）")
+
 	print("==== 3D 迁移阶段 A 测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)
