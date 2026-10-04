@@ -660,6 +660,11 @@ func _export_telemetry() -> void:
 			f.store_string(JSON.stringify(envelope, "  "))
 			f.close()
 			ok_n += 1
+	# Web 端额外触发浏览器下载（指南 §C「遥测下载」）；原生不受影响
+	if OS.has_feature("web"):
+		var b64 := Marshalls.utf8_to_base64(JSON.stringify(envelope, "  "))
+		JavaScriptBridge.eval(
+			"(() => { const a = document.createElement('a'); a.href = 'data:application/json;base64," + b64 + "'; a.download = 'demo04_3d_lab_log.json'; document.body.appendChild(a); a.click(); a.remove(); })()", true)
 	if ok_n == paths.size():
 		_toast("遥测已导出（%s · %d 事件）" % [tester_id, events.size()])
 	else:
