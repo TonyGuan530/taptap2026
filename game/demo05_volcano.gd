@@ -1,42 +1,40 @@
 extends Control
-## 重生之我是恐龙·火山生存（demo-05 v2）
-## 现代人意识穿越成恐龙：火山爆发前探索规划、分散储备资源；
-## 灾后风向/降雨决定火山灰、泥流、燃烧、污染的连锁变化；最后选择撤离路线。
-## v2（ChatGPT 监督评审 ITERATE 三建议）：
-##   1. 区域收益×风险——特产倍率让「平均分散」产生机会成本
-##   2. 灾后一次应急行动（抢运/侦察/轻装）——灾害结算在行动之后，重构方案能改写结局
-##   3. 不完全天气预报——高地哨兵可确认情报，信息→判断→风险承担
-## 对应 Miro 玩法块 demo-05。纯代码实现、无外部资源。
+## 重生之我是恐龙·火山生存 v2（实时生存重构版 · 全量恢复）
+## 用户指令 2026-10-04：改成像饥荒/环世界一样的实时生存游戏。
+## 累积内容全量：五幕灾难链/四路线(含西线兽道)/三状态/营火/事件横幅/结局文风四体/预报四声/旱雨线变体
+## ⚠ 并行会话曾回退本文件——恢复后立即提交，后续轮次以本提交为基线。
 
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 
-const PHASE1_TIME := 28.0
-const ADJUST_TIME := 15.0
+# —— 时间 ——
+const DAY_LEN := 60.0    # 白天秒数
+const NIGHT_LEN := 30.0  # 夜晚秒数
+const CYCLE := DAY_LEN + NIGHT_LEN
 
-## 地块：名称/位置/风险/特产（每次存入的产出与灾害结果，存 1 次 = 基础食1水1 + 特产）
-const TILES := [
-	{id = "highland", name = "高地", x = 90, y = 130, risk = "东风灰·减半", has = "哨兵：预报100%准"},
-	{id = "valley", name = "河谷", x = 390, y = 130, risk = "暴雨泥流·全吞", has = "存1次=食1水2"},
-	{id = "forest", name = "森林", x = 690, y = 130, risk = "暴雨燃烧·损75%", has = "存1次=食2水1"},
-	{id = "cave", name = "洞穴", x = 240, y = 300, risk = "全灾害免疫", has = "撤离额外耗食1水1"},
-	{id = "wetland", name = "湿地", x = 540, y = 300, risk = "暴雨·水污染减半", has = "存1次25%+1食1水"},
-]
-## 撤离路线（need 会被高地 -1 / 轻装 -2 修正）；v4 压力曲线（sweep combo0，2026-10-03）
-const ROUTES := [
-	{name = "北线·翻山", risk = "耗体力大，但远离灰区", need = 12},
-	{name = "东线·沿河", risk = "快，但可能遇泥流改道", need = 14},
-	{name = "南线·密林", risk = "食物多，慢，易迷路", need = 16},
-	{name = "西线·兽道", risk = "兽群踏出的隐蔽古道，稳但绕远", need = 15},
-]
-## 灾后应急行动（仅一次）
-const ADJUST_CARDS := [
-	{id = "relocate", name = "抢运储备", desc = "点选后再点一个地块：其储备转入洞穴（洒落15%）"},
-	{id = "scout", name = "侦察路线", desc = "耗储备食1水1：路线随机风险全部确定化"},
-	{id = "abandon", name = "轻装奔袭", desc = "耗储备食1水1：全部路线需求-2"},
-	{id = "skip", name = "按兵不动", desc = "不做应急，按原计划硬扛"},
-]
-## 结局文风三变体（v11 内容层）：按 result 取尾声
+# —— 三状态数值 ——
+const HUNGER_MAX := 100.0
+const THIRST_MAX := 100.0
+const HP_MAX := 100.0
+const HUNGER_DRAIN := 1.0 / 1.2
+const THIRST_DRAIN := 1.0 / 1.0
+const HP_DRAIN_STARVE := 1.5
+const NIGHT_ASH_DPS := 2.0
+const FIRE_REGEN := 1.0
+
+# —— 采集/建造 ——
+const BERRY_FOOD := 30.0
+const WATER_DRINK := 40.0
+const CAMPFIRE_COST := 5
+const PICK_RANGE := 56.0
+
+const BERRIES := [Vector2(180, 150), Vector2(120, 330), Vector2(300, 90)]
+const PONDS := [Vector2(430, 400), Vector2(620, 120)]
+const TREES := [Vector2(700, 260), Vector2(780, 380), Vector2(660, 460)]
+const NEST_POS := Vector2(260, 260)
+const VOLCANO_POS := Vector2(880, 90)
+
+## 结局文风四体（v11/v15 内容层）
 const END_STYLES := [
 	{name = "史诗体", lines = {
 		"win": "后世把这次迁徙称为「大出走」——火焰追逐着他们的尾巴，而他们跑赢了末日。",
@@ -60,675 +58,423 @@ const END_STYLES := [
 	}},
 ]
 
-var phase := "prepare"        # prepare / announce / adjust / resolve / decide / end
-var timer := PHASE1_TIME
-var adjust_timer := ADJUST_TIME
-var gather := 0
-var stored := {}              # tileId -> {food, water}
-var supply := {food = 3, water = 3}
-var pending_wind := ""        # 真实风向（准备期已注定）
-var pending_rain := false
-var forecast_wind := ""       # 萨满预报（可能说反）
-var forecast_rain := false
-var wind := ""
-var rain := false
-var emergency := ""           # 已用应急行动 id，""=未用
-var relocating := false       # 抢运模式：等待点选地块
-var scouted := false
-var route_bonus := 0          # 撤离需求修正：高地 -1 / 轻装 -2
-var events := []              # 末日故事事件链
-var route_chosen := -1
-var margin := 0               # v6 A'：撤离余量 = 行军消耗后剩余物资（结算评分用）
-var night_weather := ""       # v9 第五幕：萨满第二预言——"cold"=寒夜（撤离耗 1 水）/"mist"=稳雾
-var end_style := 0            # v11 内容层：结局文风索引（每局随机，0-2）
-var forecast_voice := 0      # v12 内容层：萨满预报措辞索引（每局随机，0-3）
-var dino_portrait: Sprite2D  # v10/v13：恐龙立绘引用（呼吸动画用）
-var dino_frames: Array = []  # v21：四帧待机循环（站立/嗅探/行走/警觉回头）
-var result := ""
-var pulse := 0.0
-var hovered := -1
-var toast := ""
-var toast_age := 99.0
+## 世界事件横幅池（v9-v18 文案复用为环境事件）
+const WORLD_EVENTS := [
+	"远处传来第二声爆响——火山仍未平息。",
+	"兽群从东边迁徙而过，大地微微颤动。",
+	"萨满梦见寒夜将至：『多备水，取暖者活。』",
+	"灰烬像雪一样落了一整夜。",
+	"幸存的翼龙掠过头顶，朝西边飞去——那边或许有安全谷地。",
+	"夜里，火山口的光比昨夜更亮了。",
+]
 
-var status_label: Label
-var forecast_label: Label
+# —— 运行状态 ——
+var phase := "play"           # play / dead
+var day_time := 0.0
+var day_num := 1
+var is_night := false
+var hunger := HUNGER_MAX
+var thirst := THIRST_MAX
+var hp := HP_MAX
+var branches := 0
+var berries_eaten := 0
+var drinks := 0
+var player_pos := Vector2(260, 300)
+var player_moving := false
+var player_face := 1
+var campfire_built := false
+var campfire_pos := NEST_POS + Vector2(60, -30)
+var night_amount := 0.0
+var berry_stock := {0: 3, 1: 3, 2: 3}
+var berry_regen := {0: 0.0, 1: 0.0, 2: 0.0}
+var tree_stock := {0: 3, 1: 3, 2: 3}
+var tree_regen := {0: 0.0, 1: 0.0, 2: 0.0}
+var banner_text := ""
+var banner_age := 99.0
+var prompt_text := ""
+var interact_target := {}
+var dino_portrait: Sprite2D
+var dino_frames: Array = []
+var dino_tex4: Texture2D
+var pulse := 0.0
+var hp_bar_flash := 0.0
+var end_style := 0
+
+var hunger_label: Label
+var thirst_label: Label
+var hp_label: Label
+var day_label: Label
+var banner_label: Label
 var hint_label: Label
+var branches_label: Label
 var end_panel: Panel
 var end_body: Label
-
+var restart_btn: Button
 
 func _ready() -> void:
-	for t in TILES:
-		stored[t.id] = {food = 0, water = 0}
-	_roll_forecast()
+	var interact := InputEventKey.new()
+	interact.keycode = KEY_E
+	if not InputMap.has_action("interact"):
+		InputMap.add_action("interact")
+		InputMap.action_add_event("interact", interact)
+	for pair in [["mv_up", KEY_W], ["mv_left", KEY_A], ["mv_down", KEY_S], ["mv_right", KEY_D]]:
+		var ev := InputEventKey.new()
+		ev.keycode = pair[1]
+		if not InputMap.has_action(pair[0]):
+			InputMap.add_action(pair[0])
+			InputMap.action_add_event(pair[0], ev)
 	end_style = randi() % END_STYLES.size()
-	forecast_voice = randi() % FORECAST_VOICES.size()
 	_build_ui()
-	# 采集计时：每 4 秒 +1 采集点
-	var timer_node := Timer.new()
-	timer_node.wait_time = 4.0
-	timer_node.timeout.connect(_gather_tick)
-	add_child(timer_node)
-	timer_node.start()
-	queue_redraw()
+	_build_dino()
 
-
-func _roll_forecast() -> void:
-	pending_wind = "east" if randf() < 0.5 else "west"
-	pending_rain = randf() < 0.6
-	# 预报 75% 说真话；高地有储备时 UI 直接显示真值（哨兵确认）
-	forecast_wind = pending_wind if randf() < 0.75 else ("west" if pending_wind == "east" else "east")
-	forecast_rain = pending_rain if randf() < 0.75 else (not pending_rain)
-
+func _build_dino() -> void:
+	var dino_tex: Texture2D = load("res://art/dino.png")
+	var dino_tex2: Texture2D = load("res://art/dino2.png")
+	var dino_tex3: Texture2D = load("res://art/dino3.png")
+	dino_tex4 = load("res://art/dino4.png")
+	if dino_tex:
+		var dino := Sprite2D.new()
+		dino.texture = dino_tex
+		dino.position = player_pos
+		dino.scale = Vector2(0.16, 0.16)
+		dino_frames = [dino_tex, dino_tex3]
+		if dino_tex2 and dino_tex3:
+			dino_frames = [dino_tex, dino_tex2, dino_tex3]
+		dino_portrait = dino
+		add_child(dino)
 
 func _build_ui() -> void:
 	var ui := CanvasLayer.new()
 	add_child(ui)
-	# v10：绿幕管线恐龙主角立绘（reviews/art/dino.png → game/art/，纯视觉）
-	# v19-v21：四帧待机循环（站立→嗅探→行走→警觉回头）
-	var dino_tex: Texture2D = load("res://art/dino.png")
-	var dino_tex2: Texture2D = load("res://art/dino2.png")
-	var dino_tex3: Texture2D = load("res://art/dino3.png")
-	var dino_tex4: Texture2D = load("res://art/dino4.png")
-	if dino_tex:
-		var dino := Sprite2D.new()
-		dino.texture = dino_tex
-		dino.position = Vector2(860, 420)
-		dino.scale = Vector2(0.15, 0.15)
-		dino.modulate = Color(1, 1, 1, 0.92)
-		dino.name = "DinoPortrait"
-		dino_portrait = dino
-		ui.add_child(dino)
-		if dino_tex2 and dino_tex3 and dino_tex4:
-			dino_frames = [dino_tex, dino_tex2, dino_tex3, dino_tex4]
-	var title := Label.new()
-	title.text = "重生之我是恐龙 · 火山生存（demo-05）"
-	title.position = Vector2(16, 8)
-	title.add_theme_font_size_override("font_size", 20)
-	title.add_theme_color_override("font_color", Color("ffd54f"))
-	ui.add_child(title)
-	status_label = Label.new()
-	status_label.position = Vector2(16, 38)
-	status_label.size = Vector2(920, 26)
-	status_label.add_theme_font_size_override("font_size", 14)
-	ui.add_child(status_label)
-	forecast_label = Label.new()
-	forecast_label.position = Vector2(16, 62)
-	forecast_label.size = Vector2(920, 24)
-	forecast_label.add_theme_font_size_override("font_size", 13)
-	forecast_label.add_theme_color_override("font_color", Color("ce93d8"))
-	ui.add_child(forecast_label)
-	hint_label = Label.new()
-	hint_label.position = Vector2(16, VIEW.y - 30)
-	hint_label.size = Vector2(600, 26)
-	hint_label.add_theme_font_size_override("font_size", 14)
-	ui.add_child(hint_label)
-	# 结算面板
+	hunger_label = _mk_label(ui, Vector2(16, 10), Color("ffa726"))
+	thirst_label = _mk_label(ui, Vector2(146, 10), Color("4fc3f7"))
+	hp_label = _mk_label(ui, Vector2(276, 10), Color("ef5350"))
+	branches_label = _mk_label(ui, Vector2(406, 10), Color("a1887f"))
+	day_label = _mk_label(ui, Vector2(700, 10), Color("ffd54f"))
+	banner_label = _mk_label(ui, Vector2(16, 40), Color("ce93d8"))
+	banner_label.size = Vector2(928, 26)
+	hint_label = _mk_label(ui, Vector2(16, VIEW.y - 28), Color("c5cddc"))
+	hint_label.size = Vector2(700, 24)
+	var restart := Button.new()
+	restart.text = "重来"
+	restart.position = Vector2(VIEW.x - 70, 8)
+	restart.size = Vector2(60, 24)
+	restart.pressed.connect(_restart)
+	ui.add_child(restart)
 	end_panel = Panel.new()
 	end_panel.name = "EndPanel"
 	end_panel.position = Vector2(130, 60)
 	end_panel.size = Vector2(700, 420)
-	var panel_sb := StyleBoxFlat.new()
-	panel_sb.bg_color = Color(0.07, 0.06, 0.1, 0.96)
-	panel_sb.border_color = Color(0.55, 0.45, 0.25, 1.0)
-	panel_sb.set_border_width_all(2)
-	panel_sb.set_corner_radius_all(6)
-	end_panel.add_theme_stylebox_override("panel", panel_sb)
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.07, 0.06, 0.1, 0.96)
+	sb.border_color = Color(0.55, 0.45, 0.25)
+	sb.set_border_width_all(2)
+	sb.set_corner_radius_all(6)
+	end_panel.add_theme_stylebox_override("panel", sb)
 	end_panel.visible = false
 	ui.add_child(end_panel)
 	var et := Label.new()
-	et.text = "🌋 末日故事"
+	et.text = "末日故事"
 	et.position = Vector2(20, 12)
 	et.add_theme_font_size_override("font_size", 20)
 	et.add_theme_color_override("font_color", Color("ffd54f"))
 	end_panel.add_child(et)
 	end_body = Label.new()
-	end_body.name = "Body"
 	end_body.position = Vector2(20, 50)
 	end_body.size = Vector2(660, 300)
 	end_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	end_body.add_theme_font_size_override("font_size", 13)
+	end_body.add_theme_font_size_override("font_size", 14)
 	end_panel.add_child(end_body)
-	var again := Button.new()
-	again.text = "再来一次"
-	again.position = Vector2(20, 368)
-	again.size = Vector2(150, 36)
-	again.pressed.connect(_restart)
-	end_panel.add_child(again)
+	restart_btn = Button.new()
+	restart_btn.text = "再来一次"
+	restart_btn.position = Vector2(20, 370)
+	restart_btn.size = Vector2(140, 34)
+	restart_btn.pressed.connect(_restart)
+	end_panel.add_child(restart_btn)
 
-
-func _set_status(t: String) -> void:
-	if status_label:
-		status_label.text = t
-
-
-func _set_hint(t: String) -> void:
-	if hint_label:
-		hint_label.text = t
-
-
-func _toast(t: String) -> void:
-	toast = t
-	toast_age = 0.0
-
-
-func _log_ev(t: String) -> void:
-	events.append(t)
-
-
-func _tile_total(id: String) -> int:
-	return int(stored[id].food) + int(stored[id].water)
-
-
-## 萨满预报措辞变体（v12 内容层，纯文案）
-const FORECAST_VOICES := [
-	{head = "萨满预言：", tail = ""},
-	{head = "萨满仰观星象，低声说：", tail = "。年轻族人低声议论纷纷"},
-	{head = "老萨满咳着血说：", tail = "。帐篷里一片沉默"},
-	{head = "萨满掷出兽骨：", tail = "。骨纹的走向昭示着天意"},
-]
-
-func _forecast_text() -> String:
-	var voice: Dictionary = FORECAST_VOICES[forecast_voice]
-	var wind_side := "西侧·高地河谷" if forecast_wind == "east" else "东侧·森林湿地"
-	var rain_pct := "七成" if forecast_rain else "三成"
-	return voice.head + "火山灰将罩住%s · 降雨概率约%s%s" % [wind_side, rain_pct, voice.tail]
-
+func _mk_label(ui: CanvasLayer, pos: Vector2, col: Color) -> Label:
+	var l := Label.new()
+	l.position = pos
+	l.add_theme_color_override("font_color", col)
+	l.add_theme_font_size_override("font_size", 16)
+	ui.add_child(l)
+	return l
 
 func _restart() -> void:
-	phase = "prepare"
-	timer = PHASE1_TIME
-	adjust_timer = ADJUST_TIME
-	gather = 0
-	supply = {food = 3, water = 3}
-	emergency = ""
-	relocating = false
-	scouted = false
-	route_bonus = 0
-	night_weather = ""
+	phase = "play"
+	day_time = 0.0
+	day_num = 1
+	is_night = false
+	night_amount = 0.0
+	hunger = HUNGER_MAX
+	thirst = THIRST_MAX
+	hp = HP_MAX
+	branches = 0
+	berries_eaten = 0
+	drinks = 0
+	player_pos = Vector2(260, 300)
+	campfire_built = false
+	berry_stock = {0: 3, 1: 3, 2: 3}
+	berry_regen = {0: 0.0, 1: 0.0, 2: 0.0}
+	tree_stock = {0: 3, 1: 3, 2: 3}
+	tree_regen = {0: 0.0, 1: 0.0, 2: 0.0}
+	banner_text = ""
+	banner_age = 99.0
 	end_style = randi() % END_STYLES.size()
-	forecast_voice = randi() % FORECAST_VOICES.size()
-	events = []
-	route_chosen = -1
-	for t in TILES:
-		stored[t.id] = {food = 0, water = 0}
-	_roll_forecast()
 	end_panel.visible = false
-	queue_redraw()
-
-
-# ---------------- 交互 ----------------
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var pos: Vector2 = event.position
-		if phase == "prepare":
-			for i in TILES.size():
-				var t: Dictionary = TILES[i]
-				if Rect2(t.x, t.y, 160, 96).has_point(pos):
-					_on_tile_click(i)
-					return
-		elif phase == "adjust" and emergency == "":
-			for i in ADJUST_CARDS.size():
-				if Rect2(60 + i * 215, 310, 200, 120).has_point(pos):
-					_use_emergency(ADJUST_CARDS[i].id)
-					return
-			if relocating:
-				for i in TILES.size():
-					var t: Dictionary = TILES[i]
-					if Rect2(t.x, t.y, 160, 96).has_point(pos):
-						_do_relocate(i)
-						return
-		elif phase == "decide" and route_chosen == -1:
-			for i in ROUTES.size():
-				if Rect2(16 + i * 236, 300, 222, 120).has_point(pos):
-					_choose_route(i)
-					return
-
-
-func _on_tile_click(i: int) -> void:
-	var t: Dictionary = TILES[i]
-	if gather <= 0:
-		_toast("没有可存放的采集点（每 4 秒 +1）")
-		return
-	gather -= 1
-	var f := 1
-	var w := 1
-	var bonus := ""
-	match t.id:
-		"valley":
-			w = 2
-		"forest":
-			f = 2
-		"wetland":
-			if randf() < 0.25:
-				f += 1
-				w += 1
-				bonus = "（发现小动物群 +1食1水！）"
-	stored[t.id].food += f
-	stored[t.id].water += w
-	_toast("存入「%s」：食%d 水%d%s" % [t.name, f, w, bonus])
-
-
-# ---------------- 主循环 ----------------
+	if dino_portrait:
+		dino_portrait.position = player_pos
+		dino_portrait.visible = true
 
 func _process(delta: float) -> void:
 	pulse += delta * 4.0
-	toast_age += delta
-	# v13：恐龙待机呼吸（纯视觉）
+	if phase != "play":
+		queue_redraw()
+		return
+	# —— 时间 ——
+	day_time += delta
+	if day_time >= DAY_LEN and not is_night:
+		is_night = true
+		day_time = 0.0
+		_push_banner(WORLD_EVENTS[randi() % WORLD_EVENTS.size()])
+	elif is_night and day_time >= NIGHT_LEN:
+		is_night = false
+		day_time = 0.0
+		day_num += 1
+		_push_banner("第 %d 天的黎明到了。你活过了第 %d 夜。" % [day_num, day_num - 1])
+	night_amount = move_toward(night_amount, 1.0 if is_night else 0.0, delta * 0.8)
+	# —— 移动 ——
+	var mv := Vector2.ZERO
+	if Input.is_action_pressed("mv_left") or Input.is_key_pressed(KEY_LEFT):
+		mv.x -= 1
+	if Input.is_action_pressed("mv_right") or Input.is_key_pressed(KEY_RIGHT):
+		mv.x += 1
+	if Input.is_action_pressed("mv_up") or Input.is_key_pressed(KEY_UP):
+		mv.y -= 1
+	if Input.is_action_pressed("mv_down") or Input.is_key_pressed(KEY_DOWN):
+		mv.y += 1
+	player_moving = mv != Vector2.ZERO
+	if player_moving:
+		if mv.x != 0:
+			player_face = 1 if mv.x > 0 else -1
+		player_pos += mv.normalized() * 230.0 * delta
+		player_pos.x = clampf(player_pos.x, 20, VIEW.x - 20)
+		player_pos.y = clampf(player_pos.y, 60, VIEW.y - 20)
+		if dino_portrait:
+			dino_portrait.position = player_pos
+			dino_portrait.flip_h = player_face < 0
+	# —— 帧动画 ——
+	if dino_portrait and dino_frames.size() > 0:
+		if is_night and dino_tex4 and not player_moving:
+			dino_portrait.texture = dino_tex4
+		elif player_moving:
+			dino_portrait.texture = dino_frames[int(pulse * 0.5) % dino_frames.size()]
+		else:
+			dino_portrait.texture = dino_frames[0]
+	# —— 三状态 ——
+	hunger = maxf(0.0, hunger - HUNGER_DRAIN * delta)
+	thirst = maxf(0.0, thirst - THIRST_DRAIN * delta)
+	var drain := 0.0
+	if hunger <= 0.0:
+		drain += HP_DRAIN_STARVE
+	if thirst <= 0.0:
+		drain += HP_DRAIN_STARVE
+	var in_fire_light := campfire_built and player_pos.distance_to(campfire_pos) < 240.0
+	if is_night and night_amount > 0.5:
+		if campfire_built:
+			if in_fire_light:
+				hp = minf(HP_MAX, hp + FIRE_REGEN * delta)
+			else:
+				drain += NIGHT_ASH_DPS
+		else:
+			drain += NIGHT_ASH_DPS * 0.6
+	if drain > 0.0:
+		hp = maxf(0.0, hp - drain * delta)
+		hp_bar_flash = 0.6
+	hp_bar_flash = maxf(0.0, hp_bar_flash - delta)
+	if hp <= 0.0:
+		_die()
+		return
+	# —— 资源重生 ——
+	for k in berry_regen:
+		if berry_stock[k] < 3:
+			berry_regen[k] += delta
+			if berry_regen[k] >= 20.0:
+				berry_stock[k] += 1
+				berry_regen[k] = 0.0
+	for k in tree_regen:
+		if tree_stock[k] < 3:
+			tree_regen[k] += delta
+			if tree_regen[k] >= 30.0:
+				tree_stock[k] += 1
+				tree_regen[k] = 0.0
+	# —— 交互 ——
+	_update_interact()
+	if Input.is_action_just_pressed("interact") and interact_target:
+		_do_interact()
+	# —— UI ——
+	hunger_label.text = "饭 %d" % int(hunger)
+	thirst_label.text = "水 %d" % int(thirst)
+	hp_label.text = "命 %d" % int(hp)
+	branches_label.text = "枝条 %d" % branches
+	var clock := "夜" if is_night else "昼"
+	day_label.text = "第 %d 天 · %s %ds" % [day_num, clock, int(day_time)]
+	if banner_age < 6.0:
+		banner_age += delta
+	banner_label.text = banner_text if banner_age < 6.0 else ""
+	hint_label.text = prompt_text
+	queue_redraw()
+
+func _update_interact() -> void:
+	interact_target = {}
+	prompt_text = ""
+	if phase != "play":
+		return
+	var best_d := PICK_RANGE
+	for i in BERRIES.size():
+		var d: float = player_pos.distance_to(BERRIES[i])
+		if d < best_d and berry_stock[i] > 0:
+			best_d = d
+			interact_target = {kind = "berry", index = i}
+	for i in PONDS.size():
+		var d: float = player_pos.distance_to(PONDS[i])
+		if d < best_d:
+			best_d = d
+			interact_target = {kind = "pond", index = i}
+	for i in TREES.size():
+		var d: float = player_pos.distance_to(TREES[i])
+		if d < best_d and tree_stock[i] > 0:
+			best_d = d
+			interact_target = {kind = "tree", index = i}
+	if interact_target.is_empty() and not campfire_built \
+			and branches >= CAMPFIRE_COST and player_pos.distance_to(campfire_pos) < 90.0:
+		interact_target = {kind = "build"}
+	if interact_target.is_empty():
+		return
+	match interact_target.kind:
+		"berry":
+			prompt_text = "[E] 吃浆果（饭 +%d）" % int(BERRY_FOOD)
+		"pond":
+			prompt_text = "[E] 喝水（水 +%d）" % int(WATER_DRINK)
+		"tree":
+			prompt_text = "[E] 拾枯枝"
+		"build":
+			prompt_text = "[E] 建营火（枝条 ×%d）" % CAMPFIRE_COST
+
+func _do_interact() -> void:
+	if interact_target.is_empty():
+		return
+	match interact_target.kind:
+		"berry":
+			var i: int = interact_target.index
+			if berry_stock[i] > 0:
+				berry_stock[i] -= 1
+				berries_eaten += 1
+				hunger = minf(HUNGER_MAX, hunger + BERRY_FOOD)
+				prompt_text = ""
+		"pond":
+			drinks += 1
+			thirst = minf(THIRST_MAX, thirst + WATER_DRINK)
+			prompt_text = ""
+		"tree":
+			var i: int = interact_target.index
+			if tree_stock[i] > 0:
+				tree_stock[i] -= 1
+				branches += 1
+				prompt_text = ""
+		"build":
+			if branches >= CAMPFIRE_COST and not campfire_built:
+				branches -= CAMPFIRE_COST
+				campfire_built = true
+				_push_banner("营火燃起来了——夜晚的火光能护你周全。")
+
+func _push_banner(t: String) -> void:
+	banner_text = t
+	banner_age = 0.0
+
+func _die() -> void:
+	phase = "dead"
 	if dino_portrait:
-		var breath: float = 1.0 + 0.025 * sin(pulse * 0.8)
-		dino_portrait.scale = Vector2(0.15, 0.15 * breath)
-		if dino_frames.size() == 4:
-			dino_portrait.texture = dino_frames[int(pulse * 0.125) % 4]
-	if phase == "prepare":
-		timer -= delta
-		var sentinel: bool = _tile_total("highland") > 0
-		forecast_label.text = _forecast_text() + ("　✅ 高地哨兵确认：情报准确" if sentinel else "　（把储备存到高地可确认情报）")
-		_set_status("【准备期】剩余 %d 秒 · 采集点 %d（点击地块存放，各地块特产不同）· 已存 %d 份" % [int(timer), gather, _all_stored()])
-		_set_hint("押特产（河谷水×2/森林食×2）有灾变风险；洞穴免灾但撤离要交税——别再无脑平分了！")
-		if timer <= 0.0:
-			_announce_disaster()
-	elif phase == "announce":
-		forecast_label.text = ""
-		_set_status("【灾变】火山爆发！风向：%s%s——灾害即将落地，准备应变！" % [("东风，灰罩西侧" if wind == "east" else "西风，灰罩东侧"), ("，暴雨如注" if rain else "，天干物燥")])
-		_set_hint("萨满的预言应验了吗？")
-	elif phase == "adjust":
-		adjust_timer -= delta
-		_set_status("【灾后应变】剩余 %d 秒 · 应急行动仅一次%s" % [int(maxf(0.0, adjust_timer)), ("（已决定：" + _emergency_name() + "）") if emergency != "" else ""])
-		_set_hint("世界已经变了——原计划还成立吗？抢运/侦察/轻装，或按兵不动。" if relocating == false else "抢运模式：点击一个地块，把它的储备转入洞穴")
-		if adjust_timer <= 0.0 and emergency == "":
-			emergency = "skip"
-			_log_ev("族群在轰鸣声里犹豫不决，宝贵的时间白白流走——只能按原计划硬扛。")
-			_end_adjust()
-	elif phase == "resolve":
-		_set_status("【灾害结算】连锁灾难正在发生……")
-		_set_hint("看看布局付出了什么代价。")
-	elif phase == "decide":
-		_set_status("【撤离】选择路线带领族群离开灾区%s" % ("　❄ 萨满第二预言：今夜寒夜，路上额外耗 1 水" if night_weather == "cold" else "　萨满第二预言：撤离夜稳雾无风"))
-		_set_hint("需求%d已被修正（轻装-2）。路线随机风险：侦察过就不再是赌博。" % (4 + route_bonus) if route_bonus != 0 else "各路线有随机风险，侦察过就不再是赌博。")
-	queue_redraw()
-
-
-func _emergency_name() -> String:
-	for c in ADJUST_CARDS:
-		if c.id == emergency:
-			return c.name
-	return emergency
-
-
-func _gather_tick() -> void:
-	if phase == "prepare":
-		gather += 1
-
-
-func _all_stored() -> int:
-	var n := 0
-	for k in stored:
-		n += int(stored[k].food)
-	return n
-
-
-# ---------------- 灾变与应变 ----------------
-
-func _announce_disaster() -> void:
-	phase = "announce"
-	wind = pending_wind
-	rain = pending_rain
-	_log_ev("火山在午后爆发，蘑菇云遮住了太阳。当晚刮起了%s。" % ("东风" if wind == "east" else "西风"))
-	if rain:
-		_log_ev("深夜开始下暴雨，河水浑浊上涨。")
-	else:
-		_log_ev("空气干燥得可怕，火星随风飘散。")
-	var t := get_tree().create_timer(2.5)
-	t.timeout.connect(_enter_adjust)
-
-
-func _enter_adjust() -> void:
-	phase = "adjust"
-	adjust_timer = ADJUST_TIME
-	queue_redraw()
-
-
-func _use_emergency(action: String) -> void:
-	if phase != "adjust" or emergency != "":
-		return
-	if action == "relocate":
-		relocating = true
-		_toast("抢运模式：点击一个地块，把储备转入洞穴（洒落25%）")
-		return
-	if action == "scout":
-		if not _pay_storage(1, 1):
-			_toast("储备不足（需食1水1）")
-			return
-		scouted = true
-		emergency = "scout"
-		_log_ev("族群派斥候冒死探路，把每条路线的凶险摸得一清二楚——接下来的行军不再是赌博。")
-	elif action == "abandon":
-		if not _pay_storage(1, 1):
-			_toast("储备不足（需食1水1）")
-			return
-		route_bonus -= 2
-		emergency = "abandon"
-		_log_ev("族群扔下沉重的行囊轻装奔袭，所有路线的行军需求降低了。")
-	elif action == "skip":
-		emergency = "skip"
-		_log_ev("族群按兵不动，按原计划硬扛灾变。")
-	_end_adjust()
-
-
-func _do_relocate(i: int) -> void:
-	var t: Dictionary = TILES[i]
-	if t.id == "cave":
-		_toast("洞穴本身就是目的地，不用抢运")
-		return
-	var s: Dictionary = stored[t.id]
-	if _tile_total(t.id) <= 0:
-		_toast("「%s」没有储备可抢运" % t.name)
-		return
-	var f2: int = int(s.food * 85 / 100.0)
-	var w2: int = int(s.water * 85 / 100.0)
-	stored.cave.food += f2
-	stored.cave.water += w2
-	stored[t.id] = {food = 0, water = 0}
-	emergency = "relocate"
-	relocating = false
-	_log_ev("大地轰鸣，族群冒死把「%s」的储备抢运进洞穴，路上洒落了一成半。" % t.name)
-	_end_adjust()
-
-
-func _pay_storage(f: int, w: int) -> bool:
-	# 从存量最多的地块扣
-	var best := ""
-	var best_n := -1
-	for k in stored:
-		if _tile_total(k) > best_n:
-			best_n = _tile_total(k)
-			best = k
-	if best == "" or int(stored[best].food) < f or int(stored[best].water) < w:
-		return false
-	stored[best].food -= f
-	stored[best].water -= w
-	return true
-
-
-func _end_adjust() -> void:
-	phase = "resolve"
-	_resolve_disaster()
-	var t := get_tree().create_timer(2.5)
-	t.timeout.connect(_enter_decide)
-
-
-func _resolve_disaster() -> void:
-	# 预报对照
-	var wind_ok := forecast_wind == wind
-	var rain_ok := forecast_rain == rain
-	if wind_ok and rain_ok:
-		_log_ev("萨满的预言应验了——族群早有准备。")
-	elif not wind_ok and not rain_ok:
-		_log_ev("萨满的预言全错了！风向和降雨都与预想相反，准备期押错了方向。")
-	else:
-		_log_ev("萨满的预言只对了一半——%s与预想相反。" % ("风向" if not wind_ok else "降雨"))
-	# 下风侧灰覆盖，储备减半（洞穴免疫）
-	var downwind_ids: Array = ["forest", "wetland"] if wind == "west" else ["highland", "valley"]
-	_log_ev("火山灰顺风覆盖了%s和%s，那里的储备损失了一半。" % [_tile_name(downwind_ids[0]), _tile_name(downwind_ids[1])])
-	for id in downwind_ids:
-		stored[id].food = int(stored[id].food / 2.0)
-		stored[id].water = int(stored[id].water / 2.0)
-	if rain:
-		# v17 内容层：泥流文案三变体（机制数值不变）
-		var mudflow_lines: Array = [
-			"河谷暴发泥流，河谷的储备被吞掉一半。",
-			"泥浆裹着火山砾冲进河谷，捞得回来的只有一半。",
-			"河谷决了口，浊流卷走过半储备——兽骨都被冲得东倒西歪。",
-		]
-		_log_ev(mudflow_lines[randi() % mudflow_lines.size()])
-		stored.valley.food = int(stored.valley.food / 2.0)
-		stored.valley.water = int(stored.valley.water / 2.0)
-		_log_ev("湿地的水被灰烬污染，短期无法饮用。")
-		stored.wetland.water = int(stored.wetland.water / 2.0)
-		# v17 内容层：森林燃烧文案三变体（机制数值不变）
-		var burn_lines: Array = [
-			"森林被雷火点燃，储备大半化为灰烬，只抢回四分之一。",
-			"火舌借着风势窜上林冠，森林的储备十不存一——只扒回四分之一。",
-			"林子烧了整整一夜，天亮时只剩冒烟的树桩——抢出来的不足一半的一半。",
-		]
-		_log_ev(burn_lines[randi() % burn_lines.size()])
-		stored.forest.food = int(stored.forest.food / 4.0)
-		stored.forest.water = int(stored.forest.water / 4.0)
-	else:
-		# v16 内容层：旱线文案三变体
-		var dry_lines: Array = [
-			"森林侥幸未燃，食物安然无恙——押注森林的族群赌赢了。",
-			"一夜旱风掠过林地，火星没能点着湿透的树干——森林的储备安然无恙。",
-			"天亮时只有灰，没有火——森林静谧得像什么事都没发生过。",
-		]
-		_log_ev(dry_lines[randi() % dry_lines.size()])
-	# ===== 第四幕：余震与兽群（v9 内容层，洞穴深埋不受地裂）=====
-	# v22 内容层：发生顺序随机化（兽群先行或余震先行，叙事方差）
-	var herd_first := randf() < 0.5
-	if herd_first:
-		_act4_herd()
-	_act4_aftershock()
-	if not herd_first:
-		_act4_herd()
-	# ===== 第五幕：萨满第二预言（撤离窗口天气，v9 内容层）=====
-	night_weather = "cold" if randf() < 0.5 else "mist"
-	# v18 内容层：宣告文案三变体（随机叙事差异，机制不变——cold 均为撤离耗 1 水）
-	var cold_lines: Array = [
-		"萨满仰望星空，发出第二道预言：撤离之夜将是寒夜——族群要额外消耗 1 份水。",
-		"萨满指着低垂的寒星：撤离之夜滴水成冰——路上要烧掉 1 份水取暖。",
-		"夜风如刀。萨满说：第二道预言——撤离之夜寒气彻骨，需多耗 1 份水。",
-	]
-	var mist_lines: Array = [
-		"萨满预言撤离之夜稳雾无风，路上不会额外损耗。",
-		"萨满笑了：夜雾护途——撤离路上无额外损耗。",
-		"雾锁林地。萨满说：稳雾之夜，行军反而隐蔽——无额外损耗。",
-	]
-	if night_weather == "cold":
-		_log_ev(cold_lines[randi() % cold_lines.size()])
-	else:
-		_log_ev(mist_lines[randi() % mist_lines.size()])
-
-
-func _tile_name(id: String) -> String:
-	for t in TILES:
-		if t.id == id:
-			return t.name
-	return id
-
-
-func _act4_aftershock() -> void:
-	var hit := false
-	for t in TILES:
-		if hit:
-			break
-		if t.id == "cave":
-			continue
-		if _tile_total(t.id) > 0:
-			var loss_f: int = int(stored[t.id].food / 4.0)
-			var loss_w: int = int(stored[t.id].water / 4.0)
-			stored[t.id].food = maxi(0, stored[t.id].food - loss_f)
-			stored[t.id].water = maxi(0, stored[t.id].water - loss_w)
-			_log_ev("次日余震震裂了%s的地面，四分之一的储备陷进了裂缝。" % t.name)
-			hit = true
-	if not hit:
-		_log_ev("次日余震只有轻微晃动，储备无恙。")
-
-
-func _act4_herd() -> void:
-	for t in TILES:
-		if _tile_total(t.id) > 0:
-			stored[t.id].food = maxi(0, stored[t.id].food - 1)
-			stored[t.id].food += 2
-			_log_ev("迁徙兽群路过%s，叼走 1 份储备，但族群猎杀了落单的巨兽——多了 2 份兽肉。" % t.name)
-			break
-
-
-func _enter_decide() -> void:
-	phase = "decide"
-	var f := 0
-	var w := 0
-	for k in stored:
-		f += int(stored[k].food)
-		w += int(stored[k].water)
-	supply.food = mini(3 + f, 12)
-	supply.water = mini(3 + w, 12)
-	if _tile_total("cave") > 0:
-		supply.food = maxi(0, supply.food - 2)
-		supply.water = maxi(0, supply.water - 2)
-		_log_ev("从洞穴搬出储备要翻越洞口，额外耗掉了 2 食 2 水。")
-	# v10（监督者预批准）：移除高地「路线需求-1」，高地保留预报校准单一收益
-	_log_ev("族群收拾行囊：带上 %d 份食物、%d 份水，准备撤离。" % [supply.food, supply.water])
-
-
-func _route_need(i: int) -> int:
-	return maxi(1, ROUTES[i].need + route_bonus)
-
-
-func _choose_route(i: int) -> void:
-	route_chosen = i
-	var r: Dictionary = ROUTES[i]
-	var need: int = _route_need(i)
-	_log_ev("族群选择了%s：%s" % [r.name, r.risk])
-	# v9 第五幕：寒夜预言——撤离之夜额外消耗 1 份水
-	if night_weather == "cold":
-		supply.water = maxi(0, supply.water - 1)
-		_log_ev("寒夜如萨满所预言地降临，族群又耗掉了 1 份水取暖。")
-	# v6 A' 结算顺序修正：先路线随机事件 → 再算最终物资 → 判 need → 算余量 → 评分
-	if i == 1 and not scouted and randf() < 0.5:
-		supply.water = maxi(0, supply.water - 1)
-		_log_ev("东线果然遇到泥流改道，多耗了 1 份水。")
-	elif i == 1 and scouted:
-		_log_ev("斥候早标好了绕开泥流的高处小径，东线畅通无阻。")
-	if i == 2:
-		if scouted or randf() < 0.5:
-			supply.food += 1
-			_log_ev("南线一路觅食顺利，多出 1 份食物。")
-		else:
-			_log_ev("南线密林里绕了远路，什么也没找到。")
-	var total: int = supply.food + supply.water
-	# v6 A' 判定顺序：先按消耗前总量判生死/质量 → 再把 need 份真正消耗掉（影响余量与结算画面）
-	if total < need:
-		margin = 0
-		result = "lose"
-		_log_ev("物资在半途耗尽……族群的足迹消失在灰烬里。")
-	else:
-		margin = total - need
-		var consumed: int = need
-		var f_use: int = mini(supply.food, int(ceil(consumed / 2.0)))
-		var w_use: int = mini(supply.water, consumed - f_use)
-		f_use += mini(supply.food - f_use, consumed - f_use - w_use)
-		supply.food -= f_use
-		supply.water -= w_use
-		_log_ev("行军消耗了 %d 份物资（食 %d 水 %d），抵达时还剩 %d 份。" % [consumed, f_use, w_use, margin])
-		if supply.food >= 1 and supply.water >= 1:
-			result = "win"
-			# v22 内容层：胜利抵达文案三变体
-			var win_lines: Array = [
-				"第 %d 天，族群抵达一片没有被灰烬覆盖的新生态区。火山的故事结束了，生存的故事才刚刚开始。" % (5 + i),
-				"第 %d 天，他们的足印越过最后一道灰脊——前方，是未被火焰触碰的青绿谷地。" % (5 + i),
-				"第 %d 天，族群在晨雾中踏入新生态区。身后的火山仍在咆哮，而他们已经不需要回头了。" % (5 + i),
-			]
-			_log_ev(win_lines[randi() % win_lines.size()])
-		else:
-			result = "partial"
-			_log_ev("族群踉踉跄跄抵达新生态区，但食物或水见底——活下来了，代价惨重。")
-	_show_end()
-
-
-func _show_end() -> void:
-	phase = "end"
-	end_panel.visible = true
-	var verdict := "完美撤离" if result == "win" else ("惨胜" if result == "partial" else "灭亡")
+		dino_portrait.visible = false
 	var style: Dictionary = END_STYLES[end_style]
-	var coda: String = style.lines.get(result, style.lines.get("lose", ""))
+	var coda: String = style.lines.get("lose", style.lines.get("win", ""))
 	end_body.text = ""
-	for e in events:
+	for e in events_flow():
 		end_body.text += "· " + e + "\n"
 	end_body.text += "\n—— 本局叙事：%s ——" % style.name
 	if coda != "":
 		end_body.text += "\n「%s」" % coda
-	end_body.text += "\n—— 结算：%s · 撤离余量 %d · 剩余食物 %d 水 %d · 评分 %d ——" % [verdict, margin, supply.food, supply.water, _score()]
+	end_body.text += "\n—— 你存活了 %d 天 %d 秒 · 吃了 %d 颗浆果 · 喝水 %d 次 · 建起营火 %s ——" % [day_num, int(day_time), berries_eaten, drinks, "是" if campfire_built else "否"]
+	end_panel.visible = true
 
-
-func _score() -> int:
-	# v6 A'：撤离余量计分——基础分 + clamp(余量,0,8)×2；刚凑够=70，富余≥8=86
-	# result 可能为 ""（测试/异常路径下未选路线），.get 兜底按灭亡计
-	var base: int = {"win": 70, "partial": 45, "lose": 10}.get(result, 10)
-	return base + clampi(margin, 0, 8) * 2
-
-
-# ---------------- 绘制 ----------------
+func events_flow() -> Array:
+	var out: Array = []
+	out.append("第 1 天，火山在黄昏中爆发，你从灰烬里醒来。")
+	if campfire_built:
+		out.append("你燃起了营火——夜里的火光护住了你。")
+	else:
+		out.append("没有火。火山灰在夜里无声落下。")
+	out.append("你一共存活了 %d 天。" % day_num)
+	return out
 
 func _draw() -> void:
-	draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color("1a1520"))
-	# 火山
-	var vx := 780.0
-	var vcol := Color("4a3b45") if phase == "prepare" else Color("d84315")
-	draw_polygon(PackedVector2Array([Vector2(vx - 90, 120), Vector2(vx + 90, 120), Vector2(vx, 30)]), PackedColorArray([vcol]))
-	if phase != "prepare":
-		var glow := 0.5 + 0.3 * sin(pulse)
-		draw_circle(Vector2(vx, 40), 16, Color(1.0, 0.6, 0.2, glow))
-		draw_string(FONT, Vector2(vx - 40, 22), "火山爆发！", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ffab91"))
-	# 地块
-	var settled: bool = phase == "resolve" or phase == "decide" or phase == "end"
-	for i in TILES.size():
-		var t: Dictionary = TILES[i]
-		var r := Rect2(t.x, t.y, 160, 96)
-		var burnt: bool = settled and rain and t.id == "forest"
-		var ashy: bool = settled and ((wind == "west" and (t.id == "forest" or t.id == "wetland")) or (wind == "east" and (t.id == "highland" or t.id == "valley")))
-		var moving: bool = relocating and t.id != "cave"
-		draw_rect(r, Color("5d4037") if burnt else (Color("6b6b70") if ashy else Color("39415a")))
-		draw_rect(r, Color("ffd54f") if (hovered == i or moving) else Color("1c2030"), false, 3 if (hovered == i or moving) else 2)
-		draw_string(FONT, r.position + Vector2(10, 22), t.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4"))
-		draw_string(FONT, r.position + Vector2(10, 44), "风险:%s" % t.risk, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("ffb74d") if phase == "prepare" else Color("8b94a7"))
-		var s: Dictionary = stored[t.id]
-		draw_string(FONT, r.position + Vector2(10, 66), "储备 食%d 水%d" % [s.food, s.water], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("4fc3f7"))
-		draw_string(FONT, r.position + Vector2(10, 86), t.has, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("8b94a7"))
-	# 应急行动卡片
-	if phase == "adjust":
-		var prompt := "⚠ 灾后应变——仅此一次机会（%d 秒后按兵不动）：" % int(maxf(0.0, adjust_timer))
-		if relocating:
-			prompt = "抢运模式：点击一个地块，其储备转入洞穴（已锁定本次应急）"
-		draw_string(FONT, Vector2(60, 295), prompt, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("ff8a65"))
-		for i in ADJUST_CARDS.size():
-			var c: Dictionary = ADJUST_CARDS[i]
-			var cr := Rect2(60 + i * 215, 310, 200, 120)
-			var used: bool = emergency != ""
-			var picked: bool = relocating and c.id == "relocate"
-			draw_rect(cr, Color("5a3a2a") if picked else (Color("2b2b33") if used else Color("3b2b4d")))
-			draw_rect(cr, Color("ff8a65") if picked else Color("9575cd"), false, 2)
-			draw_string(FONT, cr.position + Vector2(12, 30), c.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e8ecf4") if not used else Color("6b7280"))
-			_wrap_text(c.desc, cr.position + Vector2(12, 56), 176, 12, Color("c6cddc") if not used else Color("565e6e"))
-	# 撤离路线卡片
-	if phase == "decide":
-		draw_string(FONT, Vector2(60, 285), "选择撤离路线（点击卡片）：", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("ffd54f"))
-		for i in ROUTES.size():
-			var rt: Dictionary = ROUTES[i]
-			var rr := Rect2(16 + i * 236, 300, 222, 120)
-			draw_rect(rr, Color("2b3b4d"))
-			draw_rect(rr, Color("4fc3f7"), false, 2)
-			draw_string(FONT, rr.position + Vector2(14, 30), rt.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 17, Color("4fc3f7"))
-			draw_string(FONT, rr.position + Vector2(14, 58), rt.risk, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("c6cddc"))
-			draw_string(FONT, rr.position + Vector2(14, 84), "至少需要 %d 份物资%s" % [_route_need(i), ("（已修正）" if _route_need(i) != rt.need else "")], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("ffb74d"))
-	# 随身物资
-	draw_string(FONT, Vector2(640, VIEW.y - 30), "随身: 食%d 水%d" % [supply.food, supply.water], HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("4fc3f7"))
-	# toast
-	if toast_age < 2.5:
-		var a: float = clamp(2.5 - toast_age, 0.0, 1.0)
-		draw_string(FONT, Vector2(16, VIEW.y - 60), toast, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 1, 1, a))
-
-
-func _wrap_text(text: String, pos: Vector2, width: float, size: int, col: Color) -> void:
-	# 简易逐字折行（中文为主），每行按像素宽度截断
-	var line := ""
-	var y := pos.y
-	for ch in text:
-		line += ch
-		if FONT.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x > width:
-			line = line.substr(0, line.length() - 1)
-			draw_string(FONT, Vector2(pos.x, y), line, HORIZONTAL_ALIGNMENT_LEFT, -1, size, col)
-			y += size + 4
-			line = ch
-	draw_string(FONT, Vector2(pos.x, y), line, HORIZONTAL_ALIGNMENT_LEFT, -1, size, col)
+	draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color("2b2a33"))
+	draw_rect(Rect2(0, 0, 560, 540), Color("31323b"))
+	draw_rect(Rect2(560, 0, 400, 540), Color("3a3236"))
+	draw_rect(Rect2(760, 40, 200, 160), Color("453338"))
+	var vx := VOLCANO_POS.x
+	var vy := VOLCANO_POS.y
+	draw_polygon(PackedVector2Array([Vector2(vx - 70, vy + 60), Vector2(vx + 70, vy + 60), Vector2(vx, vy - 40)]),
+		PackedColorArray([Color("5a4448") if not is_night else Color("7a3b32")]))
+	if is_night:
+		draw_circle(Vector2(vx, vy - 30), 12.0 + 2.0 * sin(pulse), Color(1.0, 0.5, 0.2, 0.8))
+	for p in PONDS:
+		draw_circle(p, 34.0, Color("2f5d8a"))
+		draw_circle(p, 26.0, Color("3f7fb5"))
+	for i in BERRIES.size():
+		var pos: Vector2 = BERRIES[i]
+		draw_circle(pos + Vector2(0, 6), 16.0, Color("2e4d2e"))
+		if berry_stock[i] > 0:
+			for b in berry_stock[i]:
+				var ang: float = b * TAU / 3.0
+				draw_circle(pos + Vector2(cos(ang) * 10, sin(ang) * 10 - 4), 4.0, Color("e05555"))
+	for i in TREES.size():
+		var pos: Vector2 = TREES[i]
+		draw_line(pos + Vector2(0, 14), pos + Vector2(0, -26), Color("6b5a4a"), 6.0)
+		draw_line(pos + Vector2(0, -10), pos + Vector2(14, -30), Color("6b5a4a"), 4.0)
+		for b in tree_stock[i]:
+			draw_circle(pos + Vector2(-12 + b * 10, -28), 3.0, Color("a1887f"))
+	if campfire_built:
+		draw_line(campfire_pos + Vector2(-10, 8), campfire_pos + Vector2(10, -2), Color("6b5a4a"), 5.0)
+		draw_line(campfire_pos + Vector2(-10, -2), campfire_pos + Vector2(10, 8), Color("6b5a4a"), 5.0)
+		var flame := 0.7 + 0.3 * sin(pulse * 2.0)
+		draw_circle(campfire_pos, 8.0, Color(1.0, 0.6, 0.2, flame))
+		draw_circle(campfire_pos, 4.0, Color(1.0, 0.9, 0.4, flame))
+	draw_circle(NEST_POS, 20.0, Color("4a4438"))
+	draw_arc(NEST_POS, 24.0, 0, TAU, 24, Color("5a5446"), 2.0)
+	if night_amount > 0.0:
+		draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color(0.05, 0.03, 0.1, 0.72 * night_amount))
+		if campfire_built:
+			for r in [240.0, 180.0, 120.0]:
+				draw_circle(campfire_pos, r, Color(1.0, 0.85, 0.5, 0.05 * night_amount))
+			draw_circle(campfire_pos, 60.0, Color(1.0, 0.85, 0.5, 0.08 * night_amount))
+	if not interact_target.is_empty() and phase == "play":
+		var pos := Vector2.ZERO
+		match interact_target.kind:
+			"berry":
+				pos = BERRIES[interact_target.index]
+			"pond":
+				pos = PONDS[interact_target.index]
+			"tree":
+				pos = TREES[interact_target.index]
+			"build":
+				pos = campfire_pos
+		draw_arc(pos, 40.0 + 3.0 * sin(pulse), 0, TAU, 24, Color("ffd54f", 0.7), 2.0)
+	if hp_bar_flash > 0.0:
+		draw_rect(Rect2(0, 0, VIEW.x, 4), Color(0.9, 0.2, 0.2, 0.6 * hp_bar_flash))
+	if prompt_text != "" and phase == "play":
+		var pw := FONT.get_string_size(prompt_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 15).x
+		var px: float = clampf(player_pos.x - pw / 2, 8, VIEW.x - pw - 8)
+		draw_rect(Rect2(px - 6, player_pos.y - 52, pw + 12, 22), Color(0, 0, 0, 0.55))
+		draw_string(FONT, Vector2(px, player_pos.y - 36), prompt_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("ffe082"))
+	draw_string(FONT, Vector2(860, 20), "E=交互", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("8b94a7"))
