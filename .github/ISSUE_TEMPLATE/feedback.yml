@@ -52,18 +52,6 @@ body:
     attributes:
       label: 卡在哪里 / 哪里看不懂
       placeholder: "如：第二关不知道怎么过、按钮看不懂、掉下去不会重置……"
-  - type: dropdown
-    id: fun
-    attributes:
-      label: 好玩程度
-      options:
-        - "⭐ 想关掉"
-        - "⭐⭐ 有点无聊"
-        - "⭐⭐⭐ 一般"
-        - "⭐⭐⭐⭐ 好玩"
-        - "⭐⭐⭐⭐⭐ 想继续玩"
-    validations:
-      required: true
   - type: textarea
     id: detail
     attributes:
