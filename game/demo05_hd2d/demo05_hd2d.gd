@@ -61,7 +61,21 @@ const ROCKS := [
 ## 火山灰夜潮（阶段 C 首个灾害：确定性正弦推进-退去，无 RNG）
 const VOLCANO_POS := Vector3(19.0, 0.0, -10.0)   # 火山锥在东墙外
 const ASH_FRONT_FAR := 18.0    # 黄昏/黎明灰界（墙内侧）
-const ASH_FRONT_NEAR := 8.0    # 深夜灰界最西推进
+const ASH_NEAR_STRONG := 8.0   # 强潮夜灰界最西（单数日）
+const ASH_NEAR_WEAK := 12.0    # 弱潮夜灰界（双数日）——营地区位随预报摆动
+
+## 萨满预报（C3）：今夜灰潮强度。真值按日奇偶确定；预报每第 4 日错一次（75% 正确，脚本化不完全信息）
+func _tonight_ash_near() -> float:
+	return ASH_NEAR_STRONG if day_num % 2 == 1 else ASH_NEAR_WEAK
+
+func _forecast_correct() -> bool:
+	return day_num % 4 != 3
+
+func _forecast_ash_near() -> float:
+	var truth := _tonight_ash_near()
+	if _forecast_correct():
+		return truth
+	return ASH_NEAR_WEAK if truth == ASH_NEAR_STRONG else ASH_NEAR_STRONG
 const ASH_DPS := 2.0           # 灰区内持续伤害
 
 # —— 运行状态 ——
@@ -105,6 +119,7 @@ var cam_pivot: Node3D
 var berry_fruits: Array = []
 var hud_labels: Array = []
 var hud_prompt: Label
+var hud_forecast: Label
 var hud_hint: Label
 
 func _ready() -> void:
@@ -348,6 +363,7 @@ func _build_hud() -> void:
 		_mk_label(hud, Vector2(736, 10), Color("9ccc65")),
 	]
 	hud_prompt = _mk_label(hud, Vector2(16, 44), Color("ffe082"), 18)
+	hud_forecast = _mk_label(hud, Vector2(16, 70), Color("81d4fa"), 15)
 	hud_hint = _mk_label(hud, Vector2(16, 500), Color("8b94a7"), 14)
 	hud_hint.text = "WASD 移动 · E 交互 · Q 吃 · R 喝 · B 建造（1/2/3 选型，E 放置，Esc 取消）· 夜晚火山灰自东坡推进（灰区受伤且不可交互）· 第 2 夜起低谷夜间泥流（大幅减速，绕行南侧）"
 
@@ -373,7 +389,7 @@ func _process(delta: float) -> void:
 	# —— 火山灰夜潮（确定性：正弦推进-退去）——
 	if is_night:
 		var ap: float = (day_time - DAY_LEN) / NIGHT_LEN
-		ash_front = lerpf(ASH_FRONT_FAR, ASH_FRONT_NEAR, sin(ap * PI))
+		ash_front = lerpf(ASH_FRONT_FAR, _tonight_ash_near(), sin(ap * PI))
 	else:
 		ash_front = ASH_FRONT_FAR
 	if ash_node:
@@ -502,6 +518,8 @@ func _process(delta: float) -> void:
 	hud_labels[5].text = "口渴 %d" % int(thirst)
 	hud_labels[6].text = "第 %d 天 · %s" % [day_num, "夜" if is_night else "昼"]
 	hud_prompt.text = interact_prompt + ("　[B 建造中：%s — E 放置 / Esc 取消]" % RECIPES[build_recipe].name if build_mode else "")
+	if hud_forecast:
+		hud_forecast.text = "萨满预报：今夜灰潮%s（萨满十中七五）" % ("强·东推至 8m" if _forecast_ash_near() == ASH_NEAR_STRONG else "弱·仅近坡 12m")
 	if is_night and dino:
 		if dino.position.x > ash_front:
 			hud_prompt.text = "⚠ 火山灰侵入——向西撤！ " + hud_prompt.text
