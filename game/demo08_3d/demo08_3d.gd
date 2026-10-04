@@ -244,8 +244,8 @@ func _apply_level_props() -> void:
 
 # ---------------- 坐标转换 ----------------
 
-func to_world(p: Vector2) -> Vector3:
-	return Vector3(0.0, (GROUND_Y - p.y) / PX_PER_M, -(p.x - START_X) / PX_PER_M)
+func to_world(p: Vector2, lat_px: float = 0.0) -> Vector3:
+	return Vector3(lat_px / PX_PER_M, (GROUND_Y - p.y) / PX_PER_M, -(p.x - START_X) / PX_PER_M)
 
 
 # ---------------- HUD 搭建 ----------------

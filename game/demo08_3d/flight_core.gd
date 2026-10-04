@@ -26,6 +26,16 @@ const START_X := 60.0
 const SAMPLE_STEP := 0.2
 const FOLD_TOLERANCE := 10.0    # 折线端点落在放宽 10px 的纸面内才接受
 
+## ---- 阶段 B1 新增规则（规则变化 B1，单独记录，2D 对照与无输入行为不受影响）----
+## A/D 有限侧向转向：升力仍按旧纵向/高度速度计算（不耦合）；
+## 侧向为独立运动学：按住横向加速、无输入线性阻尼衰减、速度上限公开；
+## 高低门获得横向有效宽度（出界穿越不计门），赛道横向边界 ±20m 贴边清速。
+const LAT_ACCEL := 240.0        # A/D 按住横向加速度 px/s^2
+const LAT_VMAX := 320.0         # 横向速度上限 px/s
+const LAT_DAMP := 160.0         # 无输入横向阻尼 px/s^2
+const LAT_LIMIT_PX := 1200.0    # 横向边界半宽 20m
+const GATE_HALF_PX := 300.0     # 门横向有效半宽 5m
+
 const LEVELS := [
 	{name = "第 1 关 · 后山操场", short = "后山操场", ratio = 1.4, folds = 3, target_m = 30.0, wind = "none", reward = 0,
 		tip = "纸最宽好折大翼，终点 30 米，无风。折线画在纸的右侧偏上，30 度满力扔"},
@@ -85,9 +95,19 @@ var bounced := false
 var gate_coins := 0          # 新增：本掷门奖（显示拆分用，不改到账规则）
 var trail := []
 
+## 阶段 B1：横向状态（+右，px；表现层换算米）
+var lateral := 0.0
+var lateral_vel := 0.0
+var lateral_input := 0.0     # -1/0/+1（A/D），由表现层输入事件设置
+
 ## 结算
 var last_pass := false
 var coins_earned := 0
+
+
+## 视觉偏航（表现层用）：横移相对前进速度的航向角，rad
+func yaw_rad() -> float:
+	return atan2(-lateral_vel, maxf(velocity.length(), 80.0))
 
 
 func level_count() -> int:
@@ -125,6 +145,8 @@ func start_level(i: int) -> void:
 	last_pass = false
 	coins_earned = 0
 	trail = []
+	lateral = 0.0
+	lateral_vel = 0.0
 	state = "fold"
 
 
@@ -186,6 +208,8 @@ func do_throw(angle_deg: float, power: float) -> void:
 	last_pass = false
 	coins_earned = 0
 	trail = [plane_pos]
+	lateral = 0.0
+	lateral_vel = 0.0
 	state = "fly"
 
 
@@ -194,6 +218,17 @@ func step(delta: float) -> String:
 	if state != "fly":
 		return ""
 	flight_time += delta
+	# 阶段 B1：横向独立运动学（不触碰下方旧纵向/高度积分，升力不耦合）
+	if lateral_input != 0.0:
+		lateral_vel += lateral_input * LAT_ACCEL * delta
+	else:
+		var ldamp: float = LAT_DAMP * delta
+		lateral_vel = 0.0 if absf(lateral_vel) <= ldamp else lateral_vel - signf(lateral_vel) * ldamp
+	lateral_vel = clampf(lateral_vel, -LAT_VMAX, LAT_VMAX)
+	lateral += lateral_vel * delta
+	if absf(lateral) > LAT_LIMIT_PX:
+		lateral = signf(lateral) * LAT_LIMIT_PX
+		lateral_vel = 0.0
 	var spd := velocity.length()
 	var lift_up: float = minf(LIFT_K * eff_lift * spd * spd, GRAV * 0.95)
 	var t_trim: float = clampf(float(plane_params.trim), -1.5, 1.5)
@@ -232,23 +267,23 @@ func step(delta: float) -> String:
 	if sample_acc >= SAMPLE_STEP:
 		sample_acc -= SAMPLE_STEP
 		flight_distance = maxf(flight_distance, (plane_pos.x - START_X) / PX_PER_M)
-	# 高空门：穿越门位且高度 ≥ gate_h（与低空门互斥，一掷只吃其一；门奖即时入 coins、失败保留）
+	# 高空门：穿越门位、高度 ≥ gate_h、横向 |lateral| ≤ GATE_HALF（与低空门互斥，一掷只吃其一；门奖即时入 coins、失败保留）
 	var gate_x_m: float = float(LEVELS[level_idx].get("gate_x", 0.0))
 	if gate_x_m > 0.0 and not gate_hit and not low_gate_hit:
 		var gate_px := START_X + gate_x_m * PX_PER_M
 		if prev_x < gate_px and plane_pos.x >= gate_px:
-			if plane_pos.y <= GROUND_Y - float(LEVELS[level_idx].gate_h) * PX_PER_M:
+			if plane_pos.y <= GROUND_Y - float(LEVELS[level_idx].gate_h) * PX_PER_M and absf(lateral) <= GATE_HALF_PX:
 				gate_hit = true
 				var gb: int = int(LEVELS[level_idx].gate_bonus)
 				coins += gb
 				coins_earned += gb
 				gate_coins += gb
-	# 低空门：穿越门位且高度 ≤ low_gate_top（与高空门互斥）
+	# 低空门：穿越门位、高度 ≤ low_gate_top、横向 |lateral| ≤ GATE_HALF（与高空门互斥）
 	var lg_x_m: float = float(LEVELS[level_idx].get("low_gate_x", 0.0))
 	if lg_x_m > 0.0 and not low_gate_hit and not gate_hit:
 		var lg_px := START_X + lg_x_m * PX_PER_M
 		if prev_x < lg_px and plane_pos.x >= lg_px:
-			if plane_pos.y >= GROUND_Y - float(LEVELS[level_idx].low_gate_top) * PX_PER_M:
+			if plane_pos.y >= GROUND_Y - float(LEVELS[level_idx].low_gate_top) * PX_PER_M and absf(lateral) <= GATE_HALF_PX:
 				low_gate_hit = true
 				var lgb: int = int(LEVELS[level_idx].gate_bonus)
 				coins += lgb
