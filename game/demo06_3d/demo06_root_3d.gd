@@ -49,6 +49,10 @@ var style: Resource
 var ghost_yaw := 0.0
 var place_dist := 6.0
 var ghost_pos := Vector3(2.0, 1.8, 0.0)
+# 物理时钟：词条计时（Fire 自毁 / Sticky 冻结）随物理 tick 累加——离线渲染（--fixed-fps）与
+# headless 测试下与真实时钟解耦，保证确定性（Time.get_ticks_msec 在离线渲染会失真）
+var clock := 0.0
+var props_root: Node3D
 
 
 func _ready() -> void:
@@ -141,22 +145,32 @@ func _build_props() -> void:
 	placed_root = Node3D.new()
 	placed_root.name = "EnvironmentObjects"
 	add_child(placed_root)
-	# 模型库 crate（场景 ComicObject，细线非交互）+ 碰撞
+	# 普通环境箱（RigidBody 无词条，入 props_root 与词条放置物分账）——可推/可撞，参与 L3 解法 C
 	var crate := ModelLibrary.create_model("crate")
-	crate.position = Vector3(1.6, 1.6, 0.6)
-	placed_root.add_child(crate)
-	var crate_body := StaticBody3D.new()
-	var ccs := CollisionShape3D.new()
 	var bounds := ModelLibrary.geometry_bounds(crate)
-	var csize: Vector3 = bounds.size if bounds.size.length() > 0.01 else Vector3(0.64, 0.64, 0.64)
+	var target_h := 1.05
+	var s: float = target_h / maxf(bounds.size.y, 0.2)
+	var rb := RigidBody3D.new()
+	rb.name = "EnvCrate"
+	rb.mass = 1.2
+	# 低摩擦：可被玩家推动/Heavy 撞走（默认摩擦会咬死在台面上）
+	var cpm := PhysicsMaterial.new()
+	cpm.friction = 0.4
+	cpm.bounce = 0.0
+	rb.physics_material_override = cpm
+	rb.position = Vector3(2.3, 1.2 + target_h * 0.5 + 0.02, 1.2)
+	var cs := CollisionShape3D.new()
 	var bsh := BoxShape3D.new()
-	bsh.size = csize
-	ccs.shape = bsh
-	ccs.position = bounds.get_center()
-	crate_body.add_child(ccs)
-	crate_body.position = crate.position
-	placed_root.add_child(crate_body)
-	crate.reparent(crate_body)
+	bsh.size = bounds.size * s
+	cs.shape = bsh
+	rb.add_child(cs)
+	crate.scale = Vector3.ONE * s
+	crate.position = -bounds.get_center() * s
+	rb.add_child(crate)
+	props_root = Node3D.new()
+	props_root.name = "EnvProps"
+	add_child(props_root)
+	props_root.add_child(rb)
 
 
 func _build_goal() -> void:
@@ -250,8 +264,9 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if player == null:
 		return
+	clock += delta
 	# 词条计时（v1 语义）：Fire die_at 自毁 / Sticky freeze_at 冻结
-	var now := Time.get_ticks_msec() / 1000.0
+	var now := clock
 	for b in placed_root.get_children():
 		if b is RigidBody3D:
 			if b.has_meta("die_at") and now >= float(b.get_meta("die_at")):
@@ -284,6 +299,12 @@ func _physics_process(delta: float) -> void:
 	player.velocity.x = dir.x
 	player.velocity.z = dir.z
 	player.move_and_slide()
+	# 推箱：滑碰动态刚体施加持续小冲量（普通环境物可被推动/被 Heavy 撞——L3 解法 C 通道）
+	for i in player.get_slide_collision_count():
+		var col := player.get_slide_collision(i)
+		var rb_hit := col.get_collider() as RigidBody3D
+		if rb_hit != null and not rb_hit.freeze:
+			rb_hit.apply_central_impulse(-col.get_normal() * 25.0 * delta)
 	# ghost 跟随射线终点
 	_place_ghost_at(_ray_endpoint())
 
@@ -398,9 +419,9 @@ func _place_at_validated(pos: Vector3, yaw: float, shape: Dictionary, word: Dict
 		pm.friction = 4.0
 		pm.bounce = 0.0
 		rb.physics_material_override = pm
-		rb.set_meta("freeze_at", Time.get_ticks_msec() / 1000.0 + 0.4)
+		rb.set_meta("freeze_at", clock + 0.4)
 	if word.id == "fire":
-		rb.set_meta("die_at", Time.get_ticks_msec() / 1000.0 + 2.0)
+		rb.set_meta("die_at", clock + 2.0)
 	placed_root.add_child(rb)
 	rb.position = pos
 	placed_count += 1
