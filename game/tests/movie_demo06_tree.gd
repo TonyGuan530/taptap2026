@@ -170,7 +170,7 @@ func _level6(px: float, py: float) -> void:
 		game._on_word(1)
 		game._try_place(Vector2(220, 401))
 	elif lv_f == 90:
-		game._try_place(Vector2(535, 346))
+		game._try_place(Vector2(545, 361))
 	elif lv_f > 120:
 		game.keys[KEY_D] = true
 		if game.on_floor:

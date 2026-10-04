@@ -345,7 +345,7 @@ func _run() -> void:
 	_check("T11b 塔1→塔2 间隙超爬升 70 可达距离（直接跳不可达，须二级架助）", g12 > reach70,
 		"间隙=%.0f 可达=%.1f" % [g12, reach70])
 	var f1 := Rect2(220 - 65, 401 - 11, 130, 22)   # P1 顶 390（自地面抬升 80）
-	var f2 := Rect2(535 - 65, 346 - 11, 130, 22)   # P2 顶 325（自塔1 抬升 65，紧邻塔1 右缘）
+	var f2 := Rect2(545 - 65, 361 - 11, 130, 22)   # P2 顶 325（自塔1 抬升 65，紧邻塔1 右缘）
 	_check("T11d P1 可从地面跳上（抬升 ≤ 跳高）", (lv6.walls[3].position.y - f1.position.y) <= jump_h,
 		"抬升=%.0f" % (lv6.walls[3].position.y - f1.position.y))
 	_check("T11e 塔1 可从 P1 跳上（抬升 ≤ 跳高）且 P1 不与塔1 相交",
@@ -363,7 +363,7 @@ func _run() -> void:
 	scene._on_shape(1)
 	scene._on_word(1)
 	scene._try_place(Vector2(220, 401))
-	scene._try_place(Vector2(535, 346))
+	scene._try_place(Vector2(545, 361))
 	await _wait(0.3)
 	var won6 := false
 	var jc6 := 0
@@ -374,13 +374,16 @@ func _run() -> void:
 		jc6 = maxi(0, jc6 - 1)
 		var px6: float = scene.player.position.x
 		var py6: float = scene.player.position.y
+		if jc6 % 30 == 0:
+			logf.store_string("T12 t=%d state=%s px=%.0f py=%.0f floor=%s space=%s
+" % [Time.get_ticks_msec() - t6, str(scene.state), px6, py6, str(scene.on_floor), str(scene.keys.get(KEY_SPACE, false))])
 		if scene.on_floor and jc6 == 0:
 			var want := false
 			if px6 > 56.0 and px6 < 72.0 and py6 > 420.0:
 				want = true        # 地面 → P1（顶 390）
 			elif px6 > 240.0 and px6 < 275.0 and py6 > 350.0 and py6 < 400.0:
 				want = true        # P1 → 塔1（顶 330）
-			elif px6 > 500.0 and px6 < 530.0 and py6 > 285.0 and py6 < 325.0:
+			elif px6 > 490.0 and px6 < 590.0 and py6 > 310.0 and py6 < 345.0:
 				want = true        # P2 → 塔2（顶 260）
 			if want:
 				scene.keys[KEY_SPACE] = true
