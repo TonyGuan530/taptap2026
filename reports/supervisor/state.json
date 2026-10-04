@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-04T12:06:00+08:00",
-  "round": 100,
+  "checkedAt": "2026-10-04T12:22:00+08:00",
+  "round": 101,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP not-foreground（12:05 实跑）"
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "✅ Pages 清理执行完成（ee585e7：每 demo 留 2 版，builds/ 909MB<1GB 软限）——部署恢复中"
+      "evidence": "新批示：历史版本归档令（reviews/…archive-versions.md）——builds 每 demo 只留最新 1 版（约 909MB→450MB）；Pages 清理上轮已完成"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -47,7 +47,7 @@
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD ee585e7",
+    "git": "本轮 HEAD 5846087",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
@@ -56,10 +56,9 @@
     "queue": "Pages 部署传播完成后全量可达性验证（12:14）；demo-09 补赛道（长期队列）"
   },
   "watch": [
-    "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
-    "Pages 清理已生效：12:14 全量抽查 19 目录可达性（重点 demo-05-v22/demo-10-v3b/demo-11-v3/demo-02-v7）",
-    "🔴【需用户决策】Batch 01 人选与排期（Pages 恢复后即可开测）；demo-02 会话失能；itch A/B",
-    "防复发规则已在批示：每 2 版清 1 旧版，红线 800MB"
+    "🔴【新交付】Jira 式反馈看板已上线：.github/feedback.yml 表单+hub 页脚入口——外网测试者填表→Issue 自动打 feedback 标签",
+    "巡查新增：每轮 gh issue list --label feedback 拉取反馈→归档批示（下轮起生效）",
+    "🔴【需用户决策】Batch 01 人选与排期（反馈通道已通，可开测）；demo-02 会话失能；itch A/B"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
