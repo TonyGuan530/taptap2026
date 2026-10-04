@@ -213,8 +213,7 @@ function setupShare() {
   function buildId(){ try{ return new URLSearchParams(location.search).get('id')||'unknown'; }catch(e){ return 'unknown'; } }
   document.addEventListener('click', async (e)=>{
     if(e.target && e.target.id==='qf-copy'){
-      const star=document.getElementById('qf-star')?.value||'';
-      const done=document.getElementById('qf-done')?.value||'';
+            const done=document.getElementById('qf-done')?.value||'';
       const text=document.getElementById('qf-text')?.value||'';
       const txt='【试玩反馈】'+buildId()+' | '+star+' | '+done+'\n'+text;
       try{ await navigator.clipboard.writeText(txt); }
@@ -241,7 +240,7 @@ function setupShare() {
     const eo2=document.getElementById('fb-open');
     if(eo2) eo2.innerHTML=open.map(x=>(
       '<div style="border-left:3px solid #e6b800;padding:4px 8px;margin:4px 0">'+
-      '<b>'+esc(x.star)+'</b> <span class="muted">'+esc(x.ts)+'</span><br>'+esc(x.text)+
+      (x.star?'<b>'+esc(x.star)+'</b> ':'')+'<span class="muted">'+esc(x.ts)+'</span><br>'+esc(x.text)+
       '<div class="muted" style="font-size:12px">编号 '+esc(x.id)+' · 已受理，修复后将在此回复</div></div>'
     )).join('');
     if(fixed.length){
@@ -249,7 +248,7 @@ function setupShare() {
       const fx=document.getElementById('fb-fixed');
       if(fx) fx.innerHTML=fixed.map(x=>(
         '<div style="border-left:3px solid #5a5;padding:4px 8px;margin:4px 0">'+
-        '<b>'+esc(x.star)+'</b> '+esc(x.text)+'<br>'+
+        (x.star?'<b>'+esc(x.star)+'</b> ':'')+esc(x.text)+'<br>'+
         '<span style="color:#8f8">🔧 已修复（'+esc(x.fixedIn)+'）</span> <span class="muted">'+esc(x.reply)+'</span></div>'
       )).join('');
     }
