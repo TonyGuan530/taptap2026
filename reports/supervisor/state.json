@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-04T12:22:00+08:00",
-  "round": 101,
+  "checkedAt": "2026-10-04T12:32:00+08:00",
+  "round": 102,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP not-foreground（12:05 实跑）"
@@ -9,7 +9,7 @@
     "supervisor": {
       "runCount": 98,
       "lastDispatch": "12:04",
-      "next": "12:14"
+      "next": "12:34"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
@@ -47,7 +47,7 @@
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 5846087",
+    "git": "本轮 HEAD e739398",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
@@ -56,9 +56,9 @@
     "queue": "Pages 部署传播完成后全量可达性验证（12:14）；demo-09 补赛道（长期队列）"
   },
   "watch": [
-    "🔴【新交付】Jira 式反馈看板已上线：.github/feedback.yml 表单+hub 页脚入口——外网测试者填表→Issue 自动打 feedback 标签",
-    "巡查新增：每轮 gh issue list --label feedback 拉取反馈→归档批示（下轮起生效）",
-    "🔴【需用户决策】Batch 01 人选与排期（反馈通道已通，可开测）；demo-02 会话失能；itch A/B"
+    "🔴【最高优先·新流程】每轮巡查第 0 步（先于其他清单项）：gh issue list --label feedback 拉取反馈→有新则归档 reports/blindtest-batch01/ + 同步 reviews/FEEDBACK-BOARD.md（各任务每轮优先读取）+ 批示对应任务",
+    "✅ 仓库已 PUBLIC（本来就公开）——任何人可提 Issue 反馈，无需开通；data/secrets.json 已 gitignore、tools/secrets.mjs 无硬编码密钥（安全验证通过）",
+    "🔴【需用户决策】Batch 01 人选与排期；demo-02 会话失能；itch A/B"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
