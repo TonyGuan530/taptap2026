@@ -45,8 +45,8 @@ const LEVELS := [
 	{name = "第 3 关 · 河堤风口", short = "河堤风口", ratio = 0.8, folds = 5, target_m = 65.0, wind = "tail", reward = 10,
 		tip = "纸最窄可折 5 次，顺风给恒定推力，终点 65 米，顺风送你一程"},
 	{name = "第 4 关 · 双门峡谷", short = "双门峡谷", ratio = 0.7, folds = 5, target_m = 55.0, wind = "head", reward = 12,
-		gate_x = 34.0, gate_h = 12.0, gate_bonus = 3, low_gate_x = 40.0, low_gate_top = 10.0,
-		tip = "逆风峡谷 55 米：34 米高空门（12m 以上）+3 与 40 米低空门（10m 以下）+3 一掷二选一——抬头吃高门、俯冲吃低门、求稳直通"},
+		gate_x = 34.0, gate_h = 12.0, gate_bonus = 3, gate_side = -480.0, low_gate_x = 40.0, low_gate_top = 10.0, low_gate_side = 480.0,
+		tip = "逆风峡谷 55 米：高门在左（-8m 横位）、低门在右（+8m 横位），A/D 横移二选一——抬头左飘吃高门、俯冲右切吃低门、求稳直通"},
 	{name = "第 5 关 · 远程投递", short = "远程投递", ratio = 0.6, folds = 6, target_m = 85.0, wind = "tail", reward = 14,
 		gate_x = 50.0, gate_h = 14.0, gate_bonus = 4,
 		tip = "顺风最长关 85 米，可折 6 次；50 米高空门（14m 以上）+4，折飘一点把门也一起收了"},
@@ -267,23 +267,26 @@ func step(delta: float) -> String:
 	if sample_acc >= SAMPLE_STEP:
 		sample_acc -= SAMPLE_STEP
 		flight_distance = maxf(flight_distance, (plane_pos.x - START_X) / PX_PER_M)
-	# 高空门：穿越门位、高度 ≥ gate_h、横向 |lateral| ≤ GATE_HALF（与低空门互斥，一掷只吃其一；门奖即时入 coins、失败保留）
+	# 高空门：穿越门位、高度 ≥ gate_h、横向 |lateral - gate_side| ≤ GATE_HALF（B2：门横位入配置）
+	# （与低空门互斥，一掷只吃其一；门奖即时入 coins、失败保留）
 	var gate_x_m: float = float(LEVELS[level_idx].get("gate_x", 0.0))
 	if gate_x_m > 0.0 and not gate_hit and not low_gate_hit:
 		var gate_px := START_X + gate_x_m * PX_PER_M
 		if prev_x < gate_px and plane_pos.x >= gate_px:
-			if plane_pos.y <= GROUND_Y - float(LEVELS[level_idx].gate_h) * PX_PER_M and absf(lateral) <= GATE_HALF_PX:
+			var gate_side: float = float(LEVELS[level_idx].get("gate_side", 0.0))
+			if plane_pos.y <= GROUND_Y - float(LEVELS[level_idx].gate_h) * PX_PER_M and absf(lateral - gate_side) <= GATE_HALF_PX:
 				gate_hit = true
 				var gb: int = int(LEVELS[level_idx].gate_bonus)
 				coins += gb
 				coins_earned += gb
 				gate_coins += gb
-	# 低空门：穿越门位、高度 ≤ low_gate_top、横向 |lateral| ≤ GATE_HALF（与高空门互斥）
+	# 低空门：穿越门位、高度 ≤ low_gate_top、横向 |lateral - low_gate_side| ≤ GATE_HALF（与高空门互斥）
 	var lg_x_m: float = float(LEVELS[level_idx].get("low_gate_x", 0.0))
 	if lg_x_m > 0.0 and not low_gate_hit and not gate_hit:
 		var lg_px := START_X + lg_x_m * PX_PER_M
 		if prev_x < lg_px and plane_pos.x >= lg_px:
-			if plane_pos.y >= GROUND_Y - float(LEVELS[level_idx].low_gate_top) * PX_PER_M and absf(lateral) <= GATE_HALF_PX:
+			var lg_side: float = float(LEVELS[level_idx].get("low_gate_side", 0.0))
+			if plane_pos.y >= GROUND_Y - float(LEVELS[level_idx].low_gate_top) * PX_PER_M and absf(lateral - lg_side) <= GATE_HALF_PX:
 				low_gate_hit = true
 				var lgb: int = int(LEVELS[level_idx].gate_bonus)
 				coins += lgb

@@ -169,12 +169,26 @@ func _build_world() -> void:
 	spring_arm = SpringArm3D.new()
 	spring_arm.spring_length = 8.0
 	spring_arm.rotation_degrees = Vector3(-14.0, 0.0, 0.0)
+	# 遮挡：SpringArm 球形探测 + 地面碰撞体（低飞镜头收近不穿地；物理行为 headless 可验证）
+	var arm_shape := SphereShape3D.new()
+	arm_shape.radius = 0.3
+	spring_arm.shape = arm_shape
 	cam_rig.add_child(spring_arm)
 	camera = Camera3D.new()
 	camera.fov = 70.0
 	spring_arm.add_child(camera)
 	world_root.add_child(cam_rig)
 	camera.current = true
+
+	var ground_body := StaticBody3D.new()
+	ground_body.name = "GroundCollider"
+	var gcol := CollisionShape3D.new()
+	var gshape := BoxShape3D.new()
+	gshape.size = Vector3(80.0, 0.5, 220.0)
+	gcol.shape = gshape
+	ground_body.add_child(gcol)
+	ground_body.position = Vector3(0.0, -0.25, -100.0)
+	world_root.add_child(ground_body)
 
 
 ## 按关卡重建终点/门（场景应用：终点与低门为自建 ComicObject，高门用基座 gate_frame 模型；
@@ -204,14 +218,14 @@ func _apply_level_props() -> void:
 	level_props.add_child(finish)
 	var gate_x_m: float = float(L.get("gate_x", 0.0))
 	if gate_x_m > 0.0:
-		# 高门：基座 gate_frame 模型（原尺寸 2.2×2.4），缩放到门宽 6m × 门高
+		# 高门：基座 gate_frame 模型（原尺寸 2.2×2.4），缩放到门宽 6m × 门高；横位随 gate_side
 		var hg: Node3D = ModelLibrary.create_model("gate_frame")
 		hg.scale = Vector3(6.0 / 2.2, float(L.gate_h) / 2.4, 1.6)
-		hg.position = Vector3(0.0, 0.0, -gate_x_m)
+		hg.position = Vector3(float(L.get("gate_side", 0.0)) / PX_PER_M, 0.0, -gate_x_m)
 		level_props.add_child(hg)
 	var lg_x_m: float = float(L.get("low_gate_x", 0.0))
 	if lg_x_m > 0.0:
-		# 低门：自建 ComicObject（双柱 + 横杆，杆顶=low_gate_top）
+		# 低门：自建 ComicObject（双柱 + 横杆，杆顶=low_gate_top）；横位随 low_gate_side
 		var low: Node3D = ComicObjectScript.new()
 		low.name = "LowGate"
 		var post_m := CylinderMesh.new()
@@ -225,7 +239,7 @@ func _apply_level_props() -> void:
 		bar_m.size = Vector3(8.0, 0.25, 0.25)
 		low.add_part(bar_m, ModelLibrary.COLORS.plate,
 			Transform3D(Basis.IDENTITY, Vector3(0.0, float(L.low_gate_top), 0.0)))
-		low.position = Vector3(0.0, 0.0, -lg_x_m)
+		low.position = Vector3(float(L.get("low_gate_side", 0.0)) / PX_PER_M, 0.0, -lg_x_m)
 		level_props.add_child(low)
 
 
