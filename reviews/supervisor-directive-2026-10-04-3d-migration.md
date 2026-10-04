@@ -46,3 +46,18 @@
 4. **demo-05 特例**：HD-2D 恐龙角色保留（sprite_comic+Y 轴 billboard），环境用统一 low-poly 材质。
 5. 描边语义按交互状态区分，材质只表逻辑状态；碰撞/拾取/导航由各 demo 玩法层实现。
 6. **验收口径**：各 demo 的 3D 迁移里程碑需含「美术基线接入完成」检查项；督导巡查逐轮核对，未接入的 demo 持续催办（并入队列/催办体系）。
+
+
+---
+
+## 增补（20:05·用户问询裁定）：美术基线采用「基座全局一次 + 场景应用分 demo」部署
+
+**裁定**：不走 9 分支各自复制（漂移风险），采用共享基座分支。
+
+### 流水线执行（一次性基建，参照 subset-font 全项目基建先例）
+
+1. 建 **3d-shared 共享基座分支**（自 main 拉出）：将 D:/GIT/3D-GUIDE/low-poly-comic-kit/ 的 comic_style/（plain_toon.gdshader、pixel_outline.gdshader、sprite_comic.gdshader、comic_style.gd Resource）、models/（八类 GLB）、addons/ComicObject 复制进 game 工程（路径建议 game/comic_style/、game/models/、game/addons/，保持套件相对结构）。
+2. 验证：game 工程打开无报错、style_gallery 示例场景在本工程跑通（材质+描边+八类模型渲染正常）。
+3. 各 demo 迁移分支**一律自 3d-shared 拉出**（不再各自复制套件）——后续美术调整只改基座一处，全项目同步。
+4. main 2D 现役版不动；基座合入主线时机待各 demo 迁移验收后由督导裁决。
+5. 完成后回执本文件：[DONE HH:MM 3d-shared 分支名+目录清单]。
