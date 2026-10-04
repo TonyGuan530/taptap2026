@@ -65,11 +65,52 @@ var ghost_pos := Vector3(2.0, 1.8, 0.0)
 var clock := 0.0
 var props_root: Node3D
 var restart_pending := false
+# 遥测（2D v15 语义适配 3D + Gate 裁定新增：placement_attempt/rejected、ghost 终位）
+var tel_sid := ""
+var tel_events := []
+var tel_t0 := 0
+
+
+func _tel(type: String, extra: Dictionary = {}) -> void:
+	var ev := {
+		"type": type,
+		"ts": snappedf(Time.get_unix_time_from_system(), 0.1),
+		"el": snappedf((Time.get_ticks_msec() - tel_t0) / 1000.0, 0.1),
+		"sid": tel_sid,
+		"level": LEVELS[level_idx].id,
+	}
+	for k in extra:
+		ev[k] = extra[k]
+	tel_events.append(ev)
+	_tel_persist()
+
+
+func _tel_json() -> String:
+	return JSON.stringify({"pid": "demo06_3d_" + LEVELS[level_idx].id + "_" + tel_sid, "events": tel_events})
+
+
+func _tel_path() -> String:
+	return "user://demo06_3d_tel/tel_%s_%s.json" % [LEVELS[level_idx].id, tel_sid]
+
+
+func _tel_persist() -> void:
+	var f := FileAccess.open(_tel_path(), FileAccess.WRITE)
+	if f != null:
+		f.store_string(_tel_json())
+		f.close()
+
+
+func _tel_copy() -> void:
+	DisplayServer.clipboard_set(_tel_json())
+	print("TEL_COPIED events=", tel_events.size())
 
 
 func _ready() -> void:
 	style = StyleDefinition.new()
 	ink = LEVELS[level_idx].ink
+	tel_sid = str(int(Time.get_unix_time_from_system() * 1000.0)) + "-3d"
+	tel_t0 = Time.get_ticks_msec()
+	DirAccess.make_dir_recursive_absolute("user://demo06_3d_tel")
 	_build_environment()
 	_build_props()
 	_build_level()
@@ -80,6 +121,7 @@ func _ready() -> void:
 	_update_ghost()
 	_place_ghost_at(_ray_endpoint())
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	_tel("start", {"ink": ink})
 
 
 func _static_box(pos: Vector3, size: Vector3, col: Color) -> StaticBody3D:
@@ -264,6 +306,7 @@ func _spawn_rock(pos: Vector3) -> void:
 
 ## 重开本关（独立于 R 的玩家复位）：清放置物与环境物 → 重建 → 回初始墨水与出生点
 func restart_level() -> void:
+	_tel("session_end", {"end_reason": "restart"})
 	restart_pending = true
 
 
@@ -279,6 +322,7 @@ func _do_restart() -> void:
 	player.velocity = Vector3.ZERO
 	mode_label.text = "%s %s（3D 迁移）" % [LEVELS[level_idx].id, LEVELS[level_idx].name]
 	_refresh_hud()
+	tel_t0 = Time.get_ticks_msec()
 	print("RESTART level=", LEVELS[level_idx].id)
 
 
@@ -395,6 +439,11 @@ func _build_goal() -> void:
 func _on_goal_entered(body: Node3D) -> void:
 	if body == player:
 		mode_label.text = "GOAL!"
+		_tel("goal", {"elapsed": snappedf((Time.get_ticks_msec() - tel_t0) / 1000.0, 0.1),
+			"ink_left": ink, "placements": placed_count,
+			"ghost_pos": [snappedf(ghost_pos.x, 0.1), snappedf(ghost_pos.y, 0.1), snappedf(ghost_pos.z, 0.1)],
+			"ghost_yaw": snappedf(ghost_yaw, 0.1), "place_dist": place_dist})
+		_tel("session_end", {"end_reason": "goal"})
 		print("GOAL_REACHED")
 
 
@@ -403,6 +452,14 @@ func _on_fire_touch(other: Node) -> void:
 	if other != null and is_instance_valid(other) and other.has_meta("flammable"):
 		other.queue_free()
 		print("FIRE_BURN target=", other.name)
+
+
+## 放置物接触遥测（2D 语义：oid/with/enter）+ Fire 燃毁通道（仅 Fire 体可燃毁目标）
+## 注意：body_entered(other) + bind(rb) → 实参顺序为 (other, rb)
+func _on_place_contact(other: Node, rb: RigidBody3D) -> void:
+	_tel("contact", {"oid": rb.name, "with": str(other), "ev": "enter"})
+	if rb.has_meta("die_at"):
+		_on_fire_touch(other)
 
 
 func _build_hud() -> void:
@@ -421,7 +478,7 @@ func _build_hud() -> void:
 
 func _refresh_hud() -> void:
 	var cost: int = SHAPES[shape_idx].cost + WORDS[word_idx].cost
-	ink_label.text = "墨水 %d | %s+%s %d墨 | Q/E旋转 %.0f° | 滚轮深度 %.1fm | LMB放置 | Esc释放鼠标" % [
+	ink_label.text = "墨水 %d | %s+%s %d墨 | Q/E旋转 %.0f° | 滚轮深度 %.1fm | LMB放置 | R复位 T重开 J复制遥测 | Esc释放鼠标" % [
 		ink, SHAPES[shape_idx].id, WORDS[word_idx].id, cost, rad_to_deg(ghost_yaw), place_dist]
 
 
@@ -430,18 +487,25 @@ func _unhandled_input(event: InputEvent) -> void:
 		match event.keycode:
 			KEY_1:
 				shape_idx = 0
+				_tel("select", {"shape": SHAPES[0].id})
 			KEY_2:
 				shape_idx = 1
+				_tel("select", {"shape": SHAPES[1].id})
 			KEY_3:
 				shape_idx = 2
+				_tel("select", {"shape": SHAPES[2].id})
 			KEY_4:
 				word_idx = 0
+				_tel("select", {"tag": WORDS[0].id})
 			KEY_5:
 				word_idx = 1
+				_tel("select", {"tag": WORDS[1].id})
 			KEY_6:
 				word_idx = 2
+				_tel("select", {"tag": WORDS[2].id})
 			KEY_7:
 				word_idx = 3
+				_tel("select", {"tag": WORDS[3].id})
 			KEY_Q:
 				ghost_yaw += PI * 0.5
 			KEY_E:
@@ -449,8 +513,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_R:
 				player.position = LEVELS[level_idx].spawn
 				player.velocity = Vector3.ZERO
+				_tel("reset", {"why": "R", "pos": [snappedf(player.position.x, 0.5), snappedf(player.position.y, 0.5)]})
 			KEY_T:
 				restart_level()
+			KEY_J:
+				_tel_copy()
 			KEY_ESCAPE:
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		_refresh_hud()
@@ -513,6 +580,7 @@ func _physics_process(delta: float) -> void:
 	if player.position.y < float(LEVELS[level_idx].fall_y):
 		player.position = LEVELS[level_idx].spawn
 		player.velocity = Vector3.ZERO
+		_tel("reset", {"why": "fall", "pos": [snappedf(player.position.x, 0.5), snappedf(player.position.y, 0.5)]})
 	# 推箱：滑碰动态刚体施加持续小冲量（普通环境物可被推动/被 Heavy 撞——L3 解法 C 通道）
 	for i in player.get_slide_collision_count():
 		var col := player.get_slide_collision(i)
@@ -586,8 +654,13 @@ func try_place_validated(pos: Vector3, yaw: float) -> bool:
 	var shape: Dictionary = SHAPES[shape_idx]
 	var word: Dictionary = WORDS[word_idx]
 	var cost: int = shape.cost + word.cost
+	# Gate 裁定新增：尝试与拒绝分事件（区分"没想到"与"想到了但放不下"）
+	_tel("placement_attempt", {"shape": shape.id, "tag": word.id,
+		"pos": [snappedf(pos.x, 0.1), snappedf(pos.y, 0.1), snappedf(pos.z, 0.1)],
+		"yaw": snappedf(yaw, 0.1), "ink": ink})
 	if ink < cost:
 		mode_label.text = "墨水不足（需 %d，剩 %d）" % [cost, ink]
+		_tel("placement_rejected", {"why": "ink", "cost": cost})
 		return false
 	var params := PhysicsShapeQueryParameters3D.new()
 	params.shape = _placement_shape(shape.size, yaw, 0.92)
@@ -598,6 +671,7 @@ func try_place_validated(pos: Vector3, yaw: float) -> bool:
 	var hits := get_world_3d().direct_space_state.intersect_shape(params, 8)
 	if hits.size() > 0:
 		mode_label.text = "放置位置被阻挡"
+		_tel("placement_rejected", {"why": "blocked"})
 		return false
 	_place_at_validated(pos, yaw, shape, word, cost)
 	return true
@@ -636,13 +710,16 @@ func _place_at_validated(pos: Vector3, yaw: float, shape: Dictionary, word: Dict
 		rb.set_meta("freeze_at", clock + 0.4)
 	if word.id == "fire":
 		rb.set_meta("die_at", clock + 2.0)
-		# Fire 词条语义（2D 保留）：接触易燃物/Fence 删除目标，自身约 2s 后删除
-		rb.contact_monitor = true
-		rb.max_contacts_reported = 4
-		rb.body_entered.connect(_on_fire_touch)
 	placed_root.add_child(rb)
 	rb.position = pos
 	placed_count += 1
+	# 接触遥测（全部放置物）+ Fire 燃毁共用通道
+	rb.contact_monitor = true
+	rb.max_contacts_reported = 4
+	rb.body_entered.connect(_on_place_contact.bind(rb))
+	_tel("place", {"oid": rb.name, "shape": shape.id, "tag": word.id,
+		"pos": [snappedf(pos.x, 0.1), snappedf(pos.y, 0.1), snappedf(pos.z, 0.1)],
+		"yaw": snappedf(yaw, 0.1), "cost": cost, "ink_left": ink})
 	_refresh_hud()
 	print("PLACED shape=%s word=%s yaw=%.2f level=0" % [shape.id, word.id, rad_to_deg(yaw)])
 

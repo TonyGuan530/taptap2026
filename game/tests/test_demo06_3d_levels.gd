@@ -166,7 +166,7 @@ func _l4_crate() -> bool:
 					phase = 1
 			1:  # 推箱抵墙（墙面 4.75，箱半 0.375 → 箱心 4.375），急停线 3.75（接触点）
 				dir = Vector3(1, 0, 0) if (on_floor and px < 3.75) else Vector3.ZERO
-				if crate.position.x > 4.35:
+				if crate.position.x > 4.3:
 					phase = 2
 			2:  # 回退助跑（停位 3.75 已在起跳窗之后）
 				dir = Vector3(-1, 0, 0) if on_floor else Vector3.ZERO
