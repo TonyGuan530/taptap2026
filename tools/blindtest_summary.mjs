@@ -142,13 +142,14 @@ function summarize3dSession(sid, evs) {
 	const rejected = evs.filter((e) => e.type === 'placement_rejected');
 	const attempts = evs.filter((e) => e.type === 'placement_attempt');
 	const resets = evs.filter((e) => e.type === 'reset');
+	const restarts = evs.filter((e) => e.type === 'session_end' && e.end_reason === 'restart');
 	const route = places
 		.map((p) => `${SHAPE_NAME[p.shape] || p.shape}+${WORD_NAME[p.tag] || p.tag}`)
 		.join('→');
 	const g = goal || {};
 	const gpos = Array.isArray(g.ghost_pos) ? `(${g.ghost_pos.join(',')})` : '?';
 	const rejRatio = attempts.length ? `${rejected.length}/${attempts.length}` : '0';
-	return `${sid} | 通关L3?${goal ? 'Y' : 'N'} | 用时${g.elapsed ?? '?'}s | 放置${places.length} | 拒绝${rejRatio} | 复位${resets.length} | 墨余${g.ink_left ?? '?'} | 组合 ${route || '(未放置)'} | ghost终位${gpos}@${g.ghost_yaw ?? '?'}rad`;
+	return `${sid} | 通关L3?${goal ? 'Y' : 'N'} | 用时${g.elapsed ?? '?'}s | 放置${places.length} | 拒绝${rejRatio} | 复位${resets.length} | 重开${restarts.length} | 墨余${g.ink_left ?? '?'} | 组合 ${route || '(未放置)'} | ghost终位${gpos}@${g.ghost_yaw ?? '?'}rad`;
 }
 
 const out3d = [];

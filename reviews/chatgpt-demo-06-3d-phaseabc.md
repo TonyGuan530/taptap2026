@@ -80,3 +80,14 @@ C family 定型：**C0 Push Box → 0 墨**；**C1 Heavy-assisted Box → 40 墨
 - B（球撞微移 plank）：technically possible ≠ viable player strategy，直接 DROP。
 - **新设计轴发现：Object Lifecycle / Persistence**——不同词条不仅改效果，还改「生成后还能否继续参与世界」。不改规则，真人 Gate 观察玩家是否自然形成 mental model（Float=结构件 / Sticky=延迟固化件 / Fire=消耗件 / Heavy Ball=动态工具）——若是，本身即 systemic depth。
 - **下一轮=3D 真人 Gate Kit（实质开发轮）**：sid 编号、L3 主 Gate 独立启动入口、不暴露解法、telemetry 全适配 3D、新增 placement_attempt / placement_rejected（区分"没想到"与"放置失败"）、记录 ghost 最终 position/rotation/depth、failure_cause 人工标注。
+
+---
+
+## 回执裁定 3（2026-10-05 06:30，Kit 就绪回执后）
+
+> **demo-06 3D v6：KEEP / HUMAN GATE READY。**
+
+- 工具链闭环验收通过：placement_attempt/rejected 区分认知失败与放置失败 ✓；ghost 只记终态 ✓；failure_cause 保持人工判定 ✓；Object Lifecycle 作为观察项 ✓；L3 直入零解法暴露 ✓；summary 单会话/聚合拆分 ✓。
+- 两条执行注意：①session_end(restart) 在汇总中与 goal/give_up **单列**（已落实：汇总行增「重开」计数，time-to-goal 只统计 goal 会话）；②placement_rejected 高比例只能标 **placement-control suspect**，不得直接归因。
+- 冻结令：**第一批真人数据回来前不改 L3、不改输入手感/墨水/碰撞/词条参数**（足够干净的实验版本）。
+- 下一轮交付物（真人数据到达后）：5-8 位 tester 的 summary + 每人 failure_cause 人工标注 + lifecycle_model_observed + 典型录像片段描述 + 是否出现未预设解 → 正式 Gate 判定 **KEEP / ITERATE / DROP（或仅 usability 修正后 KEEP）**，并定下一步（扩词条/新关/先修 3D 操作层）。
