@@ -348,7 +348,7 @@ func _physics_process(delta: float) -> void:
 
 	# 移动：相对镜头 yaw 的水平转向（空中地面一致；无通用跳跃）
 	var in_x := Input.get_axis("p_left", "p_right")
-	var in_y := Input.get_axis("p_fwd", "p_back")
+	var in_y := Input.get_axis("p_back", "p_fwd")   # W=+1 前进（反馈#1 修复：原 W/S 反向）
 	var dir := Vector3.ZERO
 	if absf(in_x) > 0.01 or absf(in_y) > 0.01:
 		tel_moved = true

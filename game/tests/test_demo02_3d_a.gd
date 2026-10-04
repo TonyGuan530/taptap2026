@@ -113,6 +113,26 @@ func _run() -> void:
 	_check("⑦ 横移输入生效", scene.ball.linear_velocity.x > vx0 + 1.0)
 	_log("⑦ vx %.1f→%.1f" % [vx0, scene.ball.linear_velocity.x])
 
+	# ⑧ WASD 方向回归（GitHub 反馈#1：W/S 曾反向）：yaw=0 时 W 应产生 -Z 速度（前进），S 应 +Z
+	scene.reset_ball()
+	scene.switch_tag(2)
+	_teleport(Vector3(0, 6, 0))
+	await physics_frame
+	Input.action_press("p_fwd")
+	await _wait_frames(10)
+	Input.action_release("p_fwd")
+	var w_ok: bool = scene.ball.linear_velocity.z < -1.0
+	scene.reset_ball()
+	scene.switch_tag(2)
+	_teleport(Vector3(0, 6, 0))
+	await physics_frame
+	Input.action_press("p_back")
+	await _wait_frames(10)
+	Input.action_release("p_back")
+	var s_ok: bool = scene.ball.linear_velocity.z > 1.0
+	_check("⑧a W=前进(-Z)", w_ok)
+	_check("⑧b S=后退(+Z)", s_ok)
+
 	_log("ALL DONE fails=%d" % fails)
 	logf.flush()
 	quit(1 if fails > 0 else 0)
