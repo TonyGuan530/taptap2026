@@ -131,6 +131,12 @@
 - V8 终局（2026-10-04 凌晨，监督者终裁选 A：停止自动调参）：cave tax 2食2水（3/3 实测致死偏差声明）+ 抢运洒落 15% + tile-cap 回退 + A' 余量计分。240 局干净数据：all_cave 100%/74 安全地板、intel 46.7%win/雨天存活 100%、relocate 复活（灭亡→100% 惨胜）、风向因果 50-100pp。**数值全面冻结，进入真人 5 局 Gate**（行为学四指标：策略发现≥3/学习链≥2/洞穴收敛判死线/应急理解；不加安全余量 UI）。模板 reviews/human-test-demo05-template.md
 - V4 压力曲线（2026-10-03 夜，sweep 两轮定档 game/tests/sweep_demo05_pressure.gd）：首轮需求 4-8 档仍 8/8 全胜（供给~20 对需求 4-8 太富裕，且泥流与风向无关、河谷雨天必归零）→ 放大到死亡区间后采纳 combo0：准备期 45s→28s（采集 7 点）、路线需求 6/4/5→12/14/16、评分=基础分+min(食,4)×2+min(水,4)×2。分层：投机(全押河谷/森林)50%、均匀分散 75%、保险/情报/抢运 100%、速度派 50%——「不再 8/8 全 >90%」达成；headless 4 用例重跑全 PASS 且用例 2 首次出现真灭亡。demo-05-v4 已导出推 itch/Pages
 
+- **HD-2D 转向（用户指令 2026-10-04：改成像饥荒/环世界一样的实时生存）**：指南 D:/GIT/3D-GUIDE/taptap2026-demo05-hd2d-zcode-guide-2026-10-04.md——3D 世界+2D 像素恐龙直接操控，入口 game/demo05_hd2d/demo05_hd2d.tscn；回合制火山短局（v1-v22）归档对照，其真人 Gate 由 HD-2D 线接管
+- 阶段 A✓（直接操控/采集/碰撞 5/5）→ B✓（三设施建造+需求+昼夜+死亡重开 13/13；督导 Gate-6 因果链 2/2，B PASS）→ C1✓ 火山灰夜潮（安全区改变，5/5）→ C2✓ 泥流夜漫（路径拓扑改变，5/5）→ C3✓ 萨满预报 75%（不完全信息驱动营地区位，5/5）
+- 督导裁决（reviews/chatgpt-demo05-hd2d-bc-full.md / -c3-full.md）：阶段 B PASS、C 层封顶（雷火冻结）、HD-2D=KEEP 候选；唯一剩余 Gate=小型真人空间学习测试（2-3 人×2 夜，shelter_build_x 遥测+模板 reviews/human-test-demo05-hd2d-template.md，Miro 已贴招募卡）
+- 线上：demo-05-hd2d-v6（Pages md5 4/4；itch html 通道已推但 CDN 文件层故障观察中）；素材：四帧绿幕行走动画；全量回归 A5+B13+C5+C2 5+Gate6 2+Anim4+Telemetry4
+- 纪律：内容层封顶不加第四灾害；HUD 提示强度不得优化（防提示掉空间假设实验）；v6 后停止 headless 内容迭代
+
 ## demo-06 词条涂鸦创造
 
 - 一句话玩法：探索获得词条（Fire/Water/Heavy/Sharp/Float/Sticky/Bounce/Grow）+ 有限墨水画图形 + 赋予词条 → 形状+词条+环境生成效果，关卡只给目标不规定答案
