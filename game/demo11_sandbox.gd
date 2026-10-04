@@ -74,6 +74,12 @@ const ROOMS := [
 
 var state := "play"           # play / final
 var room_idx := 0
+# v3 遥测（监督 KEEP 复评 instrumentation）：七字段 + solution family 归类
+var tele := {tool_use = 0, object_move = 0, freeze = 0, melt = 0, burn = 0, switch_on = 0, room5_complete = 0}
+var solution_seq := []       # 本房动作序列 ["move:right", "push:box:water", "tool:ice:right", ...]
+var family := ""             # 当前房 solution family：melt_route / magnet_iron / freeze_bridge / box_bridge / plain
+var family_by_room := {}     # room_idx -> 首次通关归类（供盲测 solution family 判据）
+var gate_was_open := false   # v3 遥测：门导通边沿检测（switch_on 计数）
 var grid: Array = []          # 长度 ROOM_W*ROOM_H：floor/wall/water/bridge/pit/fill/ice/gate
 var player := {x = 1, y = 1}  # 格子坐标
 var facing := "right"         # 最后移动方向，F/G/H 沿此方向使用
@@ -174,6 +180,9 @@ func load_room(i: int) -> void:
 	objects = []
 	melt_queue = []
 	gate_pos = {x = -1, y = -1}
+	solution_seq = []
+	family = ""
+	gate_was_open = false
 	var rows: Array = R.map
 	for y in ROOM_H:
 		var row: String = rows[y]
@@ -312,6 +321,7 @@ func move(dir: String) -> bool:
 			_set_tile(bx, by, "bridge" if btile == "water" else "fill")
 			pushed_idx = -1
 			_toast("木箱沉了下去，变成了可以走的路面")
+			solution_seq.append("push:box:" + btile)   # v3 遥测：箱桥动作
 		else:
 			if btile != "floor" and btile != "ice":
 				return false
@@ -319,10 +329,13 @@ func move(dir: String) -> bool:
 			target.y = by
 			pushed_idx = objects.find(target)
 			pushed_from = _cell_center(nx, ny)
+			tele.object_move += 1
+			solution_seq.append("push:" + ttype)
 		_slide_to(px, py)
 		player = {x = nx, y = ny}
 		facing = dir
 		steps += 1
+		solution_seq.append("move:" + dir)   # v3 遥测
 		_after_step(nx, ny)
 		return true
 	# 空格：水面/深坑不可走，关闭的门不可进
@@ -334,6 +347,7 @@ func move(dir: String) -> bool:
 	player = {x = nx, y = ny}
 	facing = dir
 	steps += 1
+	solution_seq.append("move:" + dir)   # v3 遥测
 	_after_step(nx, ny)
 	return true
 
@@ -355,6 +369,9 @@ func use_tool(tool: String, dir: String) -> bool:
 		_set_tile(tx, ty, "ice")
 		_arm_torch_melt(tx, ty)
 		_toast("冰霜杖：面前的水冻成了冰面")
+		tele.tool_use += 1
+		tele.freeze += 1
+		solution_seq.append("tool:ice:" + dir)
 		_update_status()
 		queue_redraw()
 		return true
@@ -363,12 +380,18 @@ func use_tool(tool: String, dir: String) -> bool:
 		if not o.is_empty() and String(o.type) == "box":
 			objects.erase(o)
 			_toast("火把：木箱烧成了灰")
+			tele.tool_use += 1
+			tele.burn += 1
+			solution_seq.append("tool:fire:burn:" + dir)
 			_update_status()
 			queue_redraw()
 			return true
 		if _tile(tx, ty) == "ice":
 			_toast("火把：冰面融化还原成水")
 			_melt_ice_tile(tx, ty)   # 融化结算：冰上有物体/玩家时触发失去支撑传播，并覆盖上面的通用提示
+			tele.tool_use += 1
+			tele.melt += 1
+			solution_seq.append("tool:fire:melt:" + dir)
 			_update_status()
 			queue_redraw()
 			return true
@@ -395,6 +418,9 @@ func use_tool(tool: String, dir: String) -> bool:
 				pushed_from = _cell_center(cx, cy)
 				slide_t = 0.0
 				_toast("磁石：铁块被拉近了一格")
+				tele.tool_use += 1
+				tele.object_move += 1
+				solution_seq.append("tool:magnet:" + dir)
 				_update_status()
 				queue_redraw()
 				return true
@@ -493,7 +519,14 @@ func _slide_to(px: int, py: int) -> void:
 
 
 func _after_step(nx: int, ny: int) -> void:
+	var g_now := gate_open()
+	if g_now and not gate_was_open:
+		tele.switch_on += 1
+	gate_was_open = g_now
 	if _tile(nx, ny) == "gate" and gate_open():
+		_classify_family()
+		if room_idx == ROOMS.size() - 1:
+			tele.room5_complete = 1
 		if room_idx >= ROOMS.size() - 1:
 			state = "final"
 			_show_final()
@@ -506,9 +539,44 @@ func _after_step(nx: int, ny: int) -> void:
 	queue_redraw()
 
 
+## v3 solution family 归类（监督 KEEP 复评 instrumentation）：按本房动作序列判定
+## 优先级：融冰传播 > 磁石拉铁 > 冻冰桥/箱桥 > 纯走位
+func _classify_family() -> void:
+	var has_melt := false
+	var has_magnet := false
+	var has_bridge := false
+	var has_freeze := false
+	for a in solution_seq:
+		var s: String = str(a)
+		if s == "tool:fire:melt":
+			has_melt = true
+		elif s.begins_with("tool:magnet"):
+			has_magnet = true
+		elif s == "push:box:water" or s == "push:box:pit":
+			has_bridge = true
+		elif s.begins_with("tool:ice"):
+			has_freeze = true
+	if has_melt:
+		family = "melt_route"
+	elif has_magnet:
+		family = "magnet_iron"
+	elif has_bridge:
+		family = "box_bridge"
+	elif has_freeze:
+		family = "freeze_route"
+	else:
+		family = "plain"
+	if not family_by_room.has(room_idx):
+		family_by_room[room_idx] = family
+
+
 func _show_final() -> void:
 	final_panel.visible = true
-	final_body.text = "五个箱庭房间全部通过！总步数 %d。\n冰霜杖冻水、火把烧箱融冰、磁石隔空拉铁——每个房间都不止一条解法，换个工具再走一遍试试。" % steps
+	var fam_line := ""
+	for k in family_by_room:
+		fam_line += "房%d=%s · " % [int(k) + 1, str(family_by_room[k])]
+	final_body.text = "五个箱庭房间全部通过！总步数 %d。\n解法家族：%s\n冰霜杖冻水、火把烧箱融冰、磁石隔空拉铁——每个房间都不止一条解法，换个工具再走一遍试试。\n遥测：工具 %d 次 · 移物 %d 次 · 冻 %d · 融 %d · 烧 %d · 开关导通 %d 次" % [
+		steps, fam_line, int(tele.tool_use), int(tele.object_move), int(tele.freeze), int(tele.melt), int(tele.burn), int(tele.switch_on)]
 	_update_status()
 	queue_redraw()
 
