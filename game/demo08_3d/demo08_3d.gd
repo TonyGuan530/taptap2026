@@ -877,8 +877,12 @@ func _draw_wind_tag() -> void:
 		return
 	if w == "side":
 		var left: bool = core.wind_side() < 0.0
-		paint.draw_string(FONT, Vector2(770.0, 60.0), "侧风 %s（A/D 顶风）" % ("←" if left else "→"),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("5c6bc0"))
+		var tag := "侧风 %s（A/D 顶风）" % ("←" if left else "→")
+		var shear_m: float = float(core.LEVELS[core.level_idx].get("shear_x", 0.0))
+		if shear_m > 0.0:
+			var after: bool = core.wind_side2() < 0.0
+			tag = "风切变 %.0fm：侧风 %s → %s" % [shear_m, "→" if left else "←", "←" if after else "→"]
+		paint.draw_string(FONT, Vector2(730.0, 60.0), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("5c6bc0"))
 		return
 	var head: bool = w == "head"
 	var col := Color("5c6bc0") if head else Color("43a047")

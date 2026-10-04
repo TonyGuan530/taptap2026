@@ -57,6 +57,9 @@ const LEVELS := [
 	{name = "第 7 关 · 回风峡谷", short = "回风峡谷", ratio = 0.85, folds = 6, target_m = 70.0, wind = "side", wind_side = 1.0, reward = 14,
 		gate_x = 30.0, gate_h = 12.0, gate_bonus = 3, gate_side = -360.0,
 		tip = "侧风向右推，高门却在左边（30 米、-6m 横位、12m 以上）+3：先顶风左拐吃门，再让风送你回中线滑完 70 米。更多机制关卡（用户指令扩展）"},
+	{name = "第 8 关 · 风切变峡谷", short = "风切变峡谷", ratio = 0.8, folds = 6, target_m = 65.0, wind = "side", wind_side = -1.0, shear_x = 40.0, wind_side2 = 1.0, reward = 14,
+		gate_x = 50.0, gate_h = 12.0, gate_bonus = 3, gate_side = -180.0,
+		tip = "风切变：40 米前侧风向左带、40 米后反向向右送——被带去左边不用慌，切变后风把你送回 -3m 高空门（48 米、12m 以上）+3，65 米过关。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
@@ -228,11 +231,11 @@ func step(delta: float) -> String:
 	if state != "fly":
 		return ""
 	flight_time += delta
-	# 阶段 B1/C2：横向独立运动学（不触碰下方旧纵向/高度积分，升力不耦合）
-	# C2 新增：wind="side" 时叠加恒定侧风加速度（方向 wind_side）；无侧风关卡路径与 B1 逐位一致
+	# 阶段 B1/C2/C5：横向独立运动学（不触碰下方旧纵向/高度积分，升力不耦合）
+	# C2：wind="side" 恒定侧风；C5 新增风切变：越过 shear_x 平面后侧风方向切为 wind_side2
 	var wind_a: float = 0.0
 	if wind_mode() == "side":
-		wind_a = wind_side() * LAT_WIND
+		wind_a = eff_wind_side() * LAT_WIND
 	if lateral_input != 0.0 or wind_a != 0.0:
 		lateral_vel += (lateral_input * LAT_ACCEL + wind_a) * delta
 	else:
@@ -436,3 +439,17 @@ func wind_mode() -> String:
 ## 侧风方向（-1=向左推，+1=向右推），仅 wind="side" 时有意义
 func wind_side() -> float:
 	return float(LEVELS[level_idx].get("wind_side", -1.0))
+
+
+## 阶段 C5 风切变：越过 shear_x（米，0=无切变）后侧风方向切为 wind_side2
+func eff_wind_side() -> float:
+	var ws: float = wind_side()
+	var shear_m: float = float(LEVELS[level_idx].get("shear_x", 0.0))
+	if shear_m > 0.0 and plane_pos.x >= START_X + shear_m * PX_PER_M:
+		ws = wind_side2()
+	return ws
+
+
+## 切变后的侧风方向（未配置则与切变前相同）
+func wind_side2() -> float:
+	return float(LEVELS[level_idx].get("wind_side2", wind_side()))
