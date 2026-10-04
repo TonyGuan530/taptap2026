@@ -11,6 +11,8 @@ const MOUSE_SENS := 0.0022
 const PITCH_LIMIT := 1.45          # rad ≈ 83°
 
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
+const ComicStyle := preload("res://comic_style/comic_style.gd")       # 3d-shared 统一 comic 材质
+const ModelLibrary := preload("res://comic_style/model_library.gd")   # 3d-shared 模型库（不复制套件）
 
 ## 词条（g_scale/damp/bounce 从 2D 语义迁移；flap=向上速度 m/s；air_a/vmax 为米制）
 const TAGS := [
@@ -43,12 +45,14 @@ var yaw := 0.0
 var pitch := 0.0
 var cam_rig: Node3D
 var camera: Camera3D
+var comic_style: Resource          # 3d-shared 统一 comic 材质（地形/物件/球共用）
 var hud_tag: Label
 var hud_hint: Label
 var flash_t := 0.0
 
 
 func _ready() -> void:
+	comic_style = ComicStyle.new()
 	_ensure_input_actions()
 	_build_room()
 	_build_goal_and_hazards()
@@ -87,9 +91,7 @@ func _box(name: String, pos: Vector3, size: Vector3, color: Color, is_fragile :=
 	var mesh := BoxMesh.new()
 	mesh.size = size
 	mi.mesh = mesh
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = color
-	mi.material_override = mat
+	mi.material_override = comic_style.body_material(color)
 	body.add_child(mi)
 	add_child(body)
 	return body
@@ -140,16 +142,18 @@ func _build_goal_and_hazards() -> void:
 	var smesh := BoxMesh.new()
 	smesh.size = Vector3(2, 0.3, 2)
 	smi.mesh = smesh
-	var smat := StandardMaterial3D.new()
-	smat.albedo_color = Color(1.0, 0.84, 0.31)
-	smi.material_override = smat
-	spring.add_child(smi)
+	var plate: Node3D = ModelLibrary.create_model("pressure_plate")
+	plate.position = Vector3(0, -0.15, 0)
+	spring.add_child(plate)
 	spring.body_entered.connect(_on_spring_enter)
 	spring.body_exited.connect(_on_spring_exit)
 	add_child(spring)
 
 	# 脆板：弹簧上抛后转石头砸穿，GOAL 在其正下方（板加宽到 x -10..-6 防绕边滑入）
 	fragile = _box("FragilePlate", Vector3(-8, 3, 0), Vector3(4, 0.15, 2.5), Color(0.42, 0.56, 0.35), true)
+	var blk: Node3D = ModelLibrary.create_model("iron_block")
+	blk.scale = Vector3(4.3, 0.35, 2.7)
+	fragile.add_child(blk)
 
 	# GOAL
 	var goal := Area3D.new()
@@ -164,11 +168,9 @@ func _build_goal_and_hazards() -> void:
 	var gmesh := BoxMesh.new()
 	gmesh.size = Vector3(2, 1, 2)
 	gmi.mesh = gmesh
-	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(1.0, 0.84, 0.31, 0.35)
-	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	gmi.material_override = gmat
-	goal.add_child(gmi)
+	var frame: Node3D = ModelLibrary.create_model("gate_frame")
+	frame.position = Vector3(0, -0.55, 0)
+	goal.add_child(frame)
 	goal.body_entered.connect(_on_goal_enter)
 	add_child(goal)
 
@@ -291,6 +293,9 @@ func _restore_fragile() -> void:
 	if is_instance_valid(fragile):
 		return
 	fragile = _box("FragilePlate", Vector3(-8, 3, 0), Vector3(4, 0.15, 2.5), Color(0.42, 0.56, 0.35), true)
+	var blk: Node3D = ModelLibrary.create_model("iron_block")
+	blk.scale = Vector3(4.3, 0.35, 2.7)
+	fragile.add_child(blk)
 	fragile_broken = false
 
 
