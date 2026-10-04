@@ -83,7 +83,7 @@ var night_weather := ""       # v9 第五幕：萨满第二预言——"cold"=�
 var end_style := 0            # v11 内容层：结局文风索引（每局随机，0-2）
 var forecast_voice := 0      # v12 内容层：萨满预报措辞索引（每局随机，0-3）
 var dino_portrait: Sprite2D  # v10/v13：恐龙立绘引用（呼吸动画用）
-var dino_frames: Array = []  # v20：三帧待机循环（站立/嗅探/行走）
+var dino_frames: Array = []  # v21：四帧待机循环（站立/嗅探/行走/警觉回头）
 var result := ""
 var pulse := 0.0
 var hovered := -1
@@ -125,10 +125,11 @@ func _build_ui() -> void:
 	var ui := CanvasLayer.new()
 	add_child(ui)
 	# v10：绿幕管线恐龙主角立绘（reviews/art/dino.png → game/art/，纯视觉）
-	# v19/v20：三帧待机循环（站立→嗅探→行走）
+	# v19-v21：四帧待机循环（站立→嗅探→行走→警觉回头）
 	var dino_tex: Texture2D = load("res://art/dino.png")
 	var dino_tex2: Texture2D = load("res://art/dino2.png")
 	var dino_tex3: Texture2D = load("res://art/dino3.png")
+	var dino_tex4: Texture2D = load("res://art/dino4.png")
 	if dino_tex:
 		var dino := Sprite2D.new()
 		dino.texture = dino_tex
@@ -138,8 +139,8 @@ func _build_ui() -> void:
 		dino.name = "DinoPortrait"
 		dino_portrait = dino
 		ui.add_child(dino)
-		if dino_tex2 and dino_tex3:
-			dino_frames = [dino_tex, dino_tex2, dino_tex3]
+		if dino_tex2 and dino_tex3 and dino_tex4:
+			dino_frames = [dino_tex, dino_tex2, dino_tex3, dino_tex4]
 	var title := Label.new()
 	title.text = "重生之我是恐龙 · 火山生存（demo-05）"
 	title.position = Vector2(16, 8)
@@ -318,8 +319,8 @@ func _process(delta: float) -> void:
 	if dino_portrait:
 		var breath: float = 1.0 + 0.025 * sin(pulse * 0.8)
 		dino_portrait.scale = Vector2(0.15, 0.15 * breath)
-		if dino_frames.size() == 3:
-			dino_portrait.texture = dino_frames[int(pulse * 0.125) % 3]
+		if dino_frames.size() == 4:
+			dino_portrait.texture = dino_frames[int(pulse * 0.125) % 4]
 	if phase == "prepare":
 		timer -= delta
 		var sentinel: bool = _tile_total("highland") > 0
