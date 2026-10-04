@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/5 02:50:23 · 共 67 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/5 03:50:20 · 共 72 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -87,9 +87,23 @@ Feedback Slide
 3. 不完全天气预报&#xff1a;信息→判断→风险承担
 headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch CDN 占位页故障中&#xff0c;GitHub Pages 自动更新。
 
+### [sticker] @(4400,5480)
+
+&#x1f3ae; demo-05-hd2d 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,5620)
+
+&#x1f3ae; demo-05-hd2d 恐龙火山生存 HD-2D&#xff08;阶段B 建造/需求/昼夜&#xff09;
+
 ### [sticker] @(5714,5732)
 
 <p>修改小​说​</p>
+
+### [text] @(4400,5780)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-05-hd2d.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-05-hd2d-v2.mp4
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-05-hd2d-v2/index.html
 
 ### [text] @(4400,5840)
 
@@ -243,6 +257,18 @@ DNA 语义对齐 2D v12&#xff1a;高跳×1.45 / 二段×0.95 / 暗区×0.45 / 碎�
 测试 14/14 ALL PASS &#43; 2D 回归 7/7 PASS&#xff1b;裂纹墙顶 2.9m&#xff08;3D 胶囊骑角加固&#xff0c;碎岩仍唯一解&#xff09;。
 试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v1/index.html
 录像/截图&#xff1a;待机器空闲离线补录&#xff08;当前禁止抢占前台&#xff09;。
+
+### [text] @(6300,11120)
+
+2026-10-04 v2&#xff08;指南差距修复&#xff09;&#xff1a;掉坑回安全边缘&#xff08;保留DNA/碎墙/碎片&#xff0c;计时继续&#xff09;· 走廊侧壁防侧绕 · 隔墙不融合(LOS) · HUD组合只显示本关持有组件 · Shift&#43;R完整再跑。
+17/17 用例 &#43; 2D 回归 7/7 全绿。
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v2/index.html
+
+### [text] @(6300,11320)
+
+2026-10-05 v3&#xff08;遥测 v2&#xff09;&#xff1a;暗区进出事件 · 跳跃/二段/掉坑/融合会话计数 · 遥测双写&#xff08;latest &#43; 测试员独立会话文件&#xff0c;多被试不互覆&#xff09;· pck 导出内容核对工具防串台。
+18/18 用例 &#43; 2D 回归 7/7 全绿。
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v3/index.html
 
 ### [sticker] @(4400,11760)
 

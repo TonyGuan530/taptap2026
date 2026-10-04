@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-05T02:56:00+08:00",
-  "round": 107,
+  "checkedAt": "2026-10-05T03:52:00+08:00",
+  "round": 108,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（02:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（03:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "✅ 3d-shared 基座已由督导代执行完成（用户指令）：分支已推送，comic_style+models 落位，import/脚本验证全通过——各任务可拉分支开工 3D 迁移"
+      "evidence": "🚀 3D 迁移高速推进：demo-06-3d v3 六关全通 7/7、demo-08-3d v3 第7关回风峡谷（113 断言）、demo-02 阶段B WIP"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -42,27 +42,28 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=22（清理后 +3 新版目录）",
+    "health": "ok builds=25",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "67 条（Feedback Slide 区 +6：3 条玩家反馈+AL 修复标注+工作协议+否决裁决）",
+    "miro": "72 条（+5= demo-06-3d 上板卡；反馈区无新增——FB 三条已闭环）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 待推",
+    "git": "本轮 HEAD 672d76e",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "全员 3D 迁移（demo-02-3d v3/demo-03-3d v5/demo-06-3d v1 已上线）；FB 闭环首秀完成"
+    "queue": "全员 3D 迁移（多 demo 阶段A/B 交付中）；美术基线接入核查"
   },
   "watch": [
+    "🔴【硬红线·发现即杀】03:50 巡检合规（无违规进程）——每轮持续",
     "🔴【硬红线·发现即杀】02:50 巡检击杀 2 违规进程（40376/37752）——每轮持续执行",
     "🆕【Miro Feedback 协议】Feedback Slide 区=用户反馈通道：优先阅读+完成自己在 Miro 标注（miro-post-feedback-note.mjs）+同步 feedback-board.json；否决项：本地AI小模型不可行",
-    "🔴【硬红线·发现即杀】每轮巡查检查全部 Godot 进程：命令行无 --headless 的立即 taskkill（用户二次被抢鼠标后授权）；Godot 编辑器 GUI 任何时候禁止打开（批示 no-window-qa.md 加严节）",
     "🔴【总指挥令·零打扰红线】全体任务禁止弹窗 QA（用户在电脑玩游戏）——视觉验证一律 CLI 离线（Movie Maker --write-movie / headless 截图脚本），禁止非 headless 跑游戏/开编辑器（批示 reviews/supervisor-directive-2026-10-04-no-window-qa.md）",
     "🔴 真人反馈三通道全空：Miro 无新增（60 条基线）/GitHub Issues 零条/db.json 未生成——数据仍在用户侧，等用户直接发对话里或贴上平台",
     "🔴【调度变更·需用户操作】督导自动化改 1h（Automations 界面）；其他任务 30min 不动",
-    "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B"
+    "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B",
+    "⚠️ demo-02 报告「L3 GOAL 怪象待编辑器调试」——提醒：编辑器禁开（硬红线），用 headless 测试+日志调试（催办随下轮批示）"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
