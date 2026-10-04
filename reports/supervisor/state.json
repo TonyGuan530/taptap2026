@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-05T04:54:00+08:00",
-  "round": 109,
+  "checkedAt": "2026-10-05T05:12:00+08:00",
+  "round": 110,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（04:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（05:50 前实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "🔴 第二轮清理令已发（builds 1.4G 超限）——每线留最新 1 版+体积巡检自动化（>900M 自动清最旧版）"
+      "evidence": "⚠️ 两轮清理批示均未消化（督导代执行）——流水线消化通道待诊（下轮 ReadSessionContext 或催办注入）；体积巡检自动化要求维持"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -42,22 +42,23 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=30 目录/1.4G——🔴 超软限",
+    "health": "ok builds=18 目录/822M（第二轮清理+补救后，低于软限）",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "75 条（+3=demo-05-hd2d 上板卡；反馈区无新增）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 待推",
+    "git": "main bef389e 已推送",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "🔴 builds 第二轮清理（最高优先）；3D 迁移持续推进（demo-05 C2 泥流/demo-06 阶段B/demo-08 第7关均已交付）"
+    "queue": "3D 迁移持续推进（多线阶段B/C 交付中）；builds 体积每轮核查"
   },
   "watch": [
+    "✅【Pages 超限已解】第二轮清理+补救完成：822M/18 目录，抽查 4 最新版全 200（05:10 督导代执行）",
+    "⚠️【流水线通道预警】两轮清理批示未消化——下轮跨会话诊断流水线状态",
     "🔴【硬红线】04:50 巡检合规（无违规进程）——持续执行",
-    "🔴【Pages 超限复发】builds 1.4G——第二轮清理令已发（04:52），05:04 核对 [DONE2] 与 demo-03-v14 可达性",
     "🔴【硬红线·发现即杀】02:50 巡检击杀 2 违规进程（40376/37752）——每轮持续执行",
     "🆕【Miro Feedback 协议】Feedback Slide 区=用户反馈通道：优先阅读+完成自己在 Miro 标注（miro-post-feedback-note.mjs）+同步 feedback-board.json；否决项：本地AI小模型不可行",
     "🔴【总指挥令·零打扰红线】全体任务禁止弹窗 QA（用户在电脑玩游戏）——视觉验证一律 CLI 离线（Movie Maker --write-movie / headless 截图脚本），禁止非 headless 跑游戏/开编辑器（批示 reviews/supervisor-directive-2026-10-04-no-window-qa.md）",
