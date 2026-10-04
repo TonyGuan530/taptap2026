@@ -115,6 +115,9 @@ var in_mud := false
 var telemetry := {"shelter_build_x": [], "ash_exposure_after_shelter": 0.0}
 var shelter_placed := false
 var dino: CharacterBody3D
+var dino_sprite: Sprite3D
+var dino_frames: Array = []
+var anim_t := 0.0
 var cam_pivot: Node3D
 var berry_fruits: Array = []
 var hud_labels: Array = []
@@ -318,7 +321,8 @@ func _build_dino() -> void:
 	pivot.name = "VisualPivot"
 	dino.add_child(pivot)
 	var sprite := Sprite3D.new()
-	sprite.texture = load("res://art/dino.png")
+	dino_frames = [load("res://art/dino.png"), load("res://art/dino3.png"), load("res://art/dino2.png")]
+	sprite.texture = dino_frames[0]
 	sprite.pixel_size = 0.0018
 	sprite.shaded = true
 	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
@@ -326,6 +330,7 @@ func _build_dino() -> void:
 	sprite.offset = Vector2(0, 620)
 	sprite.position = Vector3(0, 0.02, 0)
 	pivot.add_child(sprite)
+	dino_sprite = sprite
 	dino.position = Vector3(0, 0.1, 4)
 	add_child(dino)
 
@@ -435,6 +440,14 @@ func _process(delta: float) -> void:
 		dino.velocity.y -= GRAVITY * delta
 	if dino:
 		dino.move_and_slide()
+	# —— 行走动画（移动时 5fps 交替行走/嗅探帧，静止回站立）——
+	if dino_sprite and dino_frames.size() == 3:
+		if mv != Vector2.ZERO:
+			anim_t += delta
+			dino_sprite.texture = dino_frames[1 + (int(anim_t * 5.0) % 2)]
+		else:
+			anim_t = 0.0
+			dino_sprite.texture = dino_frames[0]
 	# —— 朝向（由移动速度决定，静止时保持）——
 	if dino:
 		var vel := Vector3(dino.velocity.x, 0, dino.velocity.z)
