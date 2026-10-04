@@ -519,10 +519,21 @@ func _resolve_disaster() -> void:
 			break
 	# ===== 第五幕：萨满第二预言（撤离窗口天气，v9 内容层）=====
 	night_weather = "cold" if randf() < 0.5 else "mist"
+	# v18 内容层：宣告文案三变体（随机叙事差异，机制不变——cold 均为撤离耗 1 水）
+	var cold_lines: Array = [
+		"萨满仰望星空，发出第二道预言：撤离之夜将是寒夜——族群要额外消耗 1 份水。",
+		"萨满指着低垂的寒星：撤离之夜滴水成冰——路上要烧掉 1 份水取暖。",
+		"夜风如刀。萨满说：第二道预言——撤离之夜寒气彻骨，需多耗 1 份水。",
+	]
+	var mist_lines: Array = [
+		"萨满预言撤离之夜稳雾无风，路上不会额外损耗。",
+		"萨满笑了：夜雾护途——撤离路上无额外损耗。",
+		"雾锁林地。萨满说：稳雾之夜，行军反而隐蔽——无额外损耗。",
+	]
 	if night_weather == "cold":
-		_log_ev("萨满仰望星空，发出第二道预言：撤离之夜将是寒夜——族群要额外消耗 1 份水。")
+		_log_ev(cold_lines[randi() % cold_lines.size()])
 	else:
-		_log_ev("萨满预言撤离之夜稳雾无风，路上不会额外损耗。")
+		_log_ev(mist_lines[randi() % mist_lines.size()])
 
 
 func _tile_name(id: String) -> String:
