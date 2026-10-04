@@ -25,6 +25,7 @@ extends Node2D
 ##   风暴之夜酸雨结构不变（单变量原则）。
 ## v8（美术管线续推）：小屋物件绿幕贴图化（ChatGPT 生图→chromakey→透明 PNG），窗灯闪烁保留为程序特效。
 ## v12（美术管线续推·职业专属）：四职业村民贴图（ChatGPT 生图×4→chromakey）——黄帽扳手/绿巾浇水壶/蓝披风向标/白巾背桶，一眼可辨职业。
+## v14（持续开发令·模式辨识）：风暴之夜视觉差异化——紫黑风暴天光底色、非酸雨时段环境细雨、酸雨叠加更密雨层；规则/平衡零改动。
 ## v9（持续开发令·氛围渐进）：五阶段可感知化——天空转血红/星星隐去/火山辉光增强/岩浆变深变亮，随阶段连续插值；纯特效零平衡。
 ## v11（持续开发令·状态反馈补全）：酸雨结束转场——天光渐亮+「☀ 酸雨过了」提示（对称开始侧震屏/闪电）；菜单两侧贴图装饰。纯表现零平衡。
 
@@ -442,6 +443,10 @@ func _draw() -> void:
 		# v11 酸雨结束天光：短暂放晴（纯特效）
 		sky_top = sky_top.lerp(Color("8fa8d0"), sky_bright * 0.4)
 		sky_bot = sky_bot.lerp(Color("a8bcd8"), sky_bright * 0.4)
+	if mode == "storm":
+		# v14 风暴之夜模式天光：紫黑风暴底色（模式辨识，纯特效）
+		sky_top = sky_top.lerp(Color("1c0f33"), 0.35)
+		sky_bot = sky_bot.lerp(Color("2f1839"), 0.35)
 	draw_polygon(
 		PackedVector2Array([Vector2(0, 0), Vector2(VIEW.x, 0), Vector2(VIEW.x, 250), Vector2(0, 250)]),
 		PackedColorArray([sky_top, sky_top, sky_bot, sky_bot])
@@ -548,9 +553,21 @@ func _draw() -> void:
 			var rx := fposmod(k * 41.0 + pulse * 60.0, VIEW.x + 40.0) - 20.0
 			var ry := fposmod(k * 97.0 + pulse * 100.0, VIEW.y)
 			draw_line(Vector2(rx, ry), Vector2(rx - 5.0, ry + 15.0), Color(0.78, 0.45, 0.95, 0.5), 2.0)
+		if mode == "storm":
+			# v14 风暴模式酸雨更密（同色叠加一层）
+			for k in 14:
+				var rx2 := fposmod(k * 67.0 + pulse * 85.0, VIEW.x + 40.0) - 20.0
+				var ry2 := fposmod(k * 61.0 + pulse * 130.0, VIEW.y)
+				draw_line(Vector2(rx2, ry2), Vector2(rx2 - 5.0, ry2 + 15.0), Color(0.78, 0.45, 0.95, 0.4), 2.0)
 		draw_rect(Rect2(VIEW.x / 2 - 175, 48, 350, 26), Color(0.12, 0.06, 0.18, 0.82))
 		draw_rect(Rect2(VIEW.x / 2 - 175, 48, 350, 26), Color("ce93d8"), false, 1.5)
 		draw_string(FONT, Vector2(VIEW.x / 2 - 165, 66), "☔ 酸雨中：设施降温 ×%s · 村民降温 ×%s" % [ACID_TOWER_MULT, ACID_NPC_MULT], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("ce93d8"))
+	# v14 风暴模式环境细雨（非酸雨时段的氛围雨，模式辨识）
+	if mode == "storm" and state == "play" and not acid_on:
+		for k in 18:
+			var drx := fposmod(k * 53.0 + pulse * 90.0, VIEW.x + 30.0) - 15.0
+			var dry := fposmod(k * 131.0 + pulse * 150.0, VIEW.y)
+			draw_line(Vector2(drx, dry), Vector2(drx - 3.0, dry + 11.0), Color(0.62, 0.66, 0.85, 0.22), 1.5)
 	# 闪电白幕（酸雨落地瞬间）
 	if flash > 0.0:
 		draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color(0.85, 0.75, 1.0, flash * 0.28))
