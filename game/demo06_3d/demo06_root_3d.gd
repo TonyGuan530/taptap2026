@@ -73,6 +73,7 @@ func _ready() -> void:
 	_build_environment()
 	_build_props()
 	_build_level()
+	_add_dressing()
 	_build_player()
 	_build_goal()
 	_build_hud()
@@ -254,13 +255,10 @@ func _spawn_rock(pos: Vector3) -> void:
 	ssh.radius = 0.3
 	cs.shape = ssh
 	rb.add_child(cs)
-	var mi := MeshInstance3D.new()
-	var sm := SphereMesh.new()
-	sm.radius = 0.3
-	sm.height = 0.6
-	mi.mesh = sm
-	mi.material_override = style.body_material(Color("9a9a92"))
-	rb.add_child(mi)
+	# 阶段 C：rock 模型（纯视觉，碰撞球不变）
+	var rockv: Node3D = ModelLibrary.create_model("rock")
+	rockv.scale = Vector3(0.5, 0.5, 0.5)
+	rb.add_child(rockv)
 	props_root.add_child(rb)
 
 
@@ -282,6 +280,23 @@ func _do_restart() -> void:
 	mode_label.text = "%s %s（3D 迁移）" % [LEVELS[level_idx].id, LEVELS[level_idx].name]
 	_refresh_hud()
 	print("RESTART level=", LEVELS[level_idx].id)
+
+
+## 阶段 C 场景植被（纯视觉无碰撞，z 边缘带，不占解法空间、不遮 SpringArm 判定）
+func _add_dressing() -> void:
+	var span: float = maxf(LEVELS[level_idx].goal.x + 1.0, 6.0)
+	var i := 0
+	var x := 0.5
+	while x < span:
+		var m: Node3D = ModelLibrary.create_model("tree" if i % 2 == 0 else "bush")
+		var s: float = 0.8 if i % 2 == 0 else 0.6
+		m.scale = Vector3(s, s, s)
+		var b := ModelLibrary.geometry_bounds(m)
+		var y: float = 1.2 + b.size.y * s * 0.5 - b.get_center().y * s
+		m.position = Vector3(x, y, 2.75 if i % 2 == 0 else -2.75)
+		add_child(m)
+		i += 1
+		x += 3.1
 
 
 func _build_player() -> void:
@@ -369,6 +384,10 @@ func _build_goal() -> void:
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mi.material_override = mat
 	g.add_child(mi)
+	# 阶段 C：GOAL 门框模型（纯视觉，判定盒不变）
+	var gate: Node3D = ModelLibrary.create_model("gate_frame")
+	gate.scale = Vector3(0.55, 0.55, 0.55)
+	g.add_child(gate)
 	g.body_entered.connect(_on_goal_entered)
 	add_child(g)
 
