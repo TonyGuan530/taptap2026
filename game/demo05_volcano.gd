@@ -476,7 +476,13 @@ func _resolve_disaster() -> void:
 		stored.forest.food = int(stored.forest.food / 4.0)
 		stored.forest.water = int(stored.forest.water / 4.0)
 	else:
-		_log_ev("森林侥幸未燃，食物安然无恙——押注森林的族群赌赢了。")
+		# v16 内容层：旱线文案三变体
+		var dry_lines: Array = [
+			"森林侥幸未燃，食物安然无恙——押注森林的族群赌赢了。",
+			"一夜旱风掠过林地，火星没能点着湿透的树干——森林的储备安然无恙。",
+			"天亮时只有灰，没有火——森林静谧得像什么事都没发生过。",
+		]
+		_log_ev(dry_lines[randi() % dry_lines.size()])
 	# ===== 第四幕：余震与兽群（v9 内容层，洞穴深埋不受地裂）=====
 	var aftershock_hit := false
 	for t in TILES:
