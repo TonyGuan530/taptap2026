@@ -44,6 +44,14 @@ P01 | 通关?Y | 首解=Float桥 | 用时182s | 组合尝试6 | 有意义实验3
 - JSON 按会话号（sid）自动分段；四个回放问题：首次试 Heavy 的时间点 / Sticky 是否被尝试 / 组合尝试总数 / 成功前有意义实验次数。
 - **L3 与 L4/L6 分开统计**：L3 = 自发发现/解法多样性/涌现链；L4/L6 = 规则迁移（L3 用 A 路线的人 L4/L6 是否换路线）。
 
+## 五·半、数据汇总工具（免手工数数）
+
+```
+node tools/blindtest_summary.mjs reviews/blindtest --markdown
+```
+- 组织者把每人「📦数据」复制的 JSON 存入 `reviews/blindtest/`（P01.json…）后运行上面命令，即输出每人一行摘要 + 组合明细 + 迁移轨迹（可粘贴给 ChatGPT）。
+- 「新解 D」与「intentional/accidental」两列仍需人工看录屏补齐。
+
 ## 六、数据齐后
 - 把「每人一行摘要 + 典型行为描述 + 全部 JSON」交给 ChatGPT 专属对话做 Gate 判定。
 - 判定问题：玩家是否主动尝试超过一种系统关系？解法是否分叉？是否出现 D 解？
