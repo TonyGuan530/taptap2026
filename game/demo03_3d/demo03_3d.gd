@@ -11,6 +11,7 @@ const StyleDef := preload("res://comic_style/comic_style.gd")
 const ModelLib := preload("res://comic_style/model_library.gd")
 
 const SLOT_POS: Array[Vector3] = [Vector3(-14, 0, -6), Vector3(0, 0, -6), Vector3(14, 0, -6)]
+const RES_POS := Vector3(-20, 0, -4)   # v10 蓄水池场地
 const HOUSE_POS: Array[Vector3] = [Vector3(-22, 0, 6), Vector3(-8, 0, 8), Vector3(8, 0, 7), Vector3(24, 0, 6)]
 const PROF_TINT: Array[String] = ["#c9a227", "#7cbf6b", "#5a8fd0", "#d8d8d8"]
 const PROF_COLORS := {
@@ -38,6 +39,7 @@ var tower_meshes: Array[MeshInstance3D] = []
 var comic_towers: Array[Node3D] = []
 var villager_nodes := {}   # id -> holder Node3D
 var comic_villagers := {}  # id -> ComicObject
+var comic_reservoir: Node3D
 var style_def: Resource
 var hud: CanvasLayer
 var temp_fill: ColorRect
@@ -93,6 +95,29 @@ func _build_tower_comic(slot: int, level: int) -> Node3D:
 	add_child(tower)
 	tower.position = sp
 	return tower
+
+
+## v10 蓄水池 ComicObject：未建=石圈虚位；建成=石池+水柱+立柱
+func _build_reservoir_comic(built: bool) -> Node3D:
+	var res := ComicObj.new()
+	res.name = "ComicReservoir"
+	res.interactive = true
+	res.style = style_def
+	if built:
+		ModelLib._cylinder(res, 1.6, 1.8, 0.9, Vector3(0, 0.45, 0), Color("b5b4aa"))
+		ModelLib._cylinder(res, 1.45, 1.45, 0.5, Vector3(0, 0.95, 0), Color("4fc3f7"))
+		ModelLib._cylinder(res, 0.22, 1.45, 1.0, Vector3(0, 1.5, 0), Color("4e6373"))
+	else:
+		ModelLib._cylinder(res, 1.7, 1.9, 0.35, Vector3(0, 0.175, 0), Color("8b94a7"))
+	add_child(res)
+	res.position = RES_POS
+	return res
+
+
+func _update_reservoir_visual() -> void:
+	if is_instance_valid(comic_reservoir):
+		comic_reservoir.queue_free()
+	comic_reservoir = _build_reservoir_comic(sim.reservoir == 1)
 
 
 ## v3 场景应用：ComicObject 小屋（静物，细描边）
@@ -183,6 +208,29 @@ func _build_world() -> void:
 		tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		add_child(tag)
 		comic_towers.append(_build_tower_comic(i, 0))
+	# v10 蓄水池场地（底座 + 拾取体 + 标签 + ComicObject）
+	var rbase := _box(self, RES_POS + Vector3(0, 0.15, 0), Vector3(6, 0.3, 6), Color("8b94a7"), "ResBase")
+	rbase.material_override.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	rbase.material_override.albedo_color = Color(1, 1, 1, 0.12)
+	var rbody := StaticBody3D.new()
+	rbody.position = RES_POS + Vector3(0, 1.5, 0)
+	rbody.collision_layer = 2
+	rbody.set_meta("reservoir", true)
+	var rshape := CollisionShape3D.new()
+	var rbox := BoxShape3D.new()
+	rbox.size = Vector3(6, 4, 6)
+	rshape.shape = rbox
+	rbody.add_child(rshape)
+	add_child(rbody)
+	var rtag := Label3D.new()
+	rtag.text = "蓄水池\n建造 60水\n（酸雨时失效）"
+	rtag.font = FONT
+	rtag.font_size = 64
+	rtag.pixel_size = 0.005
+	rtag.position = RES_POS + Vector3(0, 5.0, 3.4)
+	rtag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	add_child(rtag)
+	_update_reservoir_visual()
 	# 相机（正交斜俯视 + 操纵杆）
 	rig = Node3D.new()
 	rig.name = "CameraRig"
@@ -384,7 +432,8 @@ func _build_hud() -> void:
 			func() -> void: _start("storm"))
 	_button(menu_layer, Vector2(680, 300), Vector2(170, 50), "寒夜守卫（第 2 章）",
 			func() -> void: _start("hard"))
-	_label(menu_layer, Vector2(240, 380), "左键：点槽位建造/升级，点村民晋升｜F：灭火指挥（25水 全队应急降温）｜滚轮缩放，Q/E 旋转，Home 复位", 14, Color("9fb3c8"))
+	_label(menu_layer, Vector2(150, 380), "左键：槽位建造/升级 · 村民晋升 · 蓄水池（60水，酸雨时失效）｜F：灭火指挥（25水 全队应急降温）", 14, Color("9fb3c8"))
+	_label(menu_layer, Vector2(300, 404), "滚轮缩放，Q/E 旋转，Home 复位", 13, Color("9fb3c8"))
 	# 结算（v7：含本局消费遥测时间线 + 一键复制，服务真人盲测采集）
 	end_layer = Control.new()
 	end_layer.visible = false
@@ -428,7 +477,7 @@ func mode_name(p_mode: String) -> String:
 
 ## v7 结算遥测：spend_log → 可读时间线（晴/雨 天气上下文 + 总结行），供真人盲测采集
 func _format_spend_log() -> String:
-	var kind_names := {"build": "建造", "upgrade": "升级", "promote": "晋升", "command": "灭火指挥"}
+	var kind_names := {"build": "建造", "upgrade": "升级", "promote": "晋升", "command": "灭火指挥", "reservoir": "蓄水池"}
 	var lines: Array[String] = []
 	for rec: Dictionary in sim.spend_log:
 		var t: float = float(rec.t)
@@ -459,6 +508,7 @@ func _start(p_mode: String) -> void:
 	villager_nodes.clear()
 	for i in comic_towers.size():
 		_update_tower_visual(i)
+	_update_reservoir_visual()
 	comic_villagers.clear()
 	rain.emitting = false
 	menu_layer.visible = false
@@ -497,6 +547,9 @@ func _on_sim_event(kind: String, p: Dictionary) -> void:
 		"acid_ended":
 			banner_label.text = "【雨停】！设施恢复 · 村民回落"
 			banner_label.add_theme_color_override("font_color", Color("90caf9"))
+		"reservoir_built":
+			_update_reservoir_visual()
+			_toast("蓄水池建成！（酸雨时失效，注意时机）", Color("81d4fa"))
 		"command_started":
 			banner_label.text = "【灭火指挥】！全员应急降温 +1.5/s（不受酸雨影响）"
 			banner_label.add_theme_color_override("font_color", Color("81d4fa"))
@@ -543,14 +596,19 @@ func _update_hover_proxy() -> void:
 	var hit := get_world_3d().direct_space_state.intersect_ray(q)
 	var hover_slot := -1
 	var hover_villager := -1
+	var hover_res := false
 	if not hit.is_empty() and hit.collider.has_meta("slot"):
 		hover_slot = int(hit.collider.get_meta("slot"))
 	elif not hit.is_empty() and hit.collider.has_meta("villager"):
 		hover_villager = int(hit.collider.get_meta("villager"))
+	elif not hit.is_empty() and hit.collider.has_meta("reservoir"):
+		hover_res = true
 	for i in comic_towers.size():
 		var t: Node3D = comic_towers[i]
 		if is_instance_valid(t):
 			t.set_hovered(i == hover_slot and sim.towers[i] > 0)
+	if is_instance_valid(comic_reservoir):
+		comic_reservoir.set_hovered(hover_res and sim.reservoir == 1)
 	for id: int in comic_villagers:
 		var v: Node3D = comic_villagers[id]
 		if is_instance_valid(v):
@@ -569,7 +627,12 @@ func _update_tooltip(mouse: Vector2) -> void:
 	var text := ""
 	if not hit.is_empty():
 		var col: Object = hit.collider
-		if col.has_meta("slot"):
+		if col.has_meta("reservoir"):
+			if sim.reservoir == 0:
+				text = "蓄水池：建造 %d水（降温 4.5/s，酸雨时失效）" % sim.RESERVOIR_COST
+			else:
+				text = "蓄水池：已建成（酸雨时失效）"
+		elif col.has_meta("slot"):
 			var slot := int(col.get_meta("slot"))
 			var lv: int = sim.towers[slot]
 			if lv == 0:
@@ -606,7 +669,10 @@ func _pick(screen_pos: Vector2) -> void:
 	if hit.is_empty():
 		return
 	var col: Object = hit.collider
-	if col.has_meta("slot"):
+	if col.has_meta("reservoir"):
+		if not sim.try_build_reservoir():
+			_toast("蓄水池需要 %d水，或已建造" % sim.RESERVOIR_COST, Color("ef9a9a"))
+	elif col.has_meta("slot"):
 		var slot := int(col.get_meta("slot"))
 		var lv: int = sim.towers[slot]
 		var ok := sim.try_upgrade(slot) if lv == 1 else sim.try_build(slot)

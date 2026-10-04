@@ -317,5 +317,56 @@ func _run() -> void:
 	s15.villagers.append({"id": 1, "name": "气", "prof": "气象学家", "level": 0, "x": 480.0})
 	check(s15.acid_at(25.9) and not s15.acid_at(26.0), "acid_at 气象学家减半（22~26）")
 
+	# ---- 16. v10 蓄水池：大投资/强降温/酸雨完全失效 ----
+	var s16 = Sim.new()
+	s16.setup_round("classic", 7)
+	check(not s16.try_build_reservoir(), "开局无水建蓄水池失败")
+	s16.water = 59.0
+	check(not s16.try_build_reservoir(), "59 水不足 60")
+	check(s16.spend_log.is_empty(), "蓄水池失败无消费记录")
+	s16.water = 100.0
+	check(s16.try_build_reservoir(), "蓄水池建造成功")
+	check(approx(s16.water, 40.0, 0.001), "蓄水池扣 60")
+	check(not s16.try_build_reservoir(), "蓄水池不可重复建造")
+	var has_res := false
+	for rec: Dictionary in s16.spend_log:
+		if rec.kind == "reservoir":
+			has_res = true
+	check(has_res, "spend_log 含 reservoir")
+	s16.round_state = "win"
+	s16.reservoir = 0
+	s16.water = 100.0
+	check(not s16.try_build_reservoir(), "胜利后禁建蓄水池")
+	s16.setup_round("classic", 7)
+	check(s16.reservoir == 0, "重开后蓄水池清理")
+
+	# ---- 17. 蓄水池降温对照：平时 +4.5，酸雨中失效（差值恒定）----
+	var s17a = Sim.new()
+	s17a.setup_round("classic", 7)
+	s17a.acid_events[0].start = 22.0
+	s17a.acid_events[1].start = 46.0
+	s17a.towers[0] = 1
+	s17a.water = 100.0
+	s17a.try_build_reservoir()
+	var s17b = Sim.new()
+	s17b.setup_round("classic", 7)
+	s17b.acid_events[0].start = 22.0
+	s17b.acid_events[1].start = 46.0
+	s17b.towers[0] = 1
+	s17a.heat = 60.0
+	s17b.heat = 60.0
+	run_seconds(s17a, 8.0)
+	run_seconds(s17b, 8.0)
+	run_seconds(s17a, 2.0)
+	run_seconds(s17b, 2.0)
+	check(approx(s17b.heat - s17a.heat, 45.0, 0.3), "0~10s 平时对照 diff=4.5×10（建即生效）",
+			"diff=%.2f" % (s17b.heat - s17a.heat))
+	s17a.elapsed = 23.0
+	s17b.elapsed = 23.0
+	run_seconds(s17a, 2.0)
+	run_seconds(s17b, 2.0)
+	check(approx(s17b.heat - s17a.heat, 45.0, 0.3), "23~25s 酸雨中失效（diff 不再扩大）",
+			"diff=%.2f" % (s17b.heat - s17a.heat))
+
 	print("==== 3D 迁移阶段 A 测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)

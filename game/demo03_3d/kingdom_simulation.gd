@@ -50,6 +50,10 @@ const CMD_COST := 25
 const CMD_DUR := 8.0
 const CMD_CD := 20.0
 const CMD_COOL := 1.5
+## v10 蓄水池：60 水滴大投资，4.5/s 强降温；酸雨期间完全失效（蒸发）。
+## 与水塔（酸雨 ×0.6）形成风险对比：便宜皮实 vs 贵而怕酸，丰富开局投资决策。
+const RESERVOIR_COST := 60
+const RESERVOIR_COOL := 4.5
 ## 五阶段升温曲线（t 为本局总 elapsed）
 const PHASES: Array[Dictionary] = [
 	{"until": 12.0, "base": 1.8, "slope": 0.035, "name": "初火", "col": "aed581"},
@@ -74,6 +78,7 @@ var npc_times: Array[float] = NPC_TIMES   # 本局村民到点（hard 章节改�
 var water := 0.0
 var elapsed := 0.0
 var towers: Array[int] = [0, 0, 0]
+var reservoir := 0   # v10 蓄水池 0/1
 var villagers: Array[Dictionary] = []   # {id, name, prof, level, x}
 var npc_next := 0
 var acid_events: Array[Dictionary] = [] # {start, dur, announced, warned}
@@ -93,6 +98,7 @@ func setup_round(p_mode: String, seed_value: int = -1) -> void:
 	water = 0.0
 	elapsed = 0.0
 	towers = [0, 0, 0]
+	reservoir = 0
 	villagers = []
 	npc_next = 0
 	spend_log = []
@@ -248,6 +254,19 @@ func try_command() -> bool:
 	return true
 
 
+## 蓄水池（v10）：一次性大投资，酸雨时完全失效；非 play/已建/水不足 → false 且无消费记录
+func try_build_reservoir() -> bool:
+	if round_state != "play" or reservoir != 0:
+		return false
+	if water < float(RESERVOIR_COST):
+		return false
+	water -= float(RESERVOIR_COST)
+	reservoir = 1
+	spend_log.append({"t": elapsed, "kind": "reservoir", "amount": RESERVOIR_COST})
+	sim_event.emit("reservoir_built", {})
+	return true
+
+
 ## 逐帧推进：次序与 2D 一致（elapsed → 阶段/天气 → 降温 → 温度 → 收入 → 村民 → 胜负）
 func tick(delta: float) -> void:
 	if round_state != "play":
@@ -277,8 +296,10 @@ func tick(delta: float) -> void:
 	var npc_cool := npc_cool_total()
 	# 灭火指挥 +1.5 固定直加，不进酸雨乘区（酸雨中的可靠工具是它的定位）
 	var cmd_bonus := CMD_COOL if cmd_on else 0.0
+	# 蓄水池 4.5 平时直加；酸雨期间完全失效（不是乘 0.6，是 0）
+	var res_cool := RESERVOIR_COOL if reservoir == 1 and not acid_now else 0.0
 	var cool: float = tower_cool * (ACID_TOWER_MULT if acid_now else 1.0) \
-			+ npc_cool * (ACID_NPC_MULT if acid_now else 1.0) + cmd_bonus
+			+ npc_cool * (ACID_NPC_MULT if acid_now else 1.0) + cmd_bonus + res_cool
 	heat = clampf(heat + (rise - cool) * delta, 0.0, MAX_HEAT)
 	water += income_per_sec() * delta
 	if npc_next < npc_times.size() and elapsed >= float(npc_times[npc_next]):

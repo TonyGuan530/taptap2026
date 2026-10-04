@@ -39,7 +39,9 @@
       "phase3dV7Pending": "reviews/chatgpt-demo-03-3d-v7-pending.md",
       "phase3dV7Note": "v7 待发送（2026-10-05）：结算遥测面板（spend_log 时间线+天气上下文+一键复制，服务真人盲测）；规则零改动；v4/v5/v6/v7 四份备案一并待发（不弹窗约束）",
       "phase3dV8V9Pending": "reviews/chatgpt-demo-03-3d-v8-v9-pending.md",
-      "phase3dV8V9Note": "v8+v9 待发送（2026-10-05）：阶段 D headless 浏览器冒烟落地，修复 Web emoji 缺字(v8)+字体子集缺新字(v9 挥/卫)，复验截图 reviews/shots/browser-smoke-v9/；规则零改动；v4~v9 六份备案一并待发"
+      "phase3dV8V9Note": "v8+v9 待发送（2026-10-05）：阶段 D headless 浏览器冒烟落地，修复 Web emoji 缺字(v8)+字体子集缺新字(v9 挥/卫)，复验截图 reviews/shots/browser-smoke-v9/；规则零改动；v4~v9 六份备案一并待发",
+      "phase3dV10Pending": "reviews/chatgpt-demo-03-3d-v10-pending.md",
+      "phase3dV10Note": "v10 待发送（2026-10-05）：新建筑蓄水池（60水/4.5降温/酸雨完全失效），风险对比水塔；附 3D 真人盲测执行手册；v4~v10 七份备案一并待发"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",

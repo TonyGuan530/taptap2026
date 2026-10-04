@@ -219,6 +219,16 @@ func _run() -> void:
 			"结算时间线含建造与总结行", log_text.replace("\n", " | "))
 	check(scene._format_spend_log().split("\n").size() >= 2, "格式化至少两行")
 
+	# ---- 12. v10 蓄水池：真实点击建造 ----
+	scene._start("classic")
+	sim_set_water(100.0)
+	var wr: float = scene.sim.water
+	await click(screen_of(scene.RES_POS + Vector3(0, 1.2, 0)))
+	check(scene.sim.reservoir == 1, "真实点击蓄水池建造")
+	check(approx(float(scene.sim.water), wr - 60.0, 0.6), "蓄水池扣 60（点击前后差值）",
+			"got %.2f" % float(scene.sim.water))
+	check(is_instance_valid(scene.comic_reservoir), "蓄水池 ComicObject 可见")
+
 	print("==== 3D 阶段 B 拾取测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)
 
