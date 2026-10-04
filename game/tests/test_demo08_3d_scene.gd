@@ -204,8 +204,13 @@ func _run() -> void:
 	await _frames(2)
 	_check(core.state == "fold" and core.level_idx == 1, "S8d 跳过商店 → L2 折纸")
 
-	# 9 L2 场景含门：终点旗+高门环+门柱+低门横杆+立柱已建（门的三维表现就位，玩法下轮测）
-	_check(scene.level_props.get_child_count() >= 5, "S9a L2 场景道具就位（终点+高门+低门=%d 节点）" % scene.level_props.get_child_count())
+	# 9 L2 场景含门：终点旗门 + 高门(gate_frame) + 低门 = 3 个 ComicObject 道具（每个含多 part 统一材质）
+	var prop_count: int = scene.level_props.get_child_count()
+	var prop_ok: bool = prop_count == 3
+	for prop in scene.level_props.get_children():
+		if prop.get_child_count() == 0:
+			prop_ok = false
+	_check(prop_ok, "S9a L2 场景道具就位（ComicObject 终点+高门+低门=%d 节点，均含 parts）" % prop_count)
 
 	# 汇总
 	_log("==========================================")

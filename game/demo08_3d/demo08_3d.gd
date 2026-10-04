@@ -6,6 +6,9 @@ extends Node3D
 ## 网格均为 Godot 基础几何体（灰模诚实原则：折线仍是设计参数，非真实折纸网格）。
 
 const CoreScript := preload("res://demo08_3d/flight_core.gd")
+const ComicObjectScript := preload("res://comic_style/comic_object.gd")
+const ModelLibrary := preload("res://comic_style/model_library.gd")
+const StyleDef := preload("res://comic_style/comic_style.gd")
 const VIEW := Vector2(960, 540)
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
 const PX_PER_M := 60.0
@@ -14,6 +17,8 @@ const START_X := 60.0
 const CHARGE_TIME := 1.2
 const PAPER_POS := Vector2(90.0, 160.0)
 const PAPER_H := 300.0
+
+var style_def: Resource = StyleDef.new()   # 3d-shared 基座统一样式（toon+描边）
 
 var core: RefCounted = CoreScript.new()
 var last_throw := {angle = 30.0, power = 1.0}   # 测试/复盘用：最近一次实际投掷入参
@@ -102,7 +107,8 @@ func _build_world() -> void:
 	gm.size = Vector2(80.0, 220.0)
 	ground.mesh = gm
 	ground.position = Vector3(0.0, 0.0, -100.0)
-	ground.material_override = _flat_mat(Color("8bbf6a"))
+	# 统一材质：大平面用基座 toon body 材质，不加描边壳（巨型面描边出怪边）
+	ground.material_override = style_def.body_material(Color("8bbf6a"))
 	world_root.add_child(ground)
 
 	var strip := MeshInstance3D.new()
@@ -110,16 +116,25 @@ func _build_world() -> void:
 	sm.size = Vector3(5.0, 0.06, 220.0)
 	strip.mesh = sm
 	strip.position = Vector3(0.0, 0.03, -100.0)
-	strip.material_override = _flat_mat(Color("d9cfa8"))
+	strip.material_override = style_def.body_material(Color("d9cfa8"))
 	world_root.add_child(strip)
 
-	var pad := MeshInstance3D.new()
-	var pm := BoxMesh.new()
-	pm.size = Vector3(3.0, 0.3, 3.0)
-	pad.mesh = pm
-	pad.position = Vector3(0.0, 0.15, 0.0)
-	pad.material_override = _flat_mat(Color("b0a080"))
+	# 场景应用：起点台用基座 crate 模型（ComicObject，统一 toon+描边）
+	var pad: Node3D = ModelLibrary.create_model("crate")
+	pad.scale = Vector3(2.2, 1.6, 2.2)
+	pad.position = Vector3(0.0, 0.0, 0.2)
 	world_root.add_child(pad)
+
+	# 跑道两侧装饰（确定性摆位，ComicObject 统一样式，增强速度可读性）
+	var deco_ids := ["tree", "bush", "barrel", "rock"]
+	var k := 0
+	for zz in [-12.0, -26.0, -40.0, -54.0, -68.0, -82.0, -96.0, -110.0, -124.0, -138.0]:
+		var deco: Node3D = ModelLibrary.create_model(deco_ids[k % deco_ids.size()])
+		var side: float = -1.0 if k % 2 == 0 else 1.0
+		deco.position = Vector3(side * (13.0 + 3.0 * float(k % 3)), 0.0, zz)
+		deco.scale = Vector3.ONE * (1.6 + 0.4 * float(k % 2))
+		world_root.add_child(deco)
+		k += 1
 
 	level_props = Node3D.new()
 	level_props.name = "LevelProps"
@@ -135,29 +150,18 @@ func _build_world() -> void:
 	trail_mesh.material_override = tm
 	world_root.add_child(trail_mesh)
 
-	plane_visual = Node3D.new()
+	# 场景应用：纸飞机 = 自建 ComicObject parts（统一 toon+描边；本地机头 -Z）
+	plane_visual = ComicObjectScript.new()
 	plane_visual.name = "PlaneVisual"
-	var body := MeshInstance3D.new()
 	var bm := BoxMesh.new()
 	bm.size = Vector3(0.06, 0.05, 0.9)
-	body.mesh = bm
-	body.position = Vector3(0.0, 0.0, 0.1)
-	body.material_override = _flat_mat(Color("fafafa"))
-	plane_visual.add_child(body)
-	var wl := MeshInstance3D.new()
+	plane_visual.add_part(bm, Color("fafafa"), Transform3D(Basis.IDENTITY, Vector3(0.0, 0.0, 0.1)))
 	var wm := BoxMesh.new()
 	wm.size = Vector3(0.55, 0.02, 0.4)
-	wl.mesh = wm
-	wl.position = Vector3(-0.26, 0.02, 0.12)
-	wl.rotation_degrees.z = 7.0
-	wl.material_override = _flat_mat(Color("ffffff"))
-	plane_visual.add_child(wl)
-	var wr := MeshInstance3D.new()
-	wr.mesh = wm
-	wr.position = Vector3(0.26, 0.02, 0.12)
-	wr.rotation_degrees.z = -7.0
-	wr.material_override = _flat_mat(Color("ffffff"))
-	plane_visual.add_child(wr)
+	var wl_basis := Basis.IDENTITY.rotated(Vector3(0.0, 0.0, 1.0), deg_to_rad(7.0))
+	plane_visual.add_part(wm, Color("ffffff"), Transform3D(wl_basis, Vector3(-0.26, 0.02, 0.12)))
+	var wr_basis := Basis.IDENTITY.rotated(Vector3(0.0, 0.0, 1.0), deg_to_rad(-7.0))
+	plane_visual.add_part(wm, Color("ffffff"), Transform3D(wr_basis, Vector3(0.26, 0.02, 0.12)))
 	world_root.add_child(plane_visual)
 
 	cam_rig = Node3D.new()
@@ -173,73 +177,56 @@ func _build_world() -> void:
 	camera.current = true
 
 
-func _flat_mat(col: Color) -> StandardMaterial3D:
-	var m := StandardMaterial3D.new()
-	m.albedo_color = col
-	return m
-
-
-## 按关卡重建终点/门（灰模几何体；阶段 A 高低门沿用旧阈值语义，横向宽度为示意值 8m，阶段 B 才进规则）
+## 按关卡重建终点/门（场景应用：终点与低门为自建 ComicObject，高门用基座 gate_frame 模型；
+## 规则横向有效半宽见核心 GATE_HALF_PX=5m，视觉宽度与之一致）
 func _apply_level_props() -> void:
 	for c in level_props.get_children():
 		c.queue_free()
 	var L: Dictionary = core.LEVELS[core.level_idx]
 	var finish_z := -float(L.target_m)
+	# 终点旗门：自建 ComicObject（柱 frame 色 + 横幅/地线红）
+	var finish: Node3D = ComicObjectScript.new()
+	finish.name = "FinishGate"
 	var pole_m := CylinderMesh.new()
 	pole_m.top_radius = 0.08
 	pole_m.bottom_radius = 0.08
 	pole_m.height = 6.0
 	for sx in [-3.0, 3.0]:
-		var pole := MeshInstance3D.new()
-		pole.mesh = pole_m
-		pole.position = Vector3(sx, 3.0, finish_z)
-		pole.material_override = _flat_mat(Color("6b4a2f"))
-		level_props.add_child(pole)
-	var banner := MeshInstance3D.new()
-	var bm := BoxMesh.new()
-	bm.size = Vector3(6.4, 1.1, 0.06)
-	banner.mesh = bm
-	banner.position = Vector3(0.0, 5.6, finish_z)
-	banner.material_override = _flat_mat(Color("e53935"))
-	level_props.add_child(banner)
-	var line := MeshInstance3D.new()
-	var lm := BoxMesh.new()
-	lm.size = Vector3(10.0, 0.04, 0.4)
-	line.mesh = lm
-	line.position = Vector3(0.0, 0.02, finish_z)
-	line.material_override = _flat_mat(Color("d32f2f"))
-	level_props.add_child(line)
+		finish.add_part(pole_m, ModelLibrary.COLORS.frame,
+			Transform3D(Basis.IDENTITY, Vector3(sx, 3.0, 0.0)))
+	var banner_m := BoxMesh.new()
+	banner_m.size = Vector3(6.4, 1.1, 0.06)
+	finish.add_part(banner_m, Color("e53935"), Transform3D(Basis.IDENTITY, Vector3(0.0, 5.6, 0.0)))
+	var line_m := BoxMesh.new()
+	line_m.size = Vector3(10.0, 0.04, 0.4)
+	finish.add_part(line_m, Color("d32f2f"), Transform3D(Basis.IDENTITY, Vector3(0.0, 0.02, 0.0)))
+	finish.position = Vector3(0.0, 0.0, finish_z)
+	level_props.add_child(finish)
 	var gate_x_m: float = float(L.get("gate_x", 0.0))
 	if gate_x_m > 0.0:
-		var ring := MeshInstance3D.new()
-		var tor := TorusMesh.new()
-		tor.inner_radius = 2.2
-		tor.outer_radius = 3.0
-		ring.mesh = tor
-		ring.rotation_degrees.x = 90.0
-		ring.position = Vector3(0.0, float(L.gate_h), -gate_x_m)
-		ring.material_override = _flat_mat(Color("ffd54f"))
-		level_props.add_child(ring)
-		var post := MeshInstance3D.new()
-		post.mesh = pole_m
-		post.position = Vector3(0.0, float(L.gate_h) / 2.0, -gate_x_m)
-		post.material_override = _flat_mat(Color("8d6e63"))
-		level_props.add_child(post)
+		# 高门：基座 gate_frame 模型（原尺寸 2.2×2.4），缩放到门宽 6m × 门高
+		var hg: Node3D = ModelLibrary.create_model("gate_frame")
+		hg.scale = Vector3(6.0 / 2.2, float(L.gate_h) / 2.4, 1.6)
+		hg.position = Vector3(0.0, 0.0, -gate_x_m)
+		level_props.add_child(hg)
 	var lg_x_m: float = float(L.get("low_gate_x", 0.0))
 	if lg_x_m > 0.0:
-		var bar := MeshInstance3D.new()
-		var barm := BoxMesh.new()
-		barm.size = Vector3(8.0, 0.25, 0.25)
-		bar.mesh = barm
-		bar.position = Vector3(0.0, float(L.low_gate_top), -lg_x_m)
-		bar.material_override = _flat_mat(Color("4fc3f7"))
-		level_props.add_child(bar)
+		# 低门：自建 ComicObject（双柱 + 横杆，杆顶=low_gate_top）
+		var low: Node3D = ComicObjectScript.new()
+		low.name = "LowGate"
+		var post_m := CylinderMesh.new()
+		post_m.top_radius = 0.1
+		post_m.bottom_radius = 0.1
+		post_m.height = float(L.low_gate_top)
 		for sx in [-4.0, 4.0]:
-			var lp := MeshInstance3D.new()
-			lp.mesh = pole_m
-			lp.position = Vector3(sx, float(L.low_gate_top) / 2.0, -lg_x_m)
-			lp.material_override = _flat_mat(Color("8d6e63"))
-			level_props.add_child(lp)
+			low.add_part(post_m, ModelLibrary.COLORS.frame,
+				Transform3D(Basis.IDENTITY, Vector3(sx, float(L.low_gate_top) / 2.0, 0.0)))
+		var bar_m := BoxMesh.new()
+		bar_m.size = Vector3(8.0, 0.25, 0.25)
+		low.add_part(bar_m, ModelLibrary.COLORS.plate,
+			Transform3D(Basis.IDENTITY, Vector3(0.0, float(L.low_gate_top), 0.0)))
+		low.position = Vector3(0.0, 0.0, -lg_x_m)
+		level_props.add_child(low)
 
 
 # ---------------- 坐标转换 ----------------
@@ -267,7 +254,7 @@ func _build_hud() -> void:
 	status_label.add_theme_color_override("font_color", Color("0d3b4e"))
 	hud.add_child(status_label)
 	var title := Label.new()
-	title.text = "纸飞机 3D（灰模 · 阶段A）"
+	title.text = "纸飞机 3D（阶段B · 3d-shared 基座）"
 	title.position = Vector2(16, 8)
 	title.add_theme_font_size_override("font_size", 18)
 	title.add_theme_color_override("font_color", Color("0d3b4e"))
@@ -332,9 +319,9 @@ func _build_menu_panel() -> void:
 	menu_tip.add_theme_color_override("font_color", Color("0d47a1"))
 	menu_panel.add_child(menu_tip)
 	var rules := Label.new()
-	rules.text = "3D 灰模：跟随视角观察同一套折线规则。折线靠右升力大、靠上抬头、长线多阻力。\n60 像素 = 1 米；R 复位相机；门奖即时入账，失败仍保留。"
+	rules.text = "3D 灰模：跟随视角观察同一套折线规则。折线靠右升力大、靠上抬头、长线多阻力。\n60 像素 = 1 米；R 复位相机；门奖即时入账，失败仍保留。\n阶段 B：飞行中 A/D 横移（加速 240/上限 320/阻尼 160 px/s²，边界 ±20m），门有横向宽度 5m。"
 	rules.position = Vector2(24, 186)
-	rules.size = Vector2(612, 90)
+	rules.size = Vector2(612, 100)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rules.add_theme_font_size_override("font_size", 13)
 	rules.add_theme_color_override("font_color", Color("555555"))
@@ -608,6 +595,18 @@ func _unhandled_input(event: InputEvent) -> void:
 					charge = 0.0
 			elif not k.pressed and k.keycode == KEY_SPACE:
 				_release_throw()
+		elif core.state == "fly":
+			# 阶段 B1：A/D 有限侧向转向（真实按键事件；松开侧清零）
+			if k.pressed and not k.echo:
+				if k.keycode == KEY_A:
+					core.lateral_input = -1.0
+				elif k.keycode == KEY_D:
+					core.lateral_input = 1.0
+			elif not k.pressed:
+				if k.keycode == KEY_A and float(core.lateral_input) < 0.0:
+					core.lateral_input = 0.0
+				elif k.keycode == KEY_D and float(core.lateral_input) > 0.0:
+					core.lateral_input = 0.0
 		if k.pressed and not k.echo and k.keycode == KEY_R and core.state == "fly":
 			_snap_camera()
 	elif event is InputEventMouseMotion and core.state == "throw" and not charging:
@@ -634,20 +633,24 @@ func _physics_process(delta: float) -> void:
 
 
 func _update_visuals() -> void:
-	var wp := to_world(core.plane_pos)
+	var wp := to_world(core.plane_pos, float(core.lateral))
 	plane_visual.position = wp
-	plane_visual.rotation = Vector3(-core.pitch, 0.0, 0.0)
+	# 偏航=航向角（表现），小滚转倾斜=横移视觉（相机不继承）
+	var bank: float = clampf(-float(core.lateral_vel) / float(core.LAT_VMAX), -1.0, 1.0) * 0.3
+	plane_visual.rotation = Vector3(-core.pitch, float(core.yaw_rad()), bank)
 	if core.state != "fly" and core.state != "settle":
 		cam_rig.position = Vector3(0.0, 1.2, 0.0)
 		cam_rig.rotation = Vector3(0.0, 0.0, 0.0)
 	else:
-		cam_rig.position = Vector3(0.0, wp.y, wp.z)
+		# 相机半跟随航向（无滚转），横向只跟一半保持门/跑道可读
+		cam_rig.position = Vector3(wp.x * 0.6, wp.y, wp.z)
+		cam_rig.rotation = Vector3(0.0, float(core.yaw_rad()) * 0.5, 0.0)
 	_redraw_trail()
 
 
 func _snap_camera() -> void:
-	var wp := to_world(core.plane_pos)
-	cam_rig.position = Vector3(0.0, wp.y, wp.z)
+	var wp := to_world(core.plane_pos, float(core.lateral))
+	cam_rig.position = Vector3(wp.x * 0.6, wp.y, wp.z)
 	cam_rig.rotation = Vector3(0.0, 0.0, 0.0)
 
 
@@ -656,10 +659,11 @@ func _redraw_trail() -> void:
 	var pts: Array = core.trail
 	if pts.size() < 2:
 		return
+	var lat: float = float(core.lateral)
 	trail_imm.surface_begin(Mesh.PRIMITIVE_LINE_STRIP)
 	for p in pts:
 		var pp: Vector2 = p
-		trail_imm.surface_add_vertex(to_world(pp))
+		trail_imm.surface_add_vertex(to_world(pp, lat))
 	trail_imm.surface_end()
 
 
@@ -700,9 +704,9 @@ func _update_status() -> void:
 		"fly":
 			var live_m: float = (core.plane_pos.x - START_X) / PX_PER_M
 			var h_m: float = (GROUND_Y - core.plane_pos.y) / PX_PER_M
-			status_label.text = "%s · 飞行中 %.1f 米 / 目标 %.0f 米 · 高度 %.1f 米" % [
-				String(L.name), live_m, float(L.target_m), h_m]
-			hint_label.text = ""
+			status_label.text = "%s · 飞行中 %.1f 米 / 目标 %.0f 米 · 高度 %.1f 米 · 横移 %.1f 米" % [
+				String(L.name), live_m, float(L.target_m), h_m, float(core.lateral) / PX_PER_M]
+			hint_label.text = "A/D 横移（门有横向宽度），R 复位相机"
 		"settle":
 			status_label.text = ("过关！" if core.last_pass else "挑战失败") + " · 飞行 %.1f 米 · 金币 %d" % [core.flight_distance, core.coins]
 			hint_label.text = ""
