@@ -40,7 +40,7 @@
 - 五关配置：L1 30m 无风 / L2 45m 逆风高低门 / L3 65m 顺风 / L4 55m 逆风双门互斥 / L5 85m 顺风高门；首阶段未迁移的关卡明确列待办，不得改写"五关已完成"
 
 ## 每轮流程
-1. 环境与基线：cd D:\GIT\taptap2026-demo08-3d\game，Godot headless 跑 game/tests/test_demo08_3d*.gd（失败必须返回非零退出码；固定 delta、正常 time_scale=1、真实输入序列，不只用内部 API）；MCP Pro 每次先确认连接到本 worktree 的 game 目录（Godot 用用户指定 Steam 路径），连错目录立即停手
+1. 环境与基线（**全 headless，禁弹窗**——用户 2026-10-04 指令：用户在用电脑，禁止窗口模式弹出游戏做 QA/截图；headless 实测合成输入不可达 GUI、--write-movie 段错误，无窗口即无渲染无输入注入）：cd D:\GIT\taptap2026-demo08-3d\game，Godot headless 跑 game/tests/test_demo08_3d*.gd（仅核心套件 55+13 断言；窗口套件已改名 wintest_demo08_3d_*.gd 日常禁跑，仅发布前回归或用户明示时运行）；截图不自动抓取（既有 8 张为视觉基线，新截图=窗口会话事项须用户明示）；MCP Pro 每次先确认连接到本 worktree 的 game 目录（Godot 用用户指定 Steam 路径），连错目录立即停手
 2. Miro 同步：node tools/miro-fetch.mjs；data/db.json demo-08 反馈；Miro 想法与 GitHub 玩家反馈 Issues 同级进入统一队列（记录来源/ID/原文/验收场景），更新 requirements/backlog.md 的 demo-08 节
 3. 开发：按当前阶段推进最小可验收切片；迁移新增规则（门宽度、侧向阻尼、最短线长等）单独记录
 4. 发布（仅当有可玩增量）：切 project.godot main_scene → --import 校验 → powershell -File tools/export-web.ps1 -Version demo-08-3d-vN（只在 demo08-3d worktree 执行，它会重写 selected_scenes 预设）→ node tools/publish-qa.mjs <version>（FAIL=CDN 传播中，等 2-3 分钟重试；持续 FAIL=itch 平台故障，改发 GitHub Pages 并记录）→ powershell -File tools/push-itch.ps1 -Version <version>；builds/ 只保留最新 1-2 版（Pages 1GB 软限事故教训）
