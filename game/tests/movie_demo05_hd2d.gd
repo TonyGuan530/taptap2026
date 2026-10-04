@@ -77,5 +77,12 @@ func _physics_process(_delta: float) -> void:
 		640:
 			game.dino.position = Vector3(0, 0.1, 4)     # 撤到西半场
 			game.day_time = game.DAY_LEN + game.NIGHT_LEN - 1.2   # 黎明将至，灰潮退去
-		780:
+		700:
+			game.day_num = 2                             # 第 2 夜：泥流漫谷
+			game.day_time = game.DAY_LEN + 5.0
+			game.dino.position = Vector3(0, 0.1, -4)
+			_key(KEY_D, true)                            # 向东直穿低谷——深陷泥流
+		800:
+			_key(KEY_D, false)
+		860:
 			get_tree().quit()
