@@ -33,6 +33,7 @@ var end_layer: Control
 var end_title: Label
 var end_body: Label
 var toasts: Array[Dictionary] = []
+var tooltip_label: Label
 
 
 func _ready() -> void:
@@ -289,6 +290,9 @@ func _build_hud() -> void:
 	phase_label = _label(hud, Vector2(700, 44), "阶段：初火", 18, Color("aed581"))
 	mode_label = _label(hud, Vector2(20, 44), "经典 60 秒", 15, Color("9fb3c8"))
 	banner_label = _label(hud, Vector2(200, 44), "", 18, Color("ce93d8"))
+	# v2 悬停提示（阶段 B：悬停显示目标名称/价格/当前效果）
+	tooltip_label = _label(hud, Vector2(0, 0), "", 15, Color("fff3c4"))
+	tooltip_label.visible = false
 	toast_box = VBoxContainer.new()
 	toast_box.position = Vector2(340, 84)
 	toast_box.size = Vector2(300, 120)
@@ -401,6 +405,47 @@ func _unhandled_input(event: InputEvent) -> void:
 			_pick(event.position)
 
 
+## v2 悬停提示：指针下目标的名称/价格/当前效果（阶段 B 清单项）
+func _update_tooltip(mouse: Vector2) -> void:
+	if sim.round_state != "play":
+		tooltip_label.visible = false
+		return
+	var from := cam.project_ray_origin(mouse)
+	var dir := cam.project_ray_normal(mouse)
+	var q := PhysicsRayQueryParameters3D.create(from, from + dir * 200.0)
+	q.collide_with_areas = true
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	var text := ""
+	if not hit.is_empty():
+		var col: Object = hit.collider
+		if col.has_meta("slot"):
+			var slot := int(col.get_meta("slot"))
+			var lv: int = sim.towers[slot]
+			if lv == 0:
+				text = "槽位 %d：建造 %d💧（降温 2.0/s）" % [slot + 1, sim.build_cost()]
+			elif lv == 1:
+				text = "槽位 %d：升级 %d💧（降温 2.0→5.0/s）" % [slot + 1, sim.upgrade_cost()]
+			else:
+				text = "槽位 %d：II 级已满（降温 5.0/s）" % (slot + 1)
+		elif col.has_meta("villager"):
+			for n: Dictionary in sim.villagers:
+				if n.id == int(col.get_meta("villager")):
+					var bonus: float = float(sim.prof_info(str(n.prof)).cool_bonus)
+					if n.level == 0:
+						text = "%s·%s：晋升 %d💧（降温 +%.1f/s）" % [str(n.name), str(n.prof), sim.NPC_UP_COST, sim.NPC_UP_COOL]
+					else:
+						text = "%s·%s：已晋升（降温 +%.1f/s）" % [str(n.name), str(n.prof), sim.NPC_UP_COOL]
+					if bonus > 0.0:
+						text += " · 额外 +%.1f/s" % bonus
+					break
+	if text != "":
+		tooltip_label.text = text
+		tooltip_label.position = mouse + Vector2(14, 10)
+		tooltip_label.visible = true
+	else:
+		tooltip_label.visible = false
+
+
 func _pick(screen_pos: Vector2) -> void:
 	var from := cam.project_ray_origin(screen_pos)
 	var dir := cam.project_ray_normal(screen_pos)
@@ -449,6 +494,7 @@ func _process(delta: float) -> void:
 		var holder := villager_nodes[id] as Node3D
 		var vx: float = float(holder.get_meta("vx"))
 		holder.position.x = vx + sin((sim.elapsed + float(id)) * 1.3) * 2.0
+	_update_tooltip(get_viewport().get_mouse_position())
 	# toast 淡出
 	for i in range(toasts.size() - 1, -1, -1):
 		var t: Dictionary = toasts[i]
