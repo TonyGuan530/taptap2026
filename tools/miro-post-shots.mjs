@@ -22,8 +22,8 @@ const RAW = 'https://raw.githubusercontent.com/TonyGuan530/taptap2026/main';
 const SHOTS = [
 	{ id: 'demo-01', name: '灵感菇侦探', img: 'demo-01.png', video: 'demo-01.mp4', x: 6300, y: 2560, done: true },
 	{ id: 'demo-05', name: '恐龙火山生存', img: 'demo-05.png', video: 'demo-05.mp4', x: 4400, y: 4560 },
-	{ id: 'demo-05-hd2d', name: '恐龙火山生存 HD-2D（阶段B/C 建造·需求·昼夜·灰潮）', img: 'demo-05-hd2d.png', video: 'demo-05-hd2d.mp4', x: 4400, y: 5480,
-		link: 'https://tonyguan530.github.io/taptap2026/builds/demo-05-hd2d-v3/index.html' },
+	{ id: 'demo-05-hd2d', name: '恐龙火山生存 HD-2D（阶段B/C 建造·需求·昼夜·灰潮·泥流·预报）', img: 'demo-05-hd2d.png', video: 'demo-05-hd2d.mp4', x: 4400, y: 5480,
+		link: 'https://tonyguan530.github.io/taptap2026/builds/demo-05-hd2d-v5/index.html' },
 	{ id: 'demo-02', name: '物性变换谜题', img: 'demo-02.png', video: 'demo-02.mp4', x: 4400, y: 6560 },
 	{ id: 'demo-03', name: '岩浆降温的小人国度', img: 'demo-03.png', video: 'demo-03.mp4', x: 4400, y: 8460 },
 	{ id: 'demo-04', name: 'SOUP 2.0 DNA 融合逃生', img: 'demo-04.png', video: 'demo-04.mp4', x: 4400, y: 10560 },
