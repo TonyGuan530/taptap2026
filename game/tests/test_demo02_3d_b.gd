@@ -59,6 +59,14 @@ func _run() -> void:
 		await _case_3()
 	if wanted < 0 or wanted == 4:
 		await _case_4()
+	if wanted < 0 or wanted == 5:
+		await _case_5()
+	if wanted < 0 or wanted == 6:
+		await _case_6()
+	if wanted < 0 or wanted == 7:
+		await _case_7()
+	if wanted < 0 or wanted == 8:
+		await _case_8()
 	_log("ALL DONE fails=%d" % fails)
 	logf.flush()
 	quit(1 if fails > 0 else 0)
@@ -148,4 +156,63 @@ func _case_4() -> void:
 	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 12000:
 		await physics_frame
 	_check("⑤ L3 石头直走不误通关", not scene.goal_reached)
+	scene.queue_free()
+	await physics_frame
+
+# ⑥ L4 路线A：弹簧→顶点转羽毛→W 飘上高台入 GOAL
+func _case_5() -> void:
+	await _new_scene(3)
+	scene.switch_tag(2)
+	var launched: bool = await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > 9.0, 10000)
+	await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > -2.0 and scene.ball.linear_velocity.y < 2.0, 8000)
+	scene.switch_tag(0)
+	scene.yaw = -PI / 2
+	Input.action_press("p_fwd")
+	while not scene.goal_reached and scene.ball.position.x < 8.6:
+		if scene.ball.position.y < 4.5 and scene.ball.linear_velocity.y < -1.5 and not scene.flap_used:
+			scene.try_flap()   # 掉太快补一次扑翼
+		await physics_frame
+	Input.action_release("p_fwd")
+	var ok: bool = await _until(func(): return scene.goal_reached, 20000)
+	_check("⑥ L4 羽毛飘上高台", ok)
+	_log("⑥ pos=%s flaps_used=%s" % [str(scene.ball.global_position), str(scene.flap_used)])
+	scene.queue_free()
+	await physics_frame
+
+# ⑦ L4 路线B：皮球不换词条，按住 W 被空中弹板抛射上高台（过板后松 W 滑翔入Goal）
+func _case_6() -> void:
+	await _new_scene(3)
+	scene.switch_tag(2)
+	var launched: bool = await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > 9.0, 10000)
+	scene.yaw = -PI / 2
+	Input.action_press("p_fwd")
+	while not scene.goal_reached and scene.ball.position.x < 5.5:
+		await physics_frame
+	Input.action_release("p_fwd")   # 抛射后滑翔，防止 W 把 vx 顶回 6.5 导致越过平台
+	var ok: bool = await _until(func(): return scene.goal_reached, 20000)
+	_check("⑦ L4 皮球抛射上高台", ok)
+	_log("⑦ switches=%s pos=%s" % [str(scene.tel_switches), str(scene.ball.global_position)])
+	scene.queue_free()
+	await physics_frame
+
+# ⑧ L5 皮球零输入：踩弹簧后不碰任何键，弹簧链穿环入 GOAL
+func _case_7() -> void:
+	await _new_scene(4)
+	scene.switch_tag(2)
+	var t0 := Time.get_ticks_msec()
+	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 15000:
+		await physics_frame
+	_check("⑧ L5 皮球零输入穿环", scene.goal_reached and scene.tel_resets == 0)
+	_log("⑧ switches=%s spring=%s" % [str(scene.tel_switches), str(scene.spring_used)])
+	scene.queue_free()
+	await physics_frame
+
+# ⑨ L5 石头对照：弹不过二级弹簧，不误通关
+func _case_8() -> void:
+	await _new_scene(4)
+	scene.switch_tag(1)
+	var t0 := Time.get_ticks_msec()
+	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 15000:
+		await physics_frame
+	_check("⑨ L5 石头弹不上高环", not scene.goal_reached)
 	scene.queue_free()

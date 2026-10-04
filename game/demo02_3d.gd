@@ -71,6 +71,43 @@ const LEVELS := [
 		fragile = null,
 		goal = { pos = Vector3(11, 0.55, 0), size = Vector3(3.2, 0.9, 2.8) },
 	},
+	{
+		name = "第四关 · 开放高台", solution = "双路线：羽毛顶点转轻飘上高台 ／ 皮球按住 W 被空中弹板抛射上高台（不换词条）",
+		spawn = Vector3(-8, 1.6, 0),
+		boxes = [
+			[Vector3(0, -0.25, 0), Vector3(24, 0.5, 12), "field"],
+			[Vector3(9, 1.5, 0), Vector3(4, 3, 4), "wall"],   # 高台：顶面 y=3
+			[Vector3(0, 4.5, -6.25), Vector3(24, 9, 0.5), "wall"],
+			[Vector3(0, 4.5, 6.25), Vector3(24, 9, 0.5), "wall"],
+			[Vector3(-12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
+			[Vector3(12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
+			[Vector3(0, 9.25, 0), Vector3(24, 0.5, 13), "wall"],
+		],
+		springs = [
+			{ pos = Vector3(-8, 0.15, 0), imp = Vector3(0, 12, 0) },
+			{ pos = Vector3(4.4, 3, 0), imp = Vector3(3.5, 8, 0) },   # 空中弹板：皮球下落弧穿过即被抛向高台（vx 也重设，松 W 时机不敏感）
+		],
+		fragile = null,
+		goal = { pos = Vector3(9, 3.65, 0), size = Vector3(2.4, 1.1, 2.4) },   # 高台顶上，底 3.1 离台面 0.1
+	},
+	{
+		name = "第五关 · 高台弹跳", solution = "皮球踩弹簧后零输入：竖直弹簧链逐级再点火，穿过高空 GOAL 环（石头弹不上去）",
+		spawn = Vector3(-3, 1.6, 0),
+		boxes = [
+			[Vector3(0, -0.25, 0), Vector3(12, 0.5, 12), "field"],
+			[Vector3(0, 8, -6.25), Vector3(12, 16, 0.5), "wall"],
+			[Vector3(0, 8, 6.25), Vector3(12, 16, 0.5), "wall"],
+			[Vector3(-6.25, 8, 0), Vector3(0.5, 16, 13), "wall"],
+			[Vector3(6.25, 8, 0), Vector3(0.5, 16, 13), "wall"],
+			[Vector3(0, 16.25, 0), Vector3(13, 0.5, 13), "wall"],
+		],
+		springs = [
+			{ pos = Vector3(-3, 0.15, 0), imp = Vector3(0, 12, 0) },
+			{ pos = Vector3(-3, 4.5, 0), imp = Vector3(0, 12, 0) },   # 空中弹簧：上升穿过即再点火
+		],
+		fragile = null,
+		goal = { pos = Vector3(-3, 11, 0), size = Vector3(2.4, 1.0, 2.4) },   # 高空环：二级弹簧顶点 ≈12 穿过
+	},
 ]
 
 var level_idx := 0
@@ -84,6 +121,7 @@ var fragile_broken := false
 var spring_used := false
 var in_spring := false
 var spring_ready := true
+var active_imp := Vector3.ZERO
 var flap_used := false
 var prev_speed := 0.0
 var tel_switches: Array[String] = []
@@ -202,22 +240,25 @@ func _load_level(idx: int) -> void:
 	var lv: Dictionary = LEVELS[idx]
 	for b: Array in lv.boxes:
 		_box("Geo", b[0], b[1], Color(0.22, 0.24, 0.3))
-	# 弹簧
-	var spring := Area3D.new()
-	spring.name = "Spring"
-	spring.position = lv.spring.pos
-	var scs := CollisionShape3D.new()
-	var ssh := BoxShape3D.new()
-	ssh.size = Vector3(2, 0.4, 2)
-	scs.shape = ssh
-	spring.add_child(scs)
-	var plate: Node3D = ModelLibrary.create_model("pressure_plate")
-	plate.position = Vector3(0, -0.2, 0)
-	spring.add_child(plate)
-	spring.body_entered.connect(_on_spring_enter)
-	spring.body_exited.connect(_on_spring_exit)
-	add_child(spring)
-	level_nodes.append(spring)
+	# 弹簧（单弹簧 lv.spring 兼容；多弹簧 lv.springs 数组，L4 双路线/L5 弹跳链用）
+	# 注意：Dictionary.get 的默认值参数是急切求值，L4/L5 无 spring 键会直接崩，须显式分支
+	var spring_list: Array = lv.springs if lv.has("springs") else [lv.spring]
+	for s in spring_list:
+		var spring := Area3D.new()
+		spring.name = "Spring"
+		spring.position = s.pos
+		var scs := CollisionShape3D.new()
+		var ssh := BoxShape3D.new()
+		ssh.size = Vector3(2, 0.4, 2)
+		scs.shape = ssh
+		spring.add_child(scs)
+		var plate: Node3D = ModelLibrary.create_model("pressure_plate")
+		plate.position = Vector3(0, -0.2, 0)
+		spring.add_child(plate)
+		spring.body_entered.connect(_on_spring_enter.bind(s.imp))
+		spring.body_exited.connect(_on_spring_exit)
+		add_child(spring)
+		level_nodes.append(spring)
 	# 脆板
 	fragile = null
 	fragile_broken = false
@@ -379,8 +420,9 @@ func _zone_name() -> String:
 	return "field"
 
 
-func _on_spring_enter(_other: Node) -> void:
+func _on_spring_enter(_other: Node, imp: Vector3) -> void:
 	in_spring = true
+	active_imp = imp
 
 
 func _on_spring_exit(_other: Node) -> void:
@@ -443,8 +485,7 @@ func _physics_process(delta: float) -> void:
 		switch_tag(2)
 
 	if in_spring and spring_ready:
-		var imp: Vector3 = LEVELS[level_idx].spring.imp   # 点火用关卡数据（原先硬编码 12，imp 是死数据）
-		ball.linear_velocity = imp
+		ball.linear_velocity = active_imp   # 全矢量抛射：imp 可含横向分量（L4 弹板抛射路线）
 		spring_ready = false
 		spring_used = true
 
