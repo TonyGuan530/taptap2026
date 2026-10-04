@@ -1,17 +1,19 @@
 extends Node3D
-## DEMO6 3D 阶段 A 灰模 v1：L3 风格开放断层验证房 + 第三人称 + 墨水放置 v1。
-## 指南：D:/GIT/3D-GUIDE/taptap2026-demo06-3d-zcode-guide-2026-10-04.md
+## DEMO6 3D 阶段 A 场景应用版 v2：L3 风格开放断层验证房 + 第三人称 + 墨水放置。
+## 指令：分支自 3d-shared 拉出，只做场景应用——世界物体用 ComicObject/统一材质（comic_style 套件）。
 ## 尺度：100px ≈ 1m；玩家 2.4m/s、跳 5.2m/s、手写重力 16；刚体世界重力读 ProjectSettings（3D 默认 9.8）。
-## 词条行为（阶段 A 保留 2D 语义）：Heavy 重力×2.6 mass8 / Float 重力0+冻结 / Fire 自毁2s（灰模无易燃物）/
-## Sticky 摩擦4 弹性0 + 0.4s 接触计时冻结（源码语义如实保留，未改为接触后计时）。
-## 放置 v1：相机中心射线取点（未命中→沿受控深度平面），ghost 半透明预览，LMB 提交，墨水原子扣费（校验失败不扣）。
-## 已知 v1 简化：无 yaw/pitch/roll 旋转（后续轮）、无 placement_command_id 完整事务（预留 TODO）、Esc 释放鼠标。
+## 词条语义保留 2D：Heavy 重力×2.6 mass8 / Float 重力0+冻结 / Fire 2s 自毁（灰模无易燃物）/
+## Sticky 摩擦4 弹性0 + 生成后 0.4s 冻结（2D 源码语义如实保留）。
+## v2 新增（指南 §3/§4）：ghost yaw 旋转（Q/E）+ 深度调节（滚轮 3~8m）+ 占位原子校验
+##（旋转形状查询带 8% 容差，与玩家/地形/实体深度重叠即拒绝且不扣墨）+ 放置带 yaw 旋转。
+
+const ComicObjectScript := preload("res://comic_style/comic_object.gd")
+const StyleDefinition := preload("res://comic_style/comic_style.gd")
+const ModelLibrary := preload("res://comic_style/model_library.gd")
 
 const WALK := 2.4
 const JUMP_V := 5.2
 const GRAV := 16.0
-const PLACE_DIST := 6.0
-const VIEW := Vector2(960, 540)
 
 const SHAPES := [
 	{"id": "ball", "size": Vector3(0.56, 0.56, 0.56), "cost": 30},
@@ -29,20 +31,28 @@ var ink := 100
 var shape_idx := 1
 var word_idx := 0
 var mouse_captured := true
+# 影片/测试插桩：scripted=true 时由驱动直设方向与跳跃（绕过 Input——Movie Maker 离线渲染不处理输入事件）
+var scripted := false
+var auto_dir := Vector3.ZERO
+var auto_jump := false
 var player: CharacterBody3D
 var cam_pitch: Node3D
 var cam: Camera3D
-var ghost: MeshInstance3D
+var ghost: Node3D
+var ghost_mesh: MeshInstance3D
 var placed_root: Node3D
 var placed_count := 0
 var hud: CanvasLayer
 var ink_label: Label
 var mode_label: Label
-var shape_meshes: Array[Mesh] = []
-var ghost_meshes: Array[Mesh] = []
+var style: Resource
+var ghost_yaw := 0.0
+var place_dist := 6.0
+var ghost_pos := Vector3(2.0, 1.8, 0.0)
 
 
 func _ready() -> void:
+	style = StyleDefinition.new()
 	_build_environment()
 	_build_level()
 	_build_player()
@@ -50,25 +60,26 @@ func _ready() -> void:
 	_build_goal()
 	_build_hud()
 	_update_ghost()
+	_place_ghost_at(_ray_endpoint())
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
-
-func _mesh_for(shape_idx_v: int) -> Mesh:
-	match shape_idx_v:
-		0:
-			var s := SphereMesh.new()
-			s.radius = 0.28
-			s.height = 0.56
-			return s
-		1:
-			var p := BoxMesh.new()
-			p.size = Vector3(1.3, 0.22, 0.6)
-			return p
-		2:
-			var b := BoxMesh.new()
-			b.size = Vector3(0.64, 0.64, 0.64)
-			return b
-	return BoxMesh.new()
+func _static_box(pos: Vector3, size: Vector3, col: Color) -> StaticBody3D:
+	var body := StaticBody3D.new()
+	body.position = pos
+	var cs := CollisionShape3D.new()
+	var sh := BoxShape3D.new()
+	sh.size = size
+	cs.shape = sh
+	body.add_child(cs)
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = size
+	mi.mesh = bm
+	mi.material_override = style.body_material(col)
+	body.add_child(mi)
+	add_child(body)
+	return body
 
 
 func _build_environment() -> void:
@@ -87,32 +98,11 @@ func _build_environment() -> void:
 	add_child(env)
 
 
-func _static_box(pos: Vector3, size: Vector3, col: Color) -> StaticBody3D:
-	var body := StaticBody3D.new()
-	body.position = pos
-	var cs := CollisionShape3D.new()
-	var sh := BoxShape3D.new()
-	sh.size = size
-	cs.shape = sh
-	body.add_child(cs)
-	var mi := MeshInstance3D.new()
-	var bm := BoxMesh.new()
-	bm.size = size
-	mi.mesh = bm
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = col
-	mi.material_override = mat
-	mi.position = Vector3.ZERO
-	body.add_child(mi)
-	add_child(body)
-	return body
-
-
 func _build_level() -> void:
-	# L3 风格开放断层验证房：左台/右台同高 1.2m，沟宽 4.05m，沟底 y=-1.55 顶面。
-	_static_box(Vector3(0.7, 0.6, 0.0), Vector3(4.4, 1.2, 6.0), Color("39415a"))    # 左台 x[-1.5,2.9] 顶1.2
-	_static_box(Vector3(7.6, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("39415a"))    # 右台 x[5.6,9.6]
-	_static_box(Vector3(4.25, -0.75, 0.0), Vector3(4.9, 0.5, 6.0), Color("2a3148")) # 沟底 顶-1.0
+	# L3 风格开放断层：两台同高 1.2m，沟宽 4.05m，沟底 -1.2m。统一材质（场景细色，无轮廓）。
+	_static_box(Vector3(0.7, 0.6, 0.0), Vector3(4.4, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(7.6, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(4.25, -0.75, 0.0), Vector3(4.9, 0.5, 6.0), Color("6d7590"))
 
 
 func _build_player() -> void:
@@ -130,9 +120,7 @@ func _build_player() -> void:
 	cm.radius = 0.25
 	cm.height = 1.0
 	vis.mesh = cm
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color("66bb6a")
-	vis.material_override = mat
+	vis.material_override = style.body_material(Color("6fbf73"))
 	player.add_child(vis)
 	var pivot := Node3D.new()
 	pivot.name = "CamPivot"
@@ -145,45 +133,30 @@ func _build_player() -> void:
 	cam = Camera3D.new()
 	cam.fov = 75.0
 	arm.add_child(cam)
-	player.set_meta("grav", GRAV)
 	add_child(player)
 	cam.make_current()
 
 
 func _build_props() -> void:
 	placed_root = Node3D.new()
-	placed_root.name = "CreatedObjects"
+	placed_root.name = "EnvironmentObjects"
 	add_child(placed_root)
-	var defs := [
-		{"id": "ball", "pos": Vector3(1.2, 2.2, 0.5), "mesh": _mesh_for(0), "shape": _sphere_shape(0.28)},
-		{"id": "plank", "pos": Vector3(2.2, 2.4, -0.6), "mesh": _mesh_for(1), "shape": _box_shape(Vector3(1.3, 0.22, 0.6))},
-		{"id": "block", "pos": Vector3(0.8, 2.3, 0.8), "mesh": _mesh_for(2), "shape": _box_shape(Vector3(0.64, 0.64, 0.64))},
-	]
-	for d in defs:
-		var rb := RigidBody3D.new()
-		rb.position = d.pos
-		var cs := CollisionShape3D.new()
-		cs.shape = d.shape
-		rb.add_child(cs)
-		var mi := MeshInstance3D.new()
-		mi.mesh = d.mesh
-		var mat := StandardMaterial3D.new()
-		mat.albedo_color = Color("b8a888")
-		mi.material_override = mat
-		rb.add_child(mi)
-		placed_root.add_child(rb)
-
-
-func _sphere_shape(r: float) -> SphereShape3D:
-	var s := SphereShape3D.new()
-	s.radius = r
-	return s
-
-
-func _box_shape(size: Vector3) -> BoxShape3D:
-	var b := BoxShape3D.new()
-	b.size = size
-	return b
+	# 模型库 crate（场景 ComicObject，细线非交互）+ 碰撞
+	var crate := ModelLibrary.create_model("crate")
+	crate.position = Vector3(1.6, 1.6, 0.6)
+	placed_root.add_child(crate)
+	var crate_body := StaticBody3D.new()
+	var ccs := CollisionShape3D.new()
+	var bounds := ModelLibrary.geometry_bounds(crate)
+	var csize: Vector3 = bounds.size if bounds.size.length() > 0.01 else Vector3(0.64, 0.64, 0.64)
+	var bsh := BoxShape3D.new()
+	bsh.size = csize
+	ccs.shape = bsh
+	ccs.position = bounds.get_center()
+	crate_body.add_child(ccs)
+	crate_body.position = crate.position
+	placed_root.add_child(crate_body)
+	crate.reparent(crate_body)
 
 
 func _build_goal() -> void:
@@ -209,7 +182,7 @@ func _build_goal() -> void:
 
 func _on_goal_entered(body: Node3D) -> void:
 	if body == player:
-		mode_label.text = "GOAL! 6 关对照见 2D 版"
+		mode_label.text = "GOAL!"
 		print("GOAL_REACHED")
 
 
@@ -219,16 +192,18 @@ func _build_hud() -> void:
 	add_child(hud)
 	ink_label = Label.new()
 	ink_label.position = Vector2(16, 12)
-	ink_label.text = "墨水 %d | 形状[1球 2板 3块] 词条[4重 5浮 6燃 7黏] LMB放置 | Esc释放鼠标" % ink
 	hud.add_child(ink_label)
 	mode_label = Label.new()
 	mode_label.position = Vector2(16, 40)
-	mode_label.text = "L3 灰模验证房 v1（阶段 A）"
+	mode_label.text = "L3 灰模验证房（场景应用版 v2）"
 	hud.add_child(mode_label)
+	_refresh_hud()
 
 
-func _capture_mouse() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+func _refresh_hud() -> void:
+	var cost: int = SHAPES[shape_idx].cost + WORDS[word_idx].cost
+	ink_label.text = "墨水 %d | %s+%s %d墨 | Q/E旋转 %.0f° | 滚轮深度 %.1fm | LMB放置 | Esc释放鼠标" % [
+		ink, SHAPES[shape_idx].id, WORDS[word_idx].id, cost, rad_to_deg(ghost_yaw), place_dist]
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -248,15 +223,24 @@ func _unhandled_input(event: InputEvent) -> void:
 				word_idx = 2
 			KEY_7:
 				word_idx = 3
+			KEY_Q:
+				ghost_yaw += PI * 0.5
+			KEY_E:
+				ghost_yaw -= PI * 0.5
 			KEY_R:
 				player.position = Vector3(0.0, 1.9, 0.0)
 				player.velocity = Vector3.ZERO
 			KEY_ESCAPE:
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		_refresh_hud()
 		_update_ghost()
 	elif event is InputEventMouseButton and event.pressed and mouse_captured:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			_try_place()
+		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			place_dist = clampf(place_dist + 0.5, 3.0, 8.0)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			place_dist = clampf(place_dist - 0.5, 3.0, 8.0)
 	elif event is InputEventMouseMotion and mouse_captured:
 		player.rotate_y(-event.relative.x * 0.003)
 		cam_pitch.rotate_x(-event.relative.y * 0.003)
@@ -264,18 +248,16 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	# v1：Fire 自毁 2s / Sticky 生成后 0.4s 冻结（2D 语义如实保留，指南 §2 表）
-	if placed_root != null:
-		var now := Time.get_ticks_msec() / 1000.0
-		for b in placed_root.get_children():
-			if b is RigidBody3D:
-				if b.has_meta("die_at") and now >= float(b.get_meta("die_at")):
-					b.queue_free()
-					continue
-				if b.has_meta("freeze_at") and now >= float(b.get_meta("freeze_at")) and not b.freeze:
-					b.freeze = true
 	if player == null:
 		return
+	# 词条计时（v1 语义）：Fire die_at 自毁 / Sticky freeze_at 冻结
+	var now := Time.get_ticks_msec() / 1000.0
+	for b in placed_root.get_children():
+		if b is RigidBody3D:
+			if b.has_meta("die_at") and now >= float(b.get_meta("die_at")):
+				b.queue_free()
+			elif b.has_meta("freeze_at") and now >= float(b.get_meta("freeze_at")) and not b.freeze:
+				b.freeze = true
 	var dir := Vector3.ZERO
 	var fwd := -player.global_transform.basis.z
 	var right := player.global_transform.basis.x
@@ -288,61 +270,125 @@ func _physics_process(delta: float) -> void:
 	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
 		dir -= right
 	dir.y = 0.0
-	dir = dir.normalized() * WALK
+	if scripted:
+		dir = auto_dir
+	if dir.length() > 1.0:
+		dir = dir.normalized()
+	dir = dir * WALK
 	if not player.is_on_floor():
 		player.velocity.y -= GRAV * delta
-	if Input.is_key_pressed(KEY_SPACE) and player.is_on_floor():
+	var want_jump: bool = (Input.is_key_pressed(KEY_SPACE) or auto_jump) and player.is_on_floor()
+	if want_jump:
 		player.velocity.y = JUMP_V
+	auto_jump = false
 	player.velocity.x = dir.x
 	player.velocity.z = dir.z
 	player.move_and_slide()
+	# ghost 跟随射线终点
+	_place_ghost_at(_ray_endpoint())
+
+
+func _ray_endpoint() -> Vector3:
+	var cam_t := cam.global_transform
+	var end := cam_t.origin - cam_t.basis.z * place_dist
+	end.y = maxf(end.y, -0.6)
+	return end
+
+
+func _place_ghost_at(pos: Vector3) -> void:
+	ghost_pos = pos
+	if ghost != null:
+		ghost.position = pos
+		ghost.rotation.y = ghost_yaw
 
 
 func _update_ghost() -> void:
 	if ghost != null:
 		ghost.queue_free()
-	ghost = MeshInstance3D.new()
-	ghost.mesh = _mesh_for(shape_idx)
+	var cost: int = SHAPES[shape_idx].cost + WORDS[word_idx].cost
+	ghost = Node3D.new()
+	ghost_mesh = MeshInstance3D.new()
+	ghost_mesh.mesh = _mesh_for_idx(shape_idx)
 	var mat := StandardMaterial3D.new()
-	var ok: bool = ink >= SHAPES[shape_idx].cost + WORDS[word_idx].cost
+	var ok: bool = ink >= cost
 	mat.albedo_color = Color(0.4, 0.9, 0.5, 0.35) if ok else Color(0.9, 0.4, 0.3, 0.35)
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	ghost.material_override = mat
+	ghost_mesh.material_override = mat
+	ghost.add_child(ghost_mesh)
 	add_child(ghost)
+	ghost.position = ghost_pos
+	ghost.rotation.y = ghost_yaw
+
+
+func _word_color(word_id: String) -> Color:
+	if word_id == "heavy":
+		return Color("8d8d94")
+	if word_id == "float":
+		return Color("4fc3f7")
+	if word_id == "fire":
+		return Color("ef5350")
+	return Color("8d6e63")
 
 
 func _try_place() -> void:
-	var cost: int = SHAPES[shape_idx].cost + WORDS[word_idx].cost
+	try_place_validated(_ray_endpoint(), ghost_yaw)
+
+
+func _placement_shape(size: Vector3, yaw: float, margin: float) -> BoxShape3D:
+	# 旋转盒的凸包近似：yaw 旋转后取水平外接盒（避免旋转形状查询的引擎差异）
+	var c := absf(cos(yaw))
+	var sn := absf(sin(yaw))
+	var ex: float = (size.x * c + size.z * sn) * 0.5 * margin
+	var ez: float = (size.x * sn + size.z * c) * 0.5 * margin
+	var b := BoxShape3D.new()
+	b.size = Vector3(ex * 2.0, size.y * margin, ez * 2.0)
+	return b
+
+
+## 原子放置校验 v2：资金 + 旋转占位查询（8% 收缩容差，允许表面接触）
+## 拒绝（资金不足/与玩家/地形/实体深度重叠）→ 不扣墨返回 false；成功 → 扣墨一次
+func try_place_validated(pos: Vector3, yaw: float) -> bool:
+	var shape: Dictionary = SHAPES[shape_idx]
+	var word: Dictionary = WORDS[word_idx]
+	var cost: int = shape.cost + word.cost
 	if ink < cost:
-		mode_label.text = "墨水不足（需 %d）" % cost
-		return
-	var cam_t := cam.global_transform
-	var from := cam_t.origin
-	var to := from - cam_t.basis.z * PLACE_DIST
+		mode_label.text = "墨水不足（需 %d，剩 %d）" % [cost, ink]
+		return false
+	var params := PhysicsShapeQueryParameters3D.new()
+	params.shape = _placement_shape(shape.size, yaw, 0.92)
+	params.transform = Transform3D(Basis(Vector3.UP, yaw), pos)
+	params.collide_with_bodies = true
+	params.collide_with_areas = false
+	params.exclude = [player.get_rid()]
+	var hits := get_world_3d().direct_space_state.intersect_shape(params, 8)
+	if hits.size() > 0:
+		mode_label.text = "放置位置被阻挡"
+		return false
+	_place_at_validated(pos, yaw, shape, word, cost)
+	return true
+
+
+func _place_at_validated(pos: Vector3, yaw: float, shape: Dictionary, word: Dictionary, cost: int) -> void:
+	ink -= cost
 	var rb := RigidBody3D.new()
 	rb.name = "Placed%d" % placed_count
+	rb.rotation.y = yaw
 	var cs := CollisionShape3D.new()
-	var mesh: Mesh = _mesh_for(shape_idx)
-	if shape_idx == 0:
+	if shape.id == "ball":
 		var s := SphereShape3D.new()
-		s.radius = 0.28
+		s.radius = shape.size.x * 0.5
 		cs.shape = s
-		rb.mass = 1.0 * (2.6 if word_idx == 0 else 1.0)
 	else:
 		var b := BoxShape3D.new()
-		var sz: Vector3 = SHAPES[shape_idx].size
-		b.size = sz
+		b.size = shape.size
 		cs.shape = b
-		rb.mass = 8.0 if word_idx == 0 else 1.0
 	rb.add_child(cs)
-	var mi := MeshInstance3D.new()
-	mi.mesh = mesh
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color("8d8d94") if word_idx == 0 else (Color("4fc3f7") if word_idx == 1 else (Color("ef5350") if word_idx == 2 else Color("8d6e63")))
-	mi.material_override = mat
-	rb.add_child(mi)
-	rb.position = to
-	var word: Dictionary = WORDS[word_idx]
+	# ComicObject 视觉（interactive 粗线：玩家创造物；词条色）
+	var comic: Node3D = ComicObjectScript.new()
+	comic.interactive = true
+	comic.add_part(_mesh_for_idx(shape_idx), _word_color(word.id))
+	rb.add_child(comic)
+	rb.mass = word.mass if word.id == "heavy" else 1.0
 	rb.gravity_scale = word.grav
 	if word.id == "float":
 		rb.freeze = true
@@ -356,11 +402,41 @@ func _try_place() -> void:
 	if word.id == "fire":
 		rb.set_meta("die_at", Time.get_ticks_msec() / 1000.0 + 2.0)
 	placed_root.add_child(rb)
+	rb.position = pos
 	placed_count += 1
-	ink -= cost
-	ink_label.text = "墨水 %d | 形状[1球 2板 3块] 词条[4重 5浮 6燃 7黏] LMB放置 | Esc释放鼠标" % ink
-	print("PLACED type=place shape=%s word=%s level=0" % [SHAPES[shape_idx].id, WORDS[word_idx].id])
+	_refresh_hud()
+	print("PLACED shape=%s word=%s yaw=%.2f level=0" % [shape.id, word.id, rad_to_deg(yaw)])
 
 
 func place_for_test() -> void:
-	_try_place()
+	try_place_validated(_ray_endpoint(), 0.0)
+
+
+## 测试/影片用蓝图放置：指定 形状/词条/位置（走同一校验）
+func place_blueprint(shape_i: int, word_i: int, pos: Vector3) -> bool:
+	var keep_shape := shape_idx
+	var keep_word := word_idx
+	shape_idx = shape_i
+	word_idx = word_i
+	var ok := try_place_validated(pos, 0.0)
+	shape_idx = keep_shape
+	word_idx = keep_word
+	return ok
+
+
+func _mesh_for_idx(idx: int) -> Mesh:
+	match idx:
+		0:
+			var s := SphereMesh.new()
+			s.radius = 0.28
+			s.height = 0.56
+			return s
+		1:
+			var p := BoxMesh.new()
+			p.size = Vector3(1.3, 0.22, 0.6)
+			return p
+		2:
+			var b := BoxMesh.new()
+			b.size = Vector3(0.64, 0.64, 0.64)
+			return b
+	return BoxMesh.new()
