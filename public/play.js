@@ -224,3 +224,35 @@ function setupShare() {
     }
   });
 })();
+// —— 反馈与修复动态（督导维护 feedback-board.json，AI 修复后回复版本号并自动折叠） ——
+(function(){
+  function bid(){ try{ return new URLSearchParams(location.search).get('id')||''; }catch(e){ return ''; } }
+  fetch('feedback-board.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(board=>{
+    if(!board||!board.items) return;
+    const id=bid().toLowerCase();
+    const base=id.split('-v')[0];
+    const mine=board.items.filter(x=>{
+      const b=String(x.build||'').toLowerCase();
+      return b===id || b.startsWith(base+'-v') || base==='demo-07';
+    });
+    const open=mine.filter(x=>x.status==='open'), fixed=mine.filter(x=>x.status==='fixed');
+    const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    if(!mine.length) return;
+    const eo=document.getElementById('fb-empty'); if(eo) eo.hidden=true;
+    const eo2=document.getElementById('fb-open');
+    if(eo2) eo2.innerHTML=open.map(x=>(
+      '<div style="border-left:3px solid #e6b800;padding:4px 8px;margin:4px 0">'+
+      '<b>'+esc(x.star)+'</b> <span class="muted">'+esc(x.ts)+'</span><br>'+esc(x.text)+
+      '<div class="muted" style="font-size:12px">编号 '+esc(x.id)+' · 已受理，修复后将在此回复</div></div>'
+    )).join('');
+    if(fixed.length){
+      const bx=document.getElementById('fb-fixed-box'); if(bx) bx.hidden=false;
+      const fx=document.getElementById('fb-fixed');
+      if(fx) fx.innerHTML=fixed.map(x=>(
+        '<div style="border-left:3px solid #5a5;padding:4px 8px;margin:4px 0">'+
+        '<b>'+esc(x.star)+'</b> '+esc(x.text)+'<br>'+
+        '<span style="color:#8f8">🔧 已修复（'+esc(x.fixedIn)+'）</span> <span class="muted">'+esc(x.reply)+'</span></div>'
+      )).join('');
+    }
+  }).catch(function(){});
+})();

@@ -39,6 +39,15 @@
         <button id="submit" class="btn">提交反馈</button>
         <div id="msg" class="msg"></div>
       </div>
+      <div id="fb-board" class="panel" style="border:1px solid #3a5f3a;border-radius:8px;padding:10px;margin:10px 0">
+        <h3 style="margin:0 0 6px">📮 反馈与修复动态 <span class="muted" style="font-weight:400;font-size:12px">（督导维护·自动更新）</span></h3>
+        <div id="fb-open"></div>
+        <details id="fb-fixed-box" style="margin-top:6px" hidden>
+          <summary style="cursor:pointer;color:#9c9">✅ 已修复（点开查看）</summary>
+          <div id="fb-fixed" style="margin-top:6px"></div>
+        </details>
+        <div id="fb-empty" class="muted" style="padding:4px 0">本版本暂无反馈记录——当第一个反馈者！</div>
+      </div>
       <div id="quick-fb" style="border:1px solid #444;border-radius:8px;padding:10px;margin:10px 0">
         <strong>📝 无账号快速反馈（写完点复制，粘给开发组即可）</strong>
         <div style="display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap">
