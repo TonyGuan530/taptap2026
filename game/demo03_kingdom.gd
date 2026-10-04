@@ -36,6 +36,7 @@ const TEX_TOWER_L1: Texture2D = preload("res://assets/demo03/tower_l1.png")
 const TEX_TOWER_L2: Texture2D = preload("res://assets/demo03/tower_l2.png")
 const TEX_HOUSE: Texture2D = preload("res://assets/demo03/house.png")
 const TEX_VILLAGER_WALK: Texture2D = preload("res://assets/demo03/villager_walk.png")
+const TEX_BANNER: Texture2D = preload("res://assets/demo03/title_banner.png")
 # v12 职业专属贴图（绿幕管线）：村民按职业一眼可辨
 const TEX_VILLAGER_ENG: Texture2D = preload("res://assets/demo03/villager_eng.png")
 const TEX_VILLAGER_BOT: Texture2D = preload("res://assets/demo03/villager_bot.png")
@@ -597,6 +598,8 @@ func _draw() -> void:
 		draw_string(FONT, Vector2(t.x, t.y), t.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 1, 1, a))
 	# v11 菜单展示装饰（选模式界面两侧陈列现有贴图）
 	if state == "menu":
+		# v13 标题横幅（绿幕管线装饰画，面板上方；标题文字仍在面板内）
+		draw_texture_rect(TEX_BANNER, Rect2(252.0, 2.0, 456.0, 150.0), false)
 		draw_texture_rect(TEX_TOWER_L1, Rect2(70.0, 398.0, 84.0, 84.0), false)
 		draw_texture_rect(TEX_VILLAGER_WALK, Rect2(168.0, 398.0, 40.0, 70.0), false)
 		draw_texture_rect(TEX_VILLAGER, Rect2(748.0, 398.0, 40.0, 70.0), false)
