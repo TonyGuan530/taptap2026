@@ -356,18 +356,27 @@ func _run() -> void:
 	var ids_before := []
 	for it in c12.shop_items:
 		ids_before.append(String(it.id))
+	var bought_price: int = int(c12.shop_items[0].price)
 	var b1: bool = c12.buy(0)
 	var ids_after := []
 	for it in c12.shop_items:
 		ids_after.append(String(it.id))
-	_check(b1 and c12.shop_items.size() == 2 and not ids_after.has(ids_before[0]) and c12.coins == 47,
-		"B5b 购后移出（%s → 剩 %s），扣币一次 50→%d" % [ids_before[0], ",".join(ids_after), c12.coins])
+	_check(b1 and c12.shop_items.size() == 2 and not ids_after.has(ids_before[0]) and c12.coins == 50 - bought_price,
+		"B5b 购后移出（%s → 剩 %s），按价扣币 50→%d" % [ids_before[0], ",".join(ids_after), c12.coins])
+	# B5c 力度线性叠加：扫种子找池中的 power，连买两级 → mult 恰为 1.4（7 物池下组合随种子变化）
 	var power_lvl: int = int(c12.upgrades.power)
-	c12.buy(0)
-	c12.shop_skip()
-	c12.enter_shop()
-	var b2: bool = c12.buy(0)
-	_check(b2 and int(c12.upgrades.power) == power_lvl + 1 and absf(c12.power_mult() - 1.4) < VAL_EPS,
+	var buys := 0
+	for k in 80:
+		if buys >= 2 or c12.coins < 3:
+			break
+		c12.rng.seed = 200 + k
+		c12.enter_shop()
+		for i in c12.shop_items.size():
+			if String(c12.shop_items[i].id) == "power" and c12.coins >= 3:
+				if c12.buy(i):
+					buys += 1
+				break
+	_check(buys == 2 and int(c12.upgrades.power) == power_lvl + 2 and absf(c12.power_mult() - 1.4) < VAL_EPS,
 		"B5c 力度线性叠加 ×2 级 → 1+0.2×2=1.4")
 	var c13 := _new_core()
 	c13.coins = 10

@@ -71,6 +71,7 @@ const SHOP_POOL := [
 	{id = "prop", name = "螺旋桨", price = 6, unique = true, desc = "沿机头方向的恒定推力，唯一"},
 	{id = "trimtool", name = "配平仪", price = 4, unique = true, desc = "配平对俯仰的影响减半，唯一"},
 	{id = "stiff", name = "纸面加固", price = 4, desc = "折线阻力 -15%/级，可叠加"},
+	{id = "ballast", name = "重心铅条", price = 5, desc = "配平收敛 30%/级（狂野折法变温顺），可叠加"},
 	{id = "tough", name = "韧性", price = 3, unique = true, desc = "落地弹跳一次不直接判负，唯一"},
 ]
 
@@ -80,7 +81,7 @@ var state := "menu"          # menu / fold / throw / fly / settle / shop / final
 var level_idx := 0
 var unlocked := 0
 var coins := 0
-var upgrades := {power = 0, wing = 0, stiff = 0}   # 可叠加强化级数（C4 加纸面加固）
+var upgrades := {power = 0, wing = 0, stiff = 0, ballast = 0}   # 可叠加强化级数（C4 纸面加固 / C7 重心铅条）
 var owned := []
 var shop_items := []
 var total_distance := 0.0
@@ -99,6 +100,7 @@ var velocity := Vector2.ZERO
 var pitch := 0.0
 var eff_lift := 0.0
 var eff_drag_f := 0.0        # C4：投掷时定格的有效折线阻力（含纸面加固）
+var eff_trim := 0.0          # C7：投掷时定格的有效配平（含重心铅条收敛；angle_forgive 仍用原配平）
 var flight_time := 0.0
 var flight_distance := 0.0
 var apex_m := 0.0
@@ -204,6 +206,8 @@ func do_throw(angle_deg: float, power: float) -> void:
 	var v0: float = LAUNCH_V * pw * power_mult()
 	eff_lift = float(plane_params.lift_area) * wing_mult()
 	eff_drag_f = float(plane_params.drag_f) * stiff_mult()
+	# C7：配平收敛（仅影响飞行性格 lift_tilt/俯仰偏置；angle_forgive 窗口仍按折线原配平）
+	eff_trim = float(plane_params.trim) * ballast_mult()
 	velocity = Vector2.from_angle(-deg_to_rad(throw_angle)) * v0
 	pitch = -deg_to_rad(throw_angle)
 	plane_pos = Vector2(START_X, GROUND_Y - 40.0)
@@ -253,7 +257,7 @@ func step(delta: float) -> String:
 		lateral_vel = 0.0
 	var spd := velocity.length()
 	var lift_up: float = minf(LIFT_K * eff_lift * spd * spd, GRAV * 0.95)
-	var t_trim: float = clampf(float(plane_params.trim), -1.5, 1.5)
+	var t_trim: float = clampf(eff_trim, -1.5, 1.5)
 	var lift_scale := 1.0
 	var lift_tilt: float = t_trim * 0.22
 	if t_trim < -0.05:
@@ -278,7 +282,7 @@ func step(delta: float) -> String:
 		acc += Vector2.from_angle(pitch) * PROP_THRUST
 	velocity += acc * delta
 	var d_ang := wrapf(velocity.angle() - pitch, -PI, PI)
-	pitch += (PITCH_FOLLOW * d_ang + 0.35 * clampf(float(plane_params.trim), -1.0, 1.0)) * delta
+	pitch += (PITCH_FOLLOW * d_ang + 0.35 * clampf(eff_trim, -1.0, 1.0)) * delta
 	var prev_x := plane_pos.x
 	plane_pos += velocity * delta
 	apex_m = maxf(apex_m, (GROUND_Y - plane_pos.y) / PX_PER_M)
@@ -399,6 +403,8 @@ func buy(idx: int) -> bool:
 		upgrades.wing = int(upgrades.wing) + 1
 	elif id == "stiff":
 		upgrades.stiff = int(upgrades.stiff) + 1
+	elif id == "ballast":
+		upgrades.ballast = int(upgrades.ballast) + 1
 	else:
 		owned.append(id)
 	shop_items.remove_at(idx)
@@ -412,7 +418,7 @@ func shop_skip() -> void:
 
 func reset_run() -> void:
 	coins = 0
-	upgrades = {power = 0, wing = 0, stiff = 0}
+	upgrades = {power = 0, wing = 0, stiff = 0, ballast = 0}
 	owned = []
 	unlocked = 0
 	total_distance = 0.0
@@ -431,6 +437,11 @@ func wing_mult() -> float:
 ## 阶段 C4 新商店物品：纸面加固（每级折线阻力 -15%，下限 0.25 防负阻力）
 func stiff_mult() -> float:
 	return maxf(1.0 - 0.15 * float(upgrades.get("stiff", 0)), 0.25)
+
+
+## 阶段 C7 新商店物品：重心铅条（每级配平收敛 30%，下限 0.1；仅影响飞行性格，angle_forgive 用原配平）
+func ballast_mult() -> float:
+	return maxf(1.0 - 0.3 * float(upgrades.get("ballast", 0)), 0.1)
 
 
 func has_upgrade(id: String) -> bool:
