@@ -78,18 +78,19 @@ func _run() -> void:
 	else:
 		_fail("穿墙：距岩石中心仅 %.2fm" % dist_to_center)
 
-	# ---- 5 饮水 ----
+	# ---- 5 喝水（阶段B 语义：水塘直接解渴 +40，便携水由集水器产出）----
 	dino.position = scene.WATER_POS + Vector3(1.0, 0.1, 0)
 	await physics_frame
 	await physics_frame
-	var before_water: int = scene.inventory.water
+	scene.thirst = 50.0
+	await physics_frame
 	Input.action_press("interact")
 	await physics_frame
 	Input.action_release("interact")
-	if scene.inventory.water == before_water + 1:
-		_ok("饮水 +1")
+	if absf(scene.thirst - 90.0) < 1.0:
+		_ok("水塘喝水：口渴 50→%.1f" % scene.thirst)
 	else:
-		_fail("饮水失败 water=%d" % scene.inventory.water)
+		_fail("喝水失败 thirst=%.1f" % scene.thirst)
 
 	if fails == 0:
 		print("==== HD2D-A: 5/5 PASS ====")

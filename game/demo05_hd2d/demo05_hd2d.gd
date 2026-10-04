@@ -1,40 +1,93 @@
 extends Node3D
-## DEMO5 HD-2D 恐龙生存 · 阶段 A（灰盒）
-## 指南：taptap2026-demo05-hd2d-zcode-guide-2026-10-04.md
-## 直接操控一只恐龙：WASD 移动（相机相对）、E 采集（浆果/饮水）、岩石碰撞、背包 HUD。
-## 世界/碰撞为 3D；恐龙为 2D 精灵（临时贴图，正式像素帧后换）。
-## 验收（阶段 A）：绕岩石走到资源点、采集、库存变化、离开再返回；无重复领取、无穿墙。
+## DEMO5 HD-2D 恐龙生存 · 阶段 B（营地与生存）
+## 指南：taptap2026-demo05-hd2d-zcode-guide-2026-10-04.md §6 阶段B
+## 新增：三种设施（储备堆/集水器/枝叶窝）、建造模式（B 选型 / 幽灵跟随 / E 放置 / Esc 取消）、
+## 饥饿口渴需求（Q 吃 / R 喝）、最小昼夜（昼 60s / 夜 30s）。
+## 验收（阶段 B）：无效放置不扣款；采集建成功能设施；营地确实影响生存。
 
 const MOVE_SPEED := 6.0
 const INTERACT_RANGE := 2.2
 const GRAVITY := 18.0
 
-## 资源点（手工布点，阶段 C 扩展为五地域）
+## 昼夜（最小循环：昼 60s / 夜 30s）
+const DAY_LEN := 60.0
+const NIGHT_LEN := 30.0
+
+## 资源点
 const BERRY_POS := Vector3(-6.0, 0.0, -4.0)
 const WATER_POS := Vector3(6.0, 0.0, -5.0)
+const TREE_POS := Vector3(8.5, 0.0, 3.0)
 const BERRY_START_STOCK := 3
+const TREE_START_STOCK := 3
+const BERRY_REGEN := 20.0
+const TREE_REGEN := 25.0
 
-## 岩石障碍（验证碰撞与绕行）
+## 需求
+const HUNGER_MAX := 100.0
+const THIRST_MAX := 100.0
+const HP_MAX := 100.0
+const HUNGER_DRAIN := 1.0 / 1.2
+const THIRST_DRAIN := 1.0 / 1.0
+const HP_DRAIN_STARVE := 1.5
+const EAT_HUNGER := 35.0
+const DRINK_THIRST := 40.0
+
+## 建造配方（wood 消耗）
+const RECIPES := [
+	{id = "storage", name = "储备堆", cost = 4, desc = "存取食物与饮水"},
+	{id = "collector", name = "集水器", cost = 3, desc = "缓慢集水（上限 3）"},
+	{id = "shelter", name = "枝叶窝", cost = 6, desc = "夜晚入睡跳到黎明"},
+]
+const BUILD_COLORS := {
+	"storage": Color(0.75, 0.6, 0.35), "collector": Color(0.35, 0.55, 0.75),
+	"shelter": Color(0.45, 0.6, 0.4),
+}
+
+## 岩石障碍
 const ROCKS := [
 	{pos = Vector3(0, 0.75, -2), size = Vector3(3, 1.5, 2)},
 	{pos = Vector3(-3, 0.75, 3), size = Vector3(2, 1.5, 3)},
 	{pos = Vector3(4, 0.75, 3.5), size = Vector3(2.5, 1.5, 2)},
 ]
 
-var inventory := {"food": 0, "water": 0}
+# —— 运行状态 ——
+var inventory := {"food": 0, "water": 0, "wood": 0}
+var pile := {"food": 0, "water": 0}
 var berry_stock := BERRY_START_STOCK
-var interact_prompt := ""
+var berry_regen := 0.0
+var tree_stock := TREE_START_STOCK
+var tree_regen := 0.0
+var hunger := HUNGER_MAX
+var thirst := THIRST_MAX
+var hp := HP_MAX
+var day_time := 0.0
+var day_num := 1
+var is_night := false
+var collector_stock := 0
+var collector_timer := 0.0
+var buildings: Array = []          # {kind, pos, node}
+var build_mode := false
+var build_recipe := 0
+var ghost: Node3D
+var ghost_mesh: MeshInstance3D
+var ghost_mat: StandardMaterial3D
+var ghost_pos := Vector3.ZERO
 var interact_kind := ""
-var nearest_resource: Node3D
+var interact_prompt := ""
+var slept_tonight := false
+var facing := Vector3(0, 0, -1)   # 放置方向（跟随移动朝向）
+var dead := false
 var dino: CharacterBody3D
 var cam_pivot: Node3D
-var hud_food: Label
-var hud_water: Label
+var berry_fruits: Array = []
+var hud_labels: Array = []
 var hud_prompt: Label
+var hud_hint: Label
 
 func _ready() -> void:
-	# 输入动作运行时注册（WASD 移动 + E 交互）
-	for pair in [["mv_up", KEY_W], ["mv_left", KEY_A], ["mv_down", KEY_S], ["mv_right", KEY_D], ["interact", KEY_E]]:
+	for pair in [["mv_up", KEY_W], ["mv_left", KEY_A], ["mv_down", KEY_S], ["mv_right", KEY_D],
+			["interact", KEY_E], ["eat", KEY_Q], ["drink", KEY_R], ["build", KEY_B],
+			["recipe1", KEY_1], ["recipe2", KEY_2], ["recipe3", KEY_3], ["restart", KEY_ENTER]]:
 		if not InputMap.has_action(pair[0]):
 			var ev := InputEventKey.new()
 			ev.keycode = pair[1]
@@ -55,13 +108,10 @@ func _build_world() -> void:
 	env.ambient_light_energy = 0.7
 	world_env.environment = env
 	add_child(world_env)
-
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-50, -30, 0)
 	sun.light_energy = 1.1
 	add_child(sun)
-
-	# 地面：40×40 灰盒 + 碰撞
 	var ground := StaticBody3D.new()
 	ground.name = "Ground"
 	var gmesh := MeshInstance3D.new()
@@ -79,8 +129,6 @@ func _build_world() -> void:
 	gcol.position = Vector3(0, -0.1, 0)
 	ground.add_child(gcol)
 	add_child(ground)
-
-	# 边界墙（防走出地图）
 	for wall in [
 		{pos = Vector3(0, 1, -20), size = Vector3(40, 2, 0.5)},
 		{pos = Vector3(0, 1, 20), size = Vector3(40, 2, 0.5)},
@@ -95,8 +143,6 @@ func _build_world() -> void:
 		wcol.position = wall.pos
 		wbody.add_child(wcol)
 		add_child(wbody)
-
-	# 岩石障碍（碰撞 + 网格）
 	for r in ROCKS:
 		var rock := StaticBody3D.new()
 		var rmesh := MeshInstance3D.new()
@@ -115,9 +161,7 @@ func _build_world() -> void:
 		rcol.position = r.pos
 		rock.add_child(rcol)
 		add_child(rock)
-
-	# 浆果丛（红球标记）
-	var berry := StaticBody3D.new()
+	var berry := Node3D.new()
 	berry.name = "BerryNode"
 	berry.position = BERRY_POS
 	var bmesh := MeshInstance3D.new()
@@ -126,11 +170,11 @@ func _build_world() -> void:
 	bsphere.height = 1.0
 	bmesh.mesh = bsphere
 	var bmat := StandardMaterial3D.new()
-	bmat.albedo_color = Color(0.55, 0.3, 0.25)
+	bmat.albedo_color = Color(0.35, 0.5, 0.28)
 	bmesh.material_override = bmat
 	bmesh.position = Vector3(0, 0.5, 0)
 	berry.add_child(bmesh)
-	for k in 3:
+	for k in BERRY_START_STOCK:
 		var fruit := MeshInstance3D.new()
 		var fsphere := SphereMesh.new()
 		fsphere.radius = 0.12
@@ -140,13 +184,12 @@ func _build_world() -> void:
 		fmat.albedo_color = Color(0.9, 0.25, 0.25)
 		fruit.material_override = fmat
 		var ang := k * TAU / 3.0
-		fruit.position = Vector3(cos(ang) * 0.35, 0.7, sin(ang) * 0.35)
+		fruit.position = Vector3(cos(ang) * 0.35, 0.75, sin(ang) * 0.35)
 		fruit.name = "Fruit%d" % k
+		berry_fruits.append(fruit)
 		berry.add_child(fruit)
 	add_child(berry)
-
-	# 水潭（蓝柱标记）
-	var water := StaticBody3D.new()
+	var water := Node3D.new()
 	water.name = "WaterNode"
 	water.position = WATER_POS
 	var wmesh := MeshInstance3D.new()
@@ -155,12 +198,36 @@ func _build_world() -> void:
 	wcyl.bottom_radius = 0.9
 	wcyl.height = 0.2
 	wmesh.mesh = wcyl
-	var wmat2 := StandardMaterial3D.new()
-	wmat2.albedo_color = Color(0.25, 0.5, 0.75)
-	wmesh.material_override = wmat2
+	var wmat := StandardMaterial3D.new()
+	wmat.albedo_color = Color(0.25, 0.5, 0.75)
+	wmesh.material_override = wmat
 	wmesh.position = Vector3(0, 0.1, 0)
 	water.add_child(wmesh)
 	add_child(water)
+	var tree := Node3D.new()
+	tree.name = "TreeNode"
+	tree.position = TREE_POS
+	var tmesh := MeshInstance3D.new()
+	var tcyl := CylinderMesh.new()
+	tcyl.top_radius = 0.14
+	tcyl.bottom_radius = 0.2
+	tcyl.height = 2.4
+	tmesh.mesh = tcyl
+	var tmat := StandardMaterial3D.new()
+	tmat.albedo_color = Color(0.45, 0.33, 0.22)
+	tmesh.material_override = tmat
+	tmesh.position = Vector3(0, 1.2, 0)
+	tree.add_child(tmesh)
+	var crown := MeshInstance3D.new()
+	var csphere := SphereMesh.new()
+	csphere.radius = 0.9
+	crown.mesh = csphere
+	var cmat := StandardMaterial3D.new()
+	cmat.albedo_color = Color(0.3, 0.5, 0.25)
+	crown.material_override = cmat
+	crown.position = Vector3(0, 2.6, 0)
+	tree.add_child(crown)
+	add_child(tree)
 
 func _build_dino() -> void:
 	dino = CharacterBody3D.new()
@@ -178,11 +245,10 @@ func _build_dino() -> void:
 	var sprite := Sprite3D.new()
 	sprite.texture = load("res://art/dino.png")
 	sprite.pixel_size = 0.0018
-	sprite.billboard = BaseMaterial3D.BILLBOARD_DISABLED
 	sprite.shaded = true
 	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
 	sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	sprite.offset = Vector2(0, 620)  # 脚底锚点：贴图中心上移半高
+	sprite.offset = Vector2(0, 620)
 	sprite.position = Vector3(0, 0.02, 0)
 	pivot.add_child(sprite)
 	dino.position = Vector3(0, 0.1, 4)
@@ -200,31 +266,51 @@ func _build_camera() -> void:
 	cam_pivot.position = Vector3(0, 0, 4)
 	cam.current = true
 
+func _mk_label(ui: CanvasLayer, pos: Vector2, col: Color, size := 18) -> Label:
+	var l := Label.new()
+	l.position = pos
+	l.add_theme_color_override("font_color", col)
+	l.add_theme_font_size_override("font_size", size)
+	ui.add_child(l)
+	return l
+
 func _build_hud() -> void:
 	var hud := CanvasLayer.new()
 	hud.name = "HUD"
 	add_child(hud)
-	hud_food = _mk_label(hud, Vector2(16, 10), Color("ffd54f"))
-	hud_water = _mk_label(hud, Vector2(120, 10), Color("4fc3f7"))
-	hud_prompt = _mk_label(hud, Vector2(16, 44), Color("ffe082"))
-	hud_prompt.add_theme_font_size_override("font_size", 18)
-	var help := _mk_label(hud, Vector2(16, 500), Color("8b94a7"))
-	help.text = "WASD 移动 · E 采集/交互 · 走到资源点旁按 E"
-	help.add_theme_font_size_override("font_size", 14)
-
-func _mk_label(ui: CanvasLayer, pos: Vector2, col: Color) -> Label:
-	var l := Label.new()
-	l.position = pos
-	l.add_theme_color_override("font_color", col)
-	l.add_theme_font_size_override("font_size", 18)
-	ui.add_child(l)
-	return l
+	hud_labels = [
+		_mk_label(hud, Vector2(16, 10), Color("ffd54f")),
+		_mk_label(hud, Vector2(136, 10), Color("4fc3f7")),
+		_mk_label(hud, Vector2(256, 10), Color("a1887f")),
+		_mk_label(hud, Vector2(376, 10), Color("ef5350")),
+		_mk_label(hud, Vector2(496, 10), Color("ffa726")),
+		_mk_label(hud, Vector2(616, 10), Color("4fc3f7")),
+		_mk_label(hud, Vector2(736, 10), Color("9ccc65")),
+	]
+	hud_prompt = _mk_label(hud, Vector2(16, 44), Color("ffe082"), 18)
+	hud_hint = _mk_label(hud, Vector2(16, 500), Color("8b94a7"), 14)
+	hud_hint.text = "WASD 移动 · E 交互 · Q 吃 · R 喝 · B 建造（1/2/3 选型，E 放置，Esc 取消）"
 
 func _process(delta: float) -> void:
-	# 相机跟随恐龙（XZ 平面）
-	if dino and cam_pivot:
-		cam_pivot.position = Vector3(dino.position.x, 0, dino.position.z + 4)
-	# 移动（相机相对 = 世界轴，固定方位）
+	# —— 昼夜 ——
+	if not dead:
+		day_time += delta
+	var cycle := DAY_LEN + NIGHT_LEN
+	if day_time >= cycle:
+		day_time -= cycle
+		day_num += 1
+		slept_tonight = false
+	is_night = day_time >= DAY_LEN
+	# —— 死亡 / 重开 ——
+	if dead:
+		hud_prompt.text = "你死了（第 %d 天）· 按 Enter 重来" % day_num
+		if Input.is_action_just_pressed("restart"):
+			_reset_run()
+		return
+	if hp <= 0.0:
+		dead = true
+		return
+	# —— 移动 ——
 	var mv := Vector2.ZERO
 	if Input.is_action_pressed("mv_left"):
 		mv.x -= 1
@@ -237,23 +323,91 @@ func _process(delta: float) -> void:
 	if dino and mv != Vector2.ZERO:
 		dino.velocity.x = mv.x * MOVE_SPEED
 		dino.velocity.z = mv.y * MOVE_SPEED
-	else:
+	elif dino:
 		dino.velocity.x = 0
 		dino.velocity.z = 0
-	if not dino.is_on_floor():
+	if dino and not dino.is_on_floor():
 		dino.velocity.y -= GRAVITY * delta
-	else:
-		dino.velocity.y = 0.0
 	if dino:
 		dino.move_and_slide()
-	# 交互检测
+	# —— 朝向（由移动速度决定，静止时保持）——
+	if dino:
+		var vel := Vector3(dino.velocity.x, 0, dino.velocity.z)
+		if vel.length_squared() > 0.5:
+			facing = vel.normalized()
+	# —— 建造幽灵跟随 ——
+	if build_mode and dino and ghost:
+		ghost_pos = Vector3(dino.position.x, 0, dino.position.z) + facing * 2.2
+		ghost_pos.y = 0.0
+		ghost.position = ghost_pos
+		var placeable := _can_place_at(ghost_pos)
+		if ghost_mat:
+			ghost_mat.albedo_color = Color(0.4, 0.9, 0.4, 0.5) if placeable else Color(0.95, 0.35, 0.3, 0.55)
+	# —— 需求 ——
+	hunger = maxf(0.0, hunger - HUNGER_DRAIN * delta)
+	thirst = maxf(0.0, thirst - THIRST_DRAIN * delta)
+	var drain := 0.0
+	if hunger <= 0.0:
+		drain += HP_DRAIN_STARVE
+	if thirst <= 0.0:
+		drain += HP_DRAIN_STARVE
+	if drain > 0.0:
+		hp = maxf(0.0, hp - drain * delta)
+	# —— 资源再生 ——
+	if berry_stock < BERRY_START_STOCK:
+		berry_regen += delta
+		if berry_regen >= BERRY_REGEN:
+			berry_regen = 0.0
+			berry_stock += 1
+	for i in berry_fruits.size():
+		berry_fruits[i].visible = i < berry_stock
+	if tree_stock < TREE_START_STOCK:
+		tree_regen += delta
+		if tree_regen >= TREE_REGEN:
+			tree_regen = 0.0
+			tree_stock += 1
+	# —— 集水器（建成才工作）——
+	var has_collector := false
+	for b in buildings:
+		if b.kind == "collector":
+			has_collector = true
+	if has_collector and collector_stock < 3:
+		collector_timer += delta
+		if collector_timer >= 15.0:
+			collector_timer = 0.0
+			collector_stock += 1
+	# —— 输入：建造选型 ——
+	if build_mode:
+		for i in RECIPES.size():
+			if Input.is_action_just_pressed("recipe%d" % (i + 1)):
+				build_recipe = i
+	# —— 交互 ——
 	_update_interact()
-	if Input.is_action_just_pressed("interact") and interact_kind != "":
-		_do_interact()
-	# HUD
-	hud_food.text = "食物 %d" % inventory.food
-	hud_water.text = "饮水 %d" % inventory.water
-	hud_prompt.text = interact_prompt
+	if Input.is_action_just_pressed("interact"):
+		if build_mode:
+			_try_place()
+		elif interact_kind != "":
+			_do_interact()
+	if Input.is_action_just_pressed("eat"):
+		_eat()
+	if Input.is_action_just_pressed("drink"):
+		_drink_from_inventory()
+	if Input.is_action_just_pressed("build"):
+		_toggle_build()
+	if build_mode and Input.is_action_just_pressed("ui_cancel"):
+		_toggle_build()
+	# —— 相机跟随 ——
+	if dino and cam_pivot:
+		cam_pivot.position = Vector3(dino.position.x, 0, dino.position.z + 4)
+	# —— HUD ——
+	hud_labels[0].text = "食物 %d" % inventory.food
+	hud_labels[1].text = "饮水 %d" % inventory.water
+	hud_labels[2].text = "木材 %d" % inventory.wood
+	hud_labels[3].text = "生命 %d" % int(hp)
+	hud_labels[4].text = "饥饿 %d" % int(hunger)
+	hud_labels[5].text = "口渴 %d" % int(thirst)
+	hud_labels[6].text = "第 %d 天 · %s" % [day_num, "夜" if is_night else "昼"]
+	hud_prompt.text = interact_prompt + ("　[B 建造中：%s — E 放置 / Esc 取消]" % RECIPES[build_recipe].name if build_mode else "")
 
 func _update_interact() -> void:
 	interact_kind = ""
@@ -262,32 +416,188 @@ func _update_interact() -> void:
 		return
 	var dp := dino.position
 	if berry_stock > 0 and dp.distance_to(BERRY_POS) < INTERACT_RANGE + 0.5:
-		interact_kind = "food"
-		interact_prompt = "[E] 采集浆果（剩余 %d）" % berry_stock
-		nearest_resource = get_node_or_null("BerryNode")
+		interact_kind = "berry"
+		interact_prompt = "[E] 采浆果（剩余 %d）" % berry_stock
 		return
 	if dp.distance_to(WATER_POS) < INTERACT_RANGE + 0.5:
-		interact_kind = "water"
-		interact_prompt = "[E] 喝水"
-		nearest_resource = get_node_or_null("WaterNode")
+		interact_kind = "pond"
+		interact_prompt = "[E] 喝水（口渴 +%d）" % int(DRINK_THIRST)
+		return
+	if tree_stock > 0 and dp.distance_to(TREE_POS) < INTERACT_RANGE + 0.5:
+		interact_kind = "tree"
+		interact_prompt = "[E] 拾枯枝（剩余 %d）" % tree_stock
+		return
+	for b in buildings:
+		if dp.distance_to(b.pos) < INTERACT_RANGE + 0.5:
+			match b.kind:
+				"storage":
+					if pile.food > 0 and hunger < HUNGER_MAX - 1.0:
+						interact_kind = "pile_food"
+						interact_prompt = "[E] 取食（堆 %d）" % pile.food
+					elif pile.water > 0 and thirst < THIRST_MAX - 1.0:
+						interact_kind = "pile_water"
+						interact_prompt = "[E] 取水（堆 %d）" % pile.water
+					elif inventory.food + inventory.water > 0:
+						interact_kind = "pile_dep"
+						interact_prompt = "[E] 存入食物/饮水"
+				"collector":
+					if collector_stock > 0:
+						interact_kind = "collector"
+						interact_prompt = "[E] 取水（器 %d）" % collector_stock
+				"shelter":
+					interact_kind = "shelter"
+					interact_prompt = "[E] 入窝休息" + ("" if is_night else "（夜晚才睡得着）")
 
 func _do_interact() -> void:
 	match interact_kind:
-		"food":
+		"berry":
 			if berry_stock > 0:
 				berry_stock -= 1
 				inventory.food += 1
-				_refresh_berry_fruits()
 				interact_prompt = ""
-		"water":
-			inventory.water += 1
+		"pond":
+			thirst = minf(THIRST_MAX, thirst + DRINK_THIRST)
 			interact_prompt = ""
+		"tree":
+			if tree_stock > 0:
+				tree_stock -= 1
+				inventory.wood += 1
+				interact_prompt = ""
+		"pile_food":
+			if pile.food > 0:
+				pile.food -= 1
+				hunger = minf(HUNGER_MAX, hunger + EAT_HUNGER)
+				interact_prompt = ""
+		"pile_water":
+			if pile.water > 0:
+				pile.water -= 1
+				thirst = minf(THIRST_MAX, thirst + DRINK_THIRST)
+				interact_prompt = ""
+		"pile_dep":
+			if inventory.food > 0:
+				pile.food += inventory.food
+				inventory.food = 0
+			if inventory.water > 0:
+				pile.water += inventory.water
+				inventory.water = 0
+			interact_prompt = ""
+		"collector":
+			if collector_stock > 0:
+				collector_stock -= 1
+				inventory.water += 1
+				interact_prompt = ""
+		"shelter":
+			if is_night:
+				day_time = 0.0
+				day_num += 1
+				is_night = false
+				hp = minf(HP_MAX, hp + 25.0)
+				hunger = maxf(0.0, hunger - 8.0)
+				thirst = maxf(0.0, thirst - 10.0)
+				interact_prompt = "睡到黎明（第 %d 天）" % day_num
 
-func _refresh_berry_fruits() -> void:
-	var node := get_node_or_null("BerryNode")
-	if node == null:
+func _eat() -> void:
+	if inventory.food > 0 and hunger < HUNGER_MAX - 1.0:
+		inventory.food -= 1
+		hunger = minf(HUNGER_MAX, hunger + EAT_HUNGER)
+
+func _drink_from_inventory() -> void:
+	if inventory.water > 0 and thirst < THIRST_MAX - 1.0:
+		inventory.water -= 1
+		thirst = minf(THIRST_MAX, thirst + DRINK_THIRST)
+
+func _toggle_build() -> void:
+	build_mode = not build_mode
+	if build_mode and ghost == null:
+		ghost = Node3D.new()
+		ghost.name = "BuildGhost"
+		ghost_mesh = MeshInstance3D.new()
+		var box := BoxMesh.new()
+		box.size = Vector3(1.5, 1.0, 1.5)
+		ghost_mesh.mesh = box
+		ghost_mat = StandardMaterial3D.new()
+		ghost_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		ghost_mat.albedo_color = Color(0.4, 0.9, 0.4, 0.5)
+		ghost_mesh.material_override = ghost_mat
+		ghost.add_child(ghost_mesh)
+		add_child(ghost)
+	if ghost:
+		ghost.visible = build_mode
+
+## 放置合法性：场内、不压资源点/岩石/已有设施
+func _can_place_at(p: Vector3) -> bool:
+	if absf(p.x) > 18.0 or absf(p.z) > 18.0:
+		return false
+	for spot in [BERRY_POS, WATER_POS, TREE_POS]:
+		if Vector2(p.x, p.z).distance_to(Vector2(spot.x, spot.z)) < 2.0:
+			return false
+	for r in ROCKS:
+		if absf(p.x - r.pos.x) < r.size.x * 0.5 + 1.0 and absf(p.z - r.pos.z) < r.size.z * 0.5 + 1.0:
+			return false
+	for b in buildings:
+		if Vector2(p.x, p.z).distance_to(Vector2(b.pos.x, b.pos.z)) < 2.2:
+			return false
+	return true
+
+## E 放置：无效不扣款、木材不足不生成、有效则扣款+生成+退出建造
+func _try_place() -> void:
+	if not _can_place_at(ghost_pos):
+		interact_prompt = "不能放在这里"
 		return
-	for k in 3:
-		var fruit := node.get_node_or_null("Fruit%d" % k)
-		if fruit:
-			fruit.visible = k < berry_stock
+	var recipe: Dictionary = RECIPES[build_recipe]
+	if inventory.wood < recipe.cost:
+		interact_prompt = "木材不足（需 %d）" % recipe.cost
+		return
+	inventory.wood -= recipe.cost
+	var body := StaticBody3D.new()
+	body.name = "Building_%s" % recipe.id
+	var mi := MeshInstance3D.new()
+	var box := BoxMesh.new()
+	box.size = Vector3(1.5, 1.0, 1.5)
+	mi.mesh = box
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = BUILD_COLORS[recipe.id]
+	mi.material_override = mat
+	mi.position = Vector3(0, 0.5, 0)
+	body.add_child(mi)
+	var col := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = Vector3(1.5, 1.0, 1.5)
+	col.shape = shape
+	col.position = Vector3(0, 0.5, 0)
+	body.add_child(col)
+	body.position = ghost_pos
+	add_child(body)
+	buildings.append({kind = recipe.id, pos = ghost_pos, node = body})
+	interact_prompt = "%s 建成（-木材 %d）" % [recipe.name, recipe.cost]
+	build_mode = false
+	if ghost:
+		ghost.visible = false
+
+func _reset_run() -> void:
+	for b in buildings:
+		if is_instance_valid(b.node):
+			b.node.queue_free()
+	buildings.clear()
+	inventory = {"food": 0, "water": 0, "wood": 0}
+	pile = {"food": 0, "water": 0}
+	berry_stock = BERRY_START_STOCK
+	berry_regen = 0.0
+	tree_stock = TREE_START_STOCK
+	tree_regen = 0.0
+	hunger = HUNGER_MAX
+	thirst = THIRST_MAX
+	hp = HP_MAX
+	day_time = 0.0
+	day_num = 1
+	is_night = false
+	collector_stock = 0
+	collector_timer = 0.0
+	slept_tonight = false
+	build_mode = false
+	if ghost:
+		ghost.visible = false
+	dead = false
+	if dino:
+		dino.position = Vector3(0, 0.1, 4)
+	interact_prompt = "新的开始。"
