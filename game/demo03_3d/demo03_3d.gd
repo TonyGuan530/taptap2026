@@ -103,6 +103,7 @@ func _build_reservoir_comic(built: bool) -> Node3D:
 	res.name = "ComicReservoir"
 	res.interactive = true
 	res.style = style_def
+	res.set_meta("built", built)
 	if built:
 		ModelLib._cylinder(res, 1.6, 1.8, 0.9, Vector3(0, 0.45, 0), Color("b5b4aa"))
 		ModelLib._cylinder(res, 1.45, 1.45, 0.5, Vector3(0, 0.95, 0), Color("4fc3f7"))
@@ -475,18 +476,35 @@ func mode_name(p_mode: String) -> String:
 	return "经典 60 秒"
 
 
-## v7 结算遥测：spend_log → 可读时间线（晴/雨 天气上下文 + 总结行），供真人盲测采集
+## v7 结算遥测：spend_log → 可读时间线（晴/雨 天气上下文 + 目标 + 总结行），供真人盲测采集
 func _format_spend_log() -> String:
 	var kind_names := {"build": "建造", "upgrade": "升级", "promote": "晋升", "command": "灭火指挥", "reservoir": "蓄水池"}
 	var lines: Array[String] = []
 	for rec: Dictionary in sim.spend_log:
 		var t: float = float(rec.t)
 		var weather := "雨" if sim.acid_at(t) else "晴"
-		lines.append("[%5.1fs] %s %s %d水" % [t, weather, str(kind_names.get(str(rec.kind), str(rec.kind))), int(rec.amount)])
+		var kind := str(rec.kind)
+		var target := ""
+		if kind == "build" or kind == "upgrade":
+			target = "槽%d" % (int(rec.get("target", -1)) + 1)
+		elif kind == "promote":
+			target = _villager_name(int(rec.get("target", -1)))
+		elif kind == "command":
+			target = "全员"
+		elif kind == "reservoir":
+			target = "新建"
+		lines.append("[%5.1fs] %s %s·%s %d水" % [t, weather, str(kind_names.get(kind, kind)), target, int(rec.amount)])
 	var result := "败" if sim.round_state == "lose" else ("胜" if sim.round_state == "win" else "—")
 	lines.append("── %s · %s · 终温 %d · 水滴 %d · 消费 %d 笔" % [
 		mode_name(sim.mode), result, int(sim.heat), int(sim.water), sim.spend_log.size()])
 	return "\n".join(lines)
+
+
+func _villager_name(id: int) -> String:
+	for n: Dictionary in sim.villagers:
+		if int(n.id) == id:
+			return "%s·%s" % [str(n.name), str(n.prof)]
+	return "村民%d" % id
 
 
 ## v4 灭火指挥入口（按钮/F 键共用）：成功/冷却中/缺水分支提示

@@ -215,8 +215,8 @@ func _run() -> void:
 	check(scene.sim.round_state == "win" and scene.end_layer.visible, "推进到胜利结算",
 			"%s guard=%d" % [scene.sim.round_state, guard])
 	var log_text := String(scene.end_log_label.text)
-	check(log_text.contains("建造 20水") and log_text.contains("经典 60 秒 · 胜"),
-			"结算时间线含建造与总结行", log_text.replace("\n", " | "))
+	check(log_text.contains("建造·槽1 20水") and log_text.contains("经典 60 秒 · 胜"),
+			"结算时间线含目标与总结行", log_text.replace("\n", " | "))
 	check(scene._format_spend_log().split("\n").size() >= 2, "格式化至少两行")
 
 	# ---- 12. v10 蓄水池：真实点击建造 ----
@@ -241,6 +241,45 @@ func _run() -> void:
 		g18 += 1
 	await process_frame
 	check(String(scene.banner_label.text).contains("热浪"), "热浪横幅显示", scene.banner_label.text)
+
+	# ---- 14. v12 连续重开残留：消费/指挥/横幅/天气/蓄水池视觉清零 ----
+	scene._start("storm")
+	var hw_starts2: Array[float] = [15.0, 30.0, 45.0]
+	for i in scene.sim.acid_events.size():
+		scene.sim.acid_events[i].start = hw_starts2[i]
+	scene.sim.elapsed = 15.5
+	sim_set_water(300.0)
+	var g14 := 0
+	while scene.sim.elapsed < 16.0 and g14 < 100:
+		scene.sim.tick(0.1)
+		g14 += 1
+	await click(screen_of(scene.RES_POS + Vector3(0, 1.2, 0)))
+	scene._try_command_ui()
+	check(scene.sim.reservoir == 1 and scene.sim.cmd_active(), "残留局就绪（池+指挥+横幅）")
+	scene._start("classic")
+	await process_frame
+	check(scene.sim.reservoir == 0 and scene.sim.spend_log.is_empty() and scene.sim.cmd_until == -1.0,
+			"重开后池/消费/指挥清零")
+	check(String(scene.banner_label.text) == "", "重开后横幅清空", scene.banner_label.text)
+	check(not scene.rain.emitting and not scene.drizzle.emitting, "重开后双雨关闭")
+	check(is_instance_valid(scene.comic_reservoir) and not bool(scene.comic_reservoir.get_meta("built")),
+			"重开后蓄水池视觉回虚位")
+
+	# ---- 15. v12 分辨率变化后拾取（验收矩阵项：窗口尺寸/非 16:9 letterbox）----
+	sim_set_water(100.0)
+	root.size = Vector2i(1440, 810)
+	await process_frame
+	await process_frame
+	await click(screen_of(slot_world(1)))
+	check(scene.sim.towers[1] == 1, "1440×810 窗口后点击槽位 2 建造", "win=%s" % str(root.size))
+	root.size = Vector2i(1200, 800)
+	await process_frame
+	await process_frame
+	sim_set_water(100.0)
+	await click(screen_of(slot_world(2)))
+	check(scene.sim.towers[2] == 1, "非 16:9 窗口（letterbox）点击槽位 3 建造", "win=%s" % str(root.size))
+	root.size = Vector2i(960, 540)
+	await process_frame
 
 	print("==== 3D 阶段 B 拾取测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)

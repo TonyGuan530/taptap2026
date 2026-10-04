@@ -210,7 +210,7 @@ func try_build(slot: int) -> bool:
 		return false
 	water -= float(c)
 	towers[slot] = 1
-	spend_log.append({"t": elapsed, "kind": "build", "amount": c})
+	spend_log.append({"t": elapsed, "kind": "build", "amount": c, "target": slot})
 	sim_event.emit("built", {"slot": slot, "level": 1})
 	return true
 
@@ -223,7 +223,7 @@ func try_upgrade(slot: int) -> bool:
 		return false
 	water -= float(c)
 	towers[slot] = 2
-	spend_log.append({"t": elapsed, "kind": "upgrade", "amount": c})
+	spend_log.append({"t": elapsed, "kind": "upgrade", "amount": c, "target": slot})
 	sim_event.emit("upgraded", {"slot": slot, "level": 2})
 	return true
 
@@ -237,7 +237,7 @@ func try_promote(villager_id: int) -> bool:
 				return false
 			water -= float(NPC_UP_COST)
 			n.level = 1
-			spend_log.append({"t": elapsed, "kind": "promote", "amount": NPC_UP_COST})
+			spend_log.append({"t": elapsed, "kind": "promote", "amount": NPC_UP_COST, "target": villager_id})
 			sim_event.emit("promoted", {"id": villager_id})
 			return true
 	return false
@@ -261,7 +261,7 @@ func try_command() -> bool:
 	water -= float(CMD_COST)
 	cmd_until = elapsed + CMD_DUR
 	cmd_ready_at = elapsed + CMD_CD
-	spend_log.append({"t": elapsed, "kind": "command", "amount": CMD_COST})
+	spend_log.append({"t": elapsed, "kind": "command", "amount": CMD_COST, "target": -1})
 	sim_event.emit("command_started", {"until": cmd_until})
 	return true
 
@@ -274,7 +274,7 @@ func try_build_reservoir() -> bool:
 		return false
 	water -= float(RESERVOIR_COST)
 	reservoir = 1
-	spend_log.append({"t": elapsed, "kind": "reservoir", "amount": RESERVOIR_COST})
+	spend_log.append({"t": elapsed, "kind": "reservoir", "amount": RESERVOIR_COST, "target": -2})
 	sim_event.emit("reservoir_built", {})
 	return true
 
