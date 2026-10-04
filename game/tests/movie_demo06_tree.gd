@@ -9,6 +9,7 @@ var lv_f := 0
 var win_wait := 0
 var shot_saved := false
 var lx := -1.0
+var jumped6 := false
 
 
 func _initialize() -> void:
@@ -171,17 +172,21 @@ func _level6(px: float, py: float) -> void:
 		game._try_place(Vector2(220, 401))
 	elif lv_f == 90:
 		game._try_place(Vector2(545, 361))
-	elif lv_f > 120:
-		game.keys[KEY_D] = true
+	elif lv_f > 20:
+		# 出生下落期不持 D（防横移漂过起跳窗）；z1 起跳后才开始右漂
+		if jumped6:
+			game.keys[KEY_D] = true
 		if game.on_floor:
 			var want := false
-			if px > 56.0 and px < 72.0 and py > 420.0:
-				want = true        # 地面 → P1（顶 390）
-			elif px > 240.0 and px < 275.0 and py > 350.0 and py < 400.0:
+			if px > 56.0 and px < 90.0 and py > 420.0:
+				want = true        # 地面 → P1（顶 390，落点即窗内）
+			elif jumped6 and px > 240.0 and px < 275.0 and py > 350.0 and py < 400.0:
 				want = true        # P1 → 塔1（顶 330）
 			elif px > 500.0 and px < 530.0 and py > 310.0 and py < 345.0:
 				want = true        # P2 → 塔2（顶 285）
 			if want:
 				_jump()
+				if px < 100.0:
+					jumped6 = true
 			else:
 				game.keys[KEY_SPACE] = false
