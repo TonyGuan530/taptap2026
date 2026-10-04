@@ -505,27 +505,13 @@ func _resolve_disaster() -> void:
 		]
 		_log_ev(dry_lines[randi() % dry_lines.size()])
 	# ===== 第四幕：余震与兽群（v9 内容层，洞穴深埋不受地裂）=====
-	var aftershock_hit := false
-	for t in TILES:
-		if aftershock_hit:
-			break
-		if t.id == "cave":
-			continue
-		if _tile_total(t.id) > 0:
-			var loss_f: int = int(stored[t.id].food / 4.0)
-			var loss_w: int = int(stored[t.id].water / 4.0)
-			stored[t.id].food = maxi(0, stored[t.id].food - loss_f)
-			stored[t.id].water = maxi(0, stored[t.id].water - loss_w)
-			_log_ev("次日余震震裂了%s的地面，四分之一的储备陷进了裂缝。" % t.name)
-			aftershock_hit = true
-	if not aftershock_hit:
-		_log_ev("次日余震只有轻微晃动，储备无恙。")
-	for t in TILES:
-		if _tile_total(t.id) > 0:
-			stored[t.id].food = maxi(0, stored[t.id].food - 1)
-			stored[t.id].food += 2
-			_log_ev("迁徙兽群路过%s，叼走 1 份储备，但族群猎杀了落单的巨兽——多了 2 份兽肉。" % t.name)
-			break
+	# v22 内容层：发生顺序随机化（兽群先行或余震先行，叙事方差）
+	var herd_first := randf() < 0.5
+	if herd_first:
+		_act4_herd()
+	_act4_aftershock()
+	if not herd_first:
+		_act4_herd()
 	# ===== 第五幕：萨满第二预言（撤离窗口天气，v9 内容层）=====
 	night_weather = "cold" if randf() < 0.5 else "mist"
 	# v18 内容层：宣告文案三变体（随机叙事差异，机制不变——cold 均为撤离耗 1 水）
@@ -550,6 +536,33 @@ func _tile_name(id: String) -> String:
 		if t.id == id:
 			return t.name
 	return id
+
+
+func _act4_aftershock() -> void:
+	var hit := false
+	for t in TILES:
+		if hit:
+			break
+		if t.id == "cave":
+			continue
+		if _tile_total(t.id) > 0:
+			var loss_f: int = int(stored[t.id].food / 4.0)
+			var loss_w: int = int(stored[t.id].water / 4.0)
+			stored[t.id].food = maxi(0, stored[t.id].food - loss_f)
+			stored[t.id].water = maxi(0, stored[t.id].water - loss_w)
+			_log_ev("次日余震震裂了%s的地面，四分之一的储备陷进了裂缝。" % t.name)
+			hit = true
+	if not hit:
+		_log_ev("次日余震只有轻微晃动，储备无恙。")
+
+
+func _act4_herd() -> void:
+	for t in TILES:
+		if _tile_total(t.id) > 0:
+			stored[t.id].food = maxi(0, stored[t.id].food - 1)
+			stored[t.id].food += 2
+			_log_ev("迁徙兽群路过%s，叼走 1 份储备，但族群猎杀了落单的巨兽——多了 2 份兽肉。" % t.name)
+			break
 
 
 func _enter_decide() -> void:
@@ -611,7 +624,13 @@ func _choose_route(i: int) -> void:
 		_log_ev("行军消耗了 %d 份物资（食 %d 水 %d），抵达时还剩 %d 份。" % [consumed, f_use, w_use, margin])
 		if supply.food >= 1 and supply.water >= 1:
 			result = "win"
-			_log_ev("第 %d 天，族群抵达一片没有被灰烬覆盖的新生态区。火山的故事结束了，生存的故事才刚刚开始。" % (5 + i))
+			# v22 内容层：胜利抵达文案三变体
+			var win_lines: Array = [
+				"第 %d 天，族群抵达一片没有被灰烬覆盖的新生态区。火山的故事结束了，生存的故事才刚刚开始。" % (5 + i),
+				"第 %d 天，他们的足印越过最后一道灰脊——前方，是未被火焰触碰的青绿谷地。" % (5 + i),
+				"第 %d 天，族群在晨雾中踏入新生态区。身后的火山仍在咆哮，而他们已经不需要回头了。" % (5 + i),
+			]
+			_log_ev(win_lines[randi() % win_lines.size()])
 		else:
 			result = "partial"
 			_log_ev("族群踉踉跄跄抵达新生态区，但食物或水见底——活下来了，代价惨重。")
