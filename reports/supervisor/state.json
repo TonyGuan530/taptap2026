@@ -1,24 +1,24 @@
 {
-  "checkedAt": "2026-10-04T10:26:00+08:00",
-  "round": 92,
+  "checkedAt": "2026-10-04T10:36:00+08:00",
+  "round": 93,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（10:25 实跑）"
+    "thisRound": "guard SKIP not-foreground（10:35 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 90,
-      "lastDispatch": "10:24",
-      "next": "10:34"
+      "runCount": 91,
+      "lastDispatch": "10:34",
+      "next": "10:44"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "守望轮第二十/二十一次零变更（稳态）"
+      "evidence": "守望轮第二十二/二十三次零变更（稳态）；demo-06 itch 探测：上传通道恢复、CDN 分发仍卡死（服务端定性）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "🔴 空转第 13 次（a0511d9）——失能维持"
+      "evidence": "🔴 失能维持（第 13 次后无新轮）"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
@@ -33,7 +33,7 @@
     "demo-05": {
       "cron": "20,50 * * * *",
       "runCount": 23,
-      "evidence": "🔄 新素材动向：game/art/dino3.png 出现+volcano.gd 改动（待提交确认内容）"
+      "evidence": "✅ v20 交付（99efcda：恐龙三帧待机循环 站立→嗅探→行走，绿幕管线第三帧，4/4 PASS，视频重录）——dino3 素材轮落地"
     },
     "demo-06": {
       "cron": "25,55 * * * *",
@@ -42,13 +42,13 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=80",
+    "health": "ok builds=81（+1：demo-05 v20）",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 138def2",
-    "itch": "故障形态回摆 CDN 占位页（整站层问题持续）；Pages 兜底全在线"
+    "git": "本轮 HEAD 57beb47",
+    "itch": "上传通道恢复+CDN 分发卡死（服务端问题）；Pages 兜底不受影响"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
@@ -57,8 +57,9 @@
   },
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
-    "🔴【需用户决策】Batch 01 人选与排期（唯一阻塞点）；demo-02 会话失能；itch A/B（整站故障挂起）",
-    "demo-05 dino3 素材轮产出核对（10:34）"
+    "🔴【需用户决策】Batch 01 人选与排期（唯一阻塞点）；demo-02 会话失能；itch A/B（分发恢复后再判）",
+    "itch 上传通道恢复——A/B 决策条件部分恢复，观察 CDN 分发",
+    "demo-05 debug05_end.gd 调试文件待其自清理"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
