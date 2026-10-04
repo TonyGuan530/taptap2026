@@ -29,6 +29,8 @@ const SHOTS = [
 	{ id: 'demo-07-v2', name: '简单美食小摊 v2（四关卡）', img: 'demo-07-v2.png', video: 'demo-07-v2.mp4', x: 4400, y: 12180,
 		link: 'https://tonyguan530.github.io/taptap2026/builds/demo-07-v2/index.html' },
 	{ id: 'demo-06', name: '词条涂鸦创造', img: 'demo-06.png', video: 'demo-06.mp4', x: 4400, y: 13660 },
+	{ id: 'demo-06-3d', name: '词条涂鸦创造 3D（阶段A）', img: 'demo-06-3d.png', video: 'demo-06-3d.mp4', x: 4400, y: 14400,
+		link: 'https://tonyguan530.github.io/taptap2026/builds/demo-06-v15/index.html' },
 ];
 
 async function miro(method, url, body) {
