@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/5 04:50:14 · 共 75 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/5 06:50:33 · 共 87 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -95,6 +95,14 @@ headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch C
 
 &#x1f3ae; demo-05-hd2d 运行画面 &#43; 录屏 ▼
 
+### [sticker] @(4400,5480)
+
+&#x1f3ae; demo-05-hd2d 运行画面 &#43; 录屏 ▼
+
+### [sticker] @(4400,5480)
+
+&#x1f3ae; demo-05-hd2d 运行画面 &#43; 录屏 ▼
+
 ### [card] @(4400,5620)
 
 &#x1f3ae; demo-05-hd2d 恐龙火山生存 HD-2D&#xff08;阶段B 建造/需求/昼夜&#xff09;
@@ -102,6 +110,14 @@ headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch C
 ### [card] @(4400,5620)
 
 &#x1f3ae; demo-05-hd2d 恐龙火山生存 HD-2D&#xff08;阶段B/C 建造·需求·昼夜·灰潮&#xff09;
+
+### [card] @(4400,5620)
+
+&#x1f3ae; demo-05-hd2d 恐龙火山生存 HD-2D&#xff08;阶段B/C 建造·需求·昼夜·灰潮·泥流·预报&#xff09;
+
+### [card] @(4400,5620)
+
+&#x1f3ae; demo-05-hd2d 恐龙火山生存 HD-2D&#xff08;阶段B/C 建造·需求·昼夜·灰潮·泥流·预报&#xff09;
 
 ### [sticker] @(5714,5732)
 
@@ -118,6 +134,18 @@ headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch C
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-05-hd2d.png
 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-05-hd2d.mp4
 试玩: https://tonyguan530.github.io/taptap2026/builds/demo-05-hd2d-v3/index.html
+
+### [text] @(4400,5780)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-05-hd2d.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-05-hd2d.mp4
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-05-hd2d-v5/index.html
+
+### [text] @(4400,5780)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-05-hd2d.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-05-hd2d.mp4
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-05-hd2d-v6/index.html
 
 ### [text] @(4400,5840)
 
@@ -284,17 +312,50 @@ DNA 语义对齐 2D v12&#xff1a;高跳×1.45 / 二段×0.95 / 暗区×0.45 / 碎�
 18/18 用例 &#43; 2D 回归 7/7 全绿。
 试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v3/index.html
 
+### [text] @(6300,11520)
+
+2026-10-05 v4&#xff08;机器人全通验证&#xff09;&#xff1a;五关巡游机器人真实输入通关&#xff08;won&#61;true 12/15碎片&#xff09;· 修复2个真bug&#xff08;落地重置缺失/掉坑安全点污染卡死&#xff09;· 规则变化&#xff1a;L3/L5上层捷径改西侧空中栈道&#xff08;3D胶囊跳弧与头顶悬台结构冲突&#xff0c;组合独占可达不变&#xff09;· 录像驱动器就绪待空闲出片。
+18/18 用例 &#43; 2D 回归 7/7 &#43; 巡游 ALL PASS。
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v4/index.html
+
+### [sticker] @(6300,11720)
+
+&#x1f9ec; demo-04-3d 真实画面 &#43; 演示片 ▼
+
 ### [sticker] @(4400,11760)
 
 &#x1f3ae; demo-07 运行画面 &#43; 录屏 ▼
+
+### [card] @(6300,11860)
+
+&#x1f9ec; demo-04-3d v4 无窗口实拍&#xff08;CDP 前台模拟&#xff09;
 
 ### [card] @(4400,11900)
 
 &#x1f3ae; demo-07 简单美食小摊&#xff08;绿幕版&#xff09;
 
+### [text] @(6300,11920)
+
+★★ 五关完整通关演示片&#xff08;v5&#xff09;&#xff1a;https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
+761帧/219s 真实通关 → 33s 延时&#xff08;CDP 无窗口录制&#xff0c;内置巡游机器人 ?tour&#61;1&#xff09;&#xff1b;末帧 L5 四DNA&#43;超级弹跳/夜翼双组合&#43;西侧栈道&#xff0c;12/17 碎片。
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v5/index.html
+
+### [text] @(6300,12020)
+
+截图1(L1 出生·HUD): https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-cdp-a.png
+截图2(蹦蹦兽融合提示·输入已生效): https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-cdp-fuse.jpg
+演示片(CDP 按键注入·行走&#43;跳): https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
+通路: Edge headless &#43; Emulation.setFocusEmulationEnabled&#xff08;无窗口&#xff0c;符合用户红线&#xff09;
+
 ### [text] @(4400,12092)
 
 <p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-07.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-07.mp4 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;</p>
+
+### [text] @(6300,12120)
+
+Web 验收实测&#xff08;v6&#xff0c;全无窗口&#xff09;&#xff1a;iframe 嵌入 ✅ · 遥测下载落地 ✅&#xff08;5事件信封解析&#xff09;· 实验房K ✅ · 中文字体 ✅ · 连续换关 ✅
+实证: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-web-telemetry.png
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v6/index.html
 
 ### [sticker] @(4400,12180)
 

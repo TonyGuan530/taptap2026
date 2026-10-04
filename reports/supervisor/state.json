@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-05T05:12:00+08:00",
-  "round": 110,
+  "checkedAt": "2026-10-05T06:52:00+08:00",
+  "round": 111,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（05:50 前实跑）"
+    "thisRound": "guard SKIP not-foreground（06:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "⚠️ 两轮清理批示均未消化（督导代执行）——流水线消化通道待诊（下轮 ReadSessionContext 或催办注入）；体积巡检自动化要求维持"
+      "evidence": "✅ 流水线活着且高产（5bf93832 10MB 活跃；demo-02 3D v10 五关齐+demo-04 3D v6 盲测就绪 KEEP/HUMAN GATE READY）——清理批示未消化系上下文过长，督导代执行体积巡检（1002M→912M）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -42,22 +42,23 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=18 目录/822M（第二轮清理+补救后，低于软限）",
+    "health": "ok builds=17 目录/912M（巡检清理后，警戒线内）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "75 条（+3=demo-05-hd2d 上板卡；反馈区无新增）",
+    "miro": "87 条（+2 上板卡；反馈区无新增）",
     "feedback": "db.json 零反馈",
-    "git": "main bef389e 已推送",
+    "git": "main f760aea 已推送",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "3D 迁移持续推进（多线阶段B/C 交付中）；builds 体积每轮核查"
+    "queue": "3D 迁移多线阶段B/C 交付中；builds 体积巡检每轮（督导代执行）"
   },
   "watch": [
+    "🔴【硬红线】06:50 巡检合规——持续",
+    "⚠️ demo-04 3D v6 达 HUMAN GATE READY——盲测物料再+1（等待 Batch 01 人选）",
     "✅【Pages 超限已解】第二轮清理+补救完成：822M/18 目录，抽查 4 最新版全 200（05:10 督导代执行）",
-    "⚠️【流水线通道预警】两轮清理批示未消化——下轮跨会话诊断流水线状态",
     "🔴【硬红线】04:50 巡检合规（无违规进程）——持续执行",
     "🔴【硬红线·发现即杀】02:50 巡检击杀 2 违规进程（40376/37752）——每轮持续执行",
     "🆕【Miro Feedback 协议】Feedback Slide 区=用户反馈通道：优先阅读+完成自己在 Miro 标注（miro-post-feedback-note.mjs）+同步 feedback-board.json；否决项：本地AI小模型不可行",
