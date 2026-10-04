@@ -71,6 +71,7 @@ func _btn_center(scene: Node, btn_name: String, parent_hint: String) -> Vector2:
 
 
 func _run() -> void:
+	DisplayServer.window_set_mode(DisplayServer.MAIN_WINDOW_ID, DisplayServer.WINDOW_MODE_MINIMIZED)  # 无弹窗纪律：立即最小化（用户指令 2026-10-04）
 	await process_frame
 	_log("demo-08 3D 阶段 B1 真实输入测试开始（窗口模式）")
 	var scene: Node = load("res://demo08_3d.tscn").instantiate()

@@ -141,6 +141,7 @@ func _throw_l2(scene: Node, folds: Array, ang: float, trim_expect: float, tag: S
 
 
 func _run() -> void:
+	DisplayServer.window_set_mode(DisplayServer.MAIN_WINDOW_ID, DisplayServer.WINDOW_MODE_MINIMIZED)  # 无弹窗纪律：立即最小化（用户指令 2026-10-04）
 	await process_frame
 	_log("demo-08 3D L2 三策略真实输入测试开始（窗口模式，time_scale=1）")
 	var scene: Node = load("res://demo08_3d.tscn").instantiate()
