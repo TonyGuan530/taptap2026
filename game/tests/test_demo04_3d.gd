@@ -350,6 +350,43 @@ func _run() -> void:
 		_fail("完整再跑异常：idx=%d dna=%d total=%d times=%s" % [
 			scene_root.level_idx, ability.dna.size(), ability.shards_total, scene_root.level_times])
 
+	# ---- 16. 遥测 v2：暗区进出事件 + 跳跃计数 + 导出信封落盘 ----
+	scene_root.load_level(0)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	await _teleport(Vector3(24.5, 1.3, 0))   # 进暗区（23.4..36）
+	await _settle_until_floor()
+	await _settle(5)
+	await _tap(KEY_SPACE, 1)                 # 跳一下 → 计数
+	await _teleport(Vector3(20.0, 1.3, 0))   # 出暗区
+	await _settle_until_floor()
+	await _settle(5)
+	var tel: Dictionary = scene_root.stats
+	var evs: Array = scene_root.events
+	var zone_events := 0
+	var entered := false
+	var exited := false
+	for e in evs:
+		if e.type == "zone":
+			zone_events += 1
+			if e.enter:
+				entered = true
+			else:
+				exited = true
+	scene_root._export_telemetry()
+	await physics_frame
+	var fr := FileAccess.open("user://demo04_3d_lab_log.json", FileAccess.READ)
+	var envelope := {}
+	if fr != null:
+		envelope = JSON.parse_string(fr.get_as_text())
+		fr.close()
+	var env_ok: bool = envelope.has("game") and str(envelope.game) == "demo-04-3d" and envelope.has("stats") and envelope.has("events") and envelope.has("tester")
+	if entered and exited and int(tel.jumps) >= 1 and env_ok:
+		_ok("遥测 v2：暗区进出事件（%d 条 zone）+ 跳跃 %d + 信封落盘" % [zone_events, int(tel.jumps)])
+	else:
+		_fail("遥测 v2 异常：entered=%s exited=%s jumps=%d env_ok=%s" % [entered, exited, int(tel.jumps), env_ok])
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:

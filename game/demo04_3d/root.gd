@@ -121,6 +121,8 @@ var _fuse_target: Dictionary = {}
 var last_safe_pos := Vector3(1.0, 0.9, 0)   # 最近安全落点（掉坑恢复，指南 §61）
 var _grounded_ticks := 0                     # 连续接地静止帧数（≥3 才更新安全点）
 var _prev_player_pos := Vector3.ZERO         # 上一帧玩家位置（传送帧检测）
+var stats := {"jumps": 0, "doubles": 0, "falls": 0, "dark_enter": 0, "fuses": 0}  # 会话聚合（遥测 v2）
+var _in_dark_prev := false
 
 var lbl_level: Label
 var lbl_dna: Label
@@ -163,6 +165,7 @@ func _ready() -> void:
 	add_child(player)
 	player.ability_state = ability
 	player.fused.connect(_on_fuse_request)
+	player.jump_performed.connect(_on_jump_performed)
 
 	cam_rig = Node3D.new()
 	cam_rig.name = "CameraRig"
@@ -402,6 +405,11 @@ func _physics_process(delta: float) -> void:
 	var dark: Array = L.dark
 	var in_dark: bool = dark.size() == 2 and float(dark[0]) < player.position.x and player.position.x < float(dark[1])
 	player.in_dark_zone = in_dark
+	if in_dark != _in_dark_prev:
+		_log_ev("zone", {"zone": "dark", "enter": in_dark, "level": level_idx})
+		if in_dark:
+			stats.dark_enter += 1
+		_in_dark_prev = in_dark
 	lbl_dark.visible = in_dark and not ability.has_dna("glow")
 	# 掉坑恢复（指南 §61/§198）：回到此前安全落点，不重开关卡、不丢 DNA/碎墙/碎片、计时继续
 	var moved := player.position.distance_to(_prev_player_pos)
@@ -413,6 +421,7 @@ func _physics_process(delta: float) -> void:
 		player.velocity = Vector3.ZERO
 		_grounded_ticks = 0
 		_toast("掉坑了！回到安全边缘（DNA 与碎片保留）")
+		stats.falls += 1
 		_log_ev("pit_fall", {"level": level_idx})
 	elif player.is_on_floor() and absf(player.velocity.y) < 0.01:
 		# 真实落地静止才记安全点：静止帧 vy≈0（move_and_slide 清掉垂直分量）。
@@ -472,9 +481,15 @@ func _update_fuse_candidate() -> void:
 			best = {"id": a.id, "name": a.name, "d": d}
 	_fuse_target = best
 
+func _on_jump_performed(jump_type: String) -> void:
+	stats.jumps += 1
+	if jump_type == "double":
+		stats.doubles += 1
+
 func _on_fuse_request() -> void:
 	if _fuse_target.is_empty():
 		return
+	stats.fuses += 1
 	_log_ev("dna_fuse", {"id": _fuse_target.id, "level": level_idx})
 	ability.gain_dna(_fuse_target.id)
 
@@ -579,6 +594,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				# 完整再跑（指南 §61）：清总碎片/总用时/评级/组合发现，回第 1 关
 				level_times = []
 				level_ratings = []
+				stats = {"jumps": 0, "doubles": 0, "falls": 0, "dark_enter": 0, "fuses": 0}
 				ability.reset_level_state(false)
 				ability.shards_total = 0
 				mode = "campaign"
@@ -616,10 +632,17 @@ func _export_telemetry() -> void:
 		"stats": stats,
 		"events": events,
 	}
-	var f := FileAccess.open("user://demo04_3d_lab_log.json", FileAccess.WRITE)
-	if f != null:
-		f.store_string(JSON.stringify(envelope, "  "))
-		f.close()
+	DirAccess.make_dir_recursive_absolute("user://demo04_3d_lab_log")
+	var stamp := Time.get_datetime_string_from_system(true).replace(":", "").replace("-", "").replace("T", "_")
+	var paths := ["user://demo04_3d_lab_log.json", "user://demo04_3d_lab_log/%s_%s.json" % [tester_id, stamp]]
+	var ok_n := 0
+	for pp in paths:
+		var f := FileAccess.open(pp, FileAccess.WRITE)
+		if f != null:
+			f.store_string(JSON.stringify(envelope, "  "))
+			f.close()
+			ok_n += 1
+	if ok_n == paths.size():
 		_toast("遥测已导出（%s · %d 事件）" % [tester_id, events.size()])
 	else:
 		_toast("遥测导出失败")
