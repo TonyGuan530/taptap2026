@@ -77,6 +77,9 @@ var interact_prompt := ""
 var slept_tonight := false
 var facing := Vector3(0, 0, -1)   # 放置方向（跟随移动朝向）
 var dead := false
+var night_amount := 0.0
+var sun_light: DirectionalLight3D
+var env_res: Environment
 var dino: CharacterBody3D
 var cam_pivot: Node3D
 var berry_fruits: Array = []
@@ -108,10 +111,12 @@ func _build_world() -> void:
 	env.ambient_light_energy = 0.7
 	world_env.environment = env
 	add_child(world_env)
+	env_res = env
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-50, -30, 0)
 	sun.light_energy = 1.1
 	add_child(sun)
+	sun_light = sun
 	var ground := StaticBody3D.new()
 	ground.name = "Ground"
 	var gmesh := MeshInstance3D.new()
@@ -301,6 +306,14 @@ func _process(delta: float) -> void:
 		day_num += 1
 		slept_tonight = false
 	is_night = day_time >= DAY_LEN
+	# —— 昼夜视觉（光照渐变）——
+	night_amount = move_toward(night_amount, 1.0 if is_night else 0.0, delta * 4.0)
+	if sun_light:
+		sun_light.light_energy = 1.1 * (1.0 - 0.85 * night_amount)
+	if env_res:
+		env_res.ambient_light_energy = lerpf(0.7, 0.18, night_amount)
+		env_res.ambient_light_color = Color(0.75, 0.75, 0.85).lerp(Color(0.25, 0.28, 0.45), night_amount)
+		env_res.background_color = Color(0.12, 0.14, 0.18).lerp(Color(0.03, 0.04, 0.08), night_amount)
 	# —— 死亡 / 重开 ——
 	if dead:
 		hud_prompt.text = "你死了（第 %d 天）· 按 Enter 重来" % day_num
