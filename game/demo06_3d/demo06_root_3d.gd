@@ -34,7 +34,7 @@ const LEVELS := [
 	{"id": "L3", "name": "断层验证", "ink": 130, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(8.2, 1.7, 0), "fall_y": -6.0},
 	{"id": "L4", "name": "翻越高墙", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(8.2, 1.7, 0), "fall_y": -6.0},
 	{"id": "L5", "name": "双沟群岛", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(13.6, 1.7, 0), "fall_y": -6.0},
-	{"id": "L6", "name": "登天梯", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(10.0, 3.8, 0), "fall_y": -6.0},
+	{"id": "L6", "name": "登天梯", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(9.3, 3.65, 0), "fall_y": -6.0},
 ]
 
 var ink := 100
@@ -64,6 +64,7 @@ var ghost_pos := Vector3(2.0, 1.8, 0.0)
 # headless 测试下与真实时钟解耦，保证确定性（Time.get_ticks_msec 在离线渲染会失真）
 var clock := 0.0
 var props_root: Node3D
+var restart_pending := false
 
 
 func _ready() -> void:
@@ -122,6 +123,12 @@ func _build_level() -> void:
 			_build_l2()
 		2:
 			_build_l3()
+		3:
+			_build_l4()
+		4:
+			_build_l5()
+		5:
+			_build_l6()
 		_:
 			_build_l3()
 
@@ -129,7 +136,62 @@ func _build_level() -> void:
 ## L1 栅栏与沟（指南 §2）：平地、木栅栏、GOAL x7.2；Fire 与 Heavy 处理同一障碍。
 func _build_l1() -> void:
 	_static_box(Vector3(4.0, 0.6, 0.0), Vector3(12.0, 1.2, 6.0), Color("8a93a8"))
-	# 木栅栏（RigidBody 高摩擦：玩家推不动、跳不过；Heavy 球可撞倒 / Fire 触碰燃毁——物理双解，无触发器）
+
+
+## L2 登上高台（指南 §2）：地面 + 高台顶抬升 1.6m（>跳高 0.845），建造获垂直高度，GOAL 在台顶。
+func _build_l2() -> void:
+	_static_box(Vector3(2.1, 0.6, 0.0), Vector3(8.2, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(8.1, 1.4, 0.0), Vector3(3.8, 2.8, 6.0), Color("7f88a0"))
+
+
+## L3 断层验证（阶段 A 验证房原样保留=主 Gate 基线；几何/语义不动，仅墨水按指南对齐 130）
+func _build_l3() -> void:
+	# L3 风格开放断层：两台同高 1.2m，沟宽 2.7m，沟底 -1.2m。统一材质（场景细色，无轮廓）。
+	_static_box(Vector3(0.7, 0.6, 0.0), Vector3(4.4, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(7.6, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(4.25, -0.75, 0.0), Vector3(4.9, 0.5, 6.0), Color("6d7590"))
+
+
+## L4 翻越高墙（指南 §2）：抬升 0.9m、两环境物；垫板/推箱关系，0 墨方案可通。
+func _build_l4() -> void:
+	_static_box(Vector3(5.0, 0.6, 0.0), Vector3(14.0, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(5.0, 1.65, 0.0), Vector3(0.5, 0.9, 6.0), Color("7f88a0"))
+
+
+## L5 双沟群岛（指南 §2）：同高三岛，沟宽 1.4/2.0m；第一沟可直跳，第二沟需帮助；沟底两环境物。
+func _build_l5() -> void:
+	_static_box(Vector3(1.0, 0.6, 0.0), Vector3(6.0, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(7.4, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(13.4, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(7.7, -0.75, 0.0), Vector3(11.4, 0.5, 6.0), Color("6d7590"))
+
+
+## L6 登天梯（指南 §2）：塔1 抬升 1.3m、塔2 再抬 0.55m、塔间隙 1.3m；链式攀登，地面承接坠落。
+func _build_l6() -> void:
+	_static_box(Vector3(5.0, 0.6, 0.0), Vector3(14.0, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(6.0, 1.85, 0.0), Vector3(2.0, 1.3, 6.0), Color("7f88a0"))
+	_static_box(Vector3(9.3, 2.125, 0.0), Vector3(2.0, 1.85, 6.0), Color("75809c"))
+
+
+## 关卡环境物（可重开重建；词条放置物在 placed_root 分账）
+func _build_level_props() -> void:
+	match level_idx:
+		0:
+			_spawn_fence()
+		2:
+			_build_l3_crate()
+		3:
+			_spawn_crate("Crate", Vector3(3.2, 1.2 + 0.375 + 0.02, 0.6), 0.75)
+			_spawn_rock(Vector3(7.5, 1.55, 1.5))
+		4:
+			_spawn_crate("PitCrate1", Vector3(4.7, -0.5 + 0.3 + 0.02, 0.8), 0.6)
+			_spawn_crate("PitCrate2", Vector3(10.4, -0.5 + 0.3 + 0.02, -0.8), 0.6)
+		_:
+			pass
+
+
+## 木栅栏（RigidBody 高摩擦：玩家推不动、跳不过；Heavy 球可撞倒 / Fire 触碰燃毁——物理双解）
+func _spawn_fence() -> void:
 	var fence := RigidBody3D.new()
 	fence.name = "Fence"
 	fence.mass = 3.5
@@ -153,18 +215,73 @@ func _build_l1() -> void:
 	props_root.add_child(fence)
 
 
-## L2 登上高台（指南 §2）：地面 + 高台顶抬升 1.6m（>跳高 0.845），建造获垂直高度，GOAL 在台顶。
-func _build_l2() -> void:
-	_static_box(Vector3(2.1, 0.6, 0.0), Vector3(8.2, 1.2, 6.0), Color("8a93a8"))
-	_static_box(Vector3(8.1, 1.4, 0.0), Vector3(3.8, 2.8, 6.0), Color("7f88a0"))
+## 普通环境箱（无词条，可推/可垫脚）
+func _spawn_crate(cname: String, pos: Vector3, target_h: float) -> void:
+	var crate := ModelLibrary.create_model("crate")
+	var bounds := ModelLibrary.geometry_bounds(crate)
+	var s: float = target_h / maxf(bounds.size.y, 0.2)
+	var rb := RigidBody3D.new()
+	rb.name = cname
+	rb.mass = 2.0
+	var cpm := PhysicsMaterial.new()
+	cpm.friction = 0.6
+	cpm.bounce = 0.0
+	rb.physics_material_override = cpm
+	rb.position = pos
+	var cs := CollisionShape3D.new()
+	var bsh := BoxShape3D.new()
+	bsh.size = bounds.size * s
+	cs.shape = bsh
+	rb.add_child(cs)
+	crate.scale = Vector3.ONE * s
+	crate.position = -bounds.get_center() * s
+	rb.add_child(crate)
+	props_root.add_child(rb)
 
 
-## L3 断层验证（阶段 A 验证房原样保留=主 Gate 基线；几何/语义不动，仅墨水按指南对齐 130）
-func _build_l3() -> void:
-	# L3 风格开放断层：两台同高 1.2m，沟宽 2.7m，沟底 -1.2m。统一材质（场景细色，无轮廓）。
-	_static_box(Vector3(0.7, 0.6, 0.0), Vector3(4.4, 1.2, 6.0), Color("8a93a8"))
-	_static_box(Vector3(7.6, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
-	_static_box(Vector3(4.25, -0.75, 0.0), Vector3(4.9, 0.5, 6.0), Color("6d7590"))
+## 普通环境圆石（可滚/可垫）
+func _spawn_rock(pos: Vector3) -> void:
+	var rb := RigidBody3D.new()
+	rb.name = "Rock"
+	rb.mass = 1.5
+	var rpm := PhysicsMaterial.new()
+	rpm.friction = 0.7
+	rpm.bounce = 0.05
+	rb.physics_material_override = rpm
+	rb.position = pos
+	var cs := CollisionShape3D.new()
+	var ssh := SphereShape3D.new()
+	ssh.radius = 0.3
+	cs.shape = ssh
+	rb.add_child(cs)
+	var mi := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = 0.3
+	sm.height = 0.6
+	mi.mesh = sm
+	mi.material_override = style.body_material(Color("9a9a92"))
+	rb.add_child(mi)
+	props_root.add_child(rb)
+
+
+## 重开本关（独立于 R 的玩家复位）：清放置物与环境物 → 重建 → 回初始墨水与出生点
+func restart_level() -> void:
+	restart_pending = true
+
+
+func _do_restart() -> void:
+	for c in placed_root.get_children():
+		c.free()
+	for c in props_root.get_children():
+		c.free()
+	placed_count = 0
+	ink = LEVELS[level_idx].ink
+	_build_level_props()
+	player.position = LEVELS[level_idx].spawn
+	player.velocity = Vector3.ZERO
+	mode_label.text = "%s %s（3D 迁移）" % [LEVELS[level_idx].id, LEVELS[level_idx].name]
+	_refresh_hud()
+	print("RESTART level=", LEVELS[level_idx].id)
 
 
 func _build_player() -> void:
@@ -206,8 +323,7 @@ func _build_props() -> void:
 	props_root = Node3D.new()
 	props_root.name = "EnvProps"
 	add_child(props_root)
-	if level_idx == 2:
-		_build_l3_crate()
+	_build_level_props()
 
 
 ## L3 环境箱（普通刚体，可推/可撞——解法 C 通道；几何与阶段 A 逐字节一致）
@@ -314,6 +430,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_R:
 				player.position = LEVELS[level_idx].spawn
 				player.velocity = Vector3.ZERO
+			KEY_T:
+				restart_level()
 			KEY_ESCAPE:
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		_refresh_hud()
@@ -335,6 +453,9 @@ func _physics_process(delta: float) -> void:
 	if player == null:
 		return
 	clock += delta
+	if restart_pending:
+		restart_pending = false
+		_do_restart()
 	# 词条计时（v1 语义）：Fire die_at 自毁 / Sticky freeze_at 冻结
 	var now := clock
 	for b in placed_root.get_children():

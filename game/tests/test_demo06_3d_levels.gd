@@ -92,7 +92,7 @@ func _l1_heavy() -> bool:
 		var px: float = p.position.x
 		var py: float = p.position.y
 		var on_floor: bool = p.is_on_floor()
-		if toppled and on_floor and px > 4.0 and px < 4.8 and py < 2.0:
+		if toppled and on_floor and px > 3.6 and px < 4.9 and py < 2.0:
 			jump_latch = true
 		game.auto_dir = Vector3(1, 0, 0)
 		game.auto_jump = on_floor and jump_latch
@@ -140,10 +140,178 @@ func _l2_build() -> bool:
 	return false
 
 
+## L4 0 墨路：推箱抵墙 → 跃上箱顶 → 一跳越墙 → 回 z 中线 GOAL
+func _l4_crate() -> bool:
+	await _spawn(3)
+	var crate: RigidBody3D = game.props_root.get_node_or_null("Crate")
+	if crate == null:
+		print("L4 FAIL: Crate missing")
+		return false
+	var jump_latch := false
+	var phase := 0
+	t = 0
+	while t < 2400:
+		await physics_frame
+		t += 1
+		var p: CharacterBody3D = game.player
+		var px: float = p.position.x
+		var py: float = p.position.y
+		var pz: float = p.position.z
+		var on_floor: bool = p.is_on_floor()
+		var dir := Vector3.ZERO
+		match phase:
+			0:
+				dir = Vector3(0, 0, 1) if on_floor else Vector3.ZERO
+				if pz > 0.55:
+					phase = 1
+			1:  # 推箱抵墙（墙面 4.75，箱半 0.375 → 箱心 4.375），急停线 3.75（接触点）
+				dir = Vector3(1, 0, 0) if (on_floor and px < 3.75) else Vector3.ZERO
+				if crate.position.x > 4.35:
+					phase = 2
+			2:  # 回退助跑（停位 3.75 已在起跳窗之后）
+				dir = Vector3(-1, 0, 0) if on_floor else Vector3.ZERO
+				if px < 3.05:
+					phase = 3
+			3:  # 走向箱体，跃上箱顶（顶 1.95）
+				dir = Vector3(1, 0, 0)
+				if on_floor and px > 3.2 and px < 3.45 and py > 1.0 and py < 2.0:
+					jump_latch = true
+				if on_floor and px > 4.0 and py > 2.2 and py < 2.7:
+					phase = 4
+			4:  # 箱顶起跳 → 一跳越墙（墙顶 2.1，箱顶 1.95+跳 0.845=2.795）
+				dir = Vector3(1, 0, 0)
+				if on_floor and px > 4.3 and px < 4.75 and py > 2.2 and py < 2.7:
+					jump_latch = true
+				if px > 5.5 and on_floor:
+					phase = 5
+			5:  # 回 z 中线 → GOAL
+				if pz > 0.15:
+					dir = Vector3(1, 0, -1).normalized()
+				else:
+					dir = Vector3(1, 0, 0)
+		game.auto_dir = dir
+		game.auto_jump = on_floor and jump_latch
+		if not on_floor:
+			jump_latch = false
+		if t % 120 == 0:
+			print("L4 t=%d ph=%d px=%.2f py=%.2f crate=%.2f" % [t, phase, px, py, crate.position.x])
+		if _won():
+			print("L4CRATE: PASS (t=%d)" % t)
+			return true
+	print("L4 FAIL: no goal (ph=%d px=%.2f crate=%.2f)" % [phase, game.player.position.x, crate.position.x])
+	return false
+
+
+## L5 双沟：第一沟直跳 → Float 板跨第二沟（2.0m）→ GOAL
+func _l5_islands() -> bool:
+	await _spawn(4)
+	var ok: bool = game.place_blueprint(1, 1, Vector3(10.4, 1.46, 0))
+	if not ok:
+		print("L5 FAIL: plank placement rejected")
+		return false
+	var jump_latch := false
+	t = 0
+	while t < 2400:
+		await physics_frame
+		t += 1
+		var p: CharacterBody3D = game.player
+		var px: float = p.position.x
+		var py: float = p.position.y
+		var on_floor: bool = p.is_on_floor()
+		if on_floor and px > 3.85 and px < 4.0 and py > 1.0 and py < 2.0:
+			jump_latch = true
+		if on_floor and px > 8.7 and px < 9.35 and py > 1.0 and py < 2.0:
+			jump_latch = true
+		if on_floor and px > 10.2 and px < 10.9 and py > 1.8 and py < 2.4:
+			jump_latch = true
+		game.auto_dir = Vector3(1, 0, 0)
+		game.auto_jump = on_floor and jump_latch
+		if not on_floor:
+			jump_latch = false
+		if t % 120 == 0:
+			print("L5 t=%d px=%.2f py=%.2f" % [t, px, py])
+		if _won():
+			print("L5ISLANDS: PASS (t=%d)" % t)
+			return true
+	print("L5 FAIL: no goal (px=%.2f py=%.2f)" % [game.player.position.x, game.player.position.y])
+	return false
+
+
+## L6 链式登梯：Float 板1 上塔1（+1.3m）→ 板2 跨塔间沟 → 塔2（+0.55m）→ GOAL
+func _l6_ladder() -> bool:
+	await _spawn(5)
+	var ok1: bool = game.place_blueprint(1, 1, Vector3(3.4, 1.89, 0))
+	var ok2: bool = game.place_blueprint(1, 1, Vector3(7.65, 2.85, 0))
+	if not ok1 or not ok2:
+		print("L6 FAIL: plank placement rejected (%s/%s)" % [ok1, ok2])
+		return false
+	var jump_latch := false
+	t = 0
+	while t < 2400:
+		await physics_frame
+		t += 1
+		var p: CharacterBody3D = game.player
+		var px: float = p.position.x
+		var py: float = p.position.y
+		var on_floor: bool = p.is_on_floor()
+		if on_floor and px > 1.75 and px < 2.2 and py > 1.0 and py < 2.0:
+			jump_latch = true
+		if on_floor and px > 3.85 and px < 4.03 and py > 2.3 and py < 2.7:
+			jump_latch = true
+		if on_floor and px > 6.3 and px < 6.85 and py > 2.8 and py < 3.3:
+			jump_latch = true
+		if on_floor and px > 7.8 and px < 8.25 and py > 3.15 and py < 3.55:
+			jump_latch = true
+		game.auto_dir = Vector3(1, 0, 0)
+		game.auto_jump = on_floor and jump_latch
+		if not on_floor:
+			jump_latch = false
+		if t % 120 == 0:
+			print("L6 t=%d px=%.2f py=%.2f" % [t, px, py])
+		if _won():
+			print("L6LADDER: PASS (t=%d)" % t)
+			return true
+	print("L6 FAIL: no goal (px=%.2f py=%.2f)" % [game.player.position.x, game.player.position.y])
+	return false
+
+
+## 重开本关（T 命令语义）：放置物清空、墨水回满、环境物重建
+func _restart_check() -> bool:
+	await _spawn(0)
+	var ok: bool = game.place_blueprint(0, 2, Vector3(1.5, 1.5, 0))
+	if not ok:
+		print("RESTART FAIL: placement rejected")
+		return false
+	var fence0: RigidBody3D = game.props_root.get_node("Fence")
+	game.restart_level()
+	for i in 10:
+		await physics_frame
+	var fence1: RigidBody3D = game.props_root.get_node_or_null("Fence")
+	var ok_ink: bool = game.ink == 100
+	var ok_placed: bool = game.placed_count == 0
+	var ok_fence: bool = is_instance_valid(fence1) and fence1 != fence0
+	print("RESTART: ink=%s placed=%s fence=%s" % [ok_ink, ok_placed, ok_fence])
+	return ok_ink and ok_placed and ok_fence
+
+
 func _run() -> void:
-	var r1: bool = await _l1_fire()
-	var r2: bool = await _l1_heavy()
-	var r3: bool = await _l2_build()
-	var n := (1 if r1 else 0) + (1 if r2 else 0) + (1 if r3 else 0)
-	print("LEVELS RESULT: %d/3 PASS" % n)
-	quit(0 if n == 3 else 1)
+	var results := {}
+	results.l1f = await _l1_fire()
+	print("ROUTE_L1FIRE: ", "PASS" if results.l1f else "FAIL")
+	results.l1h = await _l1_heavy()
+	print("ROUTE_L1HEAVY: ", "PASS" if results.l1h else "FAIL")
+	results.l2 = await _l2_build()
+	print("ROUTE_L2: ", "PASS" if results.l2 else "FAIL")
+	results.l4 = await _l4_crate()
+	print("ROUTE_L4: ", "PASS" if results.l4 else "FAIL")
+	results.l5 = await _l5_islands()
+	print("ROUTE_L5: ", "PASS" if results.l5 else "FAIL")
+	results.l6 = await _l6_ladder()
+	print("ROUTE_L6: ", "PASS" if results.l6 else "FAIL")
+	results.rs = await _restart_check()
+	var n := 0
+	for k in results:
+		if results[k]:
+			n += 1
+	print("LEVELS RESULT: %d/7 PASS" % n)
+	quit(0 if n == 7 else 1)
