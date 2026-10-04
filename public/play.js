@@ -216,8 +216,7 @@ function setupShare() {
       const star=document.getElementById('qf-star')?.value||'';
       const done=document.getElementById('qf-done')?.value||'';
       const text=document.getElementById('qf-text')?.value||'';
-      const txt='【试玩反馈】'+buildId()+' | '+star+' | '+done+'
-'+text;
+      const txt='【试玩反馈】'+buildId()+' | '+star+' | '+done+'\n'+text;
       try{ await navigator.clipboard.writeText(txt); }
       catch(err){ const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove(); }
       const m=document.getElementById('qf-msg'); if(m) m.textContent='✅ 已复制，粘贴发给开发组即可';
