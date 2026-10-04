@@ -68,7 +68,7 @@ const LEVELS := [
 		],
 		spawn = Vector2(70, 430),
 		fence = Rect2(500, 350, 26, 120),        # 易燃木栅栏（挡路）
-		goal = Rect2(830, 400, 100, 70),
+		goal = Rect2(720, 400, 100, 70),
 		ink = 100,
 	},
 	{
