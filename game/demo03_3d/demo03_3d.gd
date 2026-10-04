@@ -175,7 +175,7 @@ func _build_world() -> void:
 		body.add_child(shape)
 		add_child(body)
 		var tag := Label3D.new()
-		tag.text = "槽位 %d\n建造 20💧" % (i + 1)
+		tag.text = "槽位 %d\n建造 20水" % (i + 1)
 		tag.font = FONT
 		tag.font_size = 64
 		tag.pixel_size = 0.005
@@ -352,8 +352,8 @@ func _build_hud() -> void:
 	temp_bg.size = Vector2(328, 28)
 	temp_bg.z_index = -1
 	hud.add_child(temp_bg)
-	water_label = _label(hud, Vector2(20, 14), "💧 0", 22, Color("4fc3f7"))
-	time_label = _label(hud, Vector2(870, 16), "⏱ 0/60", 18, Color("e8ecf4"))
+	water_label = _label(hud, Vector2(20, 14), "水 0", 22, Color("4fc3f7"))
+	time_label = _label(hud, Vector2(870, 16), "0/60 秒", 18, Color("e8ecf4"))
 	phase_label = _label(hud, Vector2(700, 44), "阶段：初火", 18, Color("aed581"))
 	mode_label = _label(hud, Vector2(20, 44), "经典 60 秒", 15, Color("9fb3c8"))
 	banner_label = _label(hud, Vector2(200, 44), "", 18, Color("ce93d8"))
@@ -361,7 +361,7 @@ func _build_hud() -> void:
 	tooltip_label = _label(hud, Vector2(0, 0), "", 15, Color("fff3c4"))
 	tooltip_label.visible = false
 	# v4 灭火指挥（主动技能按钮，快捷键 F）
-	cmd_button = _button(hud, Vector2(20, 470), Vector2(220, 46), "🧯 灭火指挥 25💧（F）",
+	cmd_button = _button(hud, Vector2(20, 470), Vector2(220, 46), "灭火指挥 25水（F）",
 			func() -> void: _try_command_ui())
 	cmd_button.disabled = true
 	toast_box = VBoxContainer.new()
@@ -384,7 +384,7 @@ func _build_hud() -> void:
 			func() -> void: _start("storm"))
 	_button(menu_layer, Vector2(680, 300), Vector2(170, 50), "寒夜守卫（第 2 章）",
 			func() -> void: _start("hard"))
-	_label(menu_layer, Vector2(240, 380), "左键：点槽位建造/升级，点村民晋升｜F：灭火指挥（25💧 全队应急降温）｜滚轮缩放，Q/E 旋转，Home 复位", 14, Color("9fb3c8"))
+	_label(menu_layer, Vector2(240, 380), "左键：点槽位建造/升级，点村民晋升｜F：灭火指挥（25水 全队应急降温）｜滚轮缩放，Q/E 旋转，Home 复位", 14, Color("9fb3c8"))
 	# 结算（v7：含本局消费遥测时间线 + 一键复制，服务真人盲测采集）
 	end_layer = Control.new()
 	end_layer.visible = false
@@ -426,14 +426,14 @@ func mode_name(p_mode: String) -> String:
 	return "经典 60 秒"
 
 
-## v7 结算遥测：spend_log → 可读时间线（☀/☔ 天气上下文 + 总结行），供真人盲测采集
+## v7 结算遥测：spend_log → 可读时间线（晴/雨 天气上下文 + 总结行），供真人盲测采集
 func _format_spend_log() -> String:
 	var kind_names := {"build": "建造", "upgrade": "升级", "promote": "晋升", "command": "灭火指挥"}
 	var lines: Array[String] = []
 	for rec: Dictionary in sim.spend_log:
 		var t: float = float(rec.t)
-		var weather := "☔" if sim.acid_at(t) else "☀"
-		lines.append("[%5.1fs] %s %s %d💧" % [t, weather, str(kind_names.get(str(rec.kind), str(rec.kind))), int(rec.amount)])
+		var weather := "雨" if sim.acid_at(t) else "晴"
+		lines.append("[%5.1fs] %s %s %d水" % [t, weather, str(kind_names.get(str(rec.kind), str(rec.kind))), int(rec.amount)])
 	var result := "败" if sim.round_state == "lose" else ("胜" if sim.round_state == "win" else "—")
 	lines.append("── %s · %s · 终温 %d · 水滴 %d · 消费 %d 笔" % [
 		mode_name(sim.mode), result, int(sim.heat), int(sim.water), sim.spend_log.size()])
@@ -443,11 +443,11 @@ func _format_spend_log() -> String:
 ## v4 灭火指挥入口（按钮/F 键共用）：成功/冷却中/缺水分支提示
 func _try_command_ui() -> void:
 	if sim.try_command():
-		_toast("🧯 灭火指挥！全队降温 +1.5/s（8 秒）", Color("81d4fa"))
+		_toast("灭火指挥！全队降温 +1.5/s（8 秒）", Color("81d4fa"))
 	elif not sim.cmd_ready():
 		_toast("灭火指挥冷却中…（还差 %.0f 秒）" % maxf(0.0, sim.cmd_ready_at - sim.elapsed), Color("ef9a9a"))
 	else:
-		_toast("灭火指挥需要 %d💧" % sim.CMD_COST, Color("ef9a9a"))
+		_toast("灭火指挥需要 %d水" % sim.CMD_COST, Color("ef9a9a"))
 
 
 # ---------------- 状态机 ----------------
@@ -490,29 +490,29 @@ func _on_sim_event(kind: String, p: Dictionary) -> void:
 			_villager_visual(int(p.id), str(p.prof), 480.0)
 			_toast("村民 %s 加入！" % str(p.id), Color("a5d6a7"))
 		"acid_warn":
-			banner_label.text = "☔ 酸雨将至——先想好水滴花在哪！"
+			banner_label.text = "【酸雨将至】——先想好水滴花在哪！"
 			banner_label.add_theme_color_override("font_color", Color("efc3f5"))
 		"acid_started":
-			banner_label.text = "☔ 酸雨中：设施降温 ×0.6 · 村民降温 ×1.5"
+			banner_label.text = "【酸雨中】：设施降温 ×0.6 · 村民降温 ×1.5"
 		"acid_ended":
-			banner_label.text = "☀ 酸雨过了！设施恢复 · 村民回落"
+			banner_label.text = "【雨停】！设施恢复 · 村民回落"
 			banner_label.add_theme_color_override("font_color", Color("90caf9"))
 		"command_started":
-			banner_label.text = "🧯 灭火指挥发起！全员应急降温 +1.5/s（不受酸雨影响）"
+			banner_label.text = "【灭火指挥】！全员应急降温 +1.5/s（不受酸雨影响）"
 			banner_label.add_theme_color_override("font_color", Color("81d4fa"))
 		"command_ended":
-			if String(banner_label.text).begins_with("🧯"):
+			if String(banner_label.text).begins_with("【灭火指挥】"):
 				banner_label.text = ""
 		"round_ended":
 			end_layer.visible = true
 			end_log_label.text = _format_spend_log()
 			if bool(p.win):
-				end_title.text = "🏡 国度守住了！"
+				end_title.text = "国度守住了！"
 				end_title.add_theme_color_override("font_color", Color("66bb6a"))
 				end_body.text = "60 秒过去，岩浆退了回去。\n剩余温度 %d 度 · 村民 %d 位 · 水滴 %d" % [
 					int(sim.heat), sim.villagers.size(), int(sim.water)]
 			else:
-				end_title.text = "🔥 岩浆吞没了国度……"
+				end_title.text = "岩浆吞没了国度……"
 				end_title.add_theme_color_override("font_color", Color("ef5350"))
 				end_body.text = "坚持了 %d 秒（%s）。\n提示：开局建塔，酸雨时优先投资村民！" % [
 					int(sim.elapsed), str(sim.phase().name)]
@@ -573,9 +573,9 @@ func _update_tooltip(mouse: Vector2) -> void:
 			var slot := int(col.get_meta("slot"))
 			var lv: int = sim.towers[slot]
 			if lv == 0:
-				text = "槽位 %d：建造 %d💧（降温 2.0/s）" % [slot + 1, sim.build_cost()]
+				text = "槽位 %d：建造 %d水（降温 2.0/s）" % [slot + 1, sim.build_cost()]
 			elif lv == 1:
-				text = "槽位 %d：升级 %d💧（降温 2.0→5.0/s）" % [slot + 1, sim.upgrade_cost()]
+				text = "槽位 %d：升级 %d水（降温 2.0→5.0/s）" % [slot + 1, sim.upgrade_cost()]
 			else:
 				text = "槽位 %d：II 级已满（降温 5.0/s）" % (slot + 1)
 		elif col.has_meta("villager"):
@@ -583,7 +583,7 @@ func _update_tooltip(mouse: Vector2) -> void:
 				if n.id == int(col.get_meta("villager")):
 					var bonus: float = float(sim.prof_info(str(n.prof)).cool_bonus)
 					if n.level == 0:
-						text = "%s·%s：晋升 %d💧（降温 +%.1f/s）" % [str(n.name), str(n.prof), sim.NPC_UP_COST, sim.NPC_UP_COOL]
+						text = "%s·%s：晋升 %d水（降温 +%.1f/s）" % [str(n.name), str(n.prof), sim.NPC_UP_COST, sim.NPC_UP_COOL]
 					else:
 						text = "%s·%s：已晋升（降温 +%.1f/s）" % [str(n.name), str(n.prof), sim.NPC_UP_COOL]
 					if bonus > 0.0:
@@ -611,11 +611,11 @@ func _pick(screen_pos: Vector2) -> void:
 		var lv: int = sim.towers[slot]
 		var ok := sim.try_upgrade(slot) if lv == 1 else sim.try_build(slot)
 		if not ok:
-			_toast("水滴不够（需要 %d💧）" % (sim.upgrade_cost() if lv == 1 else sim.build_cost()), Color("ef9a9a"))
+			_toast("水滴不够（需要 %d水）" % (sim.upgrade_cost() if lv == 1 else sim.build_cost()), Color("ef9a9a"))
 	elif col.has_meta("villager"):
 		var id := int(col.get_meta("villager"))
 		if not sim.try_promote(id):
-			_toast("晋升需要 30💧 或已晋升", Color("ef9a9a"))
+			_toast("晋升需要 30水 或已晋升", Color("ef9a9a"))
 
 
 # ---------------- 每帧 ----------------
@@ -635,20 +635,20 @@ func _process(delta: float) -> void:
 	# HUD 更新
 	temp_fill.size.x = 320.0 * clampf(sim.heat / 100.0, 0.0, 1.0)
 	temp_fill.color = Color("66bb6a").lerp(Color("ef5350"), clampf(sim.heat / 100.0, 0.0, 1.0))
-	water_label.text = "💧 %d" % int(sim.water)
-	time_label.text = "⏱ %d/60" % int(sim.elapsed)
+	water_label.text = "水 %d" % int(sim.water)
+	time_label.text = "%d/60 秒" % int(sim.elapsed)
 	var ph := sim.phase()
 	phase_label.text = "阶段：%s" % str(ph.name)
 	phase_label.add_theme_color_override("font_color", Color(str(ph.col)))
 	# v4 灭火指挥按钮状态（生效中/冷却/可用水滴三态）
 	if sim.round_state == "play" and sim.cmd_active():
-		cmd_button.text = "🧯 灭火中 %.0fs" % maxf(0.0, sim.cmd_until - sim.elapsed)
+		cmd_button.text = "灭火中 %.0fs" % maxf(0.0, sim.cmd_until - sim.elapsed)
 		cmd_button.disabled = true
 	elif sim.round_state == "play" and not sim.cmd_ready():
 		cmd_button.text = "灭火指挥 冷却 %.0fs" % maxf(0.0, sim.cmd_ready_at - sim.elapsed)
 		cmd_button.disabled = true
 	elif sim.round_state == "play":
-		cmd_button.text = "🧯 灭火指挥 %d💧（F）" % sim.CMD_COST
+		cmd_button.text = "灭火指挥 %d水（F）" % sim.CMD_COST
 		cmd_button.disabled = sim.water < float(sim.CMD_COST)
 	else:
 		cmd_button.disabled = true

@@ -8,3 +8,4 @@
 2. 导出/发布照常（headless export、butler、git plumbing 提交 Pages，全程无窗口）。
 3. Pages 发布用 plumbing（临时索引 + commit-tree + push origin <sha>:main），**不碰主检出工作区**（那是 2D 线的）；publish-qa.mjs 的 butler -i 调用有超时 bug，用手动等价校验（butler status + CDN 四件套 md5；CDN 占位 md5 0822277b 为已备案问题勿反复重推）。
 4. Pages builds/ 已 1.2GB 超 1GB 软限（部署目前仍成功）；**全局瘦身需用户决策**，未经决策不要擅自删其他 demo 的构建。
+5. Web 导出纪律（v8/v9 教训）：`.gd` 新增显示用字后必须重跑 `node tools/subset-font.mjs`（子集缺字在桌面端被系统回退掩盖，Web 端全是方块）；阶段 D 常规验证 = `node tools/browser-smoke.mjs <构建URL> reviews/shots/browser-smoke-<版>`（Edge headless，无弹窗）。

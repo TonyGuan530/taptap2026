@@ -215,7 +215,7 @@ func _run() -> void:
 	check(scene.sim.round_state == "win" and scene.end_layer.visible, "推进到胜利结算",
 			"%s guard=%d" % [scene.sim.round_state, guard])
 	var log_text := String(scene.end_log_label.text)
-	check(log_text.contains("建造 20💧") and log_text.contains("经典 60 秒 · 胜"),
+	check(log_text.contains("建造 20水") and log_text.contains("经典 60 秒 · 胜"),
 			"结算时间线含建造与总结行", log_text.replace("\n", " | "))
 	check(scene._format_spend_log().split("\n").size() >= 2, "格式化至少两行")
 
