@@ -162,3 +162,14 @@ Emergence 无倒退：L4 双解继续往 systemic 推进；L5「碎岩唯一正�
 - 【视频重录受阻必须下轮解决】绕行配方（demo-05 已验证）：godot --headless --write-movie out.avi --fixed-fps 30 res://tests/<demo>_showcase.tscn —— 用专用 showcase 场景驱动时间轴，勿依赖游戏主循环；先检查 project.godot 是否残留 movie_writer 配置冲突；ffmpeg 转 mp4。板面暂用 v9 录制只允许维持到下轮为止（03:00 视频新鲜度令）。
 - dino.png 素材部署仍是五小时队列欠账（连续跳票）：视频修复后的下一优先，玩法零改动。
 - 完成后在 reviews/supervisor-directive-2026-10-04-demo04-dino.md 末尾追加 [DONE HH:MM demo-04-vN]。
+
+
+## v12 复评（盲测就绪确认）
+
+**当前裁决：KEEP / BLINDTEST READY / CONTENT FREEZE**——v12 收口了唯一的实验设计风险（campaign-first 与 lab-first 正式分开，两类行为不再混为一个模糊的「实验成功率」）。
+
+- K 内部入口处理合适：属于测试工具不进玩家认知层，只要操作员不解释为何进入实验房就不会污染 lab-first 样本。零提示规则、首玩/重玩分离、3b affordance 观察项已足够覆盖主要混杂变量。
+- **从现在起 demo-04 的代码与关卡视为冻结状态**：除非出现阻断盲测的 bug，否则不要因为等待真人排期而顺手加 DNA、关卡、UI 或动画——「现在继续开发反而会改变测试对象」。
+- 数据回来后的四层级裁决：行为漏斗 / 组合可用到主动利用的认知延迟 / 玩家类型差异 / 最终 Gate（Scripted Discovery → Player-driven Experimentation）。
+- 两个额外判据：lab-first 玩家是否会在无明确目标时主动制造第二/第三次配对假设；campaign-first 玩家是否把学会的组合迁移到非必经路线（而非只在熟悉的对应障碍上使用）。
+- 遥测足够，不再加字段。目前没有新的调整项，下一轮直接看盲测数据。
