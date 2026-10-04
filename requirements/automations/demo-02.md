@@ -13,6 +13,13 @@
 ## 规格
 requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-export.md）。玩法：形状(圆球/长板/方块)×词条(Heavy/Float/Fire/Sticky)统一规则物理解谜，目标 3-4 关。
 
+## 当前状态（2026-10-04 晚 · 3D 化任务切换）
+- **任务已切换**：按用户指令与指南 D:/GIT/3D-GUIDE/taptap2026-demo02-3d-zcode-guide-2026-10-04.md，DEMO2 迁移第一人称 3D 物性解谜；定时任务提示词已改派（阶段 A→B→C→D）
+- **3D 工作线**：分支 codex/demo02-3d @ 工作树 D:/GIT/taptap2026-3d；阶段 A 灰模完成（game/demo02_3d.gd/.tscn，headless 9 断言全 PASS），**已上 Pages：demo-02-3d-v1**（hub 槽 demo-02-3d）；导出标准脚本 tools/export-web-3d.ps1
+- **统一标准（做完即传）**：3D 版本完成可玩即导出 demo-02-3d-vN 上 Pages（导出→build.json→主仓库 builds/→slot→push→curl 验证）+ 最新版视频重录（Movie Maker→ffmpeg）+ miro-post-shots 更新 Miro
+- 下轮 = 阶段 B：五关 3D 迁移（L4/L5 各验证 ≥2 路线；L5 含皮球零输入路线）；弹跳用例真实时间；旧 2D 套件分支回归
+- 旧 2D 线：demo-02-v7 冻结基线等 Playtest Batch 01 真人数据（【需用户决策：安排 3-5 人试玩】持续有效）；itch 分发卡平台侧
+- 3D 工程坑（实测）：GDScript4 Dictionary 取值禁 :=、成员赋值禁 :=、内联 lambda 含 and/or 歧义；Area 底面贴地面首帧误触发；平台落点余量 ≥0.5m；main_scene 并发竞争
 ## 当前状态
 - public/demos.json 的 demo-02 slot（buildId=demo-02-v6，5 关已上线；v6=新增 L5「高台弹跳」达成 ≥5 关（督导 03:00 指令），headless 9 用例 PASS——L1-L4 回归 + L5 三路线（A 弹簧羽毛漂上高台 / B 皮球零输入弹跳链涌现 / C 无弹簧出生直漂））
 - ChatGPT 复评 v6 结论 **KEEP**：L5 符合「复用既有规则产生新关系」；路线 B=好的系统涌现（spectacle），保留勿修、勿当 puzzle depth 证据；L4=自由解题（puzzle）、L5=自由实验/展示（playoff）定位成立，无需交换顺序；完整结论存 reviews/chatgpt-demo-02-full.md 尾部
