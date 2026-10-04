@@ -197,7 +197,7 @@ func _level6() -> void:
 		game._on_word(1)
 		game._try_place(Vector2(220, 401))
 	elif lv_f == 90:
-		game._try_place(Vector2(535, 346))
+		game._try_place(Vector2(545, 361))
 	elif lv_f > 20:
 		var px: float = game.player.position.x
 		var py: float = game.player.position.y
@@ -214,7 +214,7 @@ func _level6() -> void:
 				want = true        # 地面 → P1（顶 390，跳点在板左缘前 9~19px）
 			elif px > 240.0 and px < 290.0 and py > 350.0 and py < 400.0:
 				want = true        # P1 → 塔1（顶 330）
-			elif px > 495.0 and px < 535.0 and py > 295.0 and py < 325.0:
+			elif px > 490.0 and px < 590.0 and py > 310.0 and py < 345.0:
 				want = true        # P2 → 塔2（顶 260）
 			if want:
 				_jump()
