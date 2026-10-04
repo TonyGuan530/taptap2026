@@ -76,9 +76,15 @@
 - v12 上线 2026-10-04（demo-03-v12，美术管线续推）：职业专属村民贴图——ChatGPT 生图×4（同角色+职业装扮：黄帽扳手/绿巾浇水壶/蓝披风向标/白巾背桶）→ chromakey → PROF_TEX 映射按职业渲染；职业色轻染移除（贴图自带身份）；★/▲▼保留。零平衡/规则改动，四用例 PASS；v12 视频重录+上板刷新。
 - ChatGPT v12 评审（reviews/chatgpt-demo-03-v12-full.md）：备案确认 ITERATE——有效增益非换皮：把抽象职业差异落到可读的单位身份（看清场上是谁/预警时判断投给谁/酸雨决策关联气象学家），对最终形态可读性盲测正向；**盲测版本=v12**；盲测观察：四贴图风格一致性、32px 下职业辨识度；隐性风险=专属道具过多过细缩小后变杂——"一眼辨认">"细节丰富"；勿再增职业提示层。
 - v13 上线 2026-10-04（demo-03-v13，美术管线续推）：菜单标题横幅——ChatGPT 生图装饰横幅（村庄/星空暗区/火山，无文字规避 AI 中文渲染风险）→ chromakey → game/assets/demo03/title_banner.png → 选模式界面面板顶部渲染（456×150）；标题文字仍为面板 Label。零平衡/规则改动，四用例 PASS；菜单截图 demo-03-menu.png 存档。
-- ChatGPT v13 评审（reviews/chatgpt-demo-03-v13-full.md）：备案确认 ITERATE——纯菜单表现层；处理方式合理（AI 只做无文字装饰、标题用程序 Label 规避中文生成不稳定）；**盲测版本=v13**；两个横幅观察点：中央暗区对比度是否足够、右火山亮部小屏是否抢模式按钮。唯一阻塞=真人盲测。
+- ChatGPT v13 评审（reviews/chatgpt-demo-03-v13-full.md）：**更正（2026-10-04 晚）**——v13 备案因输入故障延迟至当晚实际发送，督导确认为"历史备案重复提交"（基线已推进 v14，勿回退）；v13 本身判断仍成立（纯菜单表现层，原结论维持）。横幅观察点保留：中央暗区对比度、右火山亮部小屏抢按钮。存档已用真实回复重写。
 - v14 上线 2026-10-04（demo-03-v14，持续开发令·模式辨识）：风暴之夜视觉差异化——紫黑风暴天光底色（常驻）、非酸雨时段环境细雨、酸雨叠加更密雨层；经典局零改动。零平衡/规则改动，四用例 PASS；v14 视频重录+上板刷新。
 - ChatGPT v14 评审（reviews/chatgpt-demo-03-v14-full.md）：备案确认 ITERATE——mode readability 合理非新玩法；**盲测版本=v14**；观察项：风暴常驻紫黑勿削弱酸雨紫辨识（色相过近时优先雨量/闪电/明度区分而非更紫）；Pages 事故属工程问题不影响玩法结论。唯一阻塞=真人盲测。
+- **3D 迁移启动（用户指令 2026-10-04）**：按 D:\GIT\3D-GUIDE\taptap2026-demo03-3d-zcode-guide-2026-10-04.md 迁移为斜俯视 3D 经营。worktree D:\GIT\taptap2026-demo03-3d（分支 demo03-3d），新入口 game/demo03_3d.tscn，模拟核心 KingdomSimulation 分离（reports/2026-10-04-demo03-3d-kickoff.md）。
+- demo-03-3d-v1 上线（阶段 A/B 灰模）：KingdomSimulation 规则逐项迁移（38 断言全 PASS 含 P1 解析对照/摆烂 20~30s 败/会玩胜利/双模式/四职业/酸雨窗/边界）；灰模场景正交斜俯视+射线拾取+双模式可玩；demo-03-3d-v1 推 itch；reports/2026-10-04-demo03-3d-phaseAB.md。
+- demo-03-3d-v2 上线（阶段 B 完成）：真实鼠标事件拾取测试 17/17 PASS
+- demo-03-3d-v3 上线（用户指令：迁移分支一律从 3d-shared 拉出，只做场景应用）：合并 origin/3d-shared（comic_style 套件：ComicObject/StyleDefinition/ModelLibrary+toon/描边着色器）；世界物体 ComicObject 化——水塔 L1 木桶塔/L2 石基蓝罐、4 座小屋、村民（职业色+斗笠+水桶），统一 toon 材质与描边；悬停代理接 ComicObject.set_hovered；visual≠collider 保持（拾取体独立）。零规则改动，38+17 断言 PASS。——InputEventMouse 走完整管线（建设/升级/晋升/资金不足不扣费/UI 角落不误触/旋转缩放后拾取/重开清理/悬停文本与可见性）；新增悬停显示目标名称/价格/效果（阶段 B 清单项）；demo-03-3d-v2 推 itch。
+- **当前盲测基线=demo-03-3d-v2**（2D v14 保留回归对照；itch 频道头=最新推送方轮转；Pages 恢复后 build 路径 /builds/demo-03-3d-v2/）。
+- demo-03-3d 阶段进展：A ✓（模拟核心+对照）、B ✓（拾取 17/17+悬停）、C 待做（Blender GLB 正式资产）、D 待做（Web 浏览器实玩两模式收尾）。
 
 ## demo-04 SOUP 2.0：DNA 融合逃生
 
