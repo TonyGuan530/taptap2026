@@ -1,19 +1,19 @@
 {
-  "checkedAt": "2026-10-04T09:26:00+08:00",
-  "round": 86,
+  "checkedAt": "2026-10-04T09:36:00+08:00",
+  "round": 87,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（09:25 实跑）"
+    "thisRound": "guard SKIP not-foreground（09:35 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 84,
-      "lastDispatch": "09:24",
-      "next": "09:34"
+      "runCount": 85,
+      "lastDispatch": "09:34",
+      "next": "09:44"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "守望轮第八/九次零变更（稳态）"
+      "evidence": "守望轮第十/十一次零变更（稳态）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -38,22 +38,22 @@
     "demo-06": {
       "cron": "25,55 * * * *",
       "runCount": 24,
-      "evidence": "✅ 盲测数据工具交付（4a37385：blindtest_summary.mjs 汇总器——每人摘要/组合明细/迁移轨迹/环境物检测，合成样本自测通过+手册引用）——盲测侧基建完备"
+      "evidence": "✅ 影片 L6 专项诊断归档（b78c72e：出生下落横移越窗=影片捕获输入时机差异）——专项问题有结论留档"
     }
   },
   "envSnapshot": {
-    "health": "ok builds=79（+1：demo-05 v18）",
+    "health": "ok builds=79",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD bc2f6b5",
+    "git": "本轮 HEAD b191f5d",
     "itch": "故障形态回摆 CDN 占位页（整站层问题持续）；Pages 兜底全在线"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "demo-09 补赛道（长期队列）；全员就绪/冻结；demo-05 内容层持续供给"
+    "queue": "demo-09 补赛道（长期队列）；全员就绪/冻结"
   },
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
