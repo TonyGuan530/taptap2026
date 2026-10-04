@@ -20,12 +20,20 @@ const PROF_COLORS := {
 const CAM_POS := Vector3(0, 30, 24)
 const CAM_PITCH := -50.0
 const CAM_SIZE := 26.0
+# v5 风暴之夜视觉辨识（对齐 2D v14）：紫黑夜空常驻 + 环境细雨；
+# 酸雨信息优先——酸雨紫主雨永远比细雨更亮更密，紫黑夜空不得吞掉它
+const CLASSIC_BG := Color("2b1738")
+const CLASSIC_AMB := Color("8a7a95")
+const STORM_BG := Color("170b28")
+const STORM_AMB := Color("5d5470")
 
 var sim: KingdomSimulation
 var cam: Camera3D
 var rig: Node3D
 var lava_mat: StandardMaterial3D
 var rain: CPUParticles3D
+var drizzle: CPUParticles3D
+var env_node: WorldEnvironment
 var tower_meshes: Array[MeshInstance3D] = []
 var comic_towers: Array[Node3D] = []
 var villager_nodes := {}   # id -> holder Node3D
@@ -193,13 +201,14 @@ func _build_world() -> void:
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
-	e.background_color = Color("2b1738")
+	e.background_color = CLASSIC_BG
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	e.ambient_light_color = Color("8a7a95")
+	e.ambient_light_color = CLASSIC_AMB
 	e.ambient_light_energy = 0.9
 	env.environment = e
 	add_child(env)
-	# 雨（CPU 粒子，Compatibility 友好）
+	env_node = env
+	# 酸雨（紫色主雨，酸雨窗内；Compatibility 友好 CPU 粒子）
 	rain = CPUParticles3D.new()
 	rain.amount = 400
 	rain.lifetime = 1.1
@@ -219,6 +228,26 @@ func _build_world() -> void:
 	rain.mesh.material = rmat
 	rain.emitting = false
 	add_child(rain)
+	# v5 风暴环境细雨（灰蓝细线，更慢更淡；仅风暴模式常驻，酸雨时与主雨叠加显更密）
+	drizzle = CPUParticles3D.new()
+	drizzle.amount = 160
+	drizzle.lifetime = 1.6
+	drizzle.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	drizzle.emission_box_extents = Vector3(50, 1, 40)
+	drizzle.position = Vector3(0, 22, 0)
+	drizzle.direction = Vector3(0.1, -1, 0)
+	drizzle.spread = 2.0
+	drizzle.gravity = Vector3(1, -16, 0)
+	drizzle.initial_velocity_min = 2.0
+	drizzle.initial_velocity_max = 3.5
+	var dmat := StandardMaterial3D.new()
+	dmat.albedo_color = Color(0.72, 0.8, 0.95, 0.3)
+	dmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	drizzle.mesh = QuadMesh.new()
+	(drizzle.mesh as QuadMesh).size = Vector2(0.04, 0.7)
+	drizzle.mesh.material = dmat
+	drizzle.emitting = false
+	add_child(drizzle)
 
 
 func _villager_visual(id: int, prof: String, x: float) -> void:
@@ -425,10 +454,8 @@ func _on_sim_event(kind: String, p: Dictionary) -> void:
 			banner_label.text = "☔ 酸雨将至——先想好水滴花在哪！"
 			banner_label.add_theme_color_override("font_color", Color("efc3f5"))
 		"acid_started":
-			rain.emitting = true
 			banner_label.text = "☔ 酸雨中：设施降温 ×0.6 · 村民降温 ×1.5"
 		"acid_ended":
-			rain.emitting = false
 			banner_label.text = "☀ 酸雨过了！设施恢复 · 村民回落"
 			banner_label.add_theme_color_override("font_color", Color("90caf9"))
 		"command_started":
@@ -438,7 +465,6 @@ func _on_sim_event(kind: String, p: Dictionary) -> void:
 			if String(banner_label.text).begins_with("🧯"):
 				banner_label.text = ""
 		"round_ended":
-			rain.emitting = false
 			end_layer.visible = true
 			if bool(p.win):
 				end_title.text = "🏡 国度守住了！"
@@ -591,6 +617,14 @@ func _process(delta: float) -> void:
 		var holder := villager_nodes[id] as Node3D
 		var vx: float = float(holder.get_meta("vx"))
 		holder.position.x = vx + sin((sim.elapsed + float(id)) * 1.3) * 2.0
+	# v5 天气表现（只读模拟状态；_process 为唯一驱动）：
+	# 风暴模式常驻紫黑夜空+环境细雨；酸雨紫色主雨只在窗内，两模式一致（酸雨信息优先）
+	var env := env_node.environment
+	var storm_on := sim.round_state == "play" and sim.mode == "storm"
+	env.background_color = env.background_color.lerp(STORM_BG if storm_on else CLASSIC_BG, minf(3.0 * delta, 1.0))
+	env.ambient_light_color = env.ambient_light_color.lerp(STORM_AMB if storm_on else CLASSIC_AMB, minf(3.0 * delta, 1.0))
+	drizzle.emitting = storm_on
+	rain.emitting = sim.round_state == "play" and sim.acid_active()
 	_update_hover_proxy()
 	_update_tooltip(get_viewport().get_mouse_position())
 	# toast 淡出

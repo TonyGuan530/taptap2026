@@ -31,7 +31,9 @@
       "v6Review": "reviews/chatgpt-demo-03-v6-full.md",
       "v6Note": "v6(绿幕美术管线)备案确认 ITERATE 不变：纯资产管线替换,未触碰规则/经济/Mechanical Gate,四项回归与 v5 一致；贴图无需返工；盲测时顺带观察职业轻染+★+▲▼同屏时角色本体是否一眼可读(状态标记勿压过角色轮廓)；除此之外不动玩法,等真人数据",
       "phase3dV4Pending": "reviews/chatgpt-demo-03-3d-v4-pending.md",
-      "phase3dV4Note": "v4 待发送（2026-10-05）：因用户新约束「不弹窗不占鼠标」本轮未做浏览器备案，草案已写好（灭火指挥新机制+headless 输入测试+Pages 链路修复），待可占用鼠标时段发送并归档 full。"
+      "phase3dV4Note": "v4 待发送（2026-10-05）：因用户新约束「不弹窗不占鼠标」本轮未做浏览器备案，草案已写好（灭火指挥新机制+headless 输入测试+Pages 链路修复），待可占用鼠标时段发送并归档 full。",
+      "phase3dV5Pending": "reviews/chatgpt-demo-03-3d-v5-pending.md",
+      "phase3dV5Note": "v5 待发送（2026-10-05）：风暴之夜 3D 视觉辨识（紫黑夜空+环境细雨+酸雨双层叠加，对齐 2D v14），规则零改动；与 v4 备案一并待发（不弹窗约束）"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",
