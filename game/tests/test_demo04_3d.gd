@@ -387,6 +387,128 @@ func _run() -> void:
 	else:
 		_fail("遥测 v2 异常：entered=%s exited=%s jumps=%d env_ok=%s" % [entered, exited, int(tel.jumps), env_ok])
 
+	# ---- 17. 实验房全流程（验收矩阵：K 进/B 出/R/G/T、任意融合顺序基础） ----
+	scene_root.load_level(1)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	var ev_k := InputEventKey.new()
+	ev_k.keycode = KEY_K
+	ev_k.physical_keycode = KEY_K
+	ev_k.pressed = true
+	Input.parse_input_event(ev_k)
+	await physics_frame
+	var ev_ku := InputEventKey.new()
+	ev_ku.keycode = KEY_K
+	ev_ku.physical_keycode = KEY_K
+	ev_ku.pressed = false
+	Input.parse_input_event(ev_ku)
+	await physics_frame
+	var lab_ok: bool = scene_root.mode == "lab" and ability.dna.size() == 4
+	scene_root._export_telemetry()
+	await physics_frame
+	var fr2 := FileAccess.open("user://demo04_3d_lab_log.json", FileAccess.READ)
+	var env2 := {}
+	if fr2 != null:
+		env2 = JSON.parse_string(fr2.get_as_text())
+		fr2.close()
+	var env_lab: bool = str(env2.get("mode", "")) == "lab"
+	var ev_b := InputEventKey.new()
+	ev_b.keycode = KEY_B
+	ev_b.physical_keycode = KEY_B
+	ev_b.pressed = true
+	Input.parse_input_event(ev_b)
+	await physics_frame
+	var ev_bu := InputEventKey.new()
+	ev_bu.keycode = KEY_B
+	ev_bu.physical_keycode = KEY_B
+	ev_bu.pressed = false
+	Input.parse_input_event(ev_bu)
+	await physics_frame
+	if lab_ok and env_lab and scene_root.mode == "campaign" and ability.dna.is_empty():
+		_ok("实验房：K 进（全DNA）→ T 导出 lab 信封 → B 出（战役 DNA 重教）")
+	else:
+		_fail("实验房异常：lab_ok=%s env_lab=%s mode=%s dna=%d" % [lab_ok, env_lab, scene_root.mode, ability.dna.size()])
+
+	# ---- 18. 跳数重置回归（v4 真bug①）：落地后空中二段可再用；跳数不跨滞空累积 ----
+	scene_root.load_level(0)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	ability.gain_dna("highjump")
+	ability.gain_dna("double")
+	await _teleport(Vector3(5.0, 1.3, 0))
+	await _settle_until_floor()
+	await _tap(KEY_SPACE, 1)                     # 地面跳 ju=1
+	await _settle(8)                             # 上升段
+	var ju1: int = player.jumps_used
+	await _tap(KEY_SPACE, 1)                     # 空中二段 ju=2
+	await _settle(4)
+	var ju2: int = player.jumps_used
+	var reawaited := 0
+	for i in 240:
+		await physics_frame
+		if player.is_on_floor() and player.jumps_used == 0:
+			reawaited += 1
+			break
+	if ju1 == 1 and ju2 == 2 and reawaited > 0:
+		_ok("跳数重置回归：地面跳→1、二段→2、落地归 0（v4 真bug① 已修）")
+	else:
+		_fail("跳数异常：ju1=%d ju2=%d 落地归零=%s" % [ju1, ju2, reawaited > 0])
+
+	# ---- 19. 评级边界 + 碎片单次计数 + 全收集 17 枚（验收矩阵） ----
+	var ratings_ok: bool = scene_root._rating(45.0) == "S" and scene_root._rating(45.1) == "A" 			and scene_root._rating(90.0) == "A" and scene_root._rating(90.1) == "B"
+	var total17: bool = scene_root._total_shards() == 17
+	scene_root.load_level(2)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	await _teleport(Vector3(10.25, 1.3, 0))      # L3 岛上碎片 (10.25,1.9) 正上方
+	await _settle_until_floor()
+	await _settle(30)                            # 持续接触 0.5s
+	var once_ok: bool = ability.shards_level == 1
+	if ratings_ok and total17 and once_ok:
+		_ok("评级边界 45/90 正确；全收集 17 枚；碎片重复接触只计 1 次")
+	else:
+		_fail("评级/碎片异常：ratings=%s total=%d shards_level=%d" % [ratings_ok, scene_root._total_shards(), ability.shards_level])
+
+	# ---- 20. 跨关污染：R 重开本关裂纹墙复原、组合发现保留、计时归零、输入恢复 ----
+	scene_root.load_level(3)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	ability.gain_dna("break")
+	ability.combos_found["superjump"] = true      # 模拟跨关已发现
+	await _teleport(Vector3(11.5, 1.3, 0))
+	await _settle_until_floor()
+	await _hold_and_measure(KEY_D, 2.0)          # 撞碎裂纹墙
+	var was_broken := false
+	for c in scene_root.cracks:
+		if c.broken:
+			was_broken = true
+	var ev_r2 := InputEventKey.new()
+	ev_r2.keycode = KEY_R
+	ev_r2.physical_keycode = KEY_R
+	ev_r2.pressed = true
+	Input.parse_input_event(ev_r2)
+	await physics_frame
+	var ev_r2u := InputEventKey.new()
+	ev_r2u.keycode = KEY_R
+	ev_r2u.physical_keycode = KEY_R
+	ev_r2u.pressed = false
+	Input.parse_input_event(ev_r2u)
+	await physics_frame
+	await _settle(10)
+	var crack_restored := false
+	for c in scene_root.cracks:
+		if not c.broken:
+			crack_restored = true
+	var no_cross_pollution: bool = crack_restored and ability.combos_found.has("superjump") 			and scene_root.elapsed < 2.0 and player.input_enabled and scene_root.level_times.is_empty()
+	if was_broken and no_cross_pollution:
+		_ok("跨关污染：R 复原裂纹墙、组合发现保留、计时/碎片/输入干净重置")
+	else:
+		_fail("重开状态异常：was_broken=%s restored=%s combos=%s" % [was_broken, crack_restored, ability.combos_found.has("superjump")])
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:
