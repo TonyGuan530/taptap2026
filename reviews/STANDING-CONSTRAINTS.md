@@ -10,3 +10,4 @@
 4. Pages builds/ 已 1.2GB 超 1GB 软限（部署目前仍成功）；**全局瘦身需用户决策**，未经决策不要擅自删其他 demo 的构建。
 5. Web 导出纪律（v8/v9 教训）：`.gd` 新增显示用字后必须重跑 `node tools/subset-font.mjs`（子集缺字在桌面端被系统回退掩盖，Web 端全是方块）；阶段 D 常规验证 = `node tools/browser-smoke.mjs <构建URL> reviews/shots/browser-smoke-<版>`（Edge headless，无弹窗）。
 6. 发布验证全链（headless）：构建后依次 `node tools/browser-smoke.mjs <构建URL> reviews/shots/browser-smoke-<版>` + `node tools/hub-smoke.mjs <HubURL> <版本> reviews/shots/hub-smoke-<版>`（后者校验卡片/iframe/build.json 一致性；/api/* 404 为静态托管预期，白名单）。
+7. 视频管线（v12 起，替代 Movie Maker 弹窗方案）：`node tools/record-video.mjs <构建URL> reviews/videos`（Edge headless + Playwright recordVideo，浏览器自合成帧，非屏幕录屏不占鼠标）→ `ffmpeg -i x.webm -c:v libx264 -pix_fmt yuv420p demo-03-3d.mp4`。首次需 `node node_modules/playwright-core/cli.js install ffmpeg`。Miro 回贴仍需 token（/key 页），待可占用鼠标时段。
