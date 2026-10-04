@@ -30,6 +30,7 @@ if (!files.length) {
 }
 
 const players = new Map(); // pid → { sessions: Map(sid → events[]) }
+const players3d = new Map(); // sid → events（3D：pid=demo06_3d_<关卡>_<sid>，每文件一会话）
 for (const file of files) {
 	let data;
 	try {
@@ -40,6 +41,12 @@ for (const file of files) {
 	}
 	const pid = data.pid || path.basename(file, '.json');
 	const events = Array.isArray(data.events) ? data.events : [];
+	if (String(pid).startsWith('demo06_3d')) {
+		const sid3 = events[0]?.sid || pid;
+		if (!players3d.has(sid3)) players3d.set(sid3, []);
+		players3d.get(sid3).push(...events);
+		continue;
+	}
 	for (const ev of events) {
 		const sid = ev.sid || 'S0';
 		if (!players.has(pid)) players.set(pid, new Map());
@@ -128,6 +135,44 @@ function summarizePlayer(pid, sessions) {
 	return { pid, passStr, best, combos, comboStr, envStr, heavyStr, stickyStr, lines };
 }
 
+function summarize3dSession(sid, evs) {
+	evs.sort((a, b) => (a.el || 0) - (b.el || 0));
+	const goal = evs.find((e) => e.type === 'goal');
+	const places = evs.filter((e) => e.type === 'place');
+	const rejected = evs.filter((e) => e.type === 'placement_rejected');
+	const attempts = evs.filter((e) => e.type === 'placement_attempt');
+	const resets = evs.filter((e) => e.type === 'reset');
+	const route = places
+		.map((p) => `${SHAPE_NAME[p.shape] || p.shape}+${WORD_NAME[p.tag] || p.tag}`)
+		.join('→');
+	const g = goal || {};
+	const gpos = Array.isArray(g.ghost_pos) ? `(${g.ghost_pos.join(',')})` : '?';
+	const rejRatio = attempts.length ? `${rejected.length}/${attempts.length}` : '0';
+	return `${sid} | 通关L3?${goal ? 'Y' : 'N'} | 用时${g.elapsed ?? '?'}s | 放置${places.length} | 拒绝${rejRatio} | 复位${resets.length} | 墨余${g.ink_left ?? '?'} | 组合 ${route || '(未放置)'} | ghost终位${gpos}@${g.ghost_yaw ?? '?'}rad`;
+}
+
+const out3d = [];
+if (players3d.size) {
+	const sessions = [...players3d.entries()];
+	const wins = sessions.filter(([, e]) => e.some((x) => x.type === 'goal'));
+	const times = wins
+		.map(([, e]) => e.find((x) => x.type === 'goal')?.elapsed)
+		.filter((t) => typeof t === 'number')
+		.sort((a, b) => a - b);
+	const median = times.length ? times[Math.floor(times.length / 2)] : null;
+	const totRej = sessions.reduce((s, [, e]) => s + e.filter((x) => x.type === 'placement_rejected').length, 0);
+	const totAtt = sessions.reduce((s, [, e]) => s + e.filter((x) => x.type === 'placement_attempt').length, 0);
+	out3d.push('## 3D 盲测每人一行摘要（L3 主 Gate，构建 demo-06-3d-v6+）\n');
+	for (const [, evs] of sessions) out3d.push(summarize3dSession(evs[0]?.sid || 'S?', evs));
+	out3d.push('');
+	out3d.push(
+		`汇总: 会话 ${sessions.length} / 通关 ${wins.length}` +
+			(times.length ? `（${Math.round((wins.length / sessions.length) * 100)}%，中位用时 ${median}s）` : '') +
+			` / 放置尝试 ${totAtt}（拒绝 ${totRej}${totAtt ? `，${Math.round((totRej / totAtt) * 100)}%` : ''}——高拒绝率=placement_control 疑似）`,
+	);
+	out3d.push('（failure_cause 与 lifecycle 口供由组织者记录表补充；新解 D 与 intentional/accidental 人工看录屏标注）');
+}
+
 const out = [];
 const sortedPids = [...players.keys()].sort();
 for (const pid of sortedPids) {
@@ -136,9 +181,15 @@ for (const pid of sortedPids) {
 	out.push('');
 }
 if (markdown) {
-	console.log('## 盲测每人一行摘要（可直接发给 ChatGPT）\n');
-	console.log(out.join('\n'));
-	console.log('\n（新解 D 与 intentional/accidental 两列由人工看录屏补齐后再发）');
+	if (out3d.length) console.log(out3d.join('\n') + '\n');
+	if (out.length) {
+		console.log('## 盲测每人一行摘要（可直接发给 ChatGPT）\n');
+		console.log(out.join('\n'));
+		console.log('\n（新解 D 与 intentional/accidental 两列由人工看录屏补齐后再发）');
+	}
+	if (!out.length && !out3d.length) console.log('（无可汇总数据）');
+} else if (out3d.length) {
+	console.log(out3d.join('\n'));
 } else {
 	console.log(out.join('\n'));
 }
