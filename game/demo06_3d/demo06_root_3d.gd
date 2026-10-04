@@ -36,6 +36,7 @@ const LEVELS := [
 	{"id": "L5", "name": "双沟群岛", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(13.6, 1.7, 0), "fall_y": -6.0},
 	{"id": "L6", "name": "登天梯", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(9.3, 3.65, 0), "fall_y": -6.0},
 	{"id": "L7", "name": "滚坡借力", "ink": 100, "spawn": Vector3(0, 2.9, 0), "goal": Vector3(9.5, 1.7, 0), "fall_y": -6.0},
+	{"id": "L8", "name": "引球入瓮", "ink": 100, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(7.8, 1.7, 0), "fall_y": -6.0},
 ]
 
 var ink := 100
@@ -175,8 +176,26 @@ func _build_level() -> void:
 			_build_l6()
 		6:
 			_build_l7()
+		7:
+			_build_l8()
 		_:
 			_build_l3()
+
+
+## L8 引球入瓮（内容新增）：23° 短导槽贴台面下沿引入沟上瓮位——Heavy 球放台缘滚落入瓮
+##（球架瓮壁顶≈台面）→ 踩球过沟；备解 Float 板桥。GOAL 在右台（face 5.8）。
+func _build_l8() -> void:
+	_static_box(Vector3(0.7, 0.6, 0.0), Vector3(4.4, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(7.8, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(4.4, -0.55, 0.0), Vector3(5.6, 0.5, 6.0), Color("6d7590"))
+	# 导槽（23°短槽，贴台缘下沿；槽口下探避让台面上空）
+	_static_slope(Vector3(3.33, 0.74, 0.0), Vector3(1.25, 0.3, 0.8), -28.8, Color("7f88a0"))
+	_static_slope(Vector3(3.45, 1.12, 0.42), Vector3(1.25, 0.5, 0.12), -28.8, Color("5d6580"))
+	_static_slope(Vector3(3.45, 1.12, -0.42), Vector3(1.25, 0.5, 0.12), -28.8, Color("5d6580"))
+	# 瓮：底 + 双壁（内距 0.5 < 球径 0.56 → 球架壁顶≈1.26）
+	_static_box(Vector3(4.3, 0.1, 0.0), Vector3(0.7, 0.4, 0.8), Color("6d7590"))
+	_static_box(Vector3(3.95, 0.4, 0.0), Vector3(0.2, 0.6, 0.8), Color("5d6580"))
+	_static_box(Vector3(4.65, 0.4, 0.0), Vector3(0.2, 0.6, 0.8), Color("5d6580"))
 
 
 ## 斜面静物盒（L7 首个斜坡地形）

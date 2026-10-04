@@ -376,6 +376,75 @@ func _l7_boulder() -> bool:
 	return false
 
 
+## L8 路A：Heavy 球放槽顶 → 滚落入瓮 → 踩球过沟
+func _l8_ball() -> bool:
+	await _spawn(7)
+	var ok: bool = game.place_blueprint(0, 0, Vector3(3.05, 1.55, 0))
+	if not ok:
+		print("L8B FAIL: ball placement rejected")
+		return false
+	for i in 150:
+		await physics_frame
+	var ball: RigidBody3D = game.placed_root.get_node("Placed0")
+	var in_socket: bool = ball.position.x > 3.9 and ball.position.x < 4.9
+	print("L8A ball in socket=(%.2f,%.2f) v=%.2f => %s" % [ball.position.x, ball.position.y, ball.linear_velocity.length(), str(in_socket)])
+	var jump_latch := false
+	t = 0
+	while t < 1500:
+		await physics_frame
+		t += 1
+		var p: CharacterBody3D = game.player
+		var px: float = p.position.x
+		var py: float = p.position.y
+		var on_floor: bool = p.is_on_floor()
+		if on_floor and px > 2.45 and px < 2.7 and py > 1.0 and py < 2.0:
+			jump_latch = true
+		if on_floor and px > 4.0 and px < 4.6 and py > 1.5 and py < 2.1:
+			jump_latch = true
+		game.auto_dir = Vector3(1, 0, 0)
+		game.auto_jump = on_floor and jump_latch
+		if not on_floor:
+			jump_latch = false
+		if t % 120 == 0:
+			print("L8A t=%d px=%.2f py=%.2f" % [t, px, py])
+		if _won():
+			print("L8BALL: PASS (t=%d)" % t)
+			return in_socket
+	print("L8A FAIL: no goal (px=%.2f)" % game.player.position.x)
+	return false
+
+
+## L8 路B：Float 板桥直接跨沟
+func _l8_plank() -> bool:
+	await _spawn(7)
+	var ok: bool = game.place_blueprint(1, 1, Vector3(3.75, 1.46, 0))
+	if not ok:
+		print("L8P FAIL: plank placement rejected")
+		return false
+	var jump_latch := false
+	t = 0
+	while t < 1500:
+		await physics_frame
+		t += 1
+		var p: CharacterBody3D = game.player
+		var px: float = p.position.x
+		var py: float = p.position.y
+		var on_floor: bool = p.is_on_floor()
+		if on_floor and px > 2.45 and px < 2.7 and py > 1.0 and py < 2.0:
+			jump_latch = true
+		if on_floor and px > 3.5 and px < 4.3 and py > 1.8 and py < 2.4:
+			jump_latch = true
+		game.auto_dir = Vector3(1, 0, 0)
+		game.auto_jump = on_floor and jump_latch
+		if not on_floor:
+			jump_latch = false
+		if _won():
+			print("L8PLANK: PASS (t=%d)" % t)
+			return true
+	print("L8P FAIL: no goal (px=%.2f)" % game.player.position.x)
+	return false
+
+
 func _run() -> void:
 	var results := {}
 	results.l1f = await _l1_fire()
@@ -395,9 +464,13 @@ func _run() -> void:
 	print("ROUTE_L7A: ", "PASS" if results.l7a else "FAIL")
 	results.l7b = await _l7_boulder()
 	print("ROUTE_L7B: ", "PASS" if results.l7b else "FAIL")
+	results.l8a = await _l8_ball()
+	print("ROUTE_L8A: ", "PASS" if results.l8a else "FAIL")
+	results.l8b = await _l8_plank()
+	print("ROUTE_L8B: ", "PASS" if results.l8b else "FAIL")
 	var n := 0
 	for k in results:
 		if results[k]:
 			n += 1
-	print("LEVELS RESULT: %d/9 PASS" % n)
-	quit(0 if n == 9 else 1)
+	print("LEVELS RESULT: %d/11 PASS" % n)
+	quit(0 if n == 11 else 1)
