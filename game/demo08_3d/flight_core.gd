@@ -63,6 +63,9 @@ const LEVELS := [
 	{name = "第 9 关 · 斜风峡谷", short = "斜风峡谷", ratio = 0.85, folds = 6, target_m = 50.0, wind = "head", side_wind = -60.0, reward = 12,
 		gate_x = 40.0, gate_h = 11.0, gate_bonus = 3, gate_side = 240.0,
 		tip = "斜风：逆风阻力 1.25 倍，侧风还向左推（60px/s²）——顶住左漂向右切，40 米高空门（+4m 横位、11m 以上）+3，50 米过关。更多机制关卡（用户指令扩展）"},
+	{name = "第 10 关 · S 形走廊", short = "S 形走廊", ratio = 0.8, folds = 6, target_m = 75.0, wind = "side", wind_side = -1.0, shear_x = 30.0, wind_side2 = 1.0, shear_x2 = 50.0, wind_side3 = -1.0, reward = 14,
+		gate_x = 42.0, gate_h = 12.0, gate_bonus = 3, gate_side = 300.0,
+		tip = "双段切变 S 形：30 米前左风、30-50 米右风（趁势在 +5m 横位吃 42 米高空门 +3）、50 米后左风送你收尾 75 米。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
@@ -457,18 +460,26 @@ func wind_side() -> float:
 	return float(LEVELS[level_idx].get("wind_side", -1.0))
 
 
-## 阶段 C5 风切变：越过 shear_x（米，0=无切变）后侧风方向切为 wind_side2
+## 阶段 C5/C8 风切变：越过 shear_x 后侧风切为 wind_side2；再越过 shear_x2（C8 双段，0=无）切为 wind_side3
 func eff_wind_side() -> float:
 	var ws: float = wind_side()
 	var shear_m: float = float(LEVELS[level_idx].get("shear_x", 0.0))
 	if shear_m > 0.0 and plane_pos.x >= START_X + shear_m * PX_PER_M:
 		ws = wind_side2()
+	var shear2_m: float = float(LEVELS[level_idx].get("shear_x2", 0.0))
+	if shear2_m > 0.0 and plane_pos.x >= START_X + shear2_m * PX_PER_M:
+		ws = wind_side3()
 	return ws
 
 
 ## 切变后的侧风方向（未配置则与切变前相同）
 func wind_side2() -> float:
 	return float(LEVELS[level_idx].get("wind_side2", wind_side()))
+
+
+## 第二次切变后的侧风方向（未配置则与第二段相同）
+func wind_side3() -> float:
+	return float(LEVELS[level_idx].get("wind_side3", wind_side2()))
 
 
 ## 阶段 C6 正交侧风（px/s²，带符号）：与 forward 风（head/tail/none）叠加，用于非 "side" 风型关卡
