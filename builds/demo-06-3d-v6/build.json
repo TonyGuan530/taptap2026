@@ -1,0 +1,7 @@
+{
+  "title": "TapTap2026 Demo",
+  "version": "demo-06-3d-v6",
+  "date": "2026-10-05T06:00:00.000Z",
+  "author": "49321",
+  "notes": "DEMO6 3D 真人 Gate Kit（ChatGPT 裁定执行轮）：telemetry 3D 适配（sid/level/el + start/select/place/contact/reset/goal/session_end）+ 新增 placement_attempt/placement_rejected（区分没想到与放不下）+ ghost 终位记录 + J 键复制 JSON + kit 文档 3D 改版（failure_cause 四分类 + lifecycle 观察轴）。boots 直进 L3 主 Gate。全套测试 5/5 绿。"
+}
