@@ -51,7 +51,7 @@ const LEVELS := [
 			[Vector3(12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
 			[Vector3(0, 9.25, 0), Vector3(24, 0.5, 13), "wall"],
 		],
-		spring = { pos = Vector3(-8, 0.15, 0), imp = Vector3(0, 18.5, 0) },   # 冲量加强：顶点更高，石头落板冲击 ≈15 m/s（阈值 11）
+		spring = { pos = Vector3(-8, 0.15, 0), imp = Vector3(0, 12, 0) },   # 实测基准冲量 12（b 套件全绿所测）；余量来自板压低 2.0 + 阈值 11
 		fragile = { pos = Vector3(-9.75, 2.0, 0), size = Vector3(2.5, 0.5, 2.5) },   # 脆板错位弹簧左上方；厚 0.5m 防高速穿板；压低落距增冲击余量
 		goal = { pos = Vector3(-9.75, 0.7, 0), size = Vector3(2.4, 0.9, 2.4) },   # 底 0.25m 离地
 	},
@@ -195,7 +195,8 @@ func _build_hud() -> void:
 
 func _load_level(idx: int) -> void:
 	for n in level_nodes:
-		n.queue_free()
+		if is_instance_valid(n):   # 碎板已被 queue_free 但仍挂在 level_nodes，直接 free 会中断协程
+			n.queue_free()
 	level_nodes.clear()
 	level_idx = idx
 	var lv: Dictionary = LEVELS[idx]
@@ -404,6 +405,7 @@ func _on_ball_hit(other: Node) -> void:
 	var lv: Dictionary = LEVELS[level_idx]
 	if other == fragile and not fragile_broken and prev_speed >= FRAGILE_SPEED:
 		fragile_broken = true
+		level_nodes.erase(fragile)   # 摘除幽灵引用，防下次 _load_level 对已释放节点 queue_free
 		fragile.queue_free()
 
 
@@ -441,7 +443,8 @@ func _physics_process(delta: float) -> void:
 		switch_tag(2)
 
 	if in_spring and spring_ready:
-		ball.linear_velocity = Vector3(0, 12, 0)
+		var imp: Vector3 = LEVELS[level_idx].spring.imp   # 点火用关卡数据（原先硬编码 12，imp 是死数据）
+		ball.linear_velocity = imp
 		spring_ready = false
 		spring_used = true
 
