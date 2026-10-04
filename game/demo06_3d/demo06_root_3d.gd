@@ -31,7 +31,7 @@ const WORDS := [
 const LEVELS := [
 	{"id": "L1", "name": "栅栏与沟", "ink": 100, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(7.2, 1.7, 0), "fall_y": -6.0},
 	{"id": "L2", "name": "登上高台", "ink": 140, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(8.2, 3.4, 0), "fall_y": -6.0},
-	{"id": "L3", "name": "断层验证", "ink": 130, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(8.2, 1.7, 0), "fall_y": -6.0},
+	{"id": "L3", "name": "断层验证", "ink": 130, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(10.3, 1.7, 0), "fall_y": -6.0},
 	{"id": "L4", "name": "翻越高墙", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(8.2, 1.7, 0), "fall_y": -6.0},
 	{"id": "L5", "name": "双沟群岛", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(13.6, 1.7, 0), "fall_y": -6.0},
 	{"id": "L6", "name": "登天梯", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(9.3, 3.65, 0), "fall_y": -6.0},
@@ -145,12 +145,12 @@ func _build_l2() -> void:
 	_static_box(Vector3(8.1, 1.4, 0.0), Vector3(3.8, 2.8, 6.0), Color("7f88a0"))
 
 
-## L3 断层验证（阶段 A 验证房原样保留=主 Gate 基线；几何/语义不动，仅墨水按指南对齐 130）
+## L3 断层验证（主 Gate；ChatGPT 裁定重标定：单板不可跨/双板可跨——沟宽 4.8m>单板极限 4.42m；
+## 坑深调至 1.5m 支撑 C0 纯 0 墨环境路线；语义不变=开放断层无属性锁，只判 GOAL）
 func _build_l3() -> void:
-	# L3 风格开放断层：两台同高 1.2m，沟宽 2.7m，沟底 -1.2m。统一材质（场景细色，无轮廓）。
 	_static_box(Vector3(0.7, 0.6, 0.0), Vector3(4.4, 1.2, 6.0), Color("8a93a8"))
-	_static_box(Vector3(7.6, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
-	_static_box(Vector3(4.25, -0.75, 0.0), Vector3(4.9, 0.5, 6.0), Color("6d7590"))
+	_static_box(Vector3(9.7, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(4.75, -0.55, 0.0), Vector3(5.9, 0.5, 6.0), Color("6d7590"))
 
 
 ## L4 翻越高墙（指南 §2）：抬升 0.9m、两环境物；垫板/推箱关系，0 墨方案可通。
@@ -341,11 +341,11 @@ func _build_props() -> void:
 	_build_level_props()
 
 
-## L3 环境箱（普通刚体，可推/可撞——解法 C 通道；几何与阶段 A 逐字节一致）
+## L3 环境箱（普通刚体，可推/可撞；0.75m 高=C0 双余量：坑底上箱 0.75≤0.845、箱顶回台 0.45）
 func _build_l3_crate() -> void:
 	var crate := ModelLibrary.create_model("crate")
 	var bounds := ModelLibrary.geometry_bounds(crate)
-	var target_h := 1.05
+	var target_h := 0.75
 	var s: float = target_h / maxf(bounds.size.y, 0.2)
 	var rb := RigidBody3D.new()
 	rb.name = "EnvCrate"
