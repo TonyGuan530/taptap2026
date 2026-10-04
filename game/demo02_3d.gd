@@ -30,18 +30,28 @@ const LEVELS := [
 		boxes = [
 			[Vector3(0, -0.25, 0), Vector3(24, 0.5, 12), "field"],
 			[Vector3(3, 2.25, 0), Vector3(1, 4.5, 12), "wall"],
+			[Vector3(0, 4.5, -6.25), Vector3(24, 9, 0.5), "wall"],
+			[Vector3(0, 4.5, 6.25), Vector3(24, 9, 0.5), "wall"],
+			[Vector3(-12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
+			[Vector3(12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
+			[Vector3(0, 9.25, 0), Vector3(24, 0.5, 13), "wall"],
 		],
 		spring = { pos = Vector3(-4.5, 0.15, 0), imp = Vector3(0, 12, 0) },
 		fragile = null,
 		goal = { pos = Vector3(7, 0.65, 0), size = Vector3(2.4, 1.1, 2.4) },   # 底 0.1m 离地防贴合误触发
 	},
 	{
-		name = "第二关 · 砸穿脆板", solution = "上抛转石头，砸穿脆板入 GOAL",
-		spawn = Vector3(-4.5, 1.6, 0),
+		name = "第二关 · 砸穿脆板", solution = "原地弹簧上抛，顶点转石头竖直砸穿脆板",
+		spawn = Vector3(-8, 1.6, 0),
 		boxes = [
 			[Vector3(0, -0.25, 0), Vector3(24, 0.5, 12), "field"],
+			[Vector3(0, 4.5, -6.25), Vector3(24, 9, 0.5), "wall"],
+			[Vector3(0, 4.5, 6.25), Vector3(24, 9, 0.5), "wall"],
+			[Vector3(-12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
+			[Vector3(12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
+			[Vector3(0, 9.25, 0), Vector3(24, 0.5, 13), "wall"],
 		],
-		spring = { pos = Vector3(-4.5, 0.15, 0), imp = Vector3(0, 12, 0) },
+		spring = { pos = Vector3(-8, 0.15, 0), imp = Vector3(0, 12, 0) },
 		fragile = { pos = Vector3(-8, 3, 0), size = Vector3(4, 0.15, 2.5) },
 		goal = { pos = Vector3(-8, 0.7, 0), size = Vector3(2, 0.9, 2) },   # 底 0.15m 离地
 	},
