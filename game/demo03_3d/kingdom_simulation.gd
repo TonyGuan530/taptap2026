@@ -36,6 +36,11 @@ const ACID_DUR := 8.0
 const STORM_TIMES: Array[float] = [15.0, 30.0, 45.0]
 const STORM_JITTER := 2.0
 const STORM_DUR := 4.0
+## v11 风暴限定天气「热浪」：38~43s 升温 ×1.5（只乘升温，不动降温乘区；
+## 窗口取在第三场酸雨 45±2 之前，永不重叠）
+const HEATWAVE_START := 38.0
+const HEATWAVE_DUR := 5.0
+const HEATWAVE_MULT := 1.5
 ## v6 第 2 章「寒夜守卫」（hard）：起始 50 度、三场 6s 酸雨、村民 30/50s 才来。
 ## 经济/建造/晋升/曲线与经典完全一致——难在资源更紧、人手更晚。
 const HARD_START_HEAT := 50.0
@@ -83,6 +88,7 @@ var villagers: Array[Dictionary] = []   # {id, name, prof, level, x}
 var npc_next := 0
 var acid_events: Array[Dictionary] = [] # {start, dur, announced, warned}
 var acid_was_on := false
+var heatwave_was_on := false
 var spend_log: Array[Dictionary] = []   # {t, kind, amount}
 var villager_seq := 0
 var cmd_until := -1.0   # 灭火指挥生效窗截止（sim elapsed）
@@ -107,6 +113,7 @@ func setup_round(p_mode: String, seed_value: int = -1) -> void:
 	cmd_until = -1.0
 	cmd_ready_at = 0.0
 	cmd_was_on = false
+	heatwave_was_on = false
 	if seed_value >= 0:
 		rng.seed = seed_value
 	else:
@@ -158,6 +165,11 @@ func acid_at(t: float) -> bool:
 		if t >= float(e.start) and t < float(e.start) + dur_eff:
 			return true
 	return false
+
+
+## v11 热浪：仅风暴模式，38~43s（半开区间）
+func heatwave_active() -> bool:
+	return mode == "storm" and elapsed >= HEATWAVE_START and elapsed < HEATWAVE_START + HEATWAVE_DUR
 
 
 func build_cost() -> int:
@@ -274,6 +286,14 @@ func tick(delta: float) -> void:
 	elapsed += delta
 	var ph := phase()
 	var rise: float = float(ph.base) + float(ph.slope) * elapsed
+	var hw_on := heatwave_active()
+	if hw_on and not heatwave_was_on:
+		sim_event.emit("heatwave_started", {"until": elapsed + HEATWAVE_DUR})
+	elif not hw_on and heatwave_was_on:
+		sim_event.emit("heatwave_ended", {"at": elapsed})
+	heatwave_was_on = hw_on
+	if hw_on:
+		rise *= HEATWAVE_MULT
 	var acid_now := acid_active()
 	for e: Dictionary in acid_events:
 		if not e.warned and elapsed >= float(e.start) - ACID_WARN and elapsed < float(e.start):

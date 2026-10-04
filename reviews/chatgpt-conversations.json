@@ -41,7 +41,9 @@
       "phase3dV8V9Pending": "reviews/chatgpt-demo-03-3d-v8-v9-pending.md",
       "phase3dV8V9Note": "v8+v9 待发送（2026-10-05）：阶段 D headless 浏览器冒烟落地，修复 Web emoji 缺字(v8)+字体子集缺新字(v9 挥/卫)，复验截图 reviews/shots/browser-smoke-v9/；规则零改动；v4~v9 六份备案一并待发",
       "phase3dV10Pending": "reviews/chatgpt-demo-03-3d-v10-pending.md",
-      "phase3dV10Note": "v10 待发送（2026-10-05）：新建筑蓄水池（60水/4.5降温/酸雨完全失效），风险对比水塔；附 3D 真人盲测执行手册；v4~v10 七份备案一并待发"
+      "phase3dV10Note": "v10 待发送（2026-10-05）：新建筑蓄水池（60水/4.5降温/酸雨完全失效），风险对比水塔；附 3D 真人盲测执行手册；v4~v10 七份备案一并待发",
+      "phase3dV11Pending": "reviews/chatgpt-demo-03-3d-v11-pending.md",
+      "phase3dV11Note": "v11 待发送（2026-10-05）：风暴「热浪」38~43s 升温×1.5（不与酸雨重叠）；fallback 清单收口，玩法冻结待盲测+督导回看；v4~v11 八份备案一并待发"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",

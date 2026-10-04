@@ -368,5 +368,57 @@ func _run() -> void:
 	check(approx(s17b.heat - s17a.heat, 45.0, 0.3), "23~25s 酸雨中失效（diff 不再扩大）",
 			"diff=%.2f" % (s17b.heat - s17a.heat))
 
+	# ---- 18. v11 热浪：风暴限定/边界/对照（×1.5 只乘升温）----
+	var s18c = Sim.new()
+	s18c.setup_round("classic", 7)
+	s18c.elapsed = 40.0
+	check(not s18c.heatwave_active(), "经典模式无热浪")
+	var s18a = Sim.new()
+	s18a.setup_round("storm", 7)
+	s18a.acid_events[0].start = 15.0
+	s18a.acid_events[1].start = 30.0
+	s18a.acid_events[2].start = 45.0
+	s18a.elapsed = 37.9
+	check(not s18a.heatwave_active(), "37.9 未入热浪")
+	s18a.elapsed = 38.0
+	check(s18a.heatwave_active(), "38.0 入热浪")
+	s18a.elapsed = 42.9
+	check(s18a.heatwave_active(), "42.9 仍在热浪")
+	s18a.elapsed = 43.0
+	check(not s18a.heatwave_active(), "43.0 出热浪（半开区间）")
+	var s18b = Sim.new()
+	s18b.setup_round("storm", 7)
+	s18b.acid_events[0].start = 15.0
+	s18b.acid_events[1].start = 30.0
+	s18b.acid_events[2].start = 45.0
+	s18a.towers[0] = 2
+	s18b.towers[0] = 2
+	s18a.npc_next = 2
+	s18b.npc_next = 2
+	check(s18b.heatwave_active() == false or s18b.elapsed < 38.0, "对照局待用（风暴同模式会同样受热浪影响，不做 pair）")
+	var counter18 := {"start": 0, "end": 0}
+	s18a.sim_event.connect(func(kind: String, _p: Dictionary) -> void:
+		if kind == "heatwave_started":
+			counter18.start += 1
+		elif kind == "heatwave_ended":
+			counter18.end += 1
+	)
+	# 单 tick 解析：窗内 rise×1.5。tick 先推进 elapsed：rise(40.1)=3.1+0.07×40.1=5.907
+	s18a.elapsed = 40.0
+	s18a.heat = 50.0
+	s18a.tick(0.1)
+	check(approx(s18a.heat - 50.0, (5.907 * 1.5 - 5.0) * 0.1, 0.02), "热浪窗内单 tick 升温 ×1.5",
+			"d=%.3f" % (s18a.heat - 50.0))
+	s18a.elapsed = 43.5
+	s18a.heat = 50.0
+	s18a.tick(0.1)
+	check(approx(s18a.heat - 50.0, (6.152 - 5.0) * 0.1, 0.02), "热浪窗外恢复正常升温",
+			"d=%.3f" % (s18a.heat - 50.0))
+	check(counter18.start == 1, "热浪开始事件已发", "s%d" % counter18.start)
+	s18a.elapsed = 42.95
+	s18a.heat = 50.0
+	s18a.tick(0.2)
+	check(counter18.end == 1, "越过 43s 发出热浪结束事件", "e%d" % counter18.end)
+
 	print("==== 3D 迁移阶段 A 测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)

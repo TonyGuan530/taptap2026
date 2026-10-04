@@ -550,6 +550,12 @@ func _on_sim_event(kind: String, p: Dictionary) -> void:
 		"reservoir_built":
 			_update_reservoir_visual()
 			_toast("蓄水池建成！（酸雨时失效，注意时机）", Color("81d4fa"))
+		"heatwave_started":
+			banner_label.text = "【热浪】岩浆加剧！升温 ×1.5（5 秒）"
+			banner_label.add_theme_color_override("font_color", Color("ff8a65"))
+		"heatwave_ended":
+			if String(banner_label.text).begins_with("【热浪】"):
+				banner_label.text = ""
 		"command_started":
 			banner_label.text = "【灭火指挥】！全员应急降温 +1.5/s（不受酸雨影响）"
 			banner_label.add_theme_color_override("font_color", Color("81d4fa"))
@@ -731,6 +737,10 @@ func _process(delta: float) -> void:
 	env.ambient_light_color = env.ambient_light_color.lerp(STORM_AMB if storm_on else CLASSIC_AMB, minf(3.0 * delta, 1.0))
 	drizzle.emitting = storm_on
 	rain.emitting = sim.round_state == "play" and sim.acid_active()
+	# v11 热浪表现：岩浆辉光增强（风暴限定，只读 heatwave_active）
+	lava_mat.emission_energy_multiplier = lerpf(
+			lava_mat.emission_energy_multiplier, 2.2 if sim.heatwave_active() else 1.2,
+			minf(3.0 * delta, 1.0))
 	_update_hover_proxy()
 	_update_tooltip(get_viewport().get_mouse_position())
 	# toast 淡出

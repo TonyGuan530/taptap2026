@@ -229,6 +229,19 @@ func _run() -> void:
 			"got %.2f" % float(scene.sim.water))
 	check(is_instance_valid(scene.comic_reservoir), "蓄水池 ComicObject 可见")
 
+	# ---- 13. v11 热浪横幅（风暴）----
+	scene._start("storm")
+	var hw_starts: Array[float] = [15.0, 30.0, 45.0]
+	for i in scene.sim.acid_events.size():
+		scene.sim.acid_events[i].start = hw_starts[i]
+	scene.sim.elapsed = 37.5
+	var g18 := 0
+	while scene.sim.elapsed < 38.6 and g18 < 200:
+		scene.sim.tick(0.1)
+		g18 += 1
+	await process_frame
+	check(String(scene.banner_label.text).contains("热浪"), "热浪横幅显示", scene.banner_label.text)
+
 	print("==== 3D 阶段 B 拾取测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)
 
