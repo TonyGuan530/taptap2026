@@ -42,13 +42,13 @@ const JUMP_V := 520.0
 
 ## 词条：统一物理参数表（任何形状×任何词条都成立，无配方）
 const WORDS := [
-	{ id = "heavy", name = "Heavy", col = Color("8d8d94"), cost = 10, g = 2.6, float_up = 0.0, burn = false, sticky = false,
+	{ id = "heavy", name = "Heavy", zh = "重", col = Color("8d8d94"), cost = 10, g = 2.6, float_up = 0.0, burn = false, sticky = false,
 		tip = "又重又快：砸碎脆障碍" },
-	{ id = "float", name = "Float", col = Color("4fc3f7"), cost = 15, g = 0.0, float_up = 0.0, burn = false, sticky = false,
+	{ id = "float", name = "Float", zh = "浮", col = Color("4fc3f7"), cost = 15, g = 0.0, float_up = 0.0, burn = false, sticky = false,
 		tip = "悬浮原地：当空中平台" },
-	{ id = "fire", name = "Fire", col = Color("ef5350"), cost = 15, g = 1.0, float_up = 0.0, burn = true, sticky = false,
+	{ id = "fire", name = "Fire", zh = "燃", col = Color("ef5350"), cost = 15, g = 1.0, float_up = 0.0, burn = true, sticky = false,
 		tip = "点燃易燃物：木头烧光" },
-	{ id = "sticky", name = "Sticky", col = Color("8d6e63"), cost = 10, g = 1.0, float_up = 0.0, burn = false, sticky = true,
+	{ id = "sticky", name = "Sticky", zh = "黏", col = Color("8d6e63"), cost = 10, g = 1.0, float_up = 0.0, burn = false, sticky = true,
 		tip = "接触即粘住：当垫脚台" },
 ]
 ## 形状：几何 + 墨水价
@@ -247,7 +247,7 @@ func _build_ui() -> void:
 		ui.add_child(b)
 	for i in WORDS.size():
 		var b2 := Button.new()
-		b2.text = WORDS[i].name
+		b2.text = WORDS[i].name + " " + WORDS[i].zh
 		b2.position = Vector2(560 + i * 100, 40)
 		b2.size = Vector2(96, 30)
 		b2.pressed.connect(_on_word.bind(i))
