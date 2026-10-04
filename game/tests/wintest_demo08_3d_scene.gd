@@ -1,7 +1,7 @@
 extends SceneTree
 ## demo-08 3D 阶段 A 灰模场景测试：真实输入（鼠标点击/键盘）完成 L1 完整局；
 ## 场景层零漂移（场景内核心轨迹 == 纯核心同参重放）；相机只读模拟、可复位。
-## 运行：godot --headless --path game -s res://tests/test_demo08_3d_scene.gd（失败退出码非零）
+## 运行：godot --path game -s res://tests/wintest_demo08_3d_scene.gd（窗口套件：仅发布前或用户明示时运行——用户 2026-10-04 指令：日常 QA 禁弹窗）（失败退出码非零）
 
 const CoreScript := preload("res://demo08_3d/flight_core.gd")
 

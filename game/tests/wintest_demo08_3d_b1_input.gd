@@ -1,6 +1,6 @@
 extends SceneTree
 ## demo-08 3D 阶段 B1 真实输入（窗口模式）：飞行中 A/D 横移、相机半跟随无滚转、HUD 横移显示。
-## 运行：godot --path game -s res://tests/test_demo08_3d_b1_input.gd（失败退出码非零）
+## 运行（窗口套件，仅发布前或用户明示时运行——用户 2026-10-04 指令：日常 QA 禁弹窗）：godot --path game -s res://tests/wintest_demo08_3d_b1_input.gd（失败退出码非零）
 
 var passes := 0
 var fails := 0

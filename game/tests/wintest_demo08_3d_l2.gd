@@ -2,7 +2,7 @@ extends SceneTree
 ## demo-08 3D 阶段 A 收口：L2 真实输入完整局 × 三策略（高门/低门/直通）。
 ## 前置：core.unlocked=1（解锁状态为测试装置，L2 内所有交互均为真实鼠标/键盘事件）。
 ## 配方由 tests/search_l2_recipe.gd 纯核心搜索得出，坐标契约 delta=1/60 下确定性问题可复现。
-## 运行（窗口模式，真实渲染）：godot --path game -s res://tests/test_demo08_3d_l2.gd（失败退出码非零）
+## 运行（窗口套件，仅发布前或用户明示时运行——用户 2026-10-04 指令：日常 QA 禁弹窗）：godot --path game -s res://tests/wintest_demo08_3d_l2.gd（失败退出码非零）
 
 var passes := 0
 var fails := 0
