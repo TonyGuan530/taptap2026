@@ -1,19 +1,19 @@
 {
-  "checkedAt": "2026-10-04T12:32:00+08:00",
-  "round": 102,
+  "checkedAt": "2026-10-04T20:06:00+08:00",
+  "round": 103,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（12:05 实跑）"
+    "thisRound": "待下轮守卫实跑"
   },
   "automations": {
     "supervisor": {
-      "runCount": 98,
-      "lastDispatch": "12:04",
-      "next": "12:34"
+      "runCount": "—",
+      "lastDispatch": "19:30（手动会话）",
+      "next": "待用户改 1h 调度"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "新批示：历史版本归档令（reviews/…archive-versions.md）——builds 每 demo 只留最新 1 版（约 909MB→450MB）；Pages 清理上轮已完成"
+      "evidence": "🆕 3D 迁移阶段启动——总批示已发 reviews/supervisor-directive-2026-10-04-3d-migration.md（9 份指南分派表+六条实施约定）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -47,18 +47,20 @@
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD e739398",
+    "git": "本轮 HEAD 待推",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "Pages 部署传播完成后全量可达性验证（12:14）；demo-09 补赛道（长期队列）"
+    "queue": "🆕 全员 3D/HD-2D 迁移（按各自指南灰模先行）；demo-09 补赛道（长期队列，可在 3D 分支内做）"
   },
   "watch": [
-    "🔴【最高优先·新流程】每轮巡查第 0 步（先于其他清单项）：gh issue list --label feedback 拉取反馈→有新则归档 reports/blindtest-batch01/ + 同步 reviews/FEEDBACK-BOARD.md（各任务每轮优先读取）+ 批示对应任务",
-    "✅ 仓库已 PUBLIC（本来就公开）——任何人可提 Issue 反馈，无需开通；data/secrets.json 已 gitignore、tools/secrets.mjs 无硬编码密钥（安全验证通过）",
-    "🔴【需用户决策】Batch 01 人选与排期；demo-02 会话失能；itch A/B"
+    "🔴【调度变更·需用户操作】督导自动化改 1h 触发：本会话无 CronUpdate 工具——请在 ZCode Automations 界面把「每10分钟：TapTap2026 总督导」的间隔改为 60 分钟（其他任务不动）",
+    "🆕 3D 化阶段：项目方向升级（用户已定 9 demo 方向，Codex 指南 D:/GIT/3D-GUIDE）——各任务自下轮按指南建分支/worktree 开工，main 2D 线上版继续发布",
+    "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B",
+    "🆕【定时跟进·全项目】统一美术基线 Low-poly/Comic Kit 接入核查——各 demo 3D 里程碑含「美术基线接入完成」检查项，未完成持续催办（批示 reviews/supervisor-directive-2026-10-04-3d-migration.md 增补节）",
+    "🆕【美术基线部署裁定】基座全局一次+场景应用分 demo——流水线建 3d-shared 共享分支落 comic_style/models/addons，各 demo 迁移分支从基座拉出（批示 3d-migration.md 增补节）；下轮核对 [DONE]"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
