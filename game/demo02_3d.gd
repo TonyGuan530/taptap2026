@@ -51,9 +51,9 @@ const LEVELS := [
 			[Vector3(12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
 			[Vector3(0, 9.25, 0), Vector3(24, 0.5, 13), "wall"],
 		],
-		spring = { pos = Vector3(-8, 0.15, 0), imp = Vector3(0, 12, 0) },
-		fragile = { pos = Vector3(-8, 3, 0), size = Vector3(4, 0.15, 2.5) },
-		goal = { pos = Vector3(-8, 0.7, 0), size = Vector3(2, 0.9, 2) },   # 底 0.15m 离地
+		spring = { pos = Vector3(-8, 0.15, 0), imp = Vector3(0, 17.5, 0) },   # 冲量加强：石头落板冲击 ≥12 m/s
+		fragile = { pos = Vector3(-9.75, 2.5, 0), size = Vector3(2.5, 0.15, 2.5) },   # 脆板错位弹簧正上方；羽毛在峡谷上方转石头砸落
+		goal = { pos = Vector3(-9.75, 0.7, 0), size = Vector3(2.4, 0.9, 2.4) },   # 底 0.25m 离地
 	},
 	{
 		name = "第三关 · 组合峡谷", solution = "弹簧→转羽毛(扑翼+W)跨峡谷→松 W 落入远端 GOAL",
