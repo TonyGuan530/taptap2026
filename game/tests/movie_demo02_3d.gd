@@ -3,7 +3,7 @@ extends Node3D
 ## 运行：godot --path game --write-movie <绝对路径>/f.png --fixed-fps 30 res://tests/movie_demo02_3d.tscn
 
 var game: Node3D
-var phase := 0          # 0=L1 1=L2 2=L3
+var phase := 0          # 0=L1 1=L2 2=L3 3=L4(羽毛路线) 4=L5(零输入)
 var sub := 0            # 阶段内步骤
 var hold := 0           # 过关停留帧数（30fps × 1.2s）
 var released := false
@@ -15,7 +15,7 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if game == null or phase >= 3:
+	if game == null or phase >= 5:
 		return
 	if game.goal_reached:
 		hold += 1
@@ -24,16 +24,18 @@ func _physics_process(_delta: float) -> void:
 			phase += 1
 			sub = 0          # 下一关从装载步骤重新走
 			game.goal_reached = false
-			Input.action_release("p_fwd")   # 换关必须松净按键，否则 L2 漂移会被顶回
+			Input.action_release("p_fwd")   # 换关必须松净按键，否则漂移会被顶回
 			Input.action_release("p_left")
 			released = false
-			if phase >= 3:
+			if phase >= 5:
 				get_tree().quit()
 		return
 	match phase:
 		0: _drive_l1()
 		1: _drive_l2()
 		2: _drive_l3()
+		3: _drive_l4()
+		4: _drive_l5()
 
 
 func _drive_l1() -> void:
@@ -87,3 +89,34 @@ func _drive_l3() -> void:
 			Input.action_release("p_fwd")
 		if game.ball.linear_velocity.y < -1.0 and not game.flap_used:
 			game.try_flap()
+
+
+func _drive_l4() -> void:
+	if game.ball == null:
+		return
+	if sub == 0:
+		game._load_level(3)
+		game.switch_tag(2)
+		sub = 1
+	elif sub == 1 and game.ball.linear_velocity.y > 9.0:
+		sub = 2
+	elif sub == 2 and game.ball.linear_velocity.y > -2.0 and game.ball.linear_velocity.y < 2.0:
+		game.switch_tag(0)   # 顶点转羽毛
+		game.yaw = -PI / 2
+		Input.action_press("p_fwd")
+		sub = 3
+	elif sub == 3:
+		if game.ball.position.x >= 8.6 and not released:
+			released = true
+			Input.action_release("p_fwd")   # 到台上方即松，垂直落在高台上
+		if game.ball.position.y < 4.5 and game.ball.linear_velocity.y < -1.5 and not game.flap_used:
+			game.try_flap()
+
+
+func _drive_l5() -> void:
+	if game.ball == null:
+		return
+	if sub == 0:
+		game._load_level(4)
+		game.switch_tag(2)   # 皮球零输入：踩弹簧后交给弹簧链
+		sub = 1

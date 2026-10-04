@@ -66,8 +66,14 @@ func _run() -> void:
 	# ③ 石头砸穿脆板→GOAL：石头定点砸落（弹簧+转向组合留原生试玩验证）
 	scene.reset_ball()
 	scene.switch_tag(1)   # 石头
-	_teleport(Vector3(-8, 8, 0))   # 脆板正上方 4.85m：落速 ≈15 m/s ≥ 12
-	var broke_goal: bool = await _until(func(): return scene.goal_reached, 20000)
+	_teleport(Vector3(-9.75, 8, 0))   # 脆板(9.75,2.5) 正上方 5m：落速 ≈15 m/s ≥ 12
+	var hb := 0
+	while not scene.goal_reached and hb < 900:
+		hb += 1
+		if hb % 120 == 0:
+			_log("③ hb=%d pos=%s broken=%s" % [hb, str(scene.ball.global_position), str(scene.fragile_broken)])
+		await physics_frame
+	var broke_goal: bool = scene.goal_reached
 	_check("③ 石头砸穿脆板并入 GOAL", broke_goal and scene.fragile_broken)
 	_log("③ fragile_broken=%s goal_reached=%s pos=%s" % [str(scene.fragile_broken), str(scene.goal_reached), str(scene.ball.global_position)])
 
