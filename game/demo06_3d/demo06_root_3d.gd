@@ -35,6 +35,7 @@ const LEVELS := [
 	{"id": "L4", "name": "翻越高墙", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(8.2, 1.7, 0), "fall_y": -6.0},
 	{"id": "L5", "name": "双沟群岛", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(13.6, 1.7, 0), "fall_y": -6.0},
 	{"id": "L6", "name": "登天梯", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(9.3, 3.65, 0), "fall_y": -6.0},
+	{"id": "L7", "name": "滚坡借力", "ink": 100, "spawn": Vector3(0, 2.9, 0), "goal": Vector3(9.5, 1.7, 0), "fall_y": -6.0},
 ]
 
 var ink := 100
@@ -172,8 +173,39 @@ func _build_level() -> void:
 			_build_l5()
 		5:
 			_build_l6()
+		6:
+			_build_l7()
 		_:
 			_build_l3()
+
+
+## 斜面静物盒（L7 首个斜坡地形）
+func _static_slope(pos: Vector3, size: Vector3, rot_z_deg: float, col: Color) -> void:
+	var body := StaticBody3D.new()
+	body.position = pos
+	body.rotation_degrees = Vector3(0, 0, rot_z_deg)
+	var cs := CollisionShape3D.new()
+	var sh := BoxShape3D.new()
+	sh.size = size
+	cs.shape = sh
+	body.add_child(cs)
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = size
+	mi.mesh = bm
+	mi.material_override = style.body_material(col)
+	body.add_child(mi)
+	add_child(body)
+
+
+## L7 滚坡借力（内容新增，不在 Gate 冻结面）：高台→11.3° 斜坡→低台；
+## 坡中静态巨岩挡路（跳上 0.7 可越 / 坡上圆石可下推垫脚）；GOAL 在低台。
+func _build_l7() -> void:
+	_static_box(Vector3(0.0, 1.2, 0.0), Vector3(3.0, 2.4, 6.0), Color("8a93a8"))
+	_static_slope(Vector3(4.46, 1.6, 0.0), Vector3(6.12, 0.4, 6.0), -11.31, Color("7f88a0"))
+	_static_box(Vector3(9.5, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
+	# 巨岩（静物，顶面高出坡面 0.7）
+	_static_box(Vector3(4.5, 2.05, 0.0), Vector3(0.9, 0.9, 2.4), Color("6d7590"))
 
 
 ## L1 栅栏与沟（指南 §2）：平地、木栅栏、GOAL x7.2；Fire 与 Heavy 处理同一障碍。
@@ -229,8 +261,35 @@ func _build_level_props() -> void:
 		4:
 			_spawn_crate("PitCrate1", Vector3(4.7, -0.5 + 0.3 + 0.02, 0.8), 0.6)
 			_spawn_crate("PitCrate2", Vector3(10.4, -0.5 + 0.3 + 0.02, -0.8), 0.6)
+		6:
+			_spawn_boulder()
 		_:
 			pass
+
+
+## L7 坡上圆石（r0.35 mass2 摩擦0.6：坡上自稳 tan11.3°≈0.2<0.6，可被玩家下坡推动）
+func _spawn_boulder() -> void:
+	var rb := RigidBody3D.new()
+	rb.name = "Boulder"
+	rb.mass = 2.0
+	var rpm := PhysicsMaterial.new()
+	rpm.friction = 0.6
+	rpm.bounce = 0.05
+	rb.physics_material_override = rpm
+	rb.position = Vector3(3.0, 2.45, 0.0)
+	var cs := CollisionShape3D.new()
+	var ssh := SphereShape3D.new()
+	ssh.radius = 0.35
+	cs.shape = ssh
+	rb.add_child(cs)
+	var mi := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = 0.35
+	sm.height = 0.7
+	mi.mesh = sm
+	mi.material_override = style.body_material(Color("9a9a92"))
+	rb.add_child(mi)
+	props_root.add_child(rb)
 
 
 ## 木栅栏（RigidBody 高摩擦：玩家推不动、跳不过；Heavy 球可撞倒 / Fire 触碰燃毁——物理双解）

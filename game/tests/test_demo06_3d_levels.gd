@@ -294,6 +294,88 @@ func _restart_check() -> bool:
 	return ok_ink and ok_placed and ok_fence
 
 
+## L7 路A：z 绕开坡上圆石 → 坡面跳越巨岩（顶高出坡 0.7）→ 回 z 中线
+func _l7_jump() -> bool:
+	await _spawn(6)
+	var jump_latch := false
+	var phase := 0
+	t = 0
+	while t < 1500:
+		await physics_frame
+		t += 1
+		var p: CharacterBody3D = game.player
+		var px: float = p.position.x
+		var pz: float = p.position.z
+		var py: float = p.position.y
+		var on_floor: bool = p.is_on_floor()
+		var dir := Vector3(1, 0, 0)
+		# 跳窗相位无关（相位切换可能正好跨过窗）
+		if on_floor and px > 3.2 and px < 3.7 and py > 2.25 and py < 2.75:
+			jump_latch = true
+		match phase:
+			0:  # 绕开圆石（z +1.0 车道）
+				if px > 2.2 and pz < 0.95:
+					dir = Vector3(1, 0, 0.6).normalized()
+				if pz > 0.95:
+					phase = 1
+			1:  # 越岩后转回
+				if px > 4.3 and py > 2.8:
+					phase = 2
+			2:  # 回 z 中线 → GOAL
+				if pz > 0.1:
+					dir = Vector3(1, 0, -0.6).normalized()
+		game.auto_dir = dir
+		game.auto_jump = on_floor and jump_latch
+		if not on_floor:
+			jump_latch = false
+		if t % 120 == 0:
+			print("L7A t=%d ph=%d px=%.2f py=%.2f pz=%.2f" % [t, phase, px, py, pz])
+		if _won():
+			print("L7JUMP: PASS (t=%d)" % t)
+			return true
+	print("L7A FAIL: no goal (ph=%d px=%.2f pz=%.2f)" % [phase, game.player.position.x, game.player.position.z])
+	return false
+
+
+## L7 路B：下坡推圆石抵巨岩 → 踩石垫脚翻越
+func _l7_boulder() -> bool:
+	await _spawn(6)
+	var boulder: RigidBody3D = game.props_root.get_node_or_null("Boulder")
+	if boulder == null:
+		print("L7B FAIL: Boulder missing")
+		return false
+	var jumped := false
+	var jump_latch := false
+	t = 0
+	while t < 1800:
+		await physics_frame
+		t += 1
+		var p: CharacterBody3D = game.player
+		var px: float = p.position.x
+		var py: float = p.position.y
+		var on_floor: bool = p.is_on_floor()
+		if not jumped:
+			game.auto_dir = Vector3(1, 0, 0)
+			if boulder.position.x > 3.6:
+				jumped = true
+		else:
+			game.auto_dir = Vector3(1, 0, 0)
+			if on_floor and px > 2.9 and px < 3.2 and py > 2.2 and py < 2.6:
+				jump_latch = true
+			if on_floor and px > 3.55 and px < 3.85 and py > 2.4 and py < 2.9:
+				jump_latch = true
+		game.auto_jump = on_floor and jump_latch
+		if not on_floor:
+			jump_latch = false
+		if t % 120 == 0:
+			print("L7B t=%d px=%.2f py=%.2f boulder=%.2f" % [t, px, py, boulder.position.x])
+		if _won():
+			print("L7BOULDER: PASS (t=%d)" % t)
+			return true
+	print("L7B FAIL: no goal (px=%.2f boulder=%.2f)" % [game.player.position.x, boulder.position.x])
+	return false
+
+
 func _run() -> void:
 	var results := {}
 	results.l1f = await _l1_fire()
@@ -309,9 +391,13 @@ func _run() -> void:
 	results.l6 = await _l6_ladder()
 	print("ROUTE_L6: ", "PASS" if results.l6 else "FAIL")
 	results.rs = await _restart_check()
+	results.l7a = await _l7_jump()
+	print("ROUTE_L7A: ", "PASS" if results.l7a else "FAIL")
+	results.l7b = await _l7_boulder()
+	print("ROUTE_L7B: ", "PASS" if results.l7b else "FAIL")
 	var n := 0
 	for k in results:
 		if results[k]:
 			n += 1
-	print("LEVELS RESULT: %d/7 PASS" % n)
-	quit(0 if n == 7 else 1)
+	print("LEVELS RESULT: %d/9 PASS" % n)
+	quit(0 if n == 9 else 1)
