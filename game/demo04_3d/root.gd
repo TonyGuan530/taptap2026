@@ -59,7 +59,7 @@ const LEVELS := [
 			{id = "double", name = "双翼虫", x = 3.0, col = Color("4fc3f7")},
 			{id = "glow", name = "灯灯菌", x = 6.5, col = Color("ffd54f")},
 		],
-		shards = [Vector3(4.25, 3.2, 0), Vector3(10.25, 1.9, 0), Vector3(18.75, 2.9, 0), Vector3(10.0, 3.4, 0)],
+		shards = [Vector3(4.25, 3.2, 0), Vector3(10.25, 1.9, 0), Vector3(18.75, 2.9, 0), Vector3(10.0, 3.4, -1.35)],
 		dark = [7.0, 18.0],
 		goal = 21.5,
 	},
@@ -91,7 +91,7 @@ const LEVELS := [
 			{id = "break", name = "恐龙兽", x = 6.0, col = Color("e05a3a")},
 			{id = "double", name = "双翼虫", x = 10.0, col = Color("4fc3f7")},
 		],
-		shards = [Vector3(7.25, 2.7, 0), Vector3(13.75, 1.7, 0), Vector3(19.75, 3.4, 0), Vector3(16.2, 3.8, 0)],
+		shards = [Vector3(7.25, 2.7, 0), Vector3(13.75, 1.7, 0), Vector3(19.75, 3.4, 0), Vector3(16.2, 3.8, -1.35)],
 		dark = [5.0, 25.0],
 		goal = 31.0,
 	},
@@ -254,8 +254,11 @@ func load_level(idx: int) -> void:
 		_solid(Vector3((w.x0 + w.x1) / 2.0, w.h / 2.0, 0), Vector3(w.x1 - w.x0, w.h, 3.0), ML_COL.iron_dark)
 	for ci in L.cracked.size():
 		_build_crack(L.cracked[ci], ci)
+	# 上层捷径 = 西侧空中栈道（z -2.05..-0.65）：2D 悬台在主车道头顶会吃掉 3D 跳弧
+	#（胶囊顶高 4.0m > 台底 2.8m， lip 跳必顶头）；改侧栈道后台道与车道零交集，
+	# 组合独占可达性不变（顶 3.0/3.3 > 高跳 2.2，仅超级弹跳 4.15 可登）。
 	for u in L.up:
-		_solid(Vector3((u[0] + u[1]) / 2.0, u[2] - 0.1, 0), Vector3(u[1] - u[0], 0.2, 3.0), ML_COL.wood)
+		_solid(Vector3((u[0] + u[1]) / 2.0, u[2] - 0.1, -1.35), Vector3(u[1] - u[0], 0.2, 1.4), ML_COL.wood)
 	for a in L.aliens:
 		_build_alien(a)
 	for spos in L.shards:
@@ -417,13 +420,13 @@ func _physics_process(delta: float) -> void:
 	if moved > 0.5:
 		_grounded_ticks = 0   # 传送帧：陈旧 on_floor/vy 不可信，安全点计数清零
 	elif player.position.y < -3.0:
-		player.position = last_safe_pos
+		player.position = last_safe_pos if last_safe_pos.y > -0.5 else Vector3(1.0, 0.9, 0)
 		player.velocity = Vector3.ZERO
 		_grounded_ticks = 0
 		_toast("掉坑了！回到安全边缘（DNA 与碎片保留）")
 		stats.falls += 1
 		_log_ev("pit_fall", {"level": level_idx})
-	elif player.is_on_floor() and absf(player.velocity.y) < 0.01:
+	elif player.is_on_floor() and absf(player.velocity.y) < 0.01 and player.position.y > -0.5:
 		# 真实落地静止才记安全点：静止帧 vy≈0（move_and_slide 清掉垂直分量）。
 		# 传送后的陈旧帧靠 moved>0.5 清零 + 连续 3 帧门槛双重排除。
 		_grounded_ticks += 1

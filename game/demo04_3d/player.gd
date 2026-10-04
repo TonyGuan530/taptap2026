@@ -25,6 +25,8 @@ func _physics_process(delta: float) -> void:
 	if ability_state == null:
 		return
 	var on_floor := is_on_floor()
+	if on_floor and velocity.y <= 0.0:
+		jumps_used = 0  # 落地重置（对齐 2D：每次滞空独立计数；跳帧 vy 已正、不受影响）
 	var jump_down: bool = input_enabled and keys.get(KEY_SPACE, false)
 	var jump_pressed := jump_down and not jump_held
 	jump_held = jump_down

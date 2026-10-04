@@ -267,7 +267,7 @@ func _run() -> void:
 	await physics_frame
 	await physics_frame
 	ability.reset_level_state(false)
-	await _teleport(Vector3(7.6, 4.6, 0))
+	await _teleport(Vector3(7.6, 4.6, -1.35))   # 西侧栈道（3D 适配：悬台改栈道）
 	await _settle_until_floor()
 	var on_up: bool = absf(player.position.y - 3.9) < 0.2
 	if on_up:
