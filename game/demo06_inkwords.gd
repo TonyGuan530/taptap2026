@@ -759,9 +759,32 @@ func _process(_delta: float) -> void:
 	queue_redraw()
 
 
+## v13：远山剪影多边形（纯装饰，程序生成，零碰撞）
+func _hills(col: Color, base_y: float, amp: float, off: float) -> void:
+	var pts := PackedVector2Array()
+	pts.append(Vector2(0, VIEW.y))
+	for i in 9:
+		var hx: float = VIEW.x * i / 8.0
+		var hy: float = base_y - amp * (0.6 + 0.4 * sin((i + off) * 1.7))
+		pts.append(Vector2(hx, hy))
+	pts.append(Vector2(VIEW.x, VIEW.y))
+	draw_colored_polygon(pts, col)
+
+
 func _draw() -> void:
 	var lv: Dictionary = LEVELS[level_idx]
-	draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color("141a26"))
+	# 背景（v13：渐变天空 + 远山剪影 + 慢速漂浮云——纯程序绘制，零碰撞零语义）
+	draw_polygon(PackedVector2Array([Vector2(0, 0), Vector2(VIEW.x, 0), Vector2(VIEW.x, VIEW.y), Vector2(0, VIEW.y)]),
+		PackedColorArray([Color("0f1626"), Color("0f1626"), Color("1d2b47"), Color("1d2b47")]))
+	_hills(Color("182136"), 392.0, 70.0, 0.0)
+	_hills(Color("202b47"), 438.0, 46.0, 2.6)
+	for i in 4:
+		var cx: float = fmod(140.0 + i * 265.0 + pulse * 5.0, VIEW.x + 260.0) - 130.0
+		var cy: float = 64.0 + (i % 2) * 44.0
+		var cloud := Color(0.72, 0.78, 0.9, 0.14)
+		draw_circle(Vector2(cx, cy), 25.0, cloud)
+		draw_circle(Vector2(cx + 21.0, cy + 6.0), 17.0, cloud)
+		draw_circle(Vector2(cx - 19.0, cy + 7.0), 14.0, cloud)
 	# 目标区（v11：绿幕终点旗贴图 + 保留边框与 GOAL 文字）
 	var gr: Rect2 = get_meta("goal_rect", Rect2(830, 400, 100, 70))
 	draw_rect(gr, Color(1.0, 0.84, 0.31, 0.15))
