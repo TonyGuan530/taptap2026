@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/4 12:28:48 · 共 60 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/5 02:50:23 · 共 67 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -202,13 +202,25 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 <p>随机​系统​酸雨&#xff1a;​降雨​速度​提升&#xff0c;​植物​死亡​地​下​水​爆​发&#xff1a;​获得​大量​水​建筑​系统​初始​建筑&#xff1a;​山洞​外平​台​作为​基地、​溪流​水库&#xff1a;​储水​系统气象​台&#xff1a;​人工降雨蒸​汽​工坊&#xff1a;​蒸汽转化​为​动力八、​ 小​人​系统​黄色​小人​&#xff08;工程师&#xff09;&#xff1a;​修复​建造​白色​小人​&#xff08;搬运&#xff09;&#xff1a;​运输​速度​&#43;100%​蓝色​小人​&#xff08;气象学家&#xff09;&#xff1a;​提高​降雨概率​绿色​小人​&#xff08;植物​学家&#xff09;&#xff1a;​生态恢复​速度​提高​橙色​小人​&#xff08;探险家&#xff09;&#xff1a;​发现​隐藏物品七、​ 道​具​设计1、​主动​道​具A、​人工降雨弹​&#xff08;降雨​10秒&#xff0c;​快速​获得​水源&#xff09;B、​冰霜​&#xff08;冻结​一​片​熔岩5秒&#xff09;​C、​超级​水桶​&#xff08;一​次​携带5​倍​水量&#xff0c;​持续​20秒&#xff09;​2、​战略道​具A、​蒸汽​发动​机​&#xff08;产生​动力&#xff09;​B、​云层催化器​&#xff08;增加​自然​降雨概率&#xff09;​六、​ ​希望值​&#xff08;操纵​其他​小人&#xff09;​五、​ 三​大​资源体​系水、​蒸汽、​希望​值A、​水​来源&#xff1a;​溪流、​雨水。​用途&#xff1a;​降温。​B、​转化​水源C、​ 涌​现机制A&#xff1a;​居民​AI自​主行​为​&#xff08;打水、​浇灌、​运资源、​建造&#xff09;​例如&#xff1a;​救出​工程师​&#xff08;小黄人&#xff09;​没​路→​修桥​→​其他​居民​通过​→​运远​水→​温度​下​降​效率​提高。​B&#xff1a;​环境​连锁​反应例如&#xff1a;​岩浆​降温→形​成矿石​→探索​获得​资源C&#xff1a;​生态​恢复​降水​又​产生​更​多​资源​形成​正​反馈。​&#xff08;灌木、​丛林……&#xff09;​四、​ 核心循​环​小人​打水​&#xff08;一步骤&#xff09;&#xff1a;​水桶​→溪流→浇灌岩浆→岩浆降温→​获得​奖励​奖励​触​发​&#xff08;二步骤&#xff09;&#xff1a;​水蒸气、​气泡、​被​困​小​人​小人​加入​&#xff08;三​步骤&#xff09;&#xff1a;​山洞​出现​小人&#xff0c;​自动​帮助​打水​浇​灌岩浆​建筑​升级​&#xff08;四步骤&#xff09;&#xff1a;​获得​更​大​规模​降温​能力→​温度​下降​→​解锁​新​生态三、​ ​世界​恢复​生态二、​ 河​流​扩张​35​℃ 云层形成50℃ ​出现​少量​植物​60℃ 熔岩覆盖​世界​80℃ ​世界​变化​100℃ 游戏目标玩家​通过​不断​浇水&#xff0c;​引发​小​人们、​生态、​天气​三​套​系统​互相​作用&#xff0c;​最​终​让​世界​从​100℃恢复​到​35℃。​温度​ ​《最后​的​溪流》​玩家​创造​生态→ ​生态​产生​资源​→ ​资源​解锁​新​个​体 →​新​个​体​形成​协作​→ ​协作​改变​世界​温度。​一、​</p>
 
+### [sticker] @(9298,9472)
+
+<p>角色</p>
+
 ### [sticker] @(4400,10560)
 
 &#x1f3ae; demo-04 运行画面 &#43; 录屏 ▼
 
+### [sticker] @(6300,10560)
+
+&#x1f9ec; demo-04-3d 3D 迁移 Phase B ▼
+
 ### [card] @(4400,10700)
 
 &#x1f3ae; demo-04 SOUP 2.0 DNA 融合逃生
+
+### [card] @(6300,10700)
+
+&#x1f9ec; demo-04-3d v1 五关数据驱动灰模&#xff08;Phase B&#xff09;
 
 ### [sticker] @(671,10751)
 
@@ -223,6 +235,14 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04.png
 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04.mp4
 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;
+
+### [text] @(6300,10860)
+
+2026-10-04 Phase B&#xff1a;五关&#xff08;裂谷长跑/夜翼峡谷/融合之巅/碎岩回廊/终焉长廊&#xff09;数据驱动 3D 灰模 &#43; 实验房&#xff08;K/B/G/T&#xff09;&#43; 遥测信封。
+DNA 语义对齐 2D v12&#xff1a;高跳×1.45 / 二段×0.95 / 暗区×0.45 / 碎岩撞裂墙&#xff1b;组合实测 4.15m。
+测试 14/14 ALL PASS &#43; 2D 回归 7/7 PASS&#xff1b;裂纹墙顶 2.9m&#xff08;3D 胶囊骑角加固&#xff0c;碎岩仍唯一解&#xff09;。
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v1/index.html
+录像/截图&#xff1a;待机器空闲离线补录&#xff08;当前禁止抢占前台&#xff09;。
 
 ### [sticker] @(4400,11760)
 
@@ -267,6 +287,20 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-06.png
 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-06.mp4
 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;
+
+### [sticker] @(4400,14400)
+
+&#x1f3ae; demo-06-3d 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,14540)
+
+&#x1f3ae; demo-06-3d 词条涂鸦创造 3D&#xff08;阶段A&#xff09;
+
+### [text] @(4400,14700)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-06-3d.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-06-3d.mp4
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-06-v15/index.html
 
 ### [sticker] @(1340,16707)
 

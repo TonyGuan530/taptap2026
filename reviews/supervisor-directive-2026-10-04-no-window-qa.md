@@ -27,3 +27,8 @@
 2. **仅允许的形态**：命令行 `--headless` 开头的一切用法（import / --check-only / -s 测试脚本 / --write-movie 离线渲染）。
 3. **督导巡检授权（用户授权的零打扰执行）**：督导每轮巡查用 Get-CimInstance 检查全部 Godot 进程命令行，**凡命令行不含 --headless 的进程立即 taskkill 杀掉**，不预告不等待，事后在批示本文件登记 [KILLED HH:MM PID 任务]。
 4. 任务侧自检：跑任何 Godot 命令前自查命令行必须含 --headless；场景视觉效果一律用 --write-movie 渲染出图后查看图片文件。
+
+
+[KILLED 02:50 督导巡检] PID 40376/37752（Godot 无 --headless，违规开窗）已 taskkill——硬红线执行。
+
+[Miro Feedback 协议·用户设立 2026-10-05] Feedback Slide 区（Miro 负坐标区）为用户专用反馈区：各任务每轮优先阅读；完成后用 tools/miro-post-feedback-note.mjs 自己在 Miro 标注 + 更新 public/feedback-board.json。否决裁决归档：「本地AI小模型限于浏览器性能不可行」（不得再提）。FB-001/002/003 全部已由 AL 修复标注，督导侧 json 状态已同步 fixed。
