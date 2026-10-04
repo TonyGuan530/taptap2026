@@ -49,8 +49,8 @@
       "phase3dA_B": "reports/2026-10-04-demo03-3d-phaseAB.md",
       "phase3dNote": "3D 迁移阶段 A/B(用户指令按指南斜俯视 3D 经营)：KingdomSimulation 分离+38 断言 PASS；灰模双模式可玩+demo-03-3d-v1/v2 发布；2D v14 冻结为回归对照；3D 线 ITERATE 待阶段 C(D)/真人盲测",
       "phase3dBReal": "reviews/chatgpt-demo-03-3d-v2-full.md",
-      "phase3dC": "reviews/chatgpt-demo-03-3d-v2-full.md",
-      "phase3dCNote": "3D 阶段 A/B 备案确认 ITERATE：阶段 A=Simulation Parity Gate PASS(正式关闭,C/D 勿改 KingdomSimulation)；阶段 B=Engine-level Mouse Picking Gate PASS(OS-level E2E 待 MCP 后补非阻塞)；阶段 C GO——正式 GLB 资产替换,4 约束=碰撞体不迁就模型/信息密度不倒退(5 条可读性)/斜俯视可读性优先于真实比例(实际相机+最远 zoom 验收,大轮廓>纹理)/一对一资产替换不重做布局；真人盲测延后 C/D 后,不继承 2D 可读性假设"
+      "phase3dC": "reviews/chatgpt-demo-03-3d-v3-full.md",
+      "phase3dCNote": "v3(comic 场景应用)备案确认 ITERATE：阶段 C 基本完成——3d-shared 继承/collider 未动(38+17 PASS)/一对一替换；火山岩浆 KEEP 程序化不要求 ComicObject 化；盯防=描边粗细(缩小后细结构勿糊)与职业大轮廓辨识；下一步=D 阶段+最终 3D 可读性完整后再进真人 Gate，勿扩大 ComicObject 覆盖面"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",
