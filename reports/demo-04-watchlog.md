@@ -116,3 +116,10 @@
 - tools/web-shot-demo04-3d.mjs 已固化（临时端口/独立 profile/产物轮询待修为 spawn+poll）。
 
 - 补充（同轮）：反节流旗标（disable-backgrounding-occluded-windows/renderer-backgrounding/background-timer-throttling/hang-monitor）无效，pck 仍停 ~3MB（dump-dom 实证 value=3014656）。结论：Godot 4.7 web 引导在无头隐藏页环境下取流停摆，非编译耗时、非节流旗标可解。下一候选：CDP Page.bringToFront/Emulation.setFocusEmulationEnabled 会话，或维持空闲 Movie Maker 正路。
+
+## 2026-10-05 07:10（轮24·无窗口实拍突破 ★）
+- CDP 前台模拟（Emulation.setFocusEmulationEnabled + Page.bringToFront）破解无头引导停摆——引擎在 headless 真实运行。
+- 产出：真实游戏截图×2（L1 出生 HUD / 蹦蹦兽融合提示·输入生效）+ CDP 按键注入演示片 demo-04-3d.mp4（captureScreenshot 轮询 22 帧 → ffmpeg 3.7s 证据片）。
+- 已镜像主仓库（RAW 链接生效）+ Miro 真图卡上板。
+- 工具：tools/cdp-shot-demo04-3d.mjs（截图）/ tools/cdp-video-demo04-3d.mjs（录像+按键注入）。
+- 遗留：帧率低（SwiftShader 慢，22帧/25s≈0.9fps）——后续可试 GPU 栅格/headless 旧模式提帧；五关巡游的 web 版（JS 复刻路点）未做。
