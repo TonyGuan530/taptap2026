@@ -64,6 +64,7 @@ const SHOP_POOL := [
 	{id = "wing", name = "翼面加强", price = 4, desc = "机翼升力面积 +15%，可叠加"},
 	{id = "prop", name = "螺旋桨", price = 6, unique = true, desc = "沿机头方向的恒定推力，唯一"},
 	{id = "trimtool", name = "配平仪", price = 4, unique = true, desc = "配平对俯仰的影响减半，唯一"},
+	{id = "stiff", name = "纸面加固", price = 4, desc = "折线阻力 -15%/级，可叠加"},
 	{id = "tough", name = "韧性", price = 3, unique = true, desc = "落地弹跳一次不直接判负，唯一"},
 ]
 
@@ -73,7 +74,7 @@ var state := "menu"          # menu / fold / throw / fly / settle / shop / final
 var level_idx := 0
 var unlocked := 0
 var coins := 0
-var upgrades := {power = 0, wing = 0}
+var upgrades := {power = 0, wing = 0, stiff = 0}   # 可叠加强化级数（C4 加纸面加固）
 var owned := []
 var shop_items := []
 var total_distance := 0.0
@@ -91,6 +92,7 @@ var plane_pos := Vector2(START_X, GROUND_Y - 40.0)
 var velocity := Vector2.ZERO
 var pitch := 0.0
 var eff_lift := 0.0
+var eff_drag_f := 0.0        # C4：投掷时定格的有效折线阻力（含纸面加固）
 var flight_time := 0.0
 var flight_distance := 0.0
 var apex_m := 0.0
@@ -195,6 +197,7 @@ func do_throw(angle_deg: float, power: float) -> void:
 	var pw: float = clampf(power, 0.05, 1.0)
 	var v0: float = LAUNCH_V * pw * power_mult()
 	eff_lift = float(plane_params.lift_area) * wing_mult()
+	eff_drag_f = float(plane_params.drag_f) * stiff_mult()
 	velocity = Vector2.from_angle(-deg_to_rad(throw_angle)) * v0
 	pitch = -deg_to_rad(throw_angle)
 	plane_pos = Vector2(START_X, GROUND_Y - 40.0)
@@ -252,7 +255,7 @@ func step(delta: float) -> String:
 	if has_upgrade("trimtool"):
 		lift_tilt *= 0.5
 	var lift_dir := Vector2(sin(lift_tilt), -cos(lift_tilt)).normalized()
-	var drag_f_v: float = plane_params.drag_f
+	var drag_f_v: float = eff_drag_f
 	var drag_coef := DRAG_K * (BASE_DRAG + drag_f_v)
 	if wind_mode() == "head":
 		drag_coef *= HEAD_DRAG_MULT
@@ -359,7 +362,12 @@ func enter_shop() -> void:
 		if bool(it.get("unique", false)) and owned.has(id):
 			continue
 		pool.append(it)
-	pool.shuffle()
+	# 抽池用可注入 rng（阶段 C4 修复：原全局 shuffle 使种子不可复现；概率分布不变）
+	for i in range(pool.size() - 1, 0, -1):
+		var j := rng.randi_range(0, i)
+		var tmp = pool[i]
+		pool[i] = pool[j]
+		pool[j] = tmp
 	var picked: Array = pool.slice(0, 3)
 	picked.sort_custom(func(a, b) -> bool: return int(a.price) < int(b.price))
 	shop_items = picked
@@ -381,6 +389,8 @@ func buy(idx: int) -> bool:
 		upgrades.power = int(upgrades.power) + 1
 	elif id == "wing":
 		upgrades.wing = int(upgrades.wing) + 1
+	elif id == "stiff":
+		upgrades.stiff = int(upgrades.stiff) + 1
 	else:
 		owned.append(id)
 	shop_items.remove_at(idx)
@@ -394,7 +404,7 @@ func shop_skip() -> void:
 
 func reset_run() -> void:
 	coins = 0
-	upgrades = {power = 0, wing = 0}
+	upgrades = {power = 0, wing = 0, stiff = 0}
 	owned = []
 	unlocked = 0
 	total_distance = 0.0
@@ -408,6 +418,11 @@ func power_mult() -> float:
 
 func wing_mult() -> float:
 	return 1.0 + 0.15 * float(upgrades.wing)
+
+
+## 阶段 C4 新商店物品：纸面加固（每级折线阻力 -15%，下限 0.25 防负阻力）
+func stiff_mult() -> float:
+	return maxf(1.0 - 0.15 * float(upgrades.get("stiff", 0)), 0.25)
 
 
 func has_upgrade(id: String) -> bool:

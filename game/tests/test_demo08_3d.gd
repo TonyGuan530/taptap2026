@@ -342,7 +342,7 @@ func _run() -> void:
 	for k in 25:
 		c12.rng.seed = k
 		c12.enter_shop()
-		if c12.shop_items.size() != 2:
+		if c12.shop_items.size() != 3:
 			unique_leak = true
 			break
 		for it in c12.shop_items:
@@ -360,7 +360,7 @@ func _run() -> void:
 	var ids_after := []
 	for it in c12.shop_items:
 		ids_after.append(String(it.id))
-	_check(b1 and c12.shop_items.size() == 1 and not ids_after.has(ids_before[0]) and c12.coins == 47,
+	_check(b1 and c12.shop_items.size() == 2 and not ids_after.has(ids_before[0]) and c12.coins == 47,
 		"B5b 购后移出（%s → 剩 %s），扣币一次 50→%d" % [ids_before[0], ",".join(ids_after), c12.coins])
 	var power_lvl: int = int(c12.upgrades.power)
 	c12.buy(0)
