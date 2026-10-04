@@ -1,20 +1,18 @@
 extends Node3D
-## DEMO2 第一人称 3D 物性解谜 · 阶段A 灰模测试房（指南 D:\GIT\3D-GUIDE\taptap2026-demo02-3d-zcode-guide-2026-10-04.md）
-## 保留 2D 全部规则：无通用跳跃 / 切换即时生效保持速度连续 / 脆板按撞击速度阈值 / 弹簧一次冲量 / 遥测。
-## 参数为米制重标定（不照抄 2D 像素值）：球 r=0.5m，重力 9.8，脆板阈值 12 m/s（≈石头从 4m 落体速度）。
+## DEMO2 第一人称 3D 物性解谜 · 阶段B：数据驱动多关卡（目标 ≥5 关）
+## 保留 2D 全部规则：无通用跳跃 / 切换即时生效保持速度连续 / 脆板撞击速度阈值 / 弹簧一次冲量 / 遥测。
+## 米制标定：球 r=0.5m，重力 9.8，脆板阈值 12 m/s。视觉走 3d-shared comic 材质+模型库（场景应用，不复制套件）。
 
 const BALL_R := 0.5
-const FRAGILE_SPEED := 12.0        # m/s，脆板破碎阈值（标定：石头 g_scale2.4 从 4m 落体 ≈13.7 m/s）
-const FLAP_VEL := 3.2              # 羽毛单次空中修正（向上 m/s）
-const SPAWN := Vector3(-4.5, 1.6, 0.0)
+const FRAGILE_SPEED := 12.0
+const FLAP_VEL := 3.2
 const MOUSE_SENS := 0.0022
-const PITCH_LIMIT := 1.45          # rad ≈ 83°
+const PITCH_LIMIT := 1.45
 
 const FONT: FontFile = preload("res://fonts/NotoSansSC.ttf")
-const ComicStyle := preload("res://comic_style/comic_style.gd")       # 3d-shared 统一 comic 材质
-const ModelLibrary := preload("res://comic_style/model_library.gd")   # 3d-shared 模型库（不复制套件）
+const ComicStyle := preload("res://comic_style/comic_style.gd")
+const ModelLibrary := preload("res://comic_style/model_library.gd")
 
-## 词条（g_scale/damp/bounce 从 2D 语义迁移；flap=向上速度 m/s；air_a/vmax 为米制）
 const TAGS := [
 	{ id = "feather", name = "羽毛", kw = "轻", color = Color(0.91, 0.89, 0.85),
 	  g = 0.18, damp = 1.2, bounce = 0.2, flap = FLAP_VEL, air_a = 14.0, air_vmax = 5.0 },
@@ -24,6 +22,49 @@ const TAGS := [
 	  g = 1.0, damp = 0.0, bounce = 0.86, flap = 0.0, air_a = 8.0, air_vmax = 6.5 },
 ]
 
+## 关卡数据：boxes=[pos,size,color]；spring/fragile/goal 可选；碰撞/物理由装载器生成
+const LEVELS := [
+	{
+		name = "第一关 · 弹簧起步", solution = "弹簧+皮球，空中按住 W 越墙",
+		spawn = Vector3(-4.5, 1.6, 0),
+		boxes = [
+			[Vector3(0, -0.25, 0), Vector3(24, 0.5, 12), "field"],
+			[Vector3(3, 2.25, 0), Vector3(1, 4.5, 12), "wall"],
+		],
+		spring = { pos = Vector3(-4.5, 0.15, 0), imp = Vector3(0, 12, 0) },
+		fragile = null,
+		goal = { pos = Vector3(7, 0.65, 0), size = Vector3(2.4, 1.1, 2.4) },   # 底 0.1m 离地防贴合误触发
+	},
+	{
+		name = "第二关 · 砸穿脆板", solution = "上抛转石头，砸穿脆板入 GOAL",
+		spawn = Vector3(-4.5, 1.6, 0),
+		boxes = [
+			[Vector3(0, -0.25, 0), Vector3(24, 0.5, 12), "field"],
+		],
+		spring = { pos = Vector3(-4.5, 0.15, 0), imp = Vector3(0, 12, 0) },
+		fragile = { pos = Vector3(-8, 3, 0), size = Vector3(4, 0.15, 2.5) },
+		goal = { pos = Vector3(-8, 0.7, 0), size = Vector3(2, 0.9, 2) },   # 底 0.15m 离地
+	},
+	{
+		name = "第三关 · 组合峡谷", solution = "弹簧→转羽毛(扑翼+W)跨峡谷→松 W 落入远端 GOAL",
+		spawn = Vector3(-4.5, 1.6, 0),
+		boxes = [
+			[Vector3(-6, -0.25, 0), Vector3(12, 0.5, 12), "field"],
+			[Vector3(12, -0.25, 0), Vector3(8, 0.5, 12), "field"],
+			[Vector3(2, 4.5, -6.25), Vector3(28, 9, 0.5), "wall"],
+			[Vector3(2, 4.5, 6.25), Vector3(28, 9, 0.5), "wall"],
+			[Vector3(-12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
+			[Vector3(16.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
+			[Vector3(2, 9.25, 0), Vector3(28, 0.5, 13), "wall"],
+		],
+		spring = { pos = Vector3(-4.5, 0.15, 0), imp = Vector3(0, 12, 0) },
+		fragile = null,
+		goal = { pos = Vector3(11, 0.55, 0), size = Vector3(3.2, 0.9, 2.8) },
+	},
+]
+
+var level_idx := 0
+var level_nodes: Array[Node] = []
 var tag_idx := 0
 var ball: RigidBody3D
 var ground_ray: RayCast3D
@@ -45,8 +86,9 @@ var yaw := 0.0
 var pitch := 0.0
 var cam_rig: Node3D
 var camera: Camera3D
-var comic_style: Resource          # 3d-shared 统一 comic 材质（地形/物件/球共用）
+var comic_style: Resource
 var hud_tag: Label
+var hud_level: Label
 var hud_hint: Label
 var flash_t := 0.0
 
@@ -54,11 +96,9 @@ var flash_t := 0.0
 func _ready() -> void:
 	comic_style = ComicStyle.new()
 	_ensure_input_actions()
-	_build_room()
-	_build_goal_and_hazards()
-	_spawn_ball(SPAWN)
-	_apply_tag()
+	_build_static()
 	_build_hud()
+	_load_level(0)
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -78,7 +118,14 @@ func _ensure_input_actions() -> void:
 			InputMap.action_add_event(action, ev)
 
 
-func _box(name: String, pos: Vector3, size: Vector3, color: Color, is_fragile := false) -> StaticBody3D:
+func _phys_mat(bounce: float) -> PhysicsMaterial:
+	var pm := PhysicsMaterial.new()
+	pm.bounce = bounce
+	pm.friction = 0.6
+	return pm
+
+
+func _box(name: String, pos: Vector3, size: Vector3, color: Color) -> StaticBody3D:
 	var body := StaticBody3D.new()
 	body.name = name
 	body.position = pos
@@ -94,18 +141,11 @@ func _box(name: String, pos: Vector3, size: Vector3, color: Color, is_fragile :=
 	mi.material_override = comic_style.body_material(color)
 	body.add_child(mi)
 	add_child(body)
+	level_nodes.append(body)
 	return body
 
 
-func _build_room() -> void:
-	var floor_body := _box("Floor", Vector3(0, -0.25, 0), Vector3(24, 0.5, 12), Color(0.22, 0.24, 0.3))
-	floor_body.physics_material_override = _phys_mat(0.4)
-	_box("WallN", Vector3(0, 4.5, -6.25), Vector3(24, 9, 0.5), Color(0.18, 0.2, 0.26))
-	_box("WallS", Vector3(0, 4.5, 6.25), Vector3(24, 9, 0.5), Color(0.18, 0.2, 0.26))
-	_box("WallW", Vector3(-12.25, 4.5, 0), Vector3(0.5, 9, 13), Color(0.18, 0.2, 0.26))
-	_box("WallE", Vector3(12.25, 4.5, 0), Vector3(0.5, 9, 13), Color(0.18, 0.2, 0.26))
-	_box("Ceiling", Vector3(0, 9.25, 0), Vector3(24, 0.5, 13), Color(0.14, 0.16, 0.2))
-	# 灰模照明
+func _build_static() -> void:
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-55, -30, 0)
 	sun.light_energy = 1.1
@@ -119,60 +159,13 @@ func _build_room() -> void:
 	e.ambient_light_energy = 0.6
 	env.environment = e
 	add_child(env)
-
-
-func _phys_mat(bounce: float) -> PhysicsMaterial:
-	var pm := PhysicsMaterial.new()
-	pm.bounce = bounce
-	pm.friction = 0.6
-	return pm
-
-
-func _build_goal_and_hazards() -> void:
-	# 弹簧垫：Area3D，进入即给一次竖直冲量（一次触发，退出复位）
-	var spring := Area3D.new()
-	spring.name = "Spring"
-	spring.position = Vector3(-4.5, 0.15, 0)
-	var scs := CollisionShape3D.new()
-	var ssh := BoxShape3D.new()
-	ssh.size = Vector3(2, 0.4, 2)
-	scs.shape = ssh
-	spring.add_child(scs)
-	var smi := MeshInstance3D.new()
-	var smesh := BoxMesh.new()
-	smesh.size = Vector3(2, 0.3, 2)
-	smi.mesh = smesh
-	var plate: Node3D = ModelLibrary.create_model("pressure_plate")
-	plate.position = Vector3(0, -0.15, 0)
-	spring.add_child(plate)
-	spring.body_entered.connect(_on_spring_enter)
-	spring.body_exited.connect(_on_spring_exit)
-	add_child(spring)
-
-	# 脆板：弹簧上抛后转石头砸穿，GOAL 在其正下方（板加宽到 x -10..-6 防绕边滑入）
-	fragile = _box("FragilePlate", Vector3(-8, 3, 0), Vector3(4, 0.15, 2.5), Color(0.42, 0.56, 0.35), true)
-	var blk: Node3D = ModelLibrary.create_model("iron_block")
-	blk.scale = Vector3(4.3, 0.35, 2.7)
-	fragile.add_child(blk)
-
-	# GOAL
-	var goal := Area3D.new()
-	goal.name = "Goal"
-	goal.position = Vector3(-8, 0.55, 0)   # 抬离地面 0.1m：防 Area 底面与地板顶面贴合误触发
-	var gcs := CollisionShape3D.new()
-	var gsh := BoxShape3D.new()
-	gsh.size = Vector3(2, 0.9, 2)
-	gcs.shape = gsh
-	goal.add_child(gcs)
-	var gmi := MeshInstance3D.new()
-	var gmesh := BoxMesh.new()
-	gmesh.size = Vector3(2, 1, 2)
-	gmi.mesh = gmesh
-	var frame: Node3D = ModelLibrary.create_model("gate_frame")
-	frame.position = Vector3(0, -0.55, 0)
-	goal.add_child(frame)
-	goal.body_entered.connect(_on_goal_enter)
-	add_child(goal)
+	var ui := CanvasLayer.new()
+	add_child(ui)
+	hud_level = Label.new()
+	hud_level.position = Vector2(20, 90)
+	hud_level.add_theme_font_size_override("font_size", 16)
+	hud_level.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0))
+	ui.add_child(hud_level)
 
 
 func _build_hud() -> void:
@@ -188,7 +181,70 @@ func _build_hud() -> void:
 	hud_hint.add_theme_font_size_override("font_size", 15)
 	hud_hint.add_theme_color_override("font_color", Color(0.7, 0.75, 0.85))
 	ui.add_child(hud_hint)
-	_refresh_hud()
+
+
+func _load_level(idx: int) -> void:
+	for n in level_nodes:
+		n.queue_free()
+	level_nodes.clear()
+	level_idx = idx
+	var lv: Dictionary = LEVELS[idx]
+	for b: Array in lv.boxes:
+		_box("Geo", b[0], b[1], Color(0.22, 0.24, 0.3))
+	# 弹簧
+	var spring := Area3D.new()
+	spring.name = "Spring"
+	spring.position = lv.spring.pos
+	var scs := CollisionShape3D.new()
+	var ssh := BoxShape3D.new()
+	ssh.size = Vector3(2, 0.4, 2)
+	scs.shape = ssh
+	spring.add_child(scs)
+	var plate: Node3D = ModelLibrary.create_model("pressure_plate")
+	plate.position = Vector3(0, -0.2, 0)
+	spring.add_child(plate)
+	spring.body_entered.connect(_on_spring_enter)
+	spring.body_exited.connect(_on_spring_exit)
+	add_child(spring)
+	level_nodes.append(spring)
+	# 脆板
+	fragile = null
+	fragile_broken = false
+	if lv.fragile != null:
+		fragile = _box("FragilePlate", lv.fragile.pos, lv.fragile.size, Color(0.42, 0.56, 0.35))
+		var blk: Node3D = ModelLibrary.create_model("iron_block")
+		blk.scale = Vector3(lv.fragile.size.x / 0.92, lv.fragile.size.y / 0.85, lv.fragile.size.z / 0.92)
+		fragile.add_child(blk)
+	# GOAL
+	var goal := Area3D.new()
+	goal.name = "Goal"
+	goal.position = lv.goal.pos
+	var gcs := CollisionShape3D.new()
+	var gsh := BoxShape3D.new()
+	gsh.size = lv.goal.size
+	gcs.shape = gsh
+	goal.add_child(gcs)
+	var frame: Node3D = ModelLibrary.create_model("gate_frame")
+	goal.add_child(frame)
+	goal.body_entered.connect(_on_goal_enter)
+	add_child(goal)
+	level_nodes.append(goal)
+	# 球与状态
+	_spawn_ball(lv.spawn)
+	_apply_tag()
+	goal_reached = false
+	spring_used = false
+	spring_ready = true
+	in_spring = false
+	flap_used = false
+	prev_speed = 0.0
+	tel_switches = []
+	tel_resets = 0
+	tel_moved = false
+	tel_flapped = false
+	tel_mid_switch = false
+	elapsed = 0.0
+	hud_level.text = "%s ｜ %s" % [lv.name, lv.solution]
 
 
 func _spawn_ball(pos: Vector3) -> void:
@@ -196,7 +252,7 @@ func _spawn_ball(pos: Vector3) -> void:
 	ball.name = "PlayerBall"
 	ball.position = pos
 	ball.mass = 1.0
-	ball.continuous_cd = true            # 石头高速撞击防穿透（指南要求）
+	ball.continuous_cd = true
 	ball.contact_monitor = true
 	ball.max_contacts_reported = 8
 	ball.can_sleep = false
@@ -211,15 +267,15 @@ func _spawn_ball(pos: Vector3) -> void:
 	ground_ray.target_position = Vector3(0, -(BALL_R + 0.15), 0)
 	ball.add_child(ground_ray)
 	add_child(ball)
-	# 第一人称镜头装置：跟随球位置，yaw 在装置上、pitch 在相机上，不继承滚动
-	cam_rig = Node3D.new()
-	cam_rig.name = "CameraRig"
-	add_child(cam_rig)
-	camera = Camera3D.new()
-	camera.position = Vector3(0, 0.25, 0)
-	camera.fov = 80.0
-	cam_rig.add_child(camera)
-	camera.current = true
+	if cam_rig == null:
+		cam_rig = Node3D.new()
+		cam_rig.name = "CameraRig"
+		add_child(cam_rig)
+		camera = Camera3D.new()
+		camera.position = Vector3(0, 0.25, 0)
+		camera.fov = 80.0
+		cam_rig.add_child(camera)
+		camera.current = true
 	_apply_tag()
 
 
@@ -273,7 +329,7 @@ func try_flap() -> void:
 func reset_ball() -> void:
 	if ball != null:
 		ball.queue_free()
-	_spawn_ball(SPAWN)
+	_spawn_ball(LEVELS[level_idx].spawn)
 	_apply_tag()
 	if fragile_broken:
 		_restore_fragile()
@@ -292,9 +348,12 @@ func reset_ball() -> void:
 func _restore_fragile() -> void:
 	if is_instance_valid(fragile):
 		return
-	fragile = _box("FragilePlate", Vector3(-8, 3, 0), Vector3(4, 0.15, 2.5), Color(0.42, 0.56, 0.35), true)
+	var lv: Dictionary = LEVELS[level_idx]
+	if lv.fragile == null:
+		return
+	fragile = _box("FragilePlate", lv.fragile.pos, lv.fragile.size, Color(0.42, 0.56, 0.35))
 	var blk: Node3D = ModelLibrary.create_model("iron_block")
-	blk.scale = Vector3(4.3, 0.35, 2.7)
+	blk.scale = Vector3(lv.fragile.size.x / 0.92, lv.fragile.size.y / 0.85, lv.fragile.size.z / 0.92)
 	fragile.add_child(blk)
 	fragile_broken = false
 
@@ -302,15 +361,10 @@ func _restore_fragile() -> void:
 func _zone_name() -> String:
 	if ball == null:
 		return "?"
-	var p := ball.position
-	if goal_reached:
-		return "goal"
 	if in_spring:
 		return "spring"
-	if p.x < -6.5 and p.y > 2.2:
-		return "above_plate"
-	if p.x > 6.0:
-		return "east"
+	if goal_reached:
+		return "goal"
 	return "field"
 
 
@@ -324,24 +378,21 @@ func _on_spring_exit(_other: Node) -> void:
 
 
 func _on_goal_enter(other: Node) -> void:
-	print("GOALENTER other=", other.name, " ballpos=", ball.global_position if ball else Vector3.INF)
+	if not (other is RigidBody3D):
+		return   # 只认玩家球体；StaticBody(地板)贴邻边界会误触发
 	if goal_reached:
 		return
 	goal_reached = true
 	var sw := "无切换" if tel_switches.is_empty() else "→".join(tel_switches)
 	var idle := (not tel_moved) and (not tel_flapped) and (not tel_mid_switch)
-	print("TEL3D|A|%.1fs|idle=%s|%s|%s" % [elapsed, str(idle), sw, "spring_used=" + str(spring_used)])
-	_refresh_hud()
+	print("TEL3D|L%d|%.1fs|idle=%s|%s|resets=%d|spring=%s" % [level_idx + 1, elapsed, str(idle), sw, tel_resets, str(spring_used)])
 
 
 func _on_ball_hit(other: Node) -> void:
-	if other == fragile and not fragile_broken:
-		# 撞击速度阈值判定（prev_speed 为上一物理帧速度，撞击前采样）
-		if prev_speed >= FRAGILE_SPEED:
-			fragile_broken = true
-			fragile.queue_free()
-		elif hud_hint != null:
-			hud_hint.text = "撞击 %d m/s，未达 %.0f m/s——脆板纹丝不动……" % [int(prev_speed), FRAGILE_SPEED]
+	var lv: Dictionary = LEVELS[level_idx]
+	if other == fragile and not fragile_broken and prev_speed >= FRAGILE_SPEED:
+		fragile_broken = true
+		fragile.queue_free()
 
 
 func _physics_process(delta: float) -> void:
@@ -351,9 +402,8 @@ func _physics_process(delta: float) -> void:
 	prev_speed = ball.linear_velocity.length()
 	var t: Dictionary = TAGS[tag_idx]
 
-	# 移动：相对镜头 yaw 的水平转向（空中地面一致；无通用跳跃）
 	var in_x := Input.get_axis("p_left", "p_right")
-	var in_y := Input.get_axis("p_back", "p_fwd")   # W=+1 前进（反馈#1 修复：原 W/S 反向）
+	var in_y := Input.get_axis("p_back", "p_fwd")
 	var dir := Vector3.ZERO
 	if absf(in_x) > 0.01 or absf(in_y) > 0.01:
 		tel_moved = true
@@ -361,8 +411,7 @@ func _physics_process(delta: float) -> void:
 		var right := Vector3(cos(yaw), 0, -sin(yaw))
 		dir = (fwd * in_y + right * in_x).normalized()
 	if dir.length_squared() > 0.01:
-		var v: Vector3 = ball.linear_velocity
-		var hv: Vector2 = Vector2(v.x, v.z)
+		var hv: Vector2 = Vector2(ball.linear_velocity.x, ball.linear_velocity.z)
 		var target: Vector2 = Vector2(dir.x, dir.z) * float(t.air_vmax)
 		hv = hv.move_toward(target, float(t.air_a) * delta)
 		ball.linear_velocity.x = hv.x
@@ -379,13 +428,11 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("p_tag3"):
 		switch_tag(2)
 
-	# 弹簧：进入即竖直冲量（一次触发，离开复位）
 	if in_spring and spring_ready:
 		ball.linear_velocity = Vector3(0, 12, 0)
 		spring_ready = false
 		spring_used = true
 
-	# 镜头跟随球，yaw/pitch 来自鼠标；镜头位置钳制在房间内（防穿墙出界）
 	if cam_rig != null and is_instance_valid(ball):
 		cam_rig.global_position = ball.global_position + Vector3(0, 0.3, 0)
 		cam_rig.rotation = Vector3(0, yaw, 0)
