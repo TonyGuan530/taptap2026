@@ -30,3 +30,19 @@
 - 督导巡查降频为 **每 1 小时一次**（用户指令；调度变更需在 Automations 界面手动修改——督导侧无 CronUpdate 工具）。
 - 各 demo 任务 30 分钟错峰维持不变（3D 迁移期工作量大，保持推进节奏）。
 - Pages 发布继续走 2D 现役分支；3D 迁移分支验收后再切主线（切换时督导另发裁决令）。
+
+
+---
+
+## 增补（19:40·用户指令）：统一美术基线 Low-poly/Comic Kit——全项目强制，未完成持续催办
+
+**用户已确认**：D:/GIT/3D-GUIDE/low-poly-comic-kit/ 为全部 DEMO 的统一美术基线（低面数+纯色+漫画轮廓，已在原生 Compatibility 与 Edge WebGL2 跑通验证）。
+
+### 各任务接入要求（并入每轮工作，未完成督导持续催办）
+
+1. 规范入口：D:/GIT/3D-GUIDE/taptap2026-unified-low-poly-comic-style-2026-10-04.md（决策）+ low-poly-comic-kit/ZCODE-MODELING.md（建模规范）+ low-poly-comic-kit/README.md（套件使用/复制方式）。
+2. 材质/描边直接复用套件：comic_style/shaders/plain_toon.gdshader（纯色两档面光）、pixel_outline.gdshader（反向外壳描边：交互物 4px 深墨粗线/场景 1.5px 细线/悬停暖色 4px/选中 5px/临时不可执行灰墨保类别）、sprite_comic.gdshader（HD-2D billboard，demo-05 专用）、comic_style/comic_style.gd（颜色线宽 Resource）。
+3. 基础模型八类（箱/铁块/岩石/树/灌木/木桶/压力板/门框）直接从套件取用；新模型沿用同一形体语言，GLB 经 ComicObject.add_imported_model 接入（单材质/封闭分件）。
+4. **demo-05 特例**：HD-2D 恐龙角色保留（sprite_comic+Y 轴 billboard），环境用统一 low-poly 材质。
+5. 描边语义按交互状态区分，材质只表逻辑状态；碰撞/拾取/导航由各 demo 玩法层实现。
+6. **验收口径**：各 demo 的 3D 迁移里程碑需含「美术基线接入完成」检查项；督导巡查逐轮核对，未接入的 demo 持续催办（并入队列/催办体系）。

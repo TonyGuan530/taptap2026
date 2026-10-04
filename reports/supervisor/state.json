@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-04T19:32:00+08:00",
+  "checkedAt": "2026-10-04T19:42:00+08:00",
   "round": 103,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
@@ -58,7 +58,8 @@
   "watch": [
     "🔴【调度变更·需用户操作】督导自动化改 1h 触发：本会话无 CronUpdate 工具——请在 ZCode Automations 界面把「每10分钟：TapTap2026 总督导」的间隔改为 60 分钟（其他任务不动）",
     "🆕 3D 化阶段：项目方向升级（用户已定 9 demo 方向，Codex 指南 D:/GIT/3D-GUIDE）——各任务自下轮按指南建分支/worktree 开工，main 2D 线上版继续发布",
-    "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B"
+    "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B",
+    "🆕【定时跟进·全项目】统一美术基线 Low-poly/Comic Kit 接入核查——各 demo 3D 里程碑含「美术基线接入完成」检查项，未完成持续催办（批示 reviews/supervisor-directive-2026-10-04-3d-migration.md 增补节）"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
