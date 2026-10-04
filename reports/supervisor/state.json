@@ -1,19 +1,19 @@
 {
-  "checkedAt": "2026-10-04T08:26:00+08:00",
-  "round": 80,
+  "checkedAt": "2026-10-04T08:36:00+08:00",
+  "round": 81,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（08:25 实跑）"
+    "thisRound": "guard SKIP not-foreground（08:35 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 78,
-      "lastDispatch": "08:24",
-      "next": "08:34"
+      "runCount": 79,
+      "lastDispatch": "08:34",
+      "next": "08:44"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "🔄 demo-11 盲测准备持续；demo-09 批示仍无回执（下时段队列头，08:34 再核）"
+      "evidence": "🔄 demo-11 v3 盲测版进入测试阶段（sandbox.gd+test_demo11_v3.gd 已 staged，发布在即）；demo-09 批示转长期队列（不再逐轮催，批示文件长期有效）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -23,7 +23,7 @@
     "demo-03": {
       "cron": "10,40 * * * *",
       "runCount": 23,
-      "evidence": "07:40 轮无新提交（正常）；08:10 槽"
+      "evidence": "08:10 轮无新提交（短轮正常）；08:40 槽"
     },
     "demo-04": {
       "cron": "15,45 * * * *",
@@ -38,28 +38,27 @@
     "demo-06": {
       "cron": "25,55 * * * *",
       "runCount": 24,
-      "evidence": "✅ 影片 L6 段完全闭合（2b0e515：驱动与测试参数全同步，六关 60s 完整版 L1-L6 上板）——视频新鲜度终极达标；专项会话高效闭环"
+      "evidence": "✅ v13 交付（8f9c2aa：程序绘制背景升级纯视觉，59 断言 PASS，Pages 兜底，影片 55s 重录；L6 影片物理残差留专项）"
     }
   },
   "envSnapshot": {
-    "health": "ok builds=75（+1：demo-05 v16）",
+    "health": "ok builds=76（+1：demo-06 v13）",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD e034e61",
+    "git": "本轮 HEAD 8f9c2aa",
     "itch": "占位第 3 天+工具降级（butler 网络空）——Pages 兜底不受影响"
   },
   "fiveHourPlan": {
     "done": "demo-03 v12、demo-04 v12、demo-05 v15、demo-06 v12、demo-08 v3、demo-10 v3b 全交付",
-    "running": "demo-11 盲测准备",
-    "queue": "demo-09 补赛道（批示在案）；demo-04/06/10 已冻结或盲测就绪；demo-05 内容层持续供给"
+    "running": "demo-11 v3 盲测版（测试阶段）",
+    "queue": "demo-09 补赛道（长期队列）；其余全员盲测就绪或内容冻结"
   },
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
     "🔴【需用户决策】demo-02 会话失能；Batch 01 人选与排期；itch A/B（工具降级挂起）",
-    "demo-09 批示 08:34 最终核对——仍无回执则批示转长期队列（不再逐轮催）",
-    "demo-11 盲测版产出核对"
+    "demo-11 v3 发布核对（08:44）"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
