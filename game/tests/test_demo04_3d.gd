@@ -204,6 +204,91 @@ func _run() -> void:
 	else:
 		_fail("有高跳+二段跳未能过教学墙（px=%.1f）" % player.position.x)
 
+	# ---- 9. Phase B·L4 裂纹岩墙双向门：缺碎岩被挡，有碎岩撞碎通过 ----
+	scene_root.load_level(3)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	await _teleport(Vector3(11.0, 1.3, 0))
+	await _settle_until_floor()
+	await _hold_and_measure(KEY_D, 3.0)
+	var blocked4: bool = player.position.x < 11.9
+	ability.gain_dna("break")
+	await _hold_and_measure(KEY_D, 2.5)
+	var smashed4: bool = false
+	for c in scene_root.cracks:
+		if c.broken:
+			smashed4 = true
+	if blocked4 and smashed4 and player.position.x > 12.6:
+		_ok("L4 裂纹岩墙：缺碎岩被挡（%.1f），有碎岩撞碎通过（%.1f）" % [11.0, player.position.x])
+	else:
+		_fail("L4 裂纹岩墙门异常：blocked=%s smashed=%s px=%.1f" % [blocked4, smashed4, player.position.x])
+
+	# ---- 10. Phase B·L5 裂纹岩墙：高跳也翻不过（2.35 > 高跳上限），碎岩唯一解 ----
+	scene_root.load_level(4)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	ability.gain_dna("highjump")
+	await _teleport(Vector3(5.5, 1.3, 0))
+	await _settle_until_floor()
+	_key(KEY_D, true)
+	var st5 := Time.get_ticks_msec()
+	var jt5 := 0
+	while Time.get_ticks_msec() - st5 < 4000:
+		await physics_frame
+		jt5 += 1
+		if player.is_on_floor() and jt5 % 8 == 0:
+			await _tap(KEY_SPACE, 1)
+		elif not player.is_on_floor() and player.velocity.y < 100.0 and jt5 % 4 == 0 and player.jumps_used < player.ability_state.max_jumps():
+			await _tap(KEY_SPACE, 1)
+		if player.position.x > 8.0:
+			break
+	_key(KEY_D, false)
+	await physics_frame
+	var walled5: bool = player.position.x < 7.7
+	ability.gain_dna("break")
+	await _hold_and_measure(KEY_D, 3.0)
+	var smashed5: bool = false
+	for c in scene_root.cracks:
+		if c.broken:
+			smashed5 = true
+	if walled5 and smashed5 and player.position.x > 8.0:
+		_ok("L5 裂纹岩墙：高跳+跳沿尝试翻不过（挡在墙前），碎岩撞碎通过（px=%.1f）" % player.position.x)
+	else:
+		_fail("L5 裂纹岩墙门异常：walled=%s smashed=%s px=%.1f" % [walled5, smashed5, player.position.x])
+
+	# ---- 11. Phase B·L3 上层捷径：平台实体（落上站稳）+ 仅组合可达（算术） ----
+	scene_root.load_level(2)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	await _teleport(Vector3(7.6, 4.6, 0))
+	await _settle_until_floor()
+	var on_up: bool = absf(player.position.y - 3.9) < 0.2
+	if on_up:
+		_ok("L3 上层捷径平台实体：落上站稳（y=%.2f ≈ 3.9）" % player.position.y)
+	else:
+		_fail("L3 上层捷径平台异常：落点 y=%.2f（期望≈3.9）" % player.position.y)
+	if rise_c > 3.05 and rise_h < 2.5:
+		_ok("L3 上层可达性：组合跳 %.2f > 3.05 > 单高跳 %.2f（仅超级弹跳可上）" % [rise_c, rise_h])
+	else:
+		_fail("L3 上层可达性算术异常：rise_c=%.2f rise_h=%.2f" % [rise_c, rise_h])
+
+	# ---- 12. Phase B·关卡推进：L1 终点 → 自动进入 L2 夜翼峡谷 ----
+	scene_root.load_level(0)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	await _teleport(Vector3(30.5, 1.3, 0))
+	await _settle_until_floor()
+	await _hold_and_measure(KEY_D, 1.0)
+	await _settle(20)
+	if scene_root.level_idx == 1:
+		_ok("关卡推进：L1 终点自动进入第 2 关「%s」" % scene_root.LEVELS[1].name)
+	else:
+		_fail("关卡推进失败：level_idx=%d" % scene_root.level_idx)
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:
