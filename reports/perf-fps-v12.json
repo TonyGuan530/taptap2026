@@ -1,0 +1,18 @@
+{
+  "url": "https://tonyguan530.github.io/taptap2026/builds/demo-03-3d-v12/index.html",
+  "viewport": "1280x720",
+  "when": "2026-10-04T23:41:28.544Z",
+  "host": "GSX-PC",
+  "cpu": "Intel(R) Core(TM) i7-14700KF",
+  "modes": {
+    "classic": {
+      "avgFps": 179.5,
+      "worstFrameMs": 7
+    },
+    "storm": {
+      "avgFps": 178.9,
+      "worstFrameMs": 7
+    }
+  },
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 2070 (0x00001F07) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}
