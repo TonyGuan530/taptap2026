@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-04T20:52:00+08:00",
+  "checkedAt": "2026-10-04T21:01:00+08:00",
   "round": 104,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
@@ -56,6 +56,7 @@
     "queue": "全员 3D 迁移开工（自 3d-shared 拉分支）；美术基线接入核查"
   },
   "watch": [
+    "🔴【总指挥令·零打扰红线】全体任务禁止弹窗 QA（用户在电脑玩游戏）——视觉验证一律 CLI 离线（Movie Maker --write-movie / headless 截图脚本），禁止非 headless 跑游戏/开编辑器（批示 reviews/supervisor-directive-2026-10-04-no-window-qa.md）",
     "🔴 真人反馈三通道全空：Miro 无新增（60 条基线）/GitHub Issues 零条/db.json 未生成——数据仍在用户侧，等用户直接发对话里或贴上平台",
     "🔴【调度变更·需用户操作】督导自动化改 1h（Automations 界面）；其他任务 30min 不动",
     "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B"
