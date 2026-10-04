@@ -18,9 +18,9 @@
     },
     {
       "id": "demo-02-3d",
-      "title": "物性变换谜题 3D（第一人称灰模预览）",
-      "goal": "DEMO2 3D 化：第一人称+三词条物性解谜。v3 已并入 3d-shared 基座（comic 材质地形+ComicObject 模型落位：弹簧=压力板/脆板=铁块/GOAL=门框）。五关迁移中。",
-      "buildId": "demo-02-3d-v3",
+      "title": "物性变换谜题 3D（第一人称漫画风）",
+      "goal": "DEMO2 3D 化 Phase B 全绿：三关卡 headless 5/5 PASS（L1 弹簧越墙/L2 错位砸板——板厚 0.5 防穿板+未砸板不入洞/L3 羽毛扑翼跨峡谷）；W/S 反馈修复；3d-shared 基座 comic 材质+ComicObject（弹簧=压力板/脆板=铁块/GOAL=门框）。",
+      "buildId": "demo-02-3d-v8",
       "status": "done"
     },
     {
