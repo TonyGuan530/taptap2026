@@ -1,0 +1,80 @@
+name: 🎮 试玩反馈
+description: TapTap2026 试玩反馈（选 demo、填体验，督导自动分派给对应任务消化）
+title: "[反馈] "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢试玩！请选择你玩的 demo 并如实填写——每条反馈会被自动分派给对应开发任务消化。
+  - type: dropdown
+    id: demo
+    attributes:
+      label: 试玩的 Demo
+      options:
+        - "demo-01 灵感菇侦探"
+        - "demo-02 物性变换谜题"
+        - "demo-03 岩浆降温的小人国度"
+        - "demo-04 SOUP 2.0 DNA融合逃生"
+        - "demo-05 恐龙火山生存"
+        - "demo-06 词条涂鸦创造"
+        - "demo-08 纸飞机模拟器+肉鸽"
+        - "demo-09 赛车模拟器"
+        - "demo-10 修改小说"
+        - "demo-11 塞尔达式箱庭谜题"
+        - "其他/Hub 本身"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 版本号（页面底部或链接里可见，如 demo-05-v20）
+      placeholder: demo-XX-vN
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: 结果
+      options:
+        - "通关了"
+        - "没通关（卡住）"
+        - "中途退出"
+    validations:
+      required: true
+  - type: input
+    id: duration
+    attributes:
+      label: 大约玩了多久
+      placeholder: "如 5 分钟"
+  - type: textarea
+    id: blockers
+    attributes:
+      label: 卡在哪里 / 哪里看不懂
+      placeholder: "如：第二关不知道怎么过、按钮看不懂、掉下去不会重置……"
+  - type: dropdown
+    id: fun
+    attributes:
+      label: 好玩程度
+      options:
+        - "⭐ 想关掉"
+        - "⭐⭐ 有点无聊"
+        - "⭐⭐⭐ 一般"
+        - "⭐⭐⭐⭐ 好玩"
+        - "⭐⭐⭐⭐⭐ 想继续玩"
+    validations:
+      required: true
+  - type: textarea
+    id: detail
+    attributes:
+      label: 自由反馈（任何想法都欢迎）
+      placeholder: "最喜欢/最讨厌的瞬间、想加的东西、觉得奇怪的地方……"
+  - type: dropdown
+    id: device
+    attributes:
+      label: 设备
+      options:
+        - "Windows 电脑（键鼠）"
+        - "Mac"
+        - "手机浏览器"
+        - "平板"
