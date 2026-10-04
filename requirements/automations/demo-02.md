@@ -14,6 +14,7 @@
 requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-export.md）。玩法：形状(圆球/长板/方块)×词条(Heavy/Float/Fire/Sticky)统一规则物理解谜，目标 3-4 关。
 
 ## 当前状态（2026-10-05 晨 · 3D 阶段 B 收官）
+- **ChatGPT 专属监督对话 URL（定时任务提示词 2026-10-05 补记）：https://chatgpt.com/c/6abf238d-6dc0-83ec-aa5e-43c62aebe892** —— 2026-10-05 收官评审因侧边栏找不到该线另开了新对话 https://chatgpt.com/c/6ac2d990-1b54-83ec-aa58-aca4ab18859d ，后续里程碑优先用专属线。
 - **3D 五关齐并收官（demo-02-3d-v10 已上 Pages，build.json 200）**：L1 弹簧越墙 / L2 错位脆板（未砸板不入洞）/ L3 羽毛跨峡谷 / L4 开放高台双路线（羽毛飘台、皮球弹板全矢量抛射）/ L5 皮球零输入弹簧链穿环（石头对照失败）。headless b 套件 9/9 PASS（真实时间，含 4 个石头失败对照）；单实例 L1→L5 连打验证跨关装载链。五关视频重录（Movie Maker 32s，L5 段遥测 idle=true）。
 - **ChatGPT 阶段 B 收官裁定（2026-10-05，存 reviews/chatgpt-demo-02-full.md）**：**阶段 B 收官、冻结 v10；demo-02 总体 ITERATE；下一 Gate=Batch 01 真人试玩，不进阶段 C 美术**。L4 皮球抛射路线=合格第二路线（保留，勿人工补第三条）；L5=KEEP AS TOY 勿修、统计时与 L2-L4 分开。Batch 01 Gate 已定死（L4 ≥2 solution family + ≥1 未预设合法序列 + ≥2 人迁移物理关系 → 升 KEEP）。
 - **下一轮任务（仅授权 3 件）**：①冻结 v10 物理/结构/词条（不再调参，保试玩共同基线）②组织 3-5 人 Batch 01（手册 reviews/playtest/demo-02-batch01-手册.md；【需用户决策：安排人选】）③观察员加一个 Eureka 记录字段（旧 mechanic 新用途首次时刻），不膨胀 telemetry。
