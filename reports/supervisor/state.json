@@ -1,24 +1,24 @@
 {
-  "checkedAt": "2026-10-04T10:06:00+08:00",
-  "round": 90,
+  "checkedAt": "2026-10-04T10:16:00+08:00",
+  "round": 91,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（10:05 实跑）"
+    "thisRound": "guard SKIP not-foreground（10:15 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 88,
-      "lastDispatch": "10:04",
-      "next": "10:14"
+      "runCount": 89,
+      "lastDispatch": "10:14",
+      "next": "10:24"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "守望轮第十六/十七次零变更（稳态）"
+      "evidence": "守望轮第十八/十九次零变更（稳态）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "🔴 空转第 12 次（819123b）——失能维持"
+      "evidence": "🔴 空转第 13 次（a0511d9）——失能维持"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
@@ -42,12 +42,12 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=80（+1）",
+    "health": "ok builds=80",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 9e42b91",
+    "git": "本轮 HEAD 8f7eddf",
     "itch": "故障形态回摆 CDN 占位页（整站层问题持续）；Pages 兜底全在线"
   },
   "fiveHourPlan": {
