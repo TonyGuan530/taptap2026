@@ -337,7 +337,7 @@ func _build_menu_panel() -> void:
 	menu_tip.add_theme_color_override("font_color", Color("0d47a1"))
 	menu_panel.add_child(menu_tip)
 	var rules := Label.new()
-	rules.text = "3D 灰模：跟随视角观察同一套折线规则。折线靠右升力大、靠上抬头、长线多阻力。\n60 像素 = 1 米；R 复位相机；门奖即时入账，失败仍保留。\n阶段 B：飞行中 A/D 横移（加速 240/上限 320/阻尼 160 px/s²，边界 ±20m），门有横向宽度 5m。"
+	rules.text = "3D 灰模：跟随视角观察同一套折线规则。折线靠右升力大、靠上抬头、长线多阻力。\n60 像素 = 1 米；R 复位相机；门奖即时入账，失败仍保留。\n阶段 B：飞行中 A/D 横移（加速 240/上限 320/阻尼 160 px/s²，边界 ±20m），门有横向宽度 5m。\n商店七物：力气/翼面/纸面加固/重心铅条/螺旋桨/配平仪/韧性——加固降阻力、铅条驯配平。"
 	rules.position = Vector2(24, 186)
 	rules.size = Vector2(612, 100)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -612,9 +612,10 @@ func _show_shop() -> void:
 
 func _show_final() -> void:
 	var owned_txt: String = ", ".join(core.owned) if core.owned.size() > 0 else "无特殊部件"
-	final_body.text = "%d 关全部飞过终点旗！\n总飞行 %d 米 · 最远一掷 %.1f 米 · 金币余额 %d\n强化：力气 x%d · 翼面 x%d · %s" % [
+	final_body.text = "%d 关全部飞过终点旗！\n总飞行 %d 米 · 最远一掷 %.1f 米 · 金币余额 %d\n强化：力气 x%d · 翼面 x%d · 加固 x%d · 铅条 x%d · %s" % [
 		core.LEVELS.size(), int(core.total_distance), core.best_distance, core.coins,
-		int(core.upgrades.power), int(core.upgrades.wing), owned_txt]
+		int(core.upgrades.power), int(core.upgrades.wing),
+		int(core.upgrades.get("stiff", 0)), int(core.upgrades.get("ballast", 0)), owned_txt]
 	final_panel.visible = true
 
 
