@@ -887,7 +887,10 @@ func _draw_wind_tag() -> void:
 	var head: bool = w == "head"
 	var col := Color("5c6bc0") if head else Color("43a047")
 	var label := "逆风 阻力 x1.25" if head else "顺风 恒定推力"
-	paint.draw_string(FONT, Vector2(770.0, 60.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, col)
+	var sw: float = core.side_wind_accel()
+	if absf(sw) > 0.0:
+		label += " ＋ 侧风%s" % ("←" if sw < 0.0 else "→")
+	paint.draw_string(FONT, Vector2(730.0, 60.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, col)
 
 
 # ---------------- 自动演示 + 离线截图（DEMO08_SHOTS_DIR 环境变量触发） ----------------
