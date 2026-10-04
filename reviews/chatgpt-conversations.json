@@ -78,9 +78,10 @@
       "v15Note": "v15 内容层：结局文风第 4 变体「石碑铭文」（短句铭刻体，与史诗/日记/幼龙语感区分）；4用例 4/4；V8 冻结维持；等真人 Gate",
       "v19Note": "v19 视觉：恐龙双帧待机动画（绿幕生图嗅探帧+立绘帧 1s 交替）；4用例 4/4；V8 冻结维持；等真人 Gate",
       "v20Note": "v20 视觉：恐龙三帧待机循环（站立→嗅探→行走，绿幕生图第三帧行走姿势）；4用例 4/4；V8 冻结维持；等真人 Gate",
-      "hd2dNote": "阶段B PASS（Gate-6因果链通过）；阶段C批准泥流（C2 路径拓扑，禁止伤害地板同质化）+预报后置C3+雷火暂缓；HD-2D 升 KEEP 候选，正式 KEEP 缺真人空间学习证据（shelter_build_x telemetry）",
+      "hd2dNote": "C3 PASS；内容层封顶守望（雷火冻结）；HD-2D KEEP 候选更近一步——唯一 Gate=小型真人空间学习测试（2-3 人×2 夜，shelter_build_x 学习链）",
       "hd2dReview": "reviews/chatgpt-demo05-hd2d-bc-full.md",
-      "hd2dArchivedAt": "2026-10-05T04:40+08:00"
+      "hd2dArchivedAt": "2026-10-05T06:10+08:00",
+      "hd2dC3Review": "reviews/chatgpt-demo05-hd2d-c3-full.md"
     },
     "demo-06": {
       "url": "https://chatgpt.com/c/6ac0ce03-38a8-83ec-b06a-2a658c0a4753",
