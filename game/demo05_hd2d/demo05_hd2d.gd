@@ -50,6 +50,12 @@ const ROCKS := [
 	{pos = Vector3(4, 0.75, 3.5), size = Vector3(2.5, 1.5, 2)},
 ]
 
+## 火山灰夜潮（阶段 C 首个灾害：确定性正弦推进-退去，无 RNG）
+const VOLCANO_POS := Vector3(19.0, 0.0, -10.0)   # 火山锥在东墙外
+const ASH_FRONT_FAR := 18.0    # 黄昏/黎明灰界（墙内侧）
+const ASH_FRONT_NEAR := 8.0    # 深夜灰界最西推进
+const ASH_DPS := 2.0           # 灰区内持续伤害
+
 # —— 运行状态 ——
 var inventory := {"food": 0, "water": 0, "wood": 0}
 var pile := {"food": 0, "water": 0}
@@ -80,6 +86,8 @@ var dead := false
 var night_amount := 0.0
 var sun_light: DirectionalLight3D
 var env_res: Environment
+var ash_node: MeshInstance3D
+var ash_front := ASH_FRONT_FAR
 var dino: CharacterBody3D
 var cam_pivot: Node3D
 var berry_fruits: Array = []
@@ -233,6 +241,29 @@ func _build_world() -> void:
 	crown.position = Vector3(0, 2.6, 0)
 	tree.add_child(crown)
 	add_child(tree)
+	# 火山锥（东墙外，灰潮方向锚点）
+	var volcano := MeshInstance3D.new()
+	var cone := CylinderMesh.new()
+	cone.top_radius = 0.3
+	cone.bottom_radius = 3.5
+	cone.height = 5.0
+	volcano.mesh = cone
+	var vmat := StandardMaterial3D.new()
+	vmat.albedo_color = Color(0.32, 0.26, 0.24)
+	volcano.material_override = vmat
+	volcano.position = VOLCANO_POS + Vector3(0, 2.5, 0)
+	add_child(volcano)
+	# 灰潮体（半透明灰墙，逐帧按 ash_front 缩放）
+	ash_node = MeshInstance3D.new()
+	var abox := BoxMesh.new()
+	abox.size = Vector3(1, 1, 1)
+	ash_node.mesh = abox
+	var amat := StandardMaterial3D.new()
+	amat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	amat.albedo_color = Color(0.35, 0.32, 0.28, 0.45)
+	ash_node.material_override = amat
+	ash_node.visible = false
+	add_child(ash_node)
 
 func _build_dino() -> void:
 	dino = CharacterBody3D.new()
@@ -294,7 +325,7 @@ func _build_hud() -> void:
 	]
 	hud_prompt = _mk_label(hud, Vector2(16, 44), Color("ffe082"), 18)
 	hud_hint = _mk_label(hud, Vector2(16, 500), Color("8b94a7"), 14)
-	hud_hint.text = "WASD 移动 · E 交互 · Q 吃 · R 喝 · B 建造（1/2/3 选型，E 放置，Esc 取消）"
+	hud_hint.text = "WASD 移动 · E 交互 · Q 吃 · R 喝 · B 建造（1/2/3 选型，E 放置，Esc 取消）· 夜晚火山灰自东坡推进，灰区内受伤且不可交互"
 
 func _process(delta: float) -> void:
 	# —— 昼夜 ——
@@ -314,6 +345,18 @@ func _process(delta: float) -> void:
 		env_res.ambient_light_energy = lerpf(0.7, 0.18, night_amount)
 		env_res.ambient_light_color = Color(0.75, 0.75, 0.85).lerp(Color(0.25, 0.28, 0.45), night_amount)
 		env_res.background_color = Color(0.12, 0.14, 0.18).lerp(Color(0.03, 0.04, 0.08), night_amount)
+	# —— 火山灰夜潮（确定性：正弦推进-退去）——
+	if is_night:
+		var ap: float = (day_time - DAY_LEN) / NIGHT_LEN
+		ash_front = lerpf(ASH_FRONT_FAR, ASH_FRONT_NEAR, sin(ap * PI))
+	else:
+		ash_front = ASH_FRONT_FAR
+	if ash_node:
+		ash_node.visible = is_night
+		if is_night:
+			var aw := 20.0 - ash_front
+			ash_node.scale = Vector3(aw, 4.0, 40.0)
+			ash_node.position = Vector3(ash_front + aw * 0.5, 2.0, 0)
 	# —— 死亡 / 重开 ——
 	if dead:
 		hud_prompt.text = "你死了（第 %d 天）· 按 Enter 重来" % day_num
@@ -366,6 +409,9 @@ func _process(delta: float) -> void:
 		drain += HP_DRAIN_STARVE
 	if drain > 0.0:
 		hp = maxf(0.0, hp - drain * delta)
+	# —— 灰区持续伤害 ——
+	if dino and is_night and dino.position.x > ash_front:
+		hp = maxf(0.0, hp - ASH_DPS * delta)
 	# —— 资源再生 ——
 	if berry_stock < BERRY_START_STOCK:
 		berry_regen += delta
@@ -421,6 +467,15 @@ func _process(delta: float) -> void:
 	hud_labels[5].text = "口渴 %d" % int(thirst)
 	hud_labels[6].text = "第 %d 天 · %s" % [day_num, "夜" if is_night else "昼"]
 	hud_prompt.text = interact_prompt + ("　[B 建造中：%s — E 放置 / Esc 取消]" % RECIPES[build_recipe].name if build_mode else "")
+	if is_night and dino:
+		if dino.position.x > ash_front:
+			hud_prompt.text = "⚠ 火山灰侵入——向西撤！ " + hud_prompt.text
+		elif ash_front < 14.0:
+			hud_prompt.text = "灰雾自火山坡推进（西界 %.0fm） " % ash_front + hud_prompt.text
+
+## 目标点是否被灰潮覆盖（灰区内资源/设施不可交互）
+func _in_ash(p: Vector3) -> bool:
+	return is_night and p.x > ash_front
 
 func _update_interact() -> void:
 	interact_kind = ""
@@ -428,20 +483,20 @@ func _update_interact() -> void:
 	if dino == null:
 		return
 	var dp := dino.position
-	if berry_stock > 0 and dp.distance_to(BERRY_POS) < INTERACT_RANGE + 0.5:
+	if berry_stock > 0 and not _in_ash(BERRY_POS) and dp.distance_to(BERRY_POS) < INTERACT_RANGE + 0.5:
 		interact_kind = "berry"
 		interact_prompt = "[E] 采浆果（剩余 %d）" % berry_stock
 		return
-	if dp.distance_to(WATER_POS) < INTERACT_RANGE + 0.5:
+	if not _in_ash(WATER_POS) and dp.distance_to(WATER_POS) < INTERACT_RANGE + 0.5:
 		interact_kind = "pond"
 		interact_prompt = "[E] 喝水（口渴 +%d）" % int(DRINK_THIRST)
 		return
-	if tree_stock > 0 and dp.distance_to(TREE_POS) < INTERACT_RANGE + 0.5:
+	if tree_stock > 0 and not _in_ash(TREE_POS) and dp.distance_to(TREE_POS) < INTERACT_RANGE + 0.5:
 		interact_kind = "tree"
 		interact_prompt = "[E] 拾枯枝（剩余 %d）" % tree_stock
 		return
 	for b in buildings:
-		if dp.distance_to(b.pos) < INTERACT_RANGE + 0.5:
+		if not _in_ash(b.pos) and dp.distance_to(b.pos) < INTERACT_RANGE + 0.5:
 			match b.kind:
 				"storage":
 					if pile.food > 0 and hunger < HUNGER_MAX - 1.0:
