@@ -1,20 +1,16 @@
 /**
  * 站点配置（静态托管 / GitHub Pages 模式下生效）
- *
- * 想在 Pages 上开启留言（giscus，走 GitHub Discussions）：
- *   1. 仓库 Settings → General → Features 勾选 Discussions
- *   2. 安装 giscus App: https://github.com/apps/giscus
- *   3. 打开 https://giscus.app/zh-CN ，填入仓库和分类，把下面 4 个值抄进来
- * 未配置时页面只显示提示，不影响游戏试玩。
+ * giscus 走 GitHub Discussions（每版本一个评论串）；feedbackUrl 为 Issue 反馈表单兜底。
+ * 已由督导 2026-10-04 配置完毕：Discussions 已开启，填表需 GitHub 账号登录。
  */
 window.SITE_CONFIG = {
   giscus: {
-    repo: '',            // 例如 "sxguan/taptap2026"
-    repoId: '',          // giscus.app 给出的 data-repo-id
-    category: 'Announcements',
-    categoryId: '',      // giscus.app 给出的 data-category-id
+    repo: 'TonyGuan530/taptap2026',
+    repoId: 'R_kgDOU30GxQ',
+    category: 'General',
+    categoryId: 'DIC_kwDOU30Gxc4DG_gL',
     theme: 'dark',
   },
-  // 备选：直接放一个"去这里留言"的链接（如 GitHub Discussions / 问卷 / 微信群）
-  feedbackUrl: '',
+  // 备选：直接放一个"去这里留言"的链接（Jira 式反馈表单，督导流水线自动消化）
+  feedbackUrl: 'https://github.com/TonyGuan530/taptap2026/issues/new?template=feedback.yml',
 };
