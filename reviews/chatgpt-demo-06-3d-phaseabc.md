@@ -68,3 +68,15 @@ C family 定型：**C0 Push Box → 0 墨**；**C1 Heavy-assisted Box → 40 墨
 - B 路双 Sticky 80 墨接受（0.4s freeze 未暗改，已是独立 solution family）。
 - **下一步顺序确认：先做 12 组合可移动性审计（只答三问：①生成后能否被玩家/环境推动；②是否永久冻结/快速失 operability；③是否存在假可移动——太重/太滑/太不稳定），再设计 L7「借板登岸」；不为关卡成立改核心 Tag 规则。**
 - 当前无新阻断项；L3 重新视为正式 3D 主实验场。
+
+---
+
+## 回执裁定 2（2026-10-05 06:00，可移动性审计后）
+
+> **选 C。L7 暂缓，不做 A/B。先把 3D 真人 Gate kit 做完。**
+
+- 审计本身是有效系统发现：**当前规则集并不真正支持「造物复用」作为普遍玩法**（11/12 按设计即非可重操作对象）——不应为兑现 L7 设想硬拗关卡。
+- A「借球登岸」：留作以后独立的「滚球/惯性」关卡 idea，不叫 Object Reuse Gate（强行只用 Heavy Ball 只能证明"玩家会滚球"，不能推广为复用理解；挡停/坡度/落位设计易沦为 authored apparatus）。
+- B（球撞微移 plank）：technically possible ≠ viable player strategy，直接 DROP。
+- **新设计轴发现：Object Lifecycle / Persistence**——不同词条不仅改效果，还改「生成后还能否继续参与世界」。不改规则，真人 Gate 观察玩家是否自然形成 mental model（Float=结构件 / Sticky=延迟固化件 / Fire=消耗件 / Heavy Ball=动态工具）——若是，本身即 systemic depth。
+- **下一轮=3D 真人 Gate Kit（实质开发轮）**：sid 编号、L3 主 Gate 独立启动入口、不暴露解法、telemetry 全适配 3D、新增 placement_attempt / placement_rejected（区分"没想到"与"放置失败"）、记录 ghost 最终 position/rotation/depth、failure_cause 人工标注。
