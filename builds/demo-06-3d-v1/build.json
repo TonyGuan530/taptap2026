@@ -1,0 +1,7 @@
+{
+  "title": "TapTap2026 Demo",
+  "version": "demo-06-3d-v1",
+  "date": "2026-10-05T02:50:00.000Z",
+  "author": "49321",
+  "notes": "DEMO6 第三人称 3D 化阶段A（分支 codex/demo06-3d-migration）：L3 灰模验证房（场景应用版 v2）——第三人称+墨水放置+ghost 旋转/深度+12 组合词条刚体+推箱；L3 三解法真跑 3/3（Float桥/Sticky垫脚/推箱+垫块）。机制验证版，六关迁移中。"
+}
