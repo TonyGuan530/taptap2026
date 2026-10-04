@@ -19,15 +19,15 @@
     {
       "id": "demo-02-3d",
       "title": "物性变换谜题 3D（第一人称灰模预览）",
-      "goal": "DEMO2 3D 化阶段A 灰模：第一人称+三词条物性解谜机制验证房（弹簧/脆板/GOAL）。完整五关迁移中，当前为机制预览版。",
-      "buildId": "demo-02-3d-v1",
+      "goal": "DEMO2 3D 化阶段A 灰模：第一人称+三词条物性解谜机制验证房（弹簧/脆板/GOAL）。v2 修复 W/S 反向（反馈#1）。完整五关迁移中。",
+      "buildId": "demo-02-3d-v2",
       "status": "done"
     },
     {
       "id": "demo-03",
       "title": "岩浆降温的小人国度",
       "goal": "浇水/降温自动化维持温度，随进度涌现随机 NPC 小人",
-      "buildId": "demo-03-3d-v1",
+      "buildId": "demo-03-3d-v2",
       "status": "done"
     },
     {

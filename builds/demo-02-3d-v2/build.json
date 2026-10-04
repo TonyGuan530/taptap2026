@@ -1,0 +1,7 @@
+{
+  "title": "TapTap2026 Demo",
+  "version": "demo-02-3d-v2",
+  "date": "2026-10-04T13:14:34.837Z",
+  "author": "49321",
+  "notes": "fix GitHub issue#1: W/S inverted (get_axis arg order); WASD direction regression tests; 11/11 PASS"
+}
