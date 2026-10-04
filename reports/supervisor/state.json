@@ -1,14 +1,14 @@
 {
-  "checkedAt": "2026-10-04T20:16:00+08:00",
-  "round": 103,
+  "checkedAt": "2026-10-04T20:52:00+08:00",
+  "round": 104,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "待下轮守卫实跑"
+    "thisRound": "guard FAIL noring（间隔多轮非连续，沿用读数）"
   },
   "automations": {
     "supervisor": {
       "runCount": "—",
-      "lastDispatch": "19:30（手动会话）",
+      "lastDispatch": "20:50（手动会话）",
       "next": "待用户改 1h 调度"
     },
     "demo-01(流水线)": {
@@ -42,25 +42,23 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=19 目录/909MB（清理生效）",
+    "health": "ok builds=22（清理后 +3 新版目录）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "60 条无新增（06:25 fetch OK）",
+    "miro": "60 条基线无新增（20:50 fetch）——无真人反馈",
     "feedback": "db.json 零反馈",
-    "git": "主区 HEAD 见 push；新分支 origin/3d-shared 8458ca0",
+    "git": "本轮 HEAD 78097c6",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "全员 3D 迁移开工（自 3d-shared 拉分支+按各自指南+美术基线）；demo-09 补赛道（长期队列）"
+    "queue": "全员 3D 迁移开工（自 3d-shared 拉分支）；美术基线接入核查"
   },
   "watch": [
-    "🔴【调度变更·需用户操作】督导自动化改 1h 触发：本会话无 CronUpdate 工具——请在 ZCode Automations 界面把「每10分钟：TapTap2026 总督导」的间隔改为 60 分钟（其他任务不动）",
-    "🆕 3D 化阶段：项目方向升级（用户已定 9 demo 方向，Codex 指南 D:/GIT/3D-GUIDE）——各任务自下轮按指南建分支/worktree 开工，main 2D 线上版继续发布",
-    "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B",
-    "🆕【定时跟进·全项目】统一美术基线 Low-poly/Comic Kit 接入核查——各 demo 3D 里程碑含「美术基线接入完成」检查项，未完成持续催办（批示 reviews/supervisor-directive-2026-10-04-3d-migration.md 增补节）",
-    "🆕【美术基线部署裁定】基座全局一次+场景应用分 demo——流水线建 3d-shared 共享分支落 comic_style/models/addons，各 demo 迁移分支从基座拉出（批示 3d-migration.md 增补节）；下轮核对 [DONE]"
+    "🔴 真人反馈三通道全空：Miro 无新增（60 条基线）/GitHub Issues 零条/db.json 未生成——数据仍在用户侧，等用户直接发对话里或贴上平台",
+    "🔴【调度变更·需用户操作】督导自动化改 1h（Automations 界面）；其他任务 30min 不动",
+    "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
