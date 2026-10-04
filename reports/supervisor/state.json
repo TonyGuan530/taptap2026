@@ -1,24 +1,24 @@
 {
-  "checkedAt": "2026-10-04T09:06:00+08:00",
-  "round": 84,
+  "checkedAt": "2026-10-04T09:16:00+08:00",
+  "round": 85,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（09:05 实跑）"
+    "thisRound": "guard SKIP not-foreground（09:15 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 82,
-      "lastDispatch": "09:04",
-      "next": "09:14"
+      "runCount": 83,
+      "lastDispatch": "09:14",
+      "next": "09:24"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "守望轮第五次零变更；itch 故障形态记录（占位页→butler 连通性，整站层问题）"
+      "evidence": "守望轮第七次零变更（稳态）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "🔴 空转第 10 次（b1bc8a2）——失能维持；itch QA 工具恢复但 v7 部署平台故障持续（4/4 占位页），不再逐轮重推"
+      "evidence": "🔴 空转第 11 次（4a2b152）——失能维持"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
@@ -28,7 +28,7 @@
     "demo-04": {
       "cron": "15,45 * * * *",
       "runCount": 24,
-      "evidence": "✅ 守望轮9：v12 复评已归档无新增，内容冻结合规"
+      "evidence": "08:45 轮后冻结稳态；09:15 轮触发中"
     },
     "demo-05": {
       "cron": "20,50 * * * *",
@@ -47,17 +47,18 @@
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD d90266a",
-    "itch": "故障形态升级记录：占位页→butler 连通性（整站层），Pages 兜底不受影响"
+    "git": "本轮 HEAD 2109f16",
+    "itch": "故障形态回摆 CDN 占位页（整站层问题持续）；Pages 兜底全在线"
   },
   "fiveHourPlan": {
-    "done": "盲测侧基建全齐（物料+手册+汇总工具）",
+    "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
     "queue": "demo-09 补赛道（长期队列）；全员就绪/冻结/内容供给"
   },
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
-    "🔴【需用户决策】Batch 01 人选与排期（物料+手册+数据工具全齐，唯一阻塞点）；demo-02 会话失能；itch A/B（整站故障挂起）"
+    "🔴【需用户决策】Batch 01 人选与排期（唯一阻塞点）；demo-02 会话失能；itch A/B（整站故障挂起）",
+    "系统进入等真人数据稳态——守望轮属持续开发令合规形态（无更优先可执行项）"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
