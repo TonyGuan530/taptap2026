@@ -4,7 +4,7 @@ extends Node3D
 ## 米制标定：球 r=0.5m，重力 9.8，脆板阈值 12 m/s。视觉走 3d-shared comic 材质+模型库（场景应用，不复制套件）。
 
 const BALL_R := 0.5
-const FRAGILE_SPEED := 12.0
+const FRAGILE_SPEED := 11.0   # 砸板阈值；顶点转石头冲击 ≈15 m/s，留 35% 余量（羽毛终末速 ≈2 永远不够）
 const FLAP_VEL := 3.2
 const MOUSE_SENS := 0.0022
 const PITCH_LIMIT := 1.45
@@ -51,8 +51,8 @@ const LEVELS := [
 			[Vector3(12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
 			[Vector3(0, 9.25, 0), Vector3(24, 0.5, 13), "wall"],
 		],
-		spring = { pos = Vector3(-8, 0.15, 0), imp = Vector3(0, 17.5, 0) },   # 冲量加强：石头落板冲击 ≥12 m/s
-		fragile = { pos = Vector3(-9.75, 2.5, 0), size = Vector3(2.5, 0.15, 2.5) },   # 脆板错位弹簧正上方；羽毛在峡谷上方转石头砸落
+		spring = { pos = Vector3(-8, 0.15, 0), imp = Vector3(0, 18.5, 0) },   # 冲量加强：顶点更高，石头落板冲击 ≈15 m/s（阈值 11）
+		fragile = { pos = Vector3(-9.75, 2.0, 0), size = Vector3(2.5, 0.5, 2.5) },   # 脆板错位弹簧左上方；厚 0.5m 防高速穿板；压低落距增冲击余量
 		goal = { pos = Vector3(-9.75, 0.7, 0), size = Vector3(2.4, 0.9, 2.4) },   # 底 0.25m 离地
 	},
 	{
@@ -392,6 +392,8 @@ func _on_goal_enter(other: Node) -> void:
 		return   # 只认玩家球体；StaticBody(地板)贴邻边界会误触发
 	if goal_reached:
 		return
+	if LEVELS[level_idx].fragile != null and not fragile_broken:
+		return   # 脆板关卡：砸穿才算过关，滚落绕进洞无效
 	goal_reached = true
 	var sw := "无切换" if tel_switches.is_empty() else "→".join(tel_switches)
 	var idle := (not tel_moved) and (not tel_flapped) and (not tel_mid_switch)

@@ -3,6 +3,8 @@ extends SceneTree
 ## ① L1 皮球+W 越墙入 GOAL ② L1 石头撞墙不误通关 ③ L2 横漂对准+顶点转石头砸脆板
 ## ④ L3 组合：弹簧→顶点转羽毛→扑翼+W 跨峡谷入远端 GOAL ⑤ L3 石头直走掉峡谷不误通关
 ## 结果写入 user://v3d_b_log.txt；FAIL → 非零退出码
+## 单用例模式：godot --headless --path game -s res://tests/test_demo02_3d_b.gd -- --case=2
+##   （每用例独立进程，规避长跑 headless physics_frame 停振；无参数则跑全部）
 
 var scene = null
 var logf: FileAccess
@@ -43,8 +45,26 @@ func _init() -> void:
 func _run() -> void:
 	logf = FileAccess.open("user://v3d_b_log.txt", FileAccess.WRITE)
 	await process_frame
+	var wanted := -1
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--case="):
+			wanted = int(a.substr(7))
+	if wanted < 0 or wanted == 0:
+		await _case_0()
+	if wanted < 0 or wanted == 1:
+		await _case_1()
+	if wanted < 0 or wanted == 2:
+		await _case_2()
+	if wanted < 0 or wanted == 3:
+		await _case_3()
+	if wanted < 0 or wanted == 4:
+		await _case_4()
+	_log("ALL DONE fails=%d" % fails)
+	logf.flush()
+	quit(1 if fails > 0 else 0)
 
-	# ① L1：皮球+弹簧+按住 W 越墙入 GOAL
+# ① L1：皮球+弹簧+按住 W 越墙入 GOAL
+func _case_0() -> void:
 	await _new_scene(0)
 	scene.switch_tag(2)
 	scene.yaw = -PI / 2   # 面朝 +X
@@ -62,7 +82,8 @@ func _run() -> void:
 	scene.queue_free()
 	await physics_frame
 
-	# ② L1 石头：撞墙卡住，不误通关
+# ② L1 石头：撞墙卡住，不误通关
+func _case_1() -> void:
 	await _new_scene(0)
 	scene.switch_tag(1)
 	var t0 := Time.get_ticks_msec()
@@ -72,28 +93,31 @@ func _run() -> void:
 	scene.queue_free()
 	await physics_frame
 
-	# ③ L2：弹簧上抛（羽毛上升期向左横漂对准脆板），顶点转石头砸穿入 GOAL
+# ③ L2：弹簧上抛（羽毛上升期向左横漂对准错位脆板 x=-9.75），顶点转石头竖直砸穿入 GOAL
+func _case_2() -> void:
 	await _new_scene(1)
 	scene.switch_tag(0)
 	var launched: bool = await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > 9.0, 10000)
 	Input.action_press("p_left")
-	var aligned: bool = await _until(func(): return scene.ball.position.x <= -7.4, 8000)
+	var aligned: bool = await _until(func(): return scene.ball != null and scene.ball.position.x <= -9.4, 8000)
 	Input.action_release("p_left")
-	_log("③ aligned=%s vy=%.1f y=%.1f" % [str(aligned), scene.ball.linear_velocity.y, scene.ball.position.y])
-	# 顶点附近（上升转下落）转石头，砸向下方脆板
+	_log("③ aligned=%s x=%.2f vy=%.1f y=%.1f" % [str(aligned), scene.ball.position.x, scene.ball.linear_velocity.y, scene.ball.position.y])
+	# 顶点附近（上升转下落）转石头，砸向下方错位脆板
 	await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > -2.0 and scene.ball.linear_velocity.y < 2.0, 8000)
 	scene.switch_tag(1)
-	ok = await _until(func(): return scene.goal_reached, 20000)
+	var ok: bool = await _until(func(): return scene.goal_reached, 20000)
 	_check("③ L2 转石头砸穿脆板", ok and scene.fragile_broken)
-	_log("③ aligned=%s" % str(aligned))
+	_log("③ broken=%s goal=%s" % [str(scene.fragile_broken), str(scene.goal_reached)])
 	scene.queue_free()
 	await physics_frame
 
-	# ④ L3 组合：弹簧→顶点转羽毛→扑翼+按住 W 跨峡谷→远端 GOAL
+# ④ L3 组合：弹簧→顶点转羽毛→扑翼+按住 W 跨峡谷→远端 GOAL
+func _case_3() -> void:
 	await _new_scene(2)
 	scene.switch_tag(2)
-	_teleport_pad()
-	launched = await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > 9.0, 10000)
+	scene.ball.global_position = Vector3(-4.5, 0.6, 0)
+	scene.ball.linear_velocity = Vector3.ZERO
+	var launched: bool = await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > 9.0, 10000)
 	# 顶点转羽毛（缓慢下落 + W 横移跨峡谷）
 	await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > -2.0 and scene.ball.linear_velocity.y < 2.0, 8000)
 	scene.switch_tag(0)
@@ -112,23 +136,16 @@ func _run() -> void:
 	Input.action_release("p_fwd")
 	var ok4: bool = await _until(func(): return scene.goal_reached, 20000)
 	_check("④ L3 弹簧→羽毛跨峡谷入远端 GOAL", ok4)
-	_log("④ released=%s flaps=%d pos=%s" % [str(released), str(flaps), str(scene.ball.global_position)])
+	_log("④ released=" + str(released) + " flaps=" + str(flaps) + " pos=" + str(scene.ball.global_position))
 	scene.queue_free()
 	await physics_frame
 
-	# ⑤ L3 石头直走失败对照：掉峡谷，不误通关
+# ⑤ L3 石头直走失败对照：掉峡谷，不误通关
+func _case_4() -> void:
 	await _new_scene(2)
 	scene.switch_tag(1)
-	t0 = Time.get_ticks_msec()
+	var t0 := Time.get_ticks_msec()
 	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 12000:
 		await physics_frame
 	_check("⑤ L3 石头直走不误通关", not scene.goal_reached)
 	scene.queue_free()
-
-	_log("ALL DONE fails=%d" % fails)
-	logf.flush()
-	quit(1 if fails > 0 else 0)
-
-func _teleport_pad() -> void:
-	scene.ball.global_position = Vector3(-4.5, 0.6, 0)
-	scene.ball.linear_velocity = Vector3.ZERO
