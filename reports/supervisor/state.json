@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-04T20:06:00+08:00",
+  "checkedAt": "2026-10-04T20:16:00+08:00",
   "round": 103,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "🆕 3D 迁移阶段启动——总批示已发 reviews/supervisor-directive-2026-10-04-3d-migration.md（9 份指南分派表+六条实施约定）"
+      "evidence": "✅ 3d-shared 基座已由督导代执行完成（用户指令）：分支已推送，comic_style+models 落位，import/脚本验证全通过——各任务可拉分支开工 3D 迁移"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -47,13 +47,13 @@
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 待推",
+    "git": "主区 HEAD 见 push；新分支 origin/3d-shared 8458ca0",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "🆕 全员 3D/HD-2D 迁移（按各自指南灰模先行）；demo-09 补赛道（长期队列，可在 3D 分支内做）"
+    "queue": "全员 3D 迁移开工（自 3d-shared 拉分支+按各自指南+美术基线）；demo-09 补赛道（长期队列）"
   },
   "watch": [
     "🔴【调度变更·需用户操作】督导自动化改 1h 触发：本会话无 CronUpdate 工具——请在 ZCode Automations 界面把「每10分钟：TapTap2026 总督导」的间隔改为 60 分钟（其他任务不动）",

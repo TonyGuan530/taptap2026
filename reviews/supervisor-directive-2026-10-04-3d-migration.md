@@ -61,3 +61,6 @@
 3. 各 demo 迁移分支**一律自 3d-shared 拉出**（不再各自复制套件）——后续美术调整只改基座一处，全项目同步。
 4. main 2D 现役版不动；基座合入主线时机待各 demo 迁移验收后由督导裁决。
 5. 完成后回执本文件：[DONE HH:MM 3d-shared 分支名+目录清单]。
+
+
+[DONE 20:15 督导代执行（用户指令）] 3d-shared 分支已建并推送（8458ca0）：game/comic_style/（plain_toon+pixel_outline+sprite_comic 3 shader、comic_object/comic_style/model_library 3 脚本）+ game/models/（八类 GLB+native tscn+manifest）；Godot 4.7.2 headless import 两次通过退出码 0、GLB 16 产物、脚本 check-only 通过。各任务迁移分支自 3d-shared 拉出即可。
