@@ -39,6 +39,24 @@
         <button id="submit" class="btn">提交反馈</button>
         <div id="msg" class="msg"></div>
       </div>
+      <div id="quick-fb" style="border:1px solid #444;border-radius:8px;padding:10px;margin:10px 0">
+        <strong>📝 无账号快速反馈（写完点复制，粘给开发组即可）</strong>
+        <div style="display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap">
+          <label>评分
+            <select id="qf-star" style="background:#222;color:#eee;border:1px solid #555;border-radius:4px;padding:4px">
+              <option>⭐⭐⭐⭐⭐</option><option selected>⭐⭐⭐⭐</option><option>⭐⭐⭐</option><option>⭐⭐</option><option>⭐</option>
+            </select>
+          </label>
+          <label>结果
+            <select id="qf-done" style="background:#222;color:#eee;border:1px solid #555;border-radius:4px;padding:4px">
+              <option>通关</option><option>没通关</option><option>中途退出</option>
+            </select>
+          </label>
+        </div>
+        <textarea id="qf-text" rows="3" maxlength="500" placeholder="卡在哪/喜欢哪/想改哪，随便写（可不填名字）" style="width:100%;background:#222;color:#eee;border:1px solid #555;border-radius:4px;padding:6px;box-sizing:border-box"></textarea>
+        <button id="qf-copy" class="btn" style="margin-top:6px">📋 复制反馈文本</button>
+        <span id="qf-msg" style="margin-left:8px;color:#8f8"></span>
+      </div>
       <div id="static-hint" hidden>
         <p class="muted" style="font-size:14px">
           当前是静态托管模式（GitHub Pages），留言需要 GitHub 账号（首次登录即可）。<br>

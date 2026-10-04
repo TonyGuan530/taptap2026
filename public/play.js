@@ -207,3 +207,20 @@ function setupShare() {
     setupForm(data.build.id);
   }
 })();
+
+// —— 无账号快速反馈（督导 2026-10-04：复制文本模式，粘给开发组） ——
+(function(){
+  function buildId(){ try{ return new URLSearchParams(location.search).get('id')||'unknown'; }catch(e){ return 'unknown'; } }
+  document.addEventListener('click', async (e)=>{
+    if(e.target && e.target.id==='qf-copy'){
+      const star=document.getElementById('qf-star')?.value||'';
+      const done=document.getElementById('qf-done')?.value||'';
+      const text=document.getElementById('qf-text')?.value||'';
+      const txt='【试玩反馈】'+buildId()+' | '+star+' | '+done+'
+'+text;
+      try{ await navigator.clipboard.writeText(txt); }
+      catch(err){ const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove(); }
+      const m=document.getElementById('qf-msg'); if(m) m.textContent='✅ 已复制，粘贴发给开发组即可';
+    }
+  });
+})();
