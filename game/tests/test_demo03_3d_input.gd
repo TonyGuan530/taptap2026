@@ -1,9 +1,10 @@
 extends SceneTree
-## DEMO3 3D 阶段 B：真实鼠标事件拾取测试（窗口化运行）。
-## 通过 Input.parse_input_event 注入真实 InputEventMouseButton/MouseMotion，
+## DEMO3 3D 阶段 B：真实输入事件测试（v4 起 headless 可跑）。
+## 通过 Input.parse_input_event 注入真实 InputEventMouseButton/MouseMotion/Key，
 ## 走 Viewport → _unhandled_input → Camera3D 射线 → Area3D 拾取的完整管线，
 ## 不直接调用 _try_build/_try_promote。
-## 运行：godot --path game -s res://tests/test_demo03_3d_input.gd（窗口化，约 20 秒）
+## 运行：godot --headless --path game -s res://tests/test_demo03_3d_input.gd（约 20 秒）
+## headless 下截图自动跳过（DisplayServer=headless 无帧缓冲）。
 ## 任何 FAIL → 退出码 1。
 
 const Sim := preload("res://demo03_3d/kingdom_simulation.gd")
@@ -28,6 +29,8 @@ func approx(a: float, b: float, tol: float) -> bool:
 
 
 func shot(tag: String) -> void:
+	if DisplayServer.get_name() == "headless":
+		return
 	var img := root.get_texture().get_image()
 	if img:
 		var dir := ProjectSettings.globalize_path(shots_dir)
@@ -36,17 +39,20 @@ func shot(tag: String) -> void:
 
 
 func click(pos: Vector2) -> void:
+	# pos 为视口坐标；parse_input_event 吃窗口坐标，经拉伸变换映射（headless 窗口尺寸≠960×540）
+	var xform: Transform2D = root.get_final_transform()
+	var wpos := xform * pos
 	var press := InputEventMouseButton.new()
 	press.button_index = MOUSE_BUTTON_LEFT
 	press.pressed = true
-	press.position = pos
-	press.global_position = pos
+	press.position = wpos
+	press.global_position = wpos
 	Input.parse_input_event(press)
 	var release := InputEventMouseButton.new()
 	release.button_index = MOUSE_BUTTON_LEFT
 	release.pressed = false
-	release.position = pos
-	release.global_position = pos
+	release.position = wpos
+	release.global_position = wpos
 	Input.parse_input_event(release)
 	await process_frame
 	await process_frame
@@ -151,6 +157,32 @@ func _run() -> void:
 	check(clean and scene.sim.villagers.is_empty() and scene.sim.spend_log.is_empty(),
 			"重开后状态清理干净")
 	check(scene.sim.round_state == "play", "重开后进入 play")
+
+	# ---- 9. v4 灭火指挥：真实键盘事件（F）走输入管线 ----
+	sim_set_water(100.0)
+	var cmd_press := InputEventKey.new()
+	cmd_press.keycode = KEY_F
+	cmd_press.physical_keycode = KEY_F
+	cmd_press.pressed = true
+	Input.parse_input_event(cmd_press)
+	await process_frame
+	await process_frame
+	check(scene.sim.cmd_active(), "按 F → 灭火指挥生效（真实键盘事件）")
+	var has_cmd := false
+	for rec: Dictionary in scene.sim.spend_log:
+		if rec.kind == "command":
+			has_cmd = true
+	check(has_cmd, "F 指挥产生 spend_log 记录")
+	var w_before: float = scene.sim.water
+	var cmd_press2 := InputEventKey.new()
+	cmd_press2.keycode = KEY_F
+	cmd_press2.pressed = true
+	Input.parse_input_event(cmd_press2)
+	await process_frame
+	await process_frame
+	check(approx(scene.sim.water, w_before, 0.6), "冷却期再按 F 不重复扣费（含收入漂移）",
+			"got %.2f" % scene.sim.water)
+	check(scene.cmd_button.disabled, "生效中指挥按钮禁用")
 
 	print("==== 3D 阶段 B 拾取测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)

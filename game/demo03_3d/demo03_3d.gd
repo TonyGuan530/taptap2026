@@ -45,6 +45,7 @@ var end_title: Label
 var end_body: Label
 var toasts: Array[Dictionary] = []
 var tooltip_label: Label
+var cmd_button: Button
 
 
 func _ready() -> void:
@@ -329,6 +330,10 @@ func _build_hud() -> void:
 	# v2 悬停提示（阶段 B：悬停显示目标名称/价格/当前效果）
 	tooltip_label = _label(hud, Vector2(0, 0), "", 15, Color("fff3c4"))
 	tooltip_label.visible = false
+	# v4 灭火指挥（主动技能按钮，快捷键 F）
+	cmd_button = _button(hud, Vector2(20, 470), Vector2(220, 46), "🧯 灭火指挥 25💧（F）",
+			func() -> void: _try_command_ui())
+	cmd_button.disabled = true
 	toast_box = VBoxContainer.new()
 	toast_box.position = Vector2(340, 84)
 	toast_box.size = Vector2(300, 120)
@@ -347,7 +352,7 @@ func _build_hud() -> void:
 			func() -> void: _start("classic"))
 	_button(menu_layer, Vector2(490, 300), Vector2(170, 50), "风暴之夜（实验）",
 			func() -> void: _start("storm"))
-	_label(menu_layer, Vector2(240, 380), "左键：点槽位建造/升级，点村民晋升｜滚轮缩放，Q/E 旋转，Home 复位", 14, Color("9fb3c8"))
+	_label(menu_layer, Vector2(240, 380), "左键：点槽位建造/升级，点村民晋升｜F：灭火指挥（25💧 全队应急降温）｜滚轮缩放，Q/E 旋转，Home 复位", 14, Color("9fb3c8"))
 	# 结算
 	end_layer = Control.new()
 	end_layer.visible = false
@@ -371,6 +376,16 @@ func _toast(text: String, col: Color) -> void:
 	toasts.append({"label": l, "age": 0.0})
 
 
+## v4 灭火指挥入口（按钮/F 键共用）：成功/冷却中/缺水分支提示
+func _try_command_ui() -> void:
+	if sim.try_command():
+		_toast("🧯 灭火指挥！全队降温 +1.5/s（8 秒）", Color("81d4fa"))
+	elif not sim.cmd_ready():
+		_toast("灭火指挥冷却中…（还差 %.0f 秒）" % maxf(0.0, sim.cmd_ready_at - sim.elapsed), Color("ef9a9a"))
+	else:
+		_toast("灭火指挥需要 %d💧" % sim.CMD_COST, Color("ef9a9a"))
+
+
 # ---------------- 状态机 ----------------
 
 func _start(p_mode: String) -> void:
@@ -384,6 +399,7 @@ func _start(p_mode: String) -> void:
 	rain.emitting = false
 	menu_layer.visible = false
 	end_layer.visible = false
+	banner_label.text = ""
 	mode_label.text = "风暴之夜（实验）" if p_mode == "storm" else "经典 60 秒"
 	toasts.clear()
 	for c: Node in toast_box.get_children():
@@ -415,6 +431,12 @@ func _on_sim_event(kind: String, p: Dictionary) -> void:
 			rain.emitting = false
 			banner_label.text = "☀ 酸雨过了！设施恢复 · 村民回落"
 			banner_label.add_theme_color_override("font_color", Color("90caf9"))
+		"command_started":
+			banner_label.text = "🧯 灭火指挥发起！全员应急降温 +1.5/s（不受酸雨影响）"
+			banner_label.add_theme_color_override("font_color", Color("81d4fa"))
+		"command_ended":
+			if String(banner_label.text).begins_with("🧯"):
+				banner_label.text = ""
 		"round_ended":
 			rain.emitting = false
 			end_layer.visible = true
@@ -440,6 +462,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			cam.size = clampf(cam.size + 2.0, 14.0, 40.0)
 		elif event.button_index == MOUSE_BUTTON_LEFT and sim.round_state == "play":
 			_pick(event.position)
+	elif event is InputEventKey and event.pressed and not event.echo \
+			and event.keycode == KEY_F and sim.round_state == "play":
+		_try_command_ui()
 
 
 ## v3 悬停代理：射线命中拾取体 → 对应 ComicObject 高亮（统一 toon 描边反馈）
@@ -549,6 +574,18 @@ func _process(delta: float) -> void:
 	var ph := sim.phase()
 	phase_label.text = "阶段：%s" % str(ph.name)
 	phase_label.add_theme_color_override("font_color", Color(str(ph.col)))
+	# v4 灭火指挥按钮状态（生效中/冷却/可用水滴三态）
+	if sim.round_state == "play" and sim.cmd_active():
+		cmd_button.text = "🧯 灭火中 %.0fs" % maxf(0.0, sim.cmd_until - sim.elapsed)
+		cmd_button.disabled = true
+	elif sim.round_state == "play" and not sim.cmd_ready():
+		cmd_button.text = "灭火指挥 冷却 %.0fs" % maxf(0.0, sim.cmd_ready_at - sim.elapsed)
+		cmd_button.disabled = true
+	elif sim.round_state == "play":
+		cmd_button.text = "🧯 灭火指挥 %d💧（F）" % sim.CMD_COST
+		cmd_button.disabled = sim.water < float(sim.CMD_COST)
+	else:
+		cmd_button.disabled = true
 	# 村民表现走动（只读展示）
 	for id: int in villager_nodes:
 		var holder := villager_nodes[id] as Node3D

@@ -36,6 +36,13 @@ const ACID_DUR := 8.0
 const STORM_TIMES: Array[float] = [15.0, 30.0, 45.0]
 const STORM_JITTER := 2.0
 const STORM_DUR := 4.0
+## v4 灭火指挥：花水滴发起 8s 全队应急降温，冷却 20s。
+## 刻意不吃酸雨乘区（塔 ×0.6 / 村民 ×1.5 都不影响它）——酸雨里的可靠工具，
+## 与"水滴拿去建设还是留着急救"构成资源竞争决策。
+const CMD_COST := 25
+const CMD_DUR := 8.0
+const CMD_CD := 20.0
+const CMD_COOL := 1.5
 ## 五阶段升温曲线（t 为本局总 elapsed）
 const PHASES: Array[Dictionary] = [
 	{"until": 12.0, "base": 1.8, "slope": 0.035, "name": "初火", "col": "aed581"},
@@ -65,6 +72,9 @@ var acid_events: Array[Dictionary] = [] # {start, dur, announced, warned}
 var acid_was_on := false
 var spend_log: Array[Dictionary] = []   # {t, kind, amount}
 var villager_seq := 0
+var cmd_until := -1.0   # 灭火指挥生效窗截止（sim elapsed）
+var cmd_ready_at := 0.0 # 冷却结束时刻
+var cmd_was_on := false
 
 
 func setup_round(p_mode: String, seed_value: int = -1) -> void:
@@ -79,6 +89,9 @@ func setup_round(p_mode: String, seed_value: int = -1) -> void:
 	spend_log = []
 	acid_was_on = false
 	villager_seq = 0
+	cmd_until = -1.0
+	cmd_ready_at = 0.0
+	cmd_was_on = false
 	if seed_value >= 0:
 		rng.seed = seed_value
 	else:
@@ -194,6 +207,29 @@ func try_promote(villager_id: int) -> bool:
 	return false
 
 
+func cmd_active() -> bool:
+	return elapsed < cmd_until
+
+
+func cmd_ready() -> bool:
+	return elapsed >= cmd_ready_at
+
+
+## 灭火指挥（v4）：紧急把 25 水滴换成 8 秒全队 +1.5/s 降温。
+## 与建造/升级共享水滴池；非 play/冷却中/水不足 → false 且无消费记录。
+func try_command() -> bool:
+	if round_state != "play":
+		return false
+	if not cmd_ready() or water < float(CMD_COST):
+		return false
+	water -= float(CMD_COST)
+	cmd_until = elapsed + CMD_DUR
+	cmd_ready_at = elapsed + CMD_CD
+	spend_log.append({"t": elapsed, "kind": "command", "amount": CMD_COST})
+	sim_event.emit("command_started", {"until": cmd_until})
+	return true
+
+
 ## 逐帧推进：次序与 2D 一致（elapsed → 阶段/天气 → 降温 → 温度 → 收入 → 村民 → 胜负）
 func tick(delta: float) -> void:
 	if round_state != "play":
@@ -213,12 +249,18 @@ func tick(delta: float) -> void:
 	if acid_was_on and not acid_now:
 		sim_event.emit("acid_ended", {"at": elapsed})
 	acid_was_on = acid_now
+	var cmd_on := cmd_active()
+	if cmd_was_on and not cmd_on:
+		sim_event.emit("command_ended", {"at": elapsed})
+	cmd_was_on = cmd_on
 	var tower_cool := 0.0
 	for t: int in towers:
 		tower_cool += COOL_L1 if t == 1 else (COOL_L2 if t == 2 else 0.0)
 	var npc_cool := npc_cool_total()
+	# 灭火指挥 +1.5 固定直加，不进酸雨乘区（酸雨中的可靠工具是它的定位）
+	var cmd_bonus := CMD_COOL if cmd_on else 0.0
 	var cool: float = tower_cool * (ACID_TOWER_MULT if acid_now else 1.0) \
-			+ npc_cool * (ACID_NPC_MULT if acid_now else 1.0)
+			+ npc_cool * (ACID_NPC_MULT if acid_now else 1.0) + cmd_bonus
 	heat = clampf(heat + (rise - cool) * delta, 0.0, MAX_HEAT)
 	water += income_per_sec() * delta
 	if npc_next < NPC_TIMES.size() and elapsed >= float(NPC_TIMES[npc_next]):

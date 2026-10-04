@@ -182,5 +182,77 @@ func _run() -> void:
 	s7b.elapsed = 27.0
 	check(s7a.acid_active() and not s7b.acid_active(), "27s：无气象学家仍在酸雨 / 有气象学家已结束")
 
+	# ---- 9. 灭火指挥（v4）：花费/生效窗/冷却/事件/spend_log ----
+	var s8 = Sim.new()
+	s8.setup_round("classic", 7)
+	var counter8 := {"started": 0, "ended": 0}
+	s8.sim_event.connect(func(kind: String, _p: Dictionary) -> void:
+		match kind:
+			"command_started": counter8.started += 1
+			"command_ended": counter8.ended += 1
+	)
+	check(not s8.try_command(), "开局无水指挥失败")
+	check(s8.spend_log.is_empty(), "指挥失败无消费记录")
+	s8.water = 30.0
+	check(s8.try_command(), "指挥发起成功")
+	check(approx(s8.water, 5.0, 0.001), "指挥扣 25💧")
+	check(s8.cmd_active(), "生效窗内 cmd_active")
+	check(approx(s8.cmd_ready_at, 20.0, 0.001), "冷却排定至 20s")
+	check(not s8.try_command(), "冷却期重复指挥失败")
+	run_seconds(s8, 9.0)
+	check(counter8.started == 1 and counter8.ended == 1, "指挥起/止事件各一次",
+			"s%d e%d" % [counter8.started, counter8.ended])
+	check(not s8.cmd_active(), "8s 后生效结束")
+	check(not s8.cmd_ready(), "9s 时仍在冷却")
+	var has_cmd := false
+	for rec: Dictionary in s8.spend_log:
+		if rec.kind == "command":
+			has_cmd = true
+	check(has_cmd, "spend_log 含 command")
+
+	# ---- 10. 灭火指挥对照：8s 生效窗共 -12 度 ----
+	var s9a = Sim.new()
+	s9a.setup_round("classic", 7)
+	s9a.acid_events[0].start = 22.0
+	s9a.acid_events[1].start = 46.0
+	var s9b = Sim.new()
+	s9b.setup_round("classic", 7)
+	s9b.acid_events[0].start = 22.0
+	s9b.acid_events[1].start = 46.0
+	s9a.water = 100.0
+	run_seconds(s9a, 5.0)
+	run_seconds(s9b, 5.0)
+	check(s9a.try_command(), "对照局指挥发起@5s")
+	run_seconds(s9a, 8.0)
+	run_seconds(s9b, 8.0)
+	check(approx(s9b.heat - s9a.heat, 12.0, 0.3), "8s 生效窗全程 -12 度（对照）",
+			"diff=%.2f" % (s9b.heat - s9a.heat))
+
+	# ---- 11. 灭火指挥不吃酸雨乘区：+1.5 固定直加 ----
+	var s10a = Sim.new()
+	s10a.setup_round("classic", 7)
+	s10a.acid_events[0].start = 22.0
+	s10a.acid_events[1].start = 46.0
+	var s10b = Sim.new()
+	s10b.setup_round("classic", 7)
+	s10b.acid_events[0].start = 22.0
+	s10b.acid_events[1].start = 46.0
+	s10a.water = 100.0
+	run_seconds(s10a, 23.0)
+	run_seconds(s10b, 23.0)
+	check(s10a.acid_active(), "23s 处于酸雨窗")
+	check(s10a.try_command(), "酸雨中指挥发起")
+	run_seconds(s10a, 1.0)
+	run_seconds(s10b, 1.0)
+	check(approx(s10b.heat - s10a.heat, 1.5, 0.05), "酸雨中指挥 +1.5 固定（不×1.5 不×0.6）",
+			"diff=%.2f" % (s10b.heat - s10a.heat))
+
+	# ---- 12. 灭火指挥边界：胜利后禁用 ----
+	s8.round_state = "win"
+	s8.cmd_ready_at = 0.0
+	s8.water = 100.0
+	check(not s8.try_command(), "胜利后禁指挥（即使就绪有钱）")
+	check(approx(s8.water, 100.0, 0.001), "胜利后指挥不扣费")
+
 	print("==== 3D 迁移阶段 A 测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)
