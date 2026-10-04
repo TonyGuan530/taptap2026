@@ -261,7 +261,7 @@ func step(delta: float) -> String:
 	plane_pos += velocity * delta
 	apex_m = maxf(apex_m, (GROUND_Y - plane_pos.y) / PX_PER_M)
 	trail.append(plane_pos)
-	if trail.size() > 120:
+	if trail.size() > 900:  # 表现缓冲（非模拟量）：阶段 C 复盘小图需整掷轨迹，14s×60fps=840
 		trail.pop_front()
 	sample_acc += delta
 	if sample_acc >= SAMPLE_STEP:

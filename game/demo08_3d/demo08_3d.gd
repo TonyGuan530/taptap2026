@@ -47,6 +47,9 @@ var settle_panel: Panel
 var settle_title: Label
 var settle_body: Label
 var settle_btn: Button
+var chart: Control                 # 阶段 C：结算轨迹复盘小图（高度-距离 + 门/终点标记）
+var chart_cache := PackedVector2Array()
+var chart_marks_cache: Array = []
 var shop_panel: Panel
 var shop_coins: Label
 var shop_box: Control
@@ -345,8 +348,8 @@ func _build_menu_panel() -> void:
 func _build_settle_panel() -> void:
 	settle_panel = Panel.new()
 	settle_panel.name = "SettlePanel"
-	settle_panel.position = Vector2(240, 120)
-	settle_panel.size = Vector2(480, 260)
+	settle_panel.position = Vector2(240, 110)
+	settle_panel.size = Vector2(480, 310)
 	settle_panel.add_theme_stylebox_override("panel", _panel_style())
 	settle_panel.visible = false
 	hud.add_child(settle_panel)
@@ -359,21 +362,29 @@ func _build_settle_panel() -> void:
 	settle_body = Label.new()
 	settle_body.name = "SettleBody"
 	settle_body.position = Vector2(24, 56)
-	settle_body.size = Vector2(432, 140)
+	settle_body.size = Vector2(432, 84)
 	settle_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	settle_body.add_theme_font_size_override("font_size", 14)
 	settle_body.add_theme_color_override("font_color", Color("333333"))
 	settle_panel.add_child(settle_body)
+	# 阶段 C：轨迹复盘小图（高度-距离折线 + 门/终点标记；绘制数据 headless 可断言）
+	chart = Control.new()
+	chart.name = "TrailChart"
+	chart.position = Vector2(24, 146)
+	chart.size = Vector2(432, 90)
+	chart.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	chart.draw.connect(_on_chart_draw)
+	settle_panel.add_child(chart)
 	settle_btn = Button.new()
 	settle_btn.name = "SettleBtn"
-	settle_btn.position = Vector2(24, 204)
+	settle_btn.position = Vector2(24, 250)
 	settle_btn.size = Vector2(200, 42)
 	settle_btn.pressed.connect(_on_settle_continue)
 	settle_panel.add_child(settle_btn)
 	var back := Button.new()
 	back.name = "SettleBackBtn"
 	back.text = "返回选关"
-	back.position = Vector2(256, 204)
+	back.position = Vector2(256, 250)
 	back.size = Vector2(200, 42)
 	back.pressed.connect(_go_menu)
 	settle_panel.add_child(back)
@@ -462,6 +473,61 @@ func _hide_all_panels() -> void:
 	shop_panel.visible = false
 	final_panel.visible = false
 	fold_btn.visible = false
+	if chart != null:
+		chart.visible = false
+
+
+## 轨迹复盘数据：折线点（米）(前进 x, 高度 y)
+func chart_points() -> PackedVector2Array:
+	var pts := PackedVector2Array()
+	for p in core.trail:
+		var pp: Vector2 = p
+		pts.append(Vector2((pp.x - START_X) / PX_PER_M, (GROUND_Y - pp.y) / PX_PER_M))
+	return pts
+
+
+## 轨迹复盘标记：门/终点（米）
+func chart_marks() -> Array:
+	var L: Dictionary = core.LEVELS[core.level_idx]
+	var marks: Array = []
+	var gate_x_m: float = float(L.get("gate_x", 0.0))
+	if gate_x_m > 0.0:
+		marks.append({x = gate_x_m, kind = "high", side = float(L.get("gate_side", 0.0)) / PX_PER_M})
+	var lg_x_m: float = float(L.get("low_gate_x", 0.0))
+	if lg_x_m > 0.0:
+		marks.append({x = lg_x_m, kind = "low", side = float(L.get("low_gate_side", 0.0)) / PX_PER_M})
+	marks.append({x = float(L.target_m), kind = "finish", side = 0.0})
+	return marks
+
+
+func _on_chart_draw() -> void:
+	if chart_cache.size() < 2:
+		return
+	var r := Rect2(Vector2.ZERO, chart.size)
+	var max_d: float = float(core.LEVELS[core.level_idx].target_m) * 1.08
+	var max_h: float = 1.0
+	for p in chart_cache:
+		var pp: Vector2 = p
+		max_h = maxf(max_h, pp.y)
+	paint_chart_axes(r, max_d, max_h)
+	var pts := PackedVector2Array()
+	for p in chart_cache:
+		var pp: Vector2 = p
+		pts.append(Vector2(r.position.x + pp.x / max_d * r.size.x,
+			r.position.y + r.size.y - pp.y / max_h * r.size.y))
+	chart.draw_polyline(pts, Color("1e5a8a"), 2.0)
+	chart.draw_circle(pts[pts.size() - 1], 3.0, Color("e53935"))
+	for m in chart_marks_cache:
+		var mx: float = r.position.x + float(m.x) / max_d * r.size.x
+		var col := Color("b71c1c") if String(m.kind) == "finish" else (Color("f9a825") if String(m.kind) == "high" else Color("0277bd"))
+		chart.draw_line(Vector2(mx, r.position.y), Vector2(mx, r.position.y + r.size.y), Color(col, 0.7), 2.0)
+
+
+func paint_chart_axes(r: Rect2, max_d: float, max_h: float) -> void:
+	chart.draw_rect(r, Color(1, 1, 1, 0.55))
+	chart.draw_line(r.position + Vector2(0, r.size.y), r.position + Vector2(r.size.x, r.size.y), Color("607d8b"), 1.5)
+	chart.draw_string(FONT, r.position + Vector2(2.0, 12.0), "%.0fm" % max_d, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("607d8b"))
+	chart.draw_string(FONT, r.position + Vector2(2.0, r.size.y - 3.0), "0", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("607d8b"))
 
 
 func _go_menu() -> void:
@@ -699,6 +765,11 @@ func _show_settle_panel() -> void:
 		earn_txt = "金币 +%d（门奖 %d 失败仍保留）· 现有 %d" % [core.gate_coins, core.gate_coins, core.coins]
 	settle_body.text = "%s\n飞行距离 %.1f 米 · 目标 %.0f 米 · 顶点 %.1f 米\n%s\n小贴士：%s" % [
 		String(L.name), core.flight_distance, float(L.target_m), core.apex_m, earn_txt, String(L.tip)]
+	# 轨迹复盘小图（阶段 C）：高度-距离 + 门/终点标记
+	chart_cache = chart_points()
+	chart_marks_cache = chart_marks()
+	chart.visible = true
+	chart.queue_redraw()
 
 
 func _update_status() -> void:
