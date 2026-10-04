@@ -1,7 +1,0 @@
-{
-    "title":  "TapTap2026 Demo",
-    "version":  "demo-05-hd2d-v1",
-    "date":  "2026-10-04T20:22:23+08:00",
-    "author":  "49321",
-    "notes":  "demo-05 HD-2D 阶段A灰盒：3D地形+CharacterBody3D恐龙+Sprite3D+45°跟随相机+WASD/E交互+背包；验收 5/5 PASS（headless）"
-}
