@@ -1,0 +1,7 @@
+{
+  "title": "TapTap2026 Demo",
+  "version": "demo-06-3d-v4",
+  "date": "2026-10-05T04:20:00.000Z",
+  "author": "49321",
+  "notes": "DEMO6 3D 阶段C第1批（分支 codex/demo06-3d-migration）：正式模型落位——GOAL 门框（gate_frame）/环境圆石（rock 模型）/六关边缘植被（tree/bush 纯视觉无碰撞）；碰撞零改动，7/7+回归全绿。浏览器实测被用户指令（CLI 截图）否决，以构建校验+CLI 截图替代。"
+}
