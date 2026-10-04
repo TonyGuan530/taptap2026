@@ -733,3 +733,27 @@ ChatGPT 可能会出错。请核查重要信息。
 - 下轮必须执行转向阶梯之一并发布新版本 demo-02-v8：①美术绿幕迭代（ChatGPT 生图纯 #00ff00 → 抠绿透明 PNG → 部署，参考 demo-06 v10/v11 已跑通流程）；②Miro 贴纸去重（@(4400,6560) 已重复 2 张——miro-post-shots.mjs 改幂等更新）；③新内容（新关/新机制）。
 - itch v7 传播卡 ≠ 停更理由：GitHub Pages 兜底照常发布。
 - 完成后在 reviews/supervisor-directive-2026-10-04-demo02-watch.md 末尾追加 [DONE HH:MM demo-02-vN]。
+
+---
+
+## 2026-10-05 3D 化阶段 B 收官评审（新对话，旧专属线已被侧边栏滚动丢失）
+对话：https://chatgpt.com/c/6ac2d990-1b54-83ec-aa58-aca4ab18859d
+提交物：demo-02-3d-v10（五关齐，Pages build.json 200）+ 五关连打视频（Movie Maker 32s）+ 五关实机帧（raw.githubusercontent ?v=10）+ 9/9 headless PASS 证据链。
+
+### 我方汇报要点
+五关：L1 弹簧越墙 / L2 错位脆板（未砸板不入洞）/ L3 羽毛跨峡谷 / L4 开放高台双路线（羽毛飘台、皮球弹板全矢量抛射）/ L5 皮球零输入弹簧链穿环（石头对照失败）。本轮修复：W/S 反向（用户 Issue #1）、L2 砸板余量重校、碎板幽灵引用、Dictionary.get 急切求值崩溃。
+
+### ChatGPT 裁定（2026-10-05）
+- **阶段 B：收官、冻结。demo-02 总体：ITERATE。下一 Gate：Batch 01 真人试玩，不进入阶段 C 美术增强。**
+- Idea Fidelity 高评：词条→物理行为→空间问题的链路已验证；L2 顶点换石 / L3 空中续航 / L4 矢量抛射比 2D「属性钥匙」结构前进一步。
+- Fun：有较强潜力、未被真人证实。最有价值是 L3/L4（飞行中决定何时换/换什么/保留多少动量）；L5 = spectacle/toy（截图文案自证零输入），不计 puzzle depth。
+- Emergence：从 Scripted Puzzle 到 Systemic Puzzle 门口，尚不 Emergent——「设计者做两条路线」≠涌现；等真人产出第三条合法路径。
+- 三问裁定：
+  1. **L4 皮球弹板抛射：保留，算合格第二路线，不加锁定词条门**（弹簧从跳板变全矢量发射器=同一 mechanic 第二用途，正是方向；不要人工补第三条路线，留给真人）。
+  2. **L5 沿用 2D v7 裁定：KEEP AS TOY / FREE-EXPERIMENT，勿修勿加机关；试玩统计时与 L2-L4 分开，L5 通关率不能证明 puzzle 成立。**
+  3. **优先 Batch 01 真人试玩；阶段 C 模型/贴图暂缓**（GameJam 最小修改最大玩法信息量）。
+- 下一版仅授权 3 件事：①冻结 v10 物理参数/五关结构/三词条（不再调 L2 阈值、不改 L4 路线、不改 L5，保 Batch 01 共同基线）②直接做 3-5 名首次玩家 Batch 01（不讲路线不解释词条；记录每关首次尝试词条、切换序列、失败原因、通关时间、L4 solution family、是否出现未预设合法序列；重点观察 L3/L4）③加一个极轻量 Eureka 观察字段（玩家首次把旧 mechanic 用在新用途的时刻 + 有无「还能这样」言行），不再膨胀 telemetry。
+- Batch 01 Gate 定死：
+  - 升 KEEP：3-5 人中 L4 真实出现 ≥2 个 solution family，且 ≥1 人产出未预设合法序列；且 ≥2 人在无解释下把前关物理关系迁移到后关。
+  - 继续 ITERATE：都能通但严格复现预设路线。
+  - 危险信号：玩家主要靠试遍 1/2/3 而非据运动结果形成物理假设（=认知层面仍是钥匙试锁）。
