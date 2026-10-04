@@ -92,6 +92,7 @@ var tree_regen := {0: 0.0, 1: 0.0, 2: 0.0}
 var banner_text := ""
 var banner_age := 99.0
 var prompt_text := ""
+var ash_front := 960.0          # v3：火山灰夜潮前沿 X（夜晚向左推进）
 var interact_target := {}
 var dino_portrait: Sprite2D
 var dino_frames: Array = []
@@ -206,6 +207,7 @@ func _restart() -> void:
 	day_num = 1
 	is_night = false
 	night_amount = 0.0
+	ash_front = 960.0
 	hunger = HUNGER_MAX
 	thirst = THIRST_MAX
 	hp = HP_MAX
@@ -280,14 +282,26 @@ func _process(delta: float) -> void:
 	if thirst <= 0.0:
 		drain += HP_DRAIN_STARVE
 	var in_fire_light := campfire_built and player_pos.distance_to(campfire_pos) < 240.0
+	# v3 内容层：火山灰夜潮——夜晚灰雾从火山坡向左推进（960→560），黎明退去
+	if is_night:
+		ash_front = maxf(560.0, ash_front - 13.0 * delta)
+	else:
+		ash_front = 960.0
+	var in_ash := is_night and night_amount > 0.3 and player_pos.x > ash_front
 	if is_night and night_amount > 0.5:
 		if campfire_built:
 			if in_fire_light:
 				hp = minf(HP_MAX, hp + FIRE_REGEN * delta)
+			elif in_ash:
+				drain += NIGHT_ASH_DPS * 1.5
 			else:
-				drain += NIGHT_ASH_DPS
+				drain += NIGHT_ASH_DPS * 0.4
 		else:
-			drain += NIGHT_ASH_DPS * 0.6
+			drain += NIGHT_ASH_DPS * (1.5 if in_ash else 0.6)
+		# 灰区资源不可交互
+		if in_ash and not interact_target.is_empty():
+			interact_target = {}
+			prompt_text = ""
 	if drain > 0.0:
 		hp = maxf(0.0, hp - drain * delta)
 		hp_bar_flash = 0.6
@@ -454,6 +468,11 @@ func _draw() -> void:
 	draw_arc(NEST_POS, 24.0, 0, TAU, 24, Color("5a5446"), 2.0)
 	if night_amount > 0.0:
 		draw_rect(Rect2(0, 0, VIEW.x, VIEW.y), Color(0.05, 0.03, 0.1, 0.72 * night_amount))
+		# v3：火山灰夜潮视觉（ash_front 右侧灰雾覆盖）
+		if is_night and ash_front < VIEW.x:
+			draw_rect(Rect2(ash_front, 0, VIEW.x - ash_front, VIEW.y), Color(0.35, 0.28, 0.22, 0.45 * night_amount))
+			draw_line(Vector2(ash_front, 0), Vector2(ash_front, VIEW.y), Color("8a6a4a"), 3.0)
+			draw_string(FONT, Vector2(ash_front + 12, 90), "火山灰", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("c8a878"))
 		if campfire_built:
 			for r in [240.0, 180.0, 120.0]:
 				draw_circle(campfire_pos, r, Color(1.0, 0.85, 0.5, 0.05 * night_amount))
