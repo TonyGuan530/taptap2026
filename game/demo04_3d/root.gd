@@ -118,6 +118,9 @@ var level_root: Node3D
 var alien_nodes: Dictionary = {}
 var cracks: Array = []           # {x0,x1,h,body,vis,broken}
 var _fuse_target: Dictionary = {}
+var last_safe_pos := Vector3(1.0, 0.9, 0)   # 最近安全落点（掉坑恢复，指南 §61）
+var _grounded_ticks := 0                     # 连续接地静止帧数（≥3 才更新安全点）
+var _prev_player_pos := Vector3.ZERO         # 上一帧玩家位置（传送帧检测）
 
 var lbl_level: Label
 var lbl_dna: Label
@@ -255,10 +258,28 @@ func load_level(idx: int) -> void:
 	for spos in L.shards:
 		_build_shard(spos)
 	_build_goal(L.goal)
+	# 走廊侧壁（隐形碰撞）：可行动 z 压到 ±1.6，堵死「墙边侧绕」（指南 §198）
+	var x_end: float = L.goal + 2.0
+	for zs in [-2.25, 2.25]:
+		var side := StaticBody3D.new()
+		var scs := CollisionShape3D.new()
+		var sbox := BoxShape3D.new()
+		sbox.size = Vector3(x_end, 8.0, 0.5)
+		scs.shape = sbox
+		side.position = Vector3(x_end / 2.0, 3.0, zs)
+		side.add_child(scs)
+		level_root.add_child(side)
 
+	# 荧光灯随重置移除（DNA 每关重教，灯不该残留到无荧光的新关）
+	for c in player.get_children():
+		if c is OmniLight3D:
+			c.queue_free()
 	player.position = Vector3(1.0, 1.2, 0)
 	player.velocity = Vector3.ZERO
 	player.input_enabled = true
+	last_safe_pos = Vector3(1.0, 0.9, 0)
+	_prev_player_pos = Vector3(1.0, 1.2, 0)
+	_grounded_ticks = 0
 	cam_rig.position = player.position
 	if mode == "lab":
 		for id in ["highjump", "double", "glow", "break"]:
@@ -382,6 +403,25 @@ func _physics_process(delta: float) -> void:
 	var in_dark: bool = dark.size() == 2 and float(dark[0]) < player.position.x and player.position.x < float(dark[1])
 	player.in_dark_zone = in_dark
 	lbl_dark.visible = in_dark and not ability.has_dna("glow")
+	# 掉坑恢复（指南 §61/§198）：回到此前安全落点，不重开关卡、不丢 DNA/碎墙/碎片、计时继续
+	var moved := player.position.distance_to(_prev_player_pos)
+	_prev_player_pos = player.position
+	if moved > 0.5:
+		_grounded_ticks = 0   # 传送帧：陈旧 on_floor/vy 不可信，安全点计数清零
+	elif player.position.y < -3.0:
+		player.position = last_safe_pos
+		player.velocity = Vector3.ZERO
+		_grounded_ticks = 0
+		_toast("掉坑了！回到安全边缘（DNA 与碎片保留）")
+		_log_ev("pit_fall", {"level": level_idx})
+	elif player.is_on_floor() and absf(player.velocity.y) < 0.01:
+		# 真实落地静止才记安全点：静止帧 vy≈0（move_and_slide 清掉垂直分量）。
+		# 传送后的陈旧帧靠 moved>0.5 清零 + 连续 3 帧门槛双重排除。
+		_grounded_ticks += 1
+		if _grounded_ticks >= 3:
+			last_safe_pos = player.position
+	else:
+		_grounded_ticks = 0
 	_update_fuse_candidate()
 	_check_crack_smash()
 	if toast_age < 3.0:
@@ -415,13 +455,20 @@ func _update_fuse_candidate() -> void:
 	if ability.dna.size() >= L.aliens.size():
 		return
 	var best := {}
+	var space := player.get_world_3d().direct_space_state
 	for a in L.aliens:
 		if ability.has_dna(a.id):
 			continue
 		if not alien_nodes.has(a.id):
 			continue
 		var d: float = player.position.distance_to(alien_nodes[a.id].position)
-		if d < 1.2 and (best.is_empty() or d < best.d):
+		if d >= 1.2 or (not best.is_empty() and d >= best.d):
+			continue
+		# 隔墙不融合（指南 §198）：玩家→外星生物视线被实体挡住则不作为候选
+		var ray := PhysicsRayQueryParameters3D.create(player.position, alien_nodes[a.id].position)
+		ray.exclude = [player.get_rid()]
+		var hit := space.intersect_ray(ray)
+		if hit.is_empty() or (hit.collider is Area3D):
 			best = {"id": a.id, "name": a.name, "d": d}
 	_fuse_target = best
 
@@ -528,8 +575,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	match event.keycode:
 		KEY_R:
-			load_level(level_idx)
-			_toast("已重置本关")
+			if event.shift_pressed:
+				# 完整再跑（指南 §61）：清总碎片/总用时/评级/组合发现，回第 1 关
+				level_times = []
+				level_ratings = []
+				ability.reset_level_state(false)
+				ability.shards_total = 0
+				mode = "campaign"
+				load_level(0)
+				_toast("完整再跑：全部进度清零")
+			else:
+				load_level(level_idx)
+				_toast("已重置本关")
 		KEY_K:
 			if mode == "campaign":
 				mode = "lab"
@@ -572,10 +629,11 @@ func _refresh_hud() -> void:
 	var mode_txt := "（实验室·全DNA）" if mode == "lab" else ""
 	lbl_level.text = "第 %d/%d 关：%s %s" % [level_idx + 1, LEVELS.size(), L.name, mode_txt]
 	var dna_names: Array = ability.dna_names()
+	# 组合只显示本关已持有组件对应的组合（指南 §61）
 	var combo_names := []
-	if ability.combos_found.has("superjump"):
+	if ability.combos_found.has("superjump") and ability.has_dna("highjump") and ability.has_dna("double"):
 		combo_names.append("超级弹跳")
-	if ability.combos_found.has("nightwing"):
+	if ability.combos_found.has("nightwing") and ability.has_dna("double") and ability.has_dna("glow"):
 		combo_names.append("夜翼")
 	var combo_txt: String = ("（组合：" + "、".join(combo_names) + "）") if combo_names.size() > 0 else ""
 	lbl_dna.text = "DNA：" + (("已融合 " + " + ".join(dna_names) + " " + combo_txt) if dna_names.size() > 0 else "无（找到外星生物，按 E 融合）")

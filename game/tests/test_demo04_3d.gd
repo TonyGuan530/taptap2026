@@ -153,15 +153,19 @@ func _run() -> void:
 	else:
 		_fail("暗区减速比 %.2f 超出 0.3-0.6" % ratio)
 
-	# ---- 6. 有荧光暗区恢复 ----
-	var v_glow := await _hold_and_measure(KEY_D, 1.0)   # 已有 glow（步骤4融合的是highjump——重置过，此处补测）
-	# 步骤4融合过 highjump；这里显式给 glow
+	# ---- 6. 有荧光暗区恢复（同起点 0.6s 窗对比，测点离坑沿 ≥0.6m） ----
+	ability.reset_level_state(false)
+	await _teleport(Vector3(23.8, 1.3, 0))
+	await _settle_until_floor()
+	var v_noglow := await _hold_and_measure(KEY_D, 0.6)   # 无荧光暗区位移
 	ability.gain_dna("glow")
-	v_glow = await _hold_and_measure(KEY_D, 1.0)
-	if v_glow > v_dark * 1.6:
-		_ok("荧光恢复暗区速度 %.2f（> %.2f×1.6）" % [v_glow, v_dark])
+	await _teleport(Vector3(23.8, 1.3, 0))
+	await _settle_until_floor()
+	var v_glow := await _hold_and_measure(KEY_D, 0.6)     # 有荧光暗区位移
+	if v_glow > v_noglow * 1.6:
+		_ok("荧光恢复暗区速度：%.2f → %.2f（0.6s 位移，>×1.6）" % [v_noglow, v_glow])
 	else:
-		_fail("荧光未恢复暗区速度：%.2f vs %.2f" % [v_glow, v_dark])
+		_fail("荧光未恢复暗区速度：%.2f vs %.2f" % [v_glow, v_noglow])
 
 	# ---- 7. 缺高跳不能过教学墙 ----
 	ability.reset_level_state(false)
@@ -288,6 +292,63 @@ func _run() -> void:
 		_ok("关卡推进：L1 终点自动进入第 2 关「%s」" % scene_root.LEVELS[1].name)
 	else:
 		_fail("关卡推进失败：level_idx=%d" % scene_root.level_idx)
+
+	# ---- 13. 掉坑恢复：回此前安全落点，保留 DNA/碎片，计时继续（指南 §61） ----
+	scene_root.load_level(0)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	ability.gain_dna("highjump")   # 用于验证掉坑不丢 DNA
+	await _teleport(Vector3(16.5, 1.3, 0))   # 沟边（坑 17..19）
+	await _settle_until_floor()
+	await _settle(5)                          # 稳定接地 ≥3 帧 → 记为安全点
+	var safe_x := player.position.x
+	var pre_elapsed: float = scene_root.elapsed
+	await _teleport(Vector3(18.0, 1.3, 0))   # 空传到坑上方 → 必坠
+	var recovered := false
+	for i in 180:
+		await physics_frame
+		if player.position.y > -1.0 and player.is_on_floor():
+			recovered = true
+			break
+	if recovered and absf(player.position.x - safe_x) < 0.6 \
+			and ability.has_dna("highjump") and scene_root.elapsed >= pre_elapsed:
+		_ok("掉坑恢复：回安全边缘（x=%.1f→%.1f），DNA 保留，计时继续" % [safe_x, player.position.x])
+	else:
+		_fail("掉坑恢复异常：recovered=%s px=%.1f（安全点 %.1f）dna=%s" % [
+			recovered, player.position.x, safe_x, ability.has_dna("highjump")])
+
+	# ---- 14. 防墙边侧绕：侧移贴 z 边也过不了教学墙（指南 §198） ----
+	ability.reset_level_state(false)
+	await _teleport(Vector3(9.5, 1.3, 1.4))   # 靠走廊侧边
+	await _settle_until_floor()
+	await _hold_and_measure(KEY_D, 3.0)
+	if player.position.x < 10.5 and player.position.z <= 1.7:
+		_ok("防侧绕：走廊侧壁堵死绕行（x=%.1f < 10.5，z=%.1f）" % [player.position.x, player.position.z])
+	else:
+		_fail("侧绕未被堵死：x=%.1f z=%.1f" % [player.position.x, player.position.z])
+
+	# ---- 15. 完整再跑（Shift+R）：清总碎片/评级/组合，回第 1 关 ----
+	ability.gain_dna("glow")
+	scene_root.level_times.append(12.0)
+	scene_root.level_ratings.append("S")
+	_key(KEY_R, true)
+	var ev := InputEventKey.new()
+	ev.keycode = KEY_R
+	ev.physical_keycode = KEY_R
+	ev.pressed = true
+	ev.shift_pressed = true
+	Input.parse_input_event(ev)
+	await physics_frame
+	_key(KEY_R, false)
+	await physics_frame
+	await _settle(10)
+	if scene_root.level_idx == 0 and ability.dna.is_empty() \
+			and ability.shards_total == 0 and scene_root.level_times.is_empty():
+		_ok("完整再跑：进度全清零回第 1 关")
+	else:
+		_fail("完整再跑异常：idx=%d dna=%d total=%d times=%s" % [
+			scene_root.level_idx, ability.dna.size(), ability.shards_total, scene_root.level_times])
 
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
