@@ -48,6 +48,7 @@ func _recipe(i: int) -> Array:
 		3: return [4, 35.0, 1.0, -1.0, 1.2]
 		4: return [6, 45.0, 1.0, 0.0, 0.0]
 		5: return [4, 30.0, 1.0, 1.0, 0.4]
+		6: return [5, 30.0, 1.0, -1.0, 0.8]
 	return [3, 30.0, 1.0, 0.0, 0.0]
 
 
@@ -74,7 +75,7 @@ func _run() -> void:
 	var best_d := 0.0
 	var coins_expect := 0
 	var all_pass := true
-	for i in 6:
+	for i in 7:
 		c.start_level(i)
 		_throw_and_fly(c)
 		var d: float = float(c.flight_distance)
@@ -86,18 +87,18 @@ func _run() -> void:
 		coins_expect += int(d / 10.0) + int(c.LEVELS[i].reward) + c.gate_coins
 		if not ok:
 			break
-		if i < 5:
+		if i < 6:
 			c.settle_continue()
 			if String(c.state) == "shop":
 				c.shop_skip()
-	_check(all_pass and String(c.state) == "settle" and c.level_idx == 5,
-		"C1-A 六关依次过关（L4 转向吃高门含在流程内）")
+	_check(all_pass and String(c.state) == "settle" and c.level_idx == 6,
+		"C1-A 七关依次过关（L4 转向吃高门含在流程内）")
 	var go: String = c.settle_continue()
-	_check(go == "final" and String(c.state) == "final", "C1-A2 L6 结算继续 → final")
+	_check(go == "final" and String(c.state) == "final", "C1-A2 L7 结算继续 → final")
 	_check(absf(float(c.total_distance) - sum_d) < 0.01 and absf(float(c.best_distance) - best_d) < 0.01,
 		"C1-A3 总里程/最远一致（%.1fm）" % float(c.total_distance))
 	_check(c.coins == coins_expect, "C1-A4 金币累计 %d = 各关门奖+结算之和" % c.coins)
-	_check(c.unlocked == 5, "C1-A5 解锁至第 6 关（unlocked=5）")
+	_check(c.unlocked == 6, "C1-A5 解锁至第 7 关（unlocked=6）")
 
 	# B 强化可解释性：力气 +1 级 → 初速比恰为 1.2，距离有可测变化
 	var base: Object = CoreScript.new()

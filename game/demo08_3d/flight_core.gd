@@ -54,6 +54,9 @@ const LEVELS := [
 	{name = "第 6 关 · 侧风走廊", short = "侧风走廊", ratio = 0.9, folds = 5, target_m = 60.0, wind = "side", wind_side = -1.0, reward = 12,
 		gate_x = 35.0, gate_h = 11.0, gate_bonus = 3,
 		tip = "侧风向左推（60px/s²），按住 D 顶住风向保住中线；35 米高空门（11m 以上）+3，60 米过关。更多机制关卡（用户指令扩展，五关原始配置未动）"},
+	{name = "第 7 关 · 回风峡谷", short = "回风峡谷", ratio = 0.85, folds = 6, target_m = 70.0, wind = "side", wind_side = 1.0, reward = 14,
+		gate_x = 30.0, gate_h = 12.0, gate_bonus = 3, gate_side = -360.0,
+		tip = "侧风向右推，高门却在左边（30 米、-6m 横位、12m 以上）+3：先顶风左拐吃门，再让风送你回中线滑完 70 米。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
