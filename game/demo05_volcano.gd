@@ -467,12 +467,24 @@ func _resolve_disaster() -> void:
 		stored[id].food = int(stored[id].food / 2.0)
 		stored[id].water = int(stored[id].water / 2.0)
 	if rain:
-		_log_ev("河谷暴发泥流，河谷的储备被吞掉一半。")
+		# v17 内容层：泥流文案三变体（机制数值不变）
+		var mudflow_lines: Array = [
+			"河谷暴发泥流，河谷的储备被吞掉一半。",
+			"泥浆裹着火山砾冲进河谷，捞得回来的只有一半。",
+			"河谷决了口，浊流卷走过半储备——兽骨都被冲得东倒西歪。",
+		]
+		_log_ev(mudflow_lines[randi() % mudflow_lines.size()])
 		stored.valley.food = int(stored.valley.food / 2.0)
 		stored.valley.water = int(stored.valley.water / 2.0)
 		_log_ev("湿地的水被灰烬污染，短期无法饮用。")
 		stored.wetland.water = int(stored.wetland.water / 2.0)
-		_log_ev("森林被雷火点燃，储备大半化为灰烬，只抢回四分之一。")
+		# v17 内容层：森林燃烧文案三变体（机制数值不变）
+		var burn_lines: Array = [
+			"森林被雷火点燃，储备大半化为灰烬，只抢回四分之一。",
+			"火舌借着风势窜上林冠，森林的储备十不存一——只扒回四分之一。",
+			"林子烧了整整一夜，天亮时只剩冒烟的树桩——抢出来的不足一半的一半。",
+		]
+		_log_ev(burn_lines[randi() % burn_lines.size()])
 		stored.forest.food = int(stored.forest.food / 4.0)
 		stored.forest.water = int(stored.forest.water / 4.0)
 	else:
