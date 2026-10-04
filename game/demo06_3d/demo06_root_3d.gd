@@ -27,7 +27,18 @@ const WORDS := [
 	{"id": "sticky", "cost": 10, "grav": 1.0},
 ]
 
+## 六关定义（指南 §2 六关真实结构，100px≈1m）：墨水按各关预算；L3=主 Gate（开放断层无属性锁）。
+const LEVELS := [
+	{"id": "L1", "name": "栅栏与沟", "ink": 100, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(7.2, 1.7, 0), "fall_y": -6.0},
+	{"id": "L2", "name": "登上高台", "ink": 140, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(8.2, 3.4, 0), "fall_y": -6.0},
+	{"id": "L3", "name": "断层验证", "ink": 130, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(8.2, 1.7, 0), "fall_y": -6.0},
+	{"id": "L4", "name": "翻越高墙", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(8.2, 1.7, 0), "fall_y": -6.0},
+	{"id": "L5", "name": "双沟群岛", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(13.6, 1.7, 0), "fall_y": -6.0},
+	{"id": "L6", "name": "登天梯", "ink": 150, "spawn": Vector3(0, 1.9, 0), "goal": Vector3(10.0, 3.8, 0), "fall_y": -6.0},
+]
+
 var ink := 100
+var level_idx := 2  # 默认 L3（既有测试/影片回归基线）；测试可先设 level_idx 再 add_child
 var shape_idx := 1
 var word_idx := 0
 var mouse_captured := true
@@ -57,10 +68,11 @@ var props_root: Node3D
 
 func _ready() -> void:
 	style = StyleDefinition.new()
+	ink = LEVELS[level_idx].ink
 	_build_environment()
+	_build_props()
 	_build_level()
 	_build_player()
-	_build_props()
 	_build_goal()
 	_build_hud()
 	_update_ghost()
@@ -103,7 +115,53 @@ func _build_environment() -> void:
 
 
 func _build_level() -> void:
-	# L3 风格开放断层：两台同高 1.2m，沟宽 4.05m，沟底 -1.2m。统一材质（场景细色，无轮廓）。
+	match level_idx:
+		0:
+			_build_l1()
+		1:
+			_build_l2()
+		2:
+			_build_l3()
+		_:
+			_build_l3()
+
+
+## L1 栅栏与沟（指南 §2）：平地、木栅栏、GOAL x7.2；Fire 与 Heavy 处理同一障碍。
+func _build_l1() -> void:
+	_static_box(Vector3(4.0, 0.6, 0.0), Vector3(12.0, 1.2, 6.0), Color("8a93a8"))
+	# 木栅栏（RigidBody 高摩擦：玩家推不动、跳不过；Heavy 球可撞倒 / Fire 触碰燃毁——物理双解，无触发器）
+	var fence := RigidBody3D.new()
+	fence.name = "Fence"
+	fence.mass = 3.5
+	var fpm := PhysicsMaterial.new()
+	fpm.friction = 1.0
+	fpm.bounce = 0.0
+	fence.physics_material_override = fpm
+	fence.position = Vector3(4.5, 1.72, 0.0)
+	var fcs := CollisionShape3D.new()
+	var fsh := BoxShape3D.new()
+	fsh.size = Vector3(0.14, 1.0, 6.0)
+	fcs.shape = fsh
+	fence.add_child(fcs)
+	var fmi := MeshInstance3D.new()
+	var fbm := BoxMesh.new()
+	fbm.size = Vector3(0.14, 1.0, 6.0)
+	fmi.mesh = fbm
+	fmi.material_override = style.body_material(Color("8d6e63"))
+	fence.add_child(fmi)
+	fence.set_meta("flammable", true)
+	props_root.add_child(fence)
+
+
+## L2 登上高台（指南 §2）：地面 + 高台顶抬升 1.6m（>跳高 0.845），建造获垂直高度，GOAL 在台顶。
+func _build_l2() -> void:
+	_static_box(Vector3(2.1, 0.6, 0.0), Vector3(8.2, 1.2, 6.0), Color("8a93a8"))
+	_static_box(Vector3(8.1, 1.4, 0.0), Vector3(3.8, 2.8, 6.0), Color("7f88a0"))
+
+
+## L3 断层验证（阶段 A 验证房原样保留=主 Gate 基线；几何/语义不动，仅墨水按指南对齐 130）
+func _build_l3() -> void:
+	# L3 风格开放断层：两台同高 1.2m，沟宽 2.7m，沟底 -1.2m。统一材质（场景细色，无轮廓）。
 	_static_box(Vector3(0.7, 0.6, 0.0), Vector3(4.4, 1.2, 6.0), Color("8a93a8"))
 	_static_box(Vector3(7.6, 0.6, 0.0), Vector3(4.0, 1.2, 6.0), Color("8a93a8"))
 	_static_box(Vector3(4.25, -0.75, 0.0), Vector3(4.9, 0.5, 6.0), Color("6d7590"))
@@ -145,7 +203,15 @@ func _build_props() -> void:
 	placed_root = Node3D.new()
 	placed_root.name = "EnvironmentObjects"
 	add_child(placed_root)
-	# 普通环境箱（RigidBody 无词条，入 props_root 与词条放置物分账）——可推/可撞，参与 L3 解法 C
+	props_root = Node3D.new()
+	props_root.name = "EnvProps"
+	add_child(props_root)
+	if level_idx == 2:
+		_build_l3_crate()
+
+
+## L3 环境箱（普通刚体，可推/可撞——解法 C 通道；几何与阶段 A 逐字节一致）
+func _build_l3_crate() -> void:
 	var crate := ModelLibrary.create_model("crate")
 	var bounds := ModelLibrary.geometry_bounds(crate)
 	var target_h := 1.05
@@ -167,15 +233,12 @@ func _build_props() -> void:
 	crate.scale = Vector3.ONE * s
 	crate.position = -bounds.get_center() * s
 	rb.add_child(crate)
-	props_root = Node3D.new()
-	props_root.name = "EnvProps"
-	add_child(props_root)
 	props_root.add_child(rb)
 
 
 func _build_goal() -> void:
 	var g := Area3D.new()
-	g.position = Vector3(8.2, 1.7, 0.0)
+	g.position = LEVELS[level_idx].goal
 	var cs := CollisionShape3D.new()
 	var sh := BoxShape3D.new()
 	sh.size = Vector3(1.0, 1.2, 1.0)
@@ -200,6 +263,13 @@ func _on_goal_entered(body: Node3D) -> void:
 		print("GOAL_REACHED")
 
 
+## Fire 接触语义：目标带 flammable 元数据即燃毁删除（关卡只造普通可燃物，不解法白名单）
+func _on_fire_touch(other: Node) -> void:
+	if other != null and is_instance_valid(other) and other.has_meta("flammable"):
+		other.queue_free()
+		print("FIRE_BURN target=", other.name)
+
+
 func _build_hud() -> void:
 	hud = CanvasLayer.new()
 	hud.name = "HUD"
@@ -209,7 +279,7 @@ func _build_hud() -> void:
 	hud.add_child(ink_label)
 	mode_label = Label.new()
 	mode_label.position = Vector2(16, 40)
-	mode_label.text = "L3 灰模验证房（场景应用版 v2）"
+	mode_label.text = "%s %s（3D 迁移）" % [LEVELS[level_idx].id, LEVELS[level_idx].name]
 	hud.add_child(mode_label)
 	_refresh_hud()
 
@@ -242,7 +312,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_E:
 				ghost_yaw -= PI * 0.5
 			KEY_R:
-				player.position = Vector3(0.0, 1.9, 0.0)
+				player.position = LEVELS[level_idx].spawn
 				player.velocity = Vector3.ZERO
 			KEY_ESCAPE:
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -299,6 +369,10 @@ func _physics_process(delta: float) -> void:
 	player.velocity.x = dir.x
 	player.velocity.z = dir.z
 	player.move_and_slide()
+	# 坠出世界：回本关 spawn 清零速度（与 R 同语义，计时继续）
+	if player.position.y < float(LEVELS[level_idx].fall_y):
+		player.position = LEVELS[level_idx].spawn
+		player.velocity = Vector3.ZERO
 	# 推箱：滑碰动态刚体施加持续小冲量（普通环境物可被推动/被 Heavy 撞——L3 解法 C 通道）
 	for i in player.get_slide_collision_count():
 		var col := player.get_slide_collision(i)
@@ -422,6 +496,10 @@ func _place_at_validated(pos: Vector3, yaw: float, shape: Dictionary, word: Dict
 		rb.set_meta("freeze_at", clock + 0.4)
 	if word.id == "fire":
 		rb.set_meta("die_at", clock + 2.0)
+		# Fire 词条语义（2D 保留）：接触易燃物/Fence 删除目标，自身约 2s 后删除
+		rb.contact_monitor = true
+		rb.max_contacts_reported = 4
+		rb.body_entered.connect(_on_fire_touch)
 	placed_root.add_child(rb)
 	rb.position = pos
 	placed_count += 1
