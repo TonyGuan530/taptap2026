@@ -184,6 +184,16 @@ func _run() -> void:
 			"got %.2f" % scene.sim.water)
 	check(scene.cmd_button.disabled, "生效中指挥按钮禁用")
 
+	# ---- 10. v6 菜单第三按钮：真实点击进入寒夜守卫 ----
+	scene._show_menu()
+	await process_frame
+	await process_frame
+	await click(Vector2(765, 325))
+	check(scene.sim.round_state == "play" and scene.sim.mode == "hard",
+			"真实点击寒夜守卫按钮开局", "%s/%s" % [scene.sim.round_state, scene.sim.mode])
+	check(not scene.menu_layer.visible, "开局后菜单隐藏")
+	check(String(scene.mode_label.text).contains("寒夜"), "模式标签更新", scene.mode_label.text)
+
 	print("==== 3D 阶段 B 拾取测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)
 

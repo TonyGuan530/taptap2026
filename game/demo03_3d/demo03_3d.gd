@@ -381,6 +381,8 @@ func _build_hud() -> void:
 			func() -> void: _start("classic"))
 	_button(menu_layer, Vector2(490, 300), Vector2(170, 50), "风暴之夜（实验）",
 			func() -> void: _start("storm"))
+	_button(menu_layer, Vector2(680, 300), Vector2(170, 50), "寒夜守卫（第 2 章）",
+			func() -> void: _start("hard"))
 	_label(menu_layer, Vector2(240, 380), "左键：点槽位建造/升级，点村民晋升｜F：灭火指挥（25💧 全队应急降温）｜滚轮缩放，Q/E 旋转，Home 复位", 14, Color("9fb3c8"))
 	# 结算
 	end_layer = Control.new()
@@ -429,7 +431,11 @@ func _start(p_mode: String) -> void:
 	menu_layer.visible = false
 	end_layer.visible = false
 	banner_label.text = ""
-	mode_label.text = "风暴之夜（实验）" if p_mode == "storm" else "经典 60 秒"
+	mode_label.text = "经典 60 秒"
+	if p_mode == "storm":
+		mode_label.text = "风暴之夜（实验）"
+	elif p_mode == "hard":
+		mode_label.text = "寒夜守卫（第 2 章）"
 	toasts.clear()
 	for c: Node in toast_box.get_children():
 		c.queue_free()

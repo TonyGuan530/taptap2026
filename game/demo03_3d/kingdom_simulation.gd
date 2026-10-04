@@ -36,6 +36,13 @@ const ACID_DUR := 8.0
 const STORM_TIMES: Array[float] = [15.0, 30.0, 45.0]
 const STORM_JITTER := 2.0
 const STORM_DUR := 4.0
+## v6 第 2 章「寒夜守卫」（hard）：起始 50 度、三场 6s 酸雨、村民 30/50s 才来。
+## 经济/建造/晋升/曲线与经典完全一致——难在资源更紧、人手更晚。
+const HARD_START_HEAT := 50.0
+const HARD_ACID_TIMES: Array[float] = [18.0, 34.0, 48.0]
+const HARD_ACID_JITTER := 2.5
+const HARD_ACID_DUR := 6.0
+const HARD_NPC_TIMES: Array[float] = [30.0, 50.0]
 ## v4 灭火指挥：花水滴发起 8s 全队应急降温，冷却 20s。
 ## 刻意不吃酸雨乘区（塔 ×0.6 / 村民 ×1.5 都不影响它）——酸雨里的可靠工具，
 ## 与"水滴拿去建设还是留着急救"构成资源竞争决策。
@@ -63,6 +70,7 @@ var rng := RandomNumberGenerator.new()
 var mode := "classic"
 var round_state := "menu"   # menu / play / win / lose
 var heat := START_HEAT
+var npc_times: Array[float] = NPC_TIMES   # 本局村民到点（hard 章节改用 HARD_NPC_TIMES）
 var water := 0.0
 var elapsed := 0.0
 var towers: Array[int] = [0, 0, 0]
@@ -80,7 +88,8 @@ var cmd_was_on := false
 func setup_round(p_mode: String, seed_value: int = -1) -> void:
 	mode = p_mode
 	round_state = "play"
-	heat = START_HEAT
+	heat = HARD_START_HEAT if p_mode == "hard" else START_HEAT
+	npc_times = HARD_NPC_TIMES if p_mode == "hard" else NPC_TIMES
 	water = 0.0
 	elapsed = 0.0
 	towers = [0, 0, 0]
@@ -103,6 +112,10 @@ func setup_round(p_mode: String, seed_value: int = -1) -> void:
 		times = STORM_TIMES
 		jitter = STORM_JITTER
 		dur = STORM_DUR
+	elif mode == "hard":
+		times = HARD_ACID_TIMES
+		jitter = HARD_ACID_JITTER
+		dur = HARD_ACID_DUR
 	acid_events = []
 	for at: float in times:
 		acid_events.append({
@@ -263,7 +276,7 @@ func tick(delta: float) -> void:
 			+ npc_cool * (ACID_NPC_MULT if acid_now else 1.0) + cmd_bonus
 	heat = clampf(heat + (rise - cool) * delta, 0.0, MAX_HEAT)
 	water += income_per_sec() * delta
-	if npc_next < NPC_TIMES.size() and elapsed >= float(NPC_TIMES[npc_next]):
+	if npc_next < npc_times.size() and elapsed >= float(npc_times[npc_next]):
 		var prof: Dictionary = PROFS[rng.randi_range(0, PROFS.size() - 1)]
 		villager_seq += 1
 		villagers.append({

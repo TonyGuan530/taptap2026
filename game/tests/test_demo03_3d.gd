@@ -254,5 +254,58 @@ func _run() -> void:
 	check(not s8.try_command(), "胜利后禁指挥（即使就绪有钱）")
 	check(approx(s8.water, 100.0, 0.001), "胜利后指挥不扣费")
 
+	# ---- 13. 第 2 章「寒夜守卫」（v6 hard）：更难预设、经济不变、会玩可胜 ----
+	var s11 = Sim.new()
+	s11.setup_round("hard", 7)
+	check(approx(s11.heat, 50.0, 0.001), "寒夜起始 50 度")
+	check(s11.acid_events.size() == 3, "寒夜三场酸雨")
+	check(approx(float(s11.acid_events[0].dur), 6.0, 0.001), "寒夜单场 6s")
+	for e: Dictionary in s11.acid_events:
+		check(e.start >= 15.5 and e.start <= 50.5, "寒夜酸雨时刻在窗内", str(e.start))
+	check(s11.npc_times.size() == 2 and float(s11.npc_times[0]) == 30.0 and float(s11.npc_times[1]) == 50.0,
+			"寒夜村民 30/50s 到场")
+	check(approx(s11.income_per_sec(), 5.0, 0.001), "寒夜经济与经典一致")
+	var counter11 := {"promote": 0, "joined": 0}
+	s11.sim_event.connect(func(kind: String, _p: Dictionary) -> void:
+		if kind == "promoted":
+			counter11.promote += 1
+		elif kind == "villager_joined":
+			counter11.joined += 1
+	)
+	while s11.round_state == "play" and s11.elapsed < 70.0:
+		s11.tick(TICK)
+		if s11.elapsed > 3.5 and s11.towers[0] == 0 and s11.water >= s11.build_cost():
+			s11.try_build(0)
+		elif s11.elapsed > 12.0 and s11.towers[1] == 0 and s11.water >= s11.build_cost():
+			s11.try_build(1)
+		elif s11.elapsed > 21.0 and s11.villagers.size() > 0 and s11.villagers[0].level == 0 \
+				and s11.water >= s11.NPC_UP_COST:
+			s11.try_promote(s11.villagers[0].id)
+		elif s11.elapsed > 24.0 and s11.towers[0] == 1 and s11.water >= s11.upgrade_cost():
+			s11.try_upgrade(0)
+		elif s11.elapsed > 33.0 and s11.villagers.size() > 1 and s11.villagers[1].level == 0 \
+				and s11.water >= s11.NPC_UP_COST:
+			s11.try_promote(s11.villagers[1].id)
+		elif s11.elapsed > 40.0 and s11.towers[2] == 0 and s11.water >= s11.build_cost():
+			s11.try_build(2)
+	check(s11.round_state == "win", "寒夜会玩胜利@60s",
+			"%s h=%.1f t=%.1f" % [s11.round_state, s11.heat, s11.elapsed])
+	check(counter11.joined == 2, "寒夜两名村民到场")
+	check(counter11.promote >= 1, "寒夜至少一次晋升")
+	check(s11.heat < 55.0, "寒夜终局温度有回落", "got %.1f" % s11.heat)
+
+	# ---- 14. 寒夜摆烂更快败；经典/风暴村民到点不受影响 ----
+	var s12 = Sim.new()
+	s12.setup_round("hard", 7)
+	while s12.round_state == "play" and s12.elapsed < 40.0:
+		s12.tick(TICK)
+	check(s12.round_state == "lose" and s12.elapsed < 25.0, "寒夜摆烂 <25s 败", "got %.1f" % s12.elapsed)
+	var s13 = Sim.new()
+	s13.setup_round("classic", 7)
+	check(float(s13.npc_times[0]) == 20.0 and float(s13.npc_times[1]) == 40.0, "经典村民 20/40 不变")
+	var s14 = Sim.new()
+	s14.setup_round("storm", 7)
+	check(approx(s14.heat, 40.0, 0.001), "风暴起始仍 40 度")
+
 	print("==== 3D 迁移阶段 A 测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)
