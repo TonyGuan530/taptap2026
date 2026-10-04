@@ -114,3 +114,5 @@
 - Edge headless（--headless=new + 独立 profile + 本地静态服务）可无窗渲染并出 PNG——但 Godot 引擎引导在无头环境卡死（90s 真实等待/软渲染/GPU 模式均停在加载页；进度条非单调）。截图通路就绪，差引擎引导一步。
 - 下轮候选：CDP 真实会话 / Godot 壳层 no-threads 排查 / --run-all-compositor-stages-before-draw 组合；或维持空闲时段 Movie Maker 正路。
 - tools/web-shot-demo04-3d.mjs 已固化（临时端口/独立 profile/产物轮询待修为 spawn+poll）。
+
+- 补充（同轮）：反节流旗标（disable-backgrounding-occluded-windows/renderer-backgrounding/background-timer-throttling/hang-monitor）无效，pck 仍停 ~3MB（dump-dom 实证 value=3014656）。结论：Godot 4.7 web 引导在无头隐藏页环境下取流停摆，非编译耗时、非节流旗标可解。下一候选：CDP Page.bringToFront/Emulation.setFocusEmulationEnabled 会话，或维持空闲 Movie Maker 正路。
