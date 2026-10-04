@@ -53,12 +53,22 @@ func _recipe(i: int) -> Array:
 		8: return [5, 30.0, 1.0, 1.0, 0.8]
 		9: return [5, 30.0, 1.0, 1.0, 0.6]
 		10: return [5, 35.0, 1.0, 0.0, 0.0]
+		11: return [5, 35.0, 1.0, 0.0, 0.0, 0.35]
 	return [3, 30.0, 1.0, 0.0, 0.0]
 
 
 func _throw_and_fly(c: Object) -> void:
 	var r := _recipe(c.level_idx)
-	_good_folds(c, int(r[0]))
+	if r.size() > 5:
+		# 第 6 元素 = 均匀折法 v 值（L12 乘风摆门配方用）
+		var v: float = float(r[5])
+		var pru: Rect2 = c.paper_rect
+		for k in int(r[0]):
+			var mid_y: float = 0.5 - 0.5 * v
+			c.add_fold(pru.position + pru.size * Vector2(0.92, mid_y - 0.23),
+				pru.position + pru.size * Vector2(0.92, mid_y + 0.23))
+	else:
+		_good_folds(c, int(r[0]))
 	c.finish_folds()
 	c.do_throw(float(r[1]), float(r[2]))
 	var g := 0
@@ -79,7 +89,7 @@ func _run() -> void:
 	var best_d := 0.0
 	var coins_expect := 0
 	var all_pass := true
-	for i in 11:
+	for i in 12:
 		c.start_level(i)
 		_throw_and_fly(c)
 		var d: float = float(c.flight_distance)
@@ -91,18 +101,18 @@ func _run() -> void:
 		coins_expect += int(d / 10.0) + int(c.LEVELS[i].reward) + c.gate_coins
 		if not ok:
 			break
-		if i < 10:
+		if i < 11:
 			c.settle_continue()
 			if String(c.state) == "shop":
 				c.shop_skip()
-	_check(all_pass and String(c.state) == "settle" and c.level_idx == 10,
-		"C1-A 十一关依次过关（L4 转向吃高门含在流程内）")
+	_check(all_pass and String(c.state) == "settle" and c.level_idx == 11,
+		"C1-A 十二关依次过关（L4 转向吃高门含在流程内）")
 	var go: String = c.settle_continue()
-	_check(go == "final" and String(c.state) == "final", "C1-A2 L11 结算继续 → final")
+	_check(go == "final" and String(c.state) == "final", "C1-A2 L12 结算继续 → final")
 	_check(absf(float(c.total_distance) - sum_d) < 0.01 and absf(float(c.best_distance) - best_d) < 0.01,
 		"C1-A3 总里程/最远一致（%.1fm）" % float(c.total_distance))
 	_check(c.coins == coins_expect, "C1-A4 金币累计 %d = 各关门奖+结算之和" % c.coins)
-	_check(c.unlocked == 10, "C1-A5 解锁至第 11 关（unlocked=10）")
+	_check(c.unlocked == 11, "C1-A5 解锁至第 12 关（unlocked=11）")
 
 	# B 强化可解释性：力气 +1 级 → 初速比恰为 1.2，距离有可测变化
 	var base: Object = CoreScript.new()
