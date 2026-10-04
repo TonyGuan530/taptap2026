@@ -1,19 +1,19 @@
 {
-  "checkedAt": "2026-10-04T09:46:00+08:00",
-  "round": 88,
+  "checkedAt": "2026-10-04T09:56:00+08:00",
+  "round": 89,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（09:45 实跑）"
+    "thisRound": "guard SKIP not-foreground（09:55 实跑）"
   },
   "automations": {
     "supervisor": {
-      "runCount": 86,
-      "lastDispatch": "09:44",
-      "next": "09:54"
+      "runCount": 87,
+      "lastDispatch": "09:54",
+      "next": "10:04"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "守望轮第十二/十三次零变更（稳态）"
+      "evidence": "守望轮第十四/十五次零变更（稳态）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -28,7 +28,7 @@
     "demo-04": {
       "cron": "15,45 * * * *",
       "runCount": 24,
-      "evidence": "守望轮10（冻结合规）"
+      "evidence": "守望轮11（冻结合规）"
     },
     "demo-05": {
       "cron": "20,50 * * * *",
@@ -47,7 +47,7 @@
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD f346245",
+    "git": "本轮 HEAD 1e3dcb1",
     "itch": "故障形态回摆 CDN 占位页（整站层问题持续）；Pages 兜底全在线"
   },
   "fiveHourPlan": {
