@@ -85,7 +85,9 @@
       "review": "reviews/chatgpt-demo-06-tel-full.md",
       "verdict": "L4 KEEP（transfer 诊断关）；SIZE=B 回退主线待 Gate 后恢复；整体 KEEP/READY FOR HUMAN PLAYTEST",
       "l3Review": "reviews/chatgpt-demo-06-l3-full.md",
-      "l3Note": "L3 Gate 通过(ITERATE→KEEP)：去属性锁后 4词条×3形状可自然提供多物理关系路径；下一Gate=真人数据盲测(5~8人+轻量telemetry，不解法提示，不加新词条)"
+      "l3Note": "L3 Gate 通过(ITERATE→KEEP)：去属性锁后 4词条×3形状可自然提供多物理关系路径；下一Gate=真人数据盲测(5~8人+轻量telemetry，不解法提示，不加新词条)",
+      "review3d": "reviews/chatgpt-demo-06-3d-phaseabc.md",
+      "verdict3d": "3D KEEP；L3 重标定=单板不可跨/双板可跨（不强制4.05m）；恢复C0纯0墨环境路线；L7 借板登岸 3D 优先（L3 校准后）；盲测加 failure_cause 分类"
     },
     "demo-07": {
       "url": "https://chatgpt.com/c/6ac112ff-cd24-83ec-8fe5-35b5ce1c270c",
