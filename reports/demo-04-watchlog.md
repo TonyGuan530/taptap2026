@@ -109,3 +109,8 @@
 - 全收集总数勘正：17 枚（此前误记 15），与指南一致。
 - 纯测试变更，无游戏码改动 → 不发新版，v4 仍为当前发布。
 - 受阻不变：录像（驱动器就绪）/ChatGPT/浏览器实测/原生模板/正式资产。
+
+## 2026-10-05 05:50（轮23·无窗口出图探索）
+- Edge headless（--headless=new + 独立 profile + 本地静态服务）可无窗渲染并出 PNG——但 Godot 引擎引导在无头环境卡死（90s 真实等待/软渲染/GPU 模式均停在加载页；进度条非单调）。截图通路就绪，差引擎引导一步。
+- 下轮候选：CDP 真实会话 / Godot 壳层 no-threads 排查 / --run-all-compositor-stages-before-draw 组合；或维持空闲时段 Movie Maker 正路。
+- tools/web-shot-demo04-3d.mjs 已固化（临时端口/独立 profile/产物轮询待修为 spawn+poll）。
