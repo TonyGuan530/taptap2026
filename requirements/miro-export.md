@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/5 06:50:33 · 共 87 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/5 07:50:55 · 共 93 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -103,6 +103,10 @@ headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch C
 
 &#x1f3ae; demo-05-hd2d 运行画面 &#43; 录屏 ▼
 
+### [card] @(5400,5480)
+
+&#x1f4e2; demo-05 HD-2D 招募&#xff1a;真人空间学习测试&#xff08;KEEP 最后 Gate&#xff09;
+
 ### [card] @(4400,5620)
 
 &#x1f3ae; demo-05-hd2d 恐龙火山生存 HD-2D&#xff08;阶段B 建造/需求/昼夜&#xff09;
@@ -118,6 +122,15 @@ headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch C
 ### [card] @(4400,5620)
 
 &#x1f3ae; demo-05-hd2d 恐龙火山生存 HD-2D&#xff08;阶段B/C 建造·需求·昼夜·灰潮·泥流·预报&#xff09;
+
+### [text] @(5400,5620)
+
+· 试玩&#xff08;v6&#xff09;&#xff1a;https://tonyguan530.github.io/taptap2026/builds/demo-05-hd2d-v6/index.html
+· 人数&#xff1a;2-3 人 × 至少 2 个夜晚 × 死亡后重开 ≥1 次&#xff08;约 10 分钟/人&#xff09;
+· 只给操作说明&#xff1a;WASD 移动 · E 交互 · Q 吃 · R 喝 · B 建造&#xff08;1/2/3 选型&#xff0c;E 放置&#xff09;· Enter 重开
+· 记录单&#xff1a;https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/human-test-demo05-hd2d-template.md
+· 判定&#xff1a;2/3 人在无提示下根据上一夜世界反馈主动改变建窝位置/路线 → 督导给 KEEP
+· 勿剧透&#xff1a;不解释预报/灰潮/泥流机制&#xff0c;让玩家自己从世界反馈形成规则
 
 ### [sticker] @(5714,5732)
 
@@ -229,6 +242,20 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 ### [text] @(4400,6892)
 
 <p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-02.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-02.mp4 试玩: <a href="https://sxguan.itch.io/taptap2026">https://sxguan.itch.io/taptap2026</a> &#xff08;密码 taptap&#xff09;</p>
+
+### [sticker] @(4400,6980)
+
+&#x1f3ae; demo-02-3d 运行画面 &#43; 录屏 ▼
+
+### [card] @(4400,7120)
+
+&#x1f3ae; demo-02-3d 物性变换谜题 3D&#xff08;五关齐·阶段B冻结&#xff09;
+
+### [text] @(4400,7280)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-02-3d.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-02.mp4
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v10/index.html
 
 ### [sticker] @(5714,7509)
 
@@ -364,6 +391,13 @@ Web 验收实测&#xff08;v6&#xff0c;全无窗口&#xff09;&#xff1a;iframe 嵌入 ✅ 
 ### [card] @(4400,12320)
 
 &#x1f3ae; demo-07-v2 简单美食小摊 v2&#xff08;四关卡&#xff09;
+
+### [text] @(6300,12320)
+
+v7 可读性增强&#xff1a;暗区实体化&#xff08;半透明黑暗体积&#xff0c;可见机制而非纯HUD文字&#xff09;· 终点信标光柱 · 碎片脉冲。
+L3 暗区实拍: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-darkzone-108.png
+23/23 用例 &#43; 2D 回归 7/7。
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v7/index.html
 
 ### [text] @(4400,12480)
 
