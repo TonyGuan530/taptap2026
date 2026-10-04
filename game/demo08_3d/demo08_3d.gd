@@ -370,6 +370,7 @@ func _build_settle_panel() -> void:
 	settle_btn.pressed.connect(_on_settle_continue)
 	settle_panel.add_child(settle_btn)
 	var back := Button.new()
+	back.name = "SettleBackBtn"
 	back.text = "返回选关"
 	back.position = Vector2(256, 204)
 	back.size = Vector2(200, 42)
@@ -463,7 +464,7 @@ func _hide_all_panels() -> void:
 
 
 func _go_menu() -> void:
-	core.reset_run()
+	# 与 2D 旧版一致：返回选关保留进度（金币/强化/解锁），仅"再来一次"清空
 	core.state = "menu"
 	prev_state = "menu"
 	_hide_all_panels()
