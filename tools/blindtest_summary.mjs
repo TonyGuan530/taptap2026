@@ -68,6 +68,7 @@ function summarizePlayer(pid, sessions) {
 	let l3Wins = 0;
 	let l3Best = null; // { sid, elapsed, route, placements }
 	const transfer = [];
+	const lvAggAll = new Map();   // 关卡 → (组合 → 次数)，跨会话累计
 
 	for (const [sid, evs] of sessions) {
 		evs.sort((a, b) => (a.el || 0) - (b.el || 0));
@@ -89,10 +90,14 @@ function summarizePlayer(pid, sessions) {
 			const cand = { sid, elapsed: l3Goal.elapsed, route, n: l3.filter((e) => e.type === 'place').length };
 			if (!l3Best || cand.elapsed < l3Best.elapsed) l3Best = cand;
 		}
-		const hiLevels = [...new Set(evs.filter((e) => (e.level || 0) >= 3).map((e) => e.level))];
-		for (const lv of hiLevels) {
-			const t = evs.filter((e) => e.level === lv && e.type === 'place').map((e) => `${SHAPE_NAME[e.shape]}+${WORD_NAME[e.tag]}`);
-			if (t.length) transfer.push(`L${lv + 1}: ${t.join(' → ') || '(无放置)'}`);
+		// 迁移轨迹按关卡聚合（次数计数），避免多会话/多轮跑批时行数爆炸
+		for (const e of evs) {
+			if (e.type !== 'place' || (e.level || 0) < 3) continue;
+			const key = e.level;
+			if (!lvAggAll.has(key)) lvAggAll.set(key, new Map());
+			const combo = SHAPE_NAME[e.shape] + '+' + WORD_NAME[e.tag];
+			const m = lvAggAll.get(key);
+			m.set(combo, (m.get(combo) || 0) + 1);
 		}
 	}
 	if (!l3Best) {
@@ -103,6 +108,10 @@ function summarizePlayer(pid, sessions) {
 				l3Best = { sid, elapsed: null, route: route || '(未放置)', n: 0 };
 			}
 		}
+	}
+	for (const [lv, combos] of [...lvAggAll.entries()].sort((x, y) => x[0] - y[0])) {
+		const parts = [...combos.entries()].map(([c, n]) => (n > 1 ? c + '×' + n : c));
+		transfer.push('L' + (lv + 1) + ': ' + parts.join(' | '));
 	}
 	const combos = allCombos.size;
 	const comboStr = [...allCombos].map((c) => c.replace('ball', '球').replace('plank', '板').replace('block', '块')).join(' ');
