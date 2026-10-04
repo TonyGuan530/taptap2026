@@ -78,7 +78,7 @@ func _run() -> void:
 	await click(p0)
 	check(scene.sim.towers[0] == 1, "点击槽位 0 → 建造")
 	check(approx(float(scene.sim.water), 80.0, 0.6), "建造扣 20（含收入漂移）", "got %.2f" % float(scene.sim.water))
-	check(scene.tower_meshes[0].visible, "水塔可见")
+	check(is_instance_valid(scene.comic_towers[0]), "水塔 ComicObject 可见")
 	shot("02-点击建造")
 
 	# ---- 2. 再点槽位 0 → 升级 ----

@@ -5,10 +5,18 @@ extends Node3D
 
 const Sim := preload("res://demo03_3d/kingdom_simulation.gd")
 const FONT := preload("res://fonts/NotoSansSC.ttf")
+# v3（用户指令）：世界物体切换到 3d-shared 的 ComicObject/统一材质（场景应用层）
+const ComicObj := preload("res://comic_style/comic_object.gd")
+const StyleDef := preload("res://comic_style/comic_style.gd")
+const ModelLib := preload("res://comic_style/model_library.gd")
 
 const SLOT_POS: Array[Vector3] = [Vector3(-14, 0, -6), Vector3(0, 0, -6), Vector3(14, 0, -6)]
 const HOUSE_POS: Array[Vector3] = [Vector3(-22, 0, 6), Vector3(-8, 0, 8), Vector3(8, 0, 7), Vector3(24, 0, 6)]
 const PROF_TINT: Array[String] = ["#c9a227", "#7cbf6b", "#5a8fd0", "#d8d8d8"]
+const PROF_COLORS := {
+	"工程师": Color("c9a227"), "植物学家": Color("7cbf6b"),
+	"气象学家": Color("5a8fd0"), "搬运工": Color("d8d8d8"),
+}
 const CAM_POS := Vector3(0, 30, 24)
 const CAM_PITCH := -50.0
 const CAM_SIZE := 26.0
@@ -19,7 +27,10 @@ var rig: Node3D
 var lava_mat: StandardMaterial3D
 var rain: CPUParticles3D
 var tower_meshes: Array[MeshInstance3D] = []
-var villager_nodes := {}   # id -> Node3D
+var comic_towers: Array[Node3D] = []
+var villager_nodes := {}   # id -> holder Node3D
+var comic_villagers := {}  # id -> ComicObject
+var style_def: Resource
 var hud: CanvasLayer
 var temp_fill: ColorRect
 var water_label: Label
@@ -39,9 +50,53 @@ var tooltip_label: Label
 func _ready() -> void:
 	sim = Sim.new()
 	sim.sim_event.connect(_on_sim_event)
+	style_def = StyleDef.new()
 	_build_world()
 	_build_hud()
 	_show_menu()
+
+
+## v3 场景应用：ComicObject 水塔（统一 toon+描边；L1 木桶塔 / L2 石基蓝罐）
+func _build_tower_comic(slot: int, level: int) -> Node3D:
+	if level <= 0:
+		return null
+	var sp: Vector3 = SLOT_POS[slot]
+	var tower := ComicObj.new()
+	tower.name = "ComicTower%d_L%d" % [slot, level]
+	tower.interactive = true
+	tower.style = style_def
+	if level == 1:
+		for dx: float in [-0.55, 0.55]:
+			for dz: float in [-0.55, 0.55]:
+				ModelLib._box(tower, Vector3(0.22, 1.6, 0.22), Vector3(dx, 0.8, dz), Color("5d4037"))
+		ModelLib._cylinder(tower, 0.95, 1.05, 1.7, Vector3(0, 2.45, 0), Color("cf8958"))
+		ModelLib._cylinder(tower, 1.0, 1.0, 0.22, Vector3(0, 2.45, 0), Color("4e6373"))
+		ModelLib._box(tower, Vector3(0.18, 0.5, 0.18), Vector3(0.9, 2.2, 0), Color("4e6373"))
+	else:
+		ModelLib._box(tower, Vector3(2.4, 0.9, 2.4), Vector3(0, 0.45, 0), Color("b5b4aa"))
+		for dx: float in [-0.8, 0.8]:
+			for dz: float in [-0.8, 0.8]:
+				ModelLib._box(tower, Vector3(0.26, 2.6, 0.26), Vector3(dx, 2.0, dz), Color("4e6373"))
+		ModelLib._cylinder(tower, 1.25, 1.35, 2.6, Vector3(0, 4.6, 0), Color("4fc3f7"))
+		ModelLib._cylinder(tower, 1.3, 1.3, 0.3, Vector3(0, 4.6, 0), Color("4e6373"))
+		ModelLib._cylinder(tower, 0.2, 1.25, 0.5, Vector3(0, 6.1, 0), Color("4fc3f7"))
+	add_child(tower)
+	tower.position = sp
+	return tower
+
+
+## v3 场景应用：ComicObject 小屋（静物，细描边）
+func _build_house_comic(pos: Vector3, i: int) -> void:
+	var house := ComicObj.new()
+	house.name = "ComicHouse%d" % i
+	house.interactive = false
+	house.style = style_def
+	ModelLib._box(house, Vector3(6, 4, 5.6), Vector3(0, 2, 0), Color("6d4c41"))
+	var roof_mesh := PrismMesh.new()
+	roof_mesh.size = Vector3(7.6, 3, 6.6)
+	house.add_part(roof_mesh, Color("8d6e63"), Transform3D(Basis.IDENTITY, Vector3(0, 5.5, 0)))
+	add_child(house)
+	house.position = pos
 
 
 # ---------------- 世界搭建（灰模几何体） ----------------
@@ -85,25 +140,15 @@ func _build_world() -> void:
 	crater.material_override.emission_enabled = true
 	crater.material_override.emission = Color("ff5722")
 	crater.material_override.emission_energy_multiplier = 2.0
-	# 四座小屋（物件；墙+顶+暖窗）
+	# 四座小屋（v3 场景应用：ComicObject 静物 + 暖窗发光特效）
 	for i in HOUSE_POS.size():
 		var hp: Vector3 = HOUSE_POS[i]
-		var body := _box(self, hp + Vector3(0, 2, 0), Vector3(7, 4, 6), Color("5d4037"), "HouseBody%d" % i)
-		body.name = "House%d" % i
-		var roof := MeshInstance3D.new()
-		var pm := PrismMesh.new()
-		pm.size = Vector3(7.6, 3, 6.6)
-		roof.mesh = pm
-		roof.position = hp + Vector3(0, 5.5, 0)
-		var rm := StandardMaterial3D.new()
-		rm.albedo_color = Color("8d6e63")
-		roof.material_override = rm
-		add_child(roof)
+		_build_house_comic(hp, i)
 		var win := _box(self, hp + Vector3(2.2, 2.4, 3.1), Vector3(1.6, 1.2, 0.1), Color("ffd54f"), "HouseWin%d" % i)
 		win.material_override.emission_enabled = true
 		win.material_override.emission = Color("ffd54f")
 		win.material_override.emission_energy_multiplier = 1.5
-	# 三个建设槽（底座 + 拾取体 + 等级塔体 + Label3D）
+	# 三个建设槽（底座 + 拾取体 + ComicObject 水塔 + Label3D）
 	for i in SLOT_POS.size():
 		var sp: Vector3 = SLOT_POS[i]
 		var base := _box(self, sp + Vector3(0, 0.15, 0), Vector3(6, 0.3, 6), Color("8b94a7"), "SlotBase%d" % i)
@@ -119,18 +164,6 @@ func _build_world() -> void:
 		shape.shape = box
 		body.add_child(shape)
 		add_child(body)
-		var tower := MeshInstance3D.new()
-		var tm := BoxMesh.new()
-		tm.size = Vector3(2.4, 6, 2.4)
-		tower.mesh = tm
-		tower.position = sp + Vector3(0, 3, 0)
-		var twm := StandardMaterial3D.new()
-		twm.albedo_color = Color("4fc3f7")
-		tower.material_override = twm
-		tower.visible = false
-		tower.name = "Tower%d" % i
-		add_child(tower)
-		tower_meshes.append(tower)
 		var tag := Label3D.new()
 		tag.text = "槽位 %d\n建造 20💧" % (i + 1)
 		tag.font = FONT
@@ -139,6 +172,7 @@ func _build_world() -> void:
 		tag.position = sp + Vector3(0, 5.2, 3.4)
 		tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		add_child(tag)
+		comic_towers.append(_build_tower_comic(i, 0))
 	# 相机（正交斜俯视 + 操纵杆）
 	rig = Node3D.new()
 	rig.name = "CameraRig"
@@ -191,22 +225,30 @@ func _villager_visual(id: int, prof: String, x: float) -> void:
 	holder.name = "Villager%d" % id
 	holder.position = Vector3(x * 0.055 - 21.0 + 21.0, 0, 9.0 + (id % 3) * 2.0)
 	holder.set_meta("vx", holder.position.x)
-	var ci := 0
-	for p: Dictionary in sim.PROFS:
-		if p.name == prof:
-			break
-		ci += 1
-	var col := Color(PROF_TINT[ci % PROF_TINT.size()])
-	var body := MeshInstance3D.new()
-	var cap := CapsuleMesh.new()
-	cap.radius = 0.55
-	cap.height = 2.2
-	body.mesh = cap
-	body.position = Vector3(0, 1.2, 0)
-	var bm := StandardMaterial3D.new()
-	bm.albedo_color = col
-	body.material_override = bm
-	holder.add_child(body)
+	# v3 场景应用：村民 ComicObject 化（职业色身体+斗笠+水桶，统一 toon+描边）
+	var prof_col: Color = PROF_COLORS.get(prof, Color("c9a227"))
+	var villager := ComicObj.new()
+	villager.name = "ComicVillager%d" % id
+	villager.interactive = true
+	var body_mesh := CapsuleMesh.new()
+	body_mesh.radius = 0.5
+	body_mesh.height = 1.6
+	villager.add_part(body_mesh, prof_col.darkened(0.15), Transform3D(Basis.IDENTITY, Vector3(0, 0.9, 0)))
+	var head_mesh := SphereMesh.new()
+	head_mesh.radius = 0.34
+	head_mesh.height = 0.68
+	villager.add_part(head_mesh, Color("ffcc80"), Transform3D(Basis.IDENTITY, Vector3(0, 1.95, 0)))
+	var hat_mesh := CylinderMesh.new()
+	hat_mesh.top_radius = 0.12
+	hat_mesh.bottom_radius = 0.52
+	hat_mesh.height = 0.22
+	villager.add_part(hat_mesh, Color("d9a441"), Transform3D(Basis.IDENTITY, Vector3(0, 2.3, 0)))
+	var bucket_mesh := CylinderMesh.new()
+	bucket_mesh.top_radius = 0.3
+	bucket_mesh.bottom_radius = 0.24
+	bucket_mesh.height = 0.55
+	villager.add_part(bucket_mesh, Color("8d6e63"), Transform3D(Basis.IDENTITY, Vector3(0.62, 1.0, 0.1)))
+	holder.add_child(villager)
 	var area := Area3D.new()
 	area.collision_layer = 4
 	area.set_meta("villager", id)
@@ -227,22 +269,16 @@ func _villager_visual(id: int, prof: String, x: float) -> void:
 	holder.add_child(tag)
 	add_child(holder)
 	villager_nodes[id] = holder
+	comic_villagers[id] = villager
 
 
+## v3 场景应用：水塔 ComicObject 化（L1 木桶塔 / L2 石基大罐，统一 toon+描边）
 func _update_tower_visual(slot: int) -> void:
 	var lv: int = sim.towers[slot]
-	var mi := tower_meshes[slot]
-	mi.visible = lv > 0
-	var mesh := mi.mesh as BoxMesh
-	var mat := mi.material_override as StandardMaterial3D
-	if lv == 1:
-		mesh.size = Vector3(2.2, 7, 2.2)
-		mi.position.y = SLOT_POS[slot].y + 3.5
-		mat.albedo_color = Color("4fc3f7")
-	elif lv == 2:
-		mesh.size = Vector3(3.0, 11, 3.0)
-		mi.position.y = SLOT_POS[slot].y + 5.5
-		mat.albedo_color = Color("0288d1")
+	var old := comic_towers[slot]
+	if is_instance_valid(old):
+		old.queue_free()
+	comic_towers[slot] = _build_tower_comic(slot, lv)
 
 
 # ---------------- HUD ----------------
@@ -342,8 +378,9 @@ func _start(p_mode: String) -> void:
 	for v: Node3D in villager_nodes.values():
 		v.queue_free()
 	villager_nodes.clear()
-	for i in tower_meshes.size():
-		tower_meshes[i].visible = false
+	for i in comic_towers.size():
+		_update_tower_visual(i)
+	comic_villagers.clear()
 	rain.emitting = false
 	menu_layer.visible = false
 	end_layer.visible = false
@@ -404,6 +441,29 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.button_index == MOUSE_BUTTON_LEFT and sim.round_state == "play":
 			_pick(event.position)
 
+
+## v3 悬停代理：射线命中拾取体 → 对应 ComicObject 高亮（统一 toon 描边反馈）
+func _update_hover_proxy() -> void:
+	var mouse := get_viewport().get_mouse_position()
+	var from := cam.project_ray_origin(mouse)
+	var dir := cam.project_ray_normal(mouse)
+	var q := PhysicsRayQueryParameters3D.create(from, from + dir * 200.0)
+	q.collide_with_areas = true
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	var hover_slot := -1
+	var hover_villager := -1
+	if not hit.is_empty() and hit.collider.has_meta("slot"):
+		hover_slot = int(hit.collider.get_meta("slot"))
+	elif not hit.is_empty() and hit.collider.has_meta("villager"):
+		hover_villager = int(hit.collider.get_meta("villager"))
+	for i in comic_towers.size():
+		var t: Node3D = comic_towers[i]
+		if is_instance_valid(t):
+			t.set_hovered(i == hover_slot and sim.towers[i] > 0)
+	for id: int in comic_villagers:
+		var v: Node3D = comic_villagers[id]
+		if is_instance_valid(v):
+			v.set_hovered(id == hover_villager)
 
 ## v2 悬停提示：指针下目标的名称/价格/当前效果（阶段 B 清单项）
 func _update_tooltip(mouse: Vector2) -> void:
@@ -494,6 +554,7 @@ func _process(delta: float) -> void:
 		var holder := villager_nodes[id] as Node3D
 		var vx: float = float(holder.get_meta("vx"))
 		holder.position.x = vx + sin((sim.elapsed + float(id)) * 1.3) * 2.0
+	_update_hover_proxy()
 	_update_tooltip(get_viewport().get_mouse_position())
 	# toast 淡出
 	for i in range(toasts.size() - 1, -1, -1):
