@@ -1,29 +1,29 @@
 {
-  "checkedAt": "2026-10-04T11:36:00+08:00",
-  "round": 97,
+  "checkedAt": "2026-10-04T11:46:00+08:00",
+  "round": 98,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard FAIL noring（圆环未定位，非连续首轮，零动作，沿用 19:51 读数）"
+    "thisRound": "guard SKIP not-foreground（11:45 实跑）——noring 未连续，不上报"
   },
   "automations": {
     "supervisor": {
-      "runCount": 95,
-      "lastDispatch": "11:34",
-      "next": "11:44"
+      "runCount": 96,
+      "lastDispatch": "11:44",
+      "next": "11:54"
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "守望轮第三十/三十一次零变更（稳态）"
+      "evidence": "守望轮第三十二/三十三次零变更（稳态）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "🔴 空转第 15 轮守望（8646dac）——失能维持"
+      "evidence": "🔴 空转第 16 轮守望（2f07d2f）——失能维持"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
       "runCount": 23,
-      "evidence": "✅ v13 交付（3827b7a：ChatGPT 生图装饰横幅 村庄/星空/火山全景→chromakey→选模式界面顶部，零平衡，四用例 PASS，视频重录上板）"
+      "evidence": "✅ v13 收尾备案（66f8a25：ITERATE 纯菜单表现层，盲测版本=v13）"
     },
     "demo-04": {
       "cron": "15,45 * * * *",
@@ -42,12 +42,12 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=84（+2：demo-05 v21、demo-06 v14）",
+    "health": "ok builds=84",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "60 条无新增（06:25 fetch OK）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 23095de",
+    "git": "本轮 HEAD 7d2bcf3",
     "itch": "分发仍卡（10:50 用户指令重推 demo-05-v20 实测验证：上传成功但 CDN 分发占位）——Pages 兜底 7/7 在线，试玩走 Pages"
   },
   "fiveHourPlan": {
@@ -58,8 +58,7 @@
   "watch": [
     "【工具备忘】无 CronUpdate——催办走 reviews/ 指令文件+必读评审文件尾部+state.json",
     "🔴【需用户决策】Batch 01 人选与排期（唯一阻塞点）；demo-02 会话失能；itch A/B（服务端分发挂起）",
-    "守卫 FAIL noring 第 1 次——下轮再 FAIL 即连续 2 轮上报",
-    "demo-05 debug05_end.gd 调试文件残留（待其自清理）"
+    "守望稳态持续"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
