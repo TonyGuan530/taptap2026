@@ -1,7 +1,0 @@
-{
-    "title":  "TapTap2026 Demo",
-    "version":  "demo-06-v4",
-    "date":  "2026-10-03T20:20:44+08:00",
-    "author":  "49321",
-    "notes":  "盲测 telemetry+数据面板；修复通关面板从未显示的 UI 层查找 bug（线上实测发现）"
-}

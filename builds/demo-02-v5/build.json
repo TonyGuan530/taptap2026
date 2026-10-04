@@ -1,7 +1,0 @@
-{
-    "title":  "TapTap2026 Demo",
-    "version":  "demo-02-v5",
-    "date":  "2026-10-03T22:06:13+08:00",
-    "author":  "49321",
-    "notes":  "v5 instrumentation freeze patch: switch chain + zone tags, run_index, release qualitative fragile text (numbers keep in debug/telemetry only); gameplay/geometry untouched"
-}

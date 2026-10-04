@@ -1,7 +1,0 @@
-{
-    "title":  "TapTap2026 Demo",
-    "version":  "demo-04-v9",
-    "date":  "2026-10-04T03:58:11+08:00",
-    "author":  "49321",
-    "notes":  "v9: campaign wall telemetry (wall_broken/break_attempt with level, 2s throttle) per GPT v8 review; blindtest sheet updated"
-}
