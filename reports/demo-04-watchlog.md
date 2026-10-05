@@ -219,3 +219,8 @@
 ## 2026-10-05 17:20（轮44·方法论技能化）
 - 指南 §5 建议落地：workspace skill「taptap-3d-migration」创建于 ~/.zcode/skills/（DNA 对照矩阵/3D 物理陷阱 7 条/headless 纪律/门控三层法/无窗录证管线/发布管线/交付物清单——39 轮实战蒸馏，服务后续 demo 的 3D 迁移）。
 - 纯知识工件，无发版变更。Pages 958M 冻结持续。
+
+## 2026-10-05 17:30（轮45·camera_rig 审计——P2 缺陷入册）
+- camera_rig.gd 审计：_ready 无条件请求鼠标捕获——Web 无手势失败（即 soak 的 NotAllowedError 真源）但 captured 标志仍 true → 网页玩家移动鼠标会旋转相机（指针可见却拖拽感）。native 正常。
+- 修复方案已定（web 初始 captured=false + 点击画布后才捕获）；**发版冻结解除后作为 v10 首项**。Phase D 若先行：被试用键盘即可正常游玩（相机默认角即可通全关，巡游机器人全程零鼠标已证）。
+- Pages 958M / demo-02-3d 4 版未清，冻结持续。
