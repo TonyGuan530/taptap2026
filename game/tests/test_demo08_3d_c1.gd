@@ -103,7 +103,7 @@ func _run() -> void:
 	var best_d := 0.0
 	var coins_expect := 0
 	var all_pass := true
-	for i in 20:
+	for i in 21:
 		c.start_level(i)
 		_throw_and_fly(c)
 		var d: float = float(c.flight_distance)
@@ -115,18 +115,18 @@ func _run() -> void:
 		coins_expect += int(d / 10.0) + int(c.LEVELS[i].reward) + c.gate_coins
 		if not ok:
 			break
-		if i < 19:
+		if i < 20:
 			c.settle_continue()
 			if String(c.state) == "shop":
 				c.shop_skip()
-	_check(all_pass and String(c.state) == "settle" and c.level_idx == 19,
-		"C1-A 二十关依次过关（L4 转向吃高门含在流程内）")
+	_check(all_pass and String(c.state) == "settle" and c.level_idx == 20,
+		"C1-A 二十一关依次过关（L4 转向吃高门含在流程内）")
 	var go: String = c.settle_continue()
-	_check(go == "final" and String(c.state) == "final", "C1-A2 L20 结算继续 → final")
+	_check(go == "final" and String(c.state) == "final", "C1-A2 L21 结算继续 → final")
 	_check(absf(float(c.total_distance) - sum_d) < 0.01 and absf(float(c.best_distance) - best_d) < 0.01,
 		"C1-A3 总里程/最远一致（%.1fm）" % float(c.total_distance))
 	_check(c.coins == coins_expect, "C1-A4 金币累计 %d = 各关门奖+结算之和" % c.coins)
-	_check(c.unlocked == 19, "C1-A5 解锁至第 20 关（unlocked=19）")
+	_check(c.unlocked == 20, "C1-A5 解锁至第 21 关（unlocked=20）")
 
 	# B 强化可解释性：力气 +1 级 → 初速比恰为 1.2，距离有可测变化
 	var base: Object = CoreScript.new()

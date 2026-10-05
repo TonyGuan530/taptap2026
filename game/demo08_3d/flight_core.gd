@@ -96,6 +96,9 @@ const LEVELS := [
 	{name = "第 20 关 · 切变低门", short = "切变低门", ratio = 0.85, folds = 6, target_m = 60.0, wind = "none", side_wind = 60.0, shear_x = 30.0, shear_x2 = 50.0, reward = 14,
 		gate_x = 44.0, gate_h = 12.0, gate_bonus = 3, gate_swing = 240.0, gate_period = 3.5, low_gate_x = 48.0, low_gate_top = 10.0, low_gate_swing = 240.0, low_gate_period = 3.5, low_gate_side = 0.0,
 		tip = "双段切变 + 双摆门：30 米前右送、30-50 米左拽、50 米后右送；高门 44 米固定，低门 48 米横位 ±4m 摆动（3.5 秒来回）——左拽段俯冲向左切吃低门 +3，一掷二选一，60 米过关。更多机制关卡（用户指令扩展）"},
+	{name = "第 21 关 · 顺风摆门", short = "顺风摆门", ratio = 0.85, folds = 6, target_m = 70.0, wind = "tail", reward = 14,
+		gate_x = 50.0, gate_h = 12.0, gate_bonus = 3, low_gate_x = 55.0, low_gate_top = 10.0, low_gate_swing = 240.0, low_gate_period = 3.0, low_gate_side = 120.0,
+		tip = "顺风 + 摆动低门：顺风推你加速，低门 55 米处横位 +2m 上 ±4m 摆动（3 秒来回）——顺风冲到低门位置时看准它摆到哪，俯冲穿越 +3，一掷二选一，70 米过关。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
