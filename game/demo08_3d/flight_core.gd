@@ -81,6 +81,9 @@ const LEVELS := [
 	{name = "第 15 关 · 三段侧风", short = "三段侧风", ratio = 0.9, folds = 6, target_m = 65.0, wind = "head", side_wind = 60.0, shear_x = 30.0, shear_x2 = 50.0, reward = 14,
 		gate_x = 42.0, gate_h = 12.0, gate_bonus = 3, gate_side = -240.0,
 		tip = "逆风 1.25 倍 + 三段侧风：30 米前右送、30-50 米左拽（顺势向左切，42 米高空门在 -4m 横位 +3）、50 米后右送收尾 65 米。更多机制关卡（用户指令扩展）"},
+	{name = "第 16 关 · 逆风摆门峡", short = "逆风摆门峡", ratio = 0.85, folds = 6, target_m = 80.0, wind = "side", wind_side = -1.0, shear_x = 32.0, wind_side2 = 1.0, shear_x2 = 58.0, wind_side3 = -1.0, reward = 14,
+		gate_x = 46.0, gate_h = 12.0, gate_bonus = 3, gate_side = 240.0, gate_swing = 300.0, gate_period = 3.5,
+		tip = "双段切变 + 摆门：32 米前左风、32-58 米右风（门横位还在 +4m 上 ±5m 摆动，3.5 秒来回）——乘风右切吃 46 米高空门 +3，58 米后左风收尾 80 米。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
