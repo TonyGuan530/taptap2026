@@ -755,6 +755,7 @@ func try_place_validated(pos: Vector3, yaw: float) -> bool:
 	params.transform = Transform3D(Basis(Vector3.UP, yaw), pos)
 	params.collide_with_bodies = true
 	params.collide_with_areas = false
+	params.collision_mask = 1  # 只查 layer 1（地形/物体）——layer 2 装饰植被不收窄可建造空间
 	params.exclude = [player.get_rid()]
 	var hits := get_world_3d().direct_space_state.intersect_shape(params, 8)
 	if hits.size() > 0:
