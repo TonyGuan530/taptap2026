@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/6 02:50:17 · 共 84 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/6 03:50:16 · 共 84 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -324,7 +324,7 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-cdp-a.png
 暗区实拍: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-darkzone-108.png
 五关通关演示片: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v11/index.html
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v12/index.html
 
 操作&#xff1a;WASD/方向键 · Space 跳 · E 融合 · R 重开 · Shift&#43;R 完整再跑 · K 实验房(1~5选关)/B 返回 · G 被试编号 · T 遥测导出
 
