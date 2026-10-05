@@ -63,6 +63,11 @@ func screen_of(world: Vector3) -> Vector2:
 	return cam.unproject_position(world)
 
 
+func win_pos(v: Vector2) -> Vector2:
+	# 视口坐标 → 窗口坐标（parse_input_event 用；headless 窗口尺寸≠设计分辨率）
+	return root.get_final_transform() * v
+
+
 func _initialize() -> void:
 	_run()
 
@@ -280,6 +285,107 @@ func _run() -> void:
 	check(scene.sim.towers[2] == 1, "非 16:9 窗口（letterbox）点击槽位 3 建造", "win=%s" % str(root.size))
 	root.size = Vector2i(960, 540)
 	await process_frame
+
+	# ---- 16. v12.1 滚轮缩放（真实 wheel 事件）----
+	var size0: float = scene.cam.size
+	var wheel_up := InputEventMouseButton.new()
+	wheel_up.button_index = MOUSE_BUTTON_WHEEL_UP
+	wheel_up.pressed = true
+	wheel_up.position = Vector2(480, 270)
+	Input.parse_input_event(wheel_up)
+	await process_frame
+	await process_frame
+	check(approx(scene.cam.size, size0 - 2.0, 0.01), "滚轮上→视野缩小（真实事件）",
+			"%.0f→%.0f" % [size0, scene.cam.size])
+	var wheel_dn := InputEventMouseButton.new()
+	wheel_dn.button_index = MOUSE_BUTTON_WHEEL_DOWN
+	wheel_dn.pressed = true
+	wheel_dn.position = Vector2(480, 270)
+	Input.parse_input_event(wheel_dn)
+	await process_frame
+	await process_frame
+	check(approx(scene.cam.size, size0, 0.01), "滚轮下→视野还原")
+
+	# ---- 17. v12.1 拖动不误触：空白处按下→移动→槽位上释放，不得建造 ----
+	scene._start("classic")
+	await process_frame
+	sim_set_water(100.0)
+	var spend_before_drag: int = scene.sim.spend_log.size()
+	var press_g := InputEventMouseButton.new()
+	press_g.button_index = MOUSE_BUTTON_LEFT
+	press_g.pressed = true
+	press_g.position = win_pos(Vector2(480, 60))  # 顶部天空（无任何碰撞体）
+	Input.parse_input_event(press_g)
+	await process_frame
+	for i in 6:
+		var mv := InputEventMouseMotion.new()
+		mv.position = win_pos(Vector2(480, 500 - i * 30))
+		Input.parse_input_event(mv)
+		await process_frame
+	var release_s := InputEventMouseButton.new()
+	release_s.button_index = MOUSE_BUTTON_LEFT
+	release_s.pressed = false
+	release_s.position = win_pos(screen_of(slot_world(1)))
+	Input.parse_input_event(release_s)
+	await process_frame
+	await process_frame
+	check(scene.sim.towers[1] == 0, "拖动释放悬于槽位上不建造（只认按下）")
+	check(scene.sim.spend_log.size() == spend_before_drag, "拖动无消费记录")
+
+	# ---- 18. v12.1 槽位上按下→拖走→释放：只建一次 ----
+	sim_set_water(100.0)
+	var press_s := InputEventMouseButton.new()
+	press_s.button_index = MOUSE_BUTTON_LEFT
+	press_s.pressed = true
+	press_s.position = win_pos(screen_of(slot_world(2)))
+	Input.parse_input_event(press_s)
+	await process_frame
+	var spend_mid: int = scene.sim.spend_log.size()
+	for i in 5:
+		var mv2 := InputEventMouseMotion.new()
+		mv2.position = win_pos(Vector2(200 + i * 40, 480))
+		Input.parse_input_event(mv2)
+		await process_frame
+	var release_g := InputEventMouseButton.new()
+	release_g.button_index = MOUSE_BUTTON_LEFT
+	release_g.pressed = false
+	release_g.position = win_pos(Vector2(400, 480))
+	Input.parse_input_event(release_g)
+	await process_frame
+	await process_frame
+	check(scene.sim.towers[2] == 1 and scene.sim.spend_log.size() == spend_mid,
+			"槽位按下即建造一次，拖走释放不重复")
+
+	# ---- 19. v12.1 Q/E 旋转与 Home 复位（真实键盘轮询）----
+	var q_down := InputEventKey.new()
+	q_down.keycode = KEY_Q
+	q_down.physical_keycode = KEY_Q
+	q_down.pressed = true
+	Input.parse_input_event(q_down)
+	for i in 30:
+		await process_frame
+	var q_up := InputEventKey.new()
+	q_up.keycode = KEY_Q
+	q_up.physical_keycode = KEY_Q
+	q_up.pressed = false
+	Input.parse_input_event(q_up)
+	await process_frame
+	check(absf(scene.rig.rotation.y) > 0.1, "按住 Q → 相机旋转（真实键盘）",
+			"rot=%.2f" % scene.rig.rotation.y)
+	var h_down := InputEventKey.new()
+	h_down.keycode = KEY_HOME
+	h_down.physical_keycode = KEY_HOME
+	h_down.pressed = true
+	Input.parse_input_event(h_down)
+	await process_frame
+	var h_up := InputEventKey.new()
+	h_up.keycode = KEY_HOME
+	h_up.physical_keycode = KEY_HOME
+	h_up.pressed = false
+	Input.parse_input_event(h_up)
+	await process_frame
+	await process_frame
+	check(scene.rig.rotation.y == 0.0, "Home → 旋转复位")
 
 	print("==== 3D 阶段 B 拾取测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)
