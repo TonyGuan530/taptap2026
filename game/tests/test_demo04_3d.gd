@@ -649,6 +649,37 @@ func _run() -> void:
 	else:
 		_fail("实验房终点异常：panel=%s won=%s back=%s" % [panel_visible, lab_won, back_ok])
 
+	# ---- 26. 键位条：常驻可见、H 可隐藏、lab 模式文案切换 ----
+	scene_root.load_level(0)
+	await physics_frame
+	await physics_frame
+	var lblk: Label = null
+	for c in scene_root.get_node("HUD/Root").get_children():
+		if c is Label and String(c.text).begins_with("WASD"):
+			lblk = c
+			break
+	var vis0: bool = lblk.visible
+	var t0k := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0k < 1200:
+		await physics_frame
+	var evh := InputEventKey.new()
+	evh.keycode = KEY_H
+	evh.physical_keycode = KEY_H
+	evh.pressed = true
+	Input.parse_input_event(evh)
+	await physics_frame
+	var evhu := InputEventKey.new()
+	evhu.keycode = KEY_H
+	evhu.physical_keycode = KEY_H
+	evhu.pressed = false
+	Input.parse_input_event(evhu)
+	await physics_frame
+	var hidden_ok: bool = not lblk.visible
+	if vis0 and hidden_ok:
+		_ok("键位条：常驻显示、H 隐藏生效")
+	else:
+		_fail("键位条异常：vis0=%s hidden=%s" % [vis0, hidden_ok])
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:

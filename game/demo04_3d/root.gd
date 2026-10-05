@@ -137,6 +137,8 @@ var lbl_toast: Label
 var win_panel: Panel
 var lbl_win: Label
 var toast_age := 99.0
+var lbl_keys: Label
+var keys_hint_visible := true
 
 func _ready() -> void:
 	ability = Node.new()
@@ -232,6 +234,10 @@ func _build_hud() -> void:
 	lbl_combo.visible = false
 	lbl_toast = _mk_label(root_c, 24, 168, 16, Color(1, 0.75, 0.3))
 	lbl_toast.visible = false
+	# 常驻键位条（公共访客/被试的最低成本引导；H 可隐藏）
+	lbl_keys = _mk_label(root_c, 24, 392, 13, Color(0.75, 0.78, 0.85))
+	lbl_keys.text = "WASD/方向键 移动 · Space 跳 · E 融合 · R 重开 · H 隐藏本条"
+	lbl_keys.text += " · Shift+R 全部重来"
 	win_panel = Panel.new()
 	win_panel.name = "WinPanel"
 	win_panel.position = Vector2(220, 190)
@@ -711,6 +717,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				mode = "lab"
 				load_level(level_idx)
 				_toast("实验室：全DNA · 1~5选关 · R重置 B返回 T导出 G测试员")
+			lbl_keys.text = "WASD 移动 · Space 跳 · E 融合 · 1~5 选关 · R 重置 · B 返回 · T 导出 · H 隐藏"
 		KEY_B:
 			if mode == "lab":
 				mode = "campaign"
@@ -721,6 +728,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			_toast("测试员编号：%s" % tester_id)
 		KEY_T:
 			_export_telemetry()
+		KEY_H:
+			keys_hint_visible = not keys_hint_visible
+			lbl_keys.visible = keys_hint_visible
 		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5:
 			# 实验房关卡选择器（Phase D lab-first）：1~5 直达对应关卡，全 DNA 自动带上
 			if mode == "lab":

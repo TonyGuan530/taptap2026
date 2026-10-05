@@ -34,7 +34,7 @@
 ## 阶段 C：正式资产、原生与 Web — 🟡 部分（两项等外部输入）
 | 要求 | 状态 | 证据/缺口 |
 | --- | --- | --- |
-| Web 导出（Compatibility） | ✅ | demo-04-3d-v10，Pages 换版链路（v1→v10 共 10 版） |
+| Web 导出（Compatibility） | ✅ | demo-04-3d-v11，Pages 换版链路（v1→v11 共 11 版） |
 | 遥测下载 | ✅ | v6：浏览器下载落地断言（cdp-webcheck） |
 | iframe 引导/字体/连续换关/缩放 | ✅ | webcheck + 多分辨率双端实拍 |
 | 鼠标捕获/Esc | N/A | 键盘操作游戏，无鼠标视角绑定 |
