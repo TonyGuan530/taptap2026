@@ -28,7 +28,8 @@ WASD/空格移动 · 鼠标视角 · 1/2/3 形状（球/板/块）· 4/5/6/7 词
 - 每次放置/尝试/拒绝/接触/复位/通关都实时写入遥测；**J 键把完整 JSON 复制到剪贴板**，粘贴到 `reviews/blindtest-3d/<sid>.json`。
 - 文件亦在 `user://demo06_3d_tel/tel_<关卡>_<sid>.json`（Web 下存 IndexedDB，刷新不丢）。
 - JSON 结构：`{"pid":"demo06_3d_L3_<sid>","events":[{type,ts,el,sid,level,...}]}`；事件类型：`start/select/placement_attempt/place/placement_rejected/contact/reset/goal/session_end/restart`；`goal` 事件含 elapsed/ink_left/placements/**ghost 终位**（pos/yaw/深度）。
-- `tools/blindtest_summary.mjs` 待按 3D 字段适配（placement_rejected 计数 + failure_cause 不在遥测内、由组织者表补充）。
+- `tools/blindtest_summary.mjs` 已适配 3D（自动识别 `demo06_3d` pid）：逐会话 Gate 行（通关/用时/放置/拒绝比/复位/**重开**/墨余/组合/ghost 终位）+ 聚合（通关率/中位用时/拒绝率）。failure_cause 与 lifecycle 口供不在遥测内，由组织者表补充。
+- 口径：T 重开后 el 归零、同 sid 文件含多段尝试（`session_end:restart` 分隔）；用时只取 goal 事件的 el；重开次数单列不混入失败统计。
 
 ## 协议红线
 
