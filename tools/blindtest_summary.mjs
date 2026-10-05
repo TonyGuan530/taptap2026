@@ -42,6 +42,8 @@ for (const file of files) {
 	const pid = data.pid || path.basename(file, '.json');
 	const events = Array.isArray(data.events) ? data.events : [];
 	if (String(pid).startsWith('demo06_3d')) {
+		// 过滤空会话（仅 start、无任何交互——并发测试进程的碎片，非真人局）
+		if (events.length < 2) continue;
 		const sid3 = events[0]?.sid || pid;
 		if (!players3d.has(sid3)) players3d.set(sid3, []);
 		players3d.get(sid3).push(...events);
