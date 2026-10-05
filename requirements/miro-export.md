@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/5 09:50:29 · 共 97 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/5 11:50:10 · 共 84 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -295,10 +295,6 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 ### [sticker] @(6300,10560)
 
-&#x1f9ec; demo-04-3d 3D 迁移 Phase B ▼
-
-### [sticker] @(6300,10560)
-
 &#x1f3ae; demo-04-3d 运行画面 &#43; 录屏 ▼
 
 ### [card] @(4400,10700)
@@ -307,11 +303,7 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 ### [card] @(6300,10700)
 
-&#x1f9ec; demo-04-3d v1 五关数据驱动灰模&#xff08;Phase B&#xff09;
-
-### [card] @(6300,10700)
-
-&#x1f3ae; demo-04-3d SOUP 2.0 DNA 融合逃生 3D
+&#x1f3ae; demo-04-3d SOUP 2.0 DNA 融合逃生 3D&#xff08;v8/v9&#xff09;
 
 ### [sticker] @(671,10751)
 
@@ -329,74 +321,24 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 ### [text] @(6300,10860)
 
-2026-10-04 Phase B&#xff1a;五关&#xff08;裂谷长跑/夜翼峡谷/融合之巅/碎岩回廊/终焉长廊&#xff09;数据驱动 3D 灰模 &#43; 实验房&#xff08;K/B/G/T&#xff09;&#43; 遥测信封。
-DNA 语义对齐 2D v12&#xff1a;高跳×1.45 / 二段×0.95 / 暗区×0.45 / 碎岩撞裂墙&#xff1b;组合实测 4.15m。
-测试 14/14 ALL PASS &#43; 2D 回归 7/7 PASS&#xff1b;裂纹墙顶 2.9m&#xff08;3D 胶囊骑角加固&#xff0c;碎岩仍唯一解&#xff09;。
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v1/index.html
-录像/截图&#xff1a;待机器空闲离线补录&#xff08;当前禁止抢占前台&#xff09;。
-
-### [text] @(6300,10860)
-
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-cdp-a.png
-录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v8/index.html
+暗区实拍: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-darkzone-108.png
+五关通关演示片: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v9/index.html
 
-### [text] @(6300,11120)
-
-2026-10-04 v2&#xff08;指南差距修复&#xff09;&#xff1a;掉坑回安全边缘&#xff08;保留DNA/碎墙/碎片&#xff0c;计时继续&#xff09;· 走廊侧壁防侧绕 · 隔墙不融合(LOS) · HUD组合只显示本关持有组件 · Shift&#43;R完整再跑。
-17/17 用例 &#43; 2D 回归 7/7 全绿。
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v2/index.html
-
-### [text] @(6300,11320)
-
-2026-10-05 v3&#xff08;遥测 v2&#xff09;&#xff1a;暗区进出事件 · 跳跃/二段/掉坑/融合会话计数 · 遥测双写&#xff08;latest &#43; 测试员独立会话文件&#xff0c;多被试不互覆&#xff09;· pck 导出内容核对工具防串台。
-18/18 用例 &#43; 2D 回归 7/7 全绿。
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v3/index.html
-
-### [text] @(6300,11520)
-
-2026-10-05 v4&#xff08;机器人全通验证&#xff09;&#xff1a;五关巡游机器人真实输入通关&#xff08;won&#61;true 12/15碎片&#xff09;· 修复2个真bug&#xff08;落地重置缺失/掉坑安全点污染卡死&#xff09;· 规则变化&#xff1a;L3/L5上层捷径改西侧空中栈道&#xff08;3D胶囊跳弧与头顶悬台结构冲突&#xff0c;组合独占可达不变&#xff09;· 录像驱动器就绪待空闲出片。
-18/18 用例 &#43; 2D 回归 7/7 &#43; 巡游 ALL PASS。
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v4/index.html
-
-### [sticker] @(6300,11720)
-
-&#x1f9ec; demo-04-3d 真实画面 &#43; 演示片 ▼
+操作&#xff1a;WASD/方向键 · Space 跳 · E 融合 · R 重开 · Shift&#43;R 完整再跑 · K 实验房(1~5选关)/B 返回 · G 被试编号 · T 遥测导出
 
 ### [sticker] @(4400,11760)
 
 &#x1f3ae; demo-07 运行画面 &#43; 录屏 ▼
 
-### [card] @(6300,11860)
-
-&#x1f9ec; demo-04-3d v4 无窗口实拍&#xff08;CDP 前台模拟&#xff09;
-
 ### [card] @(4400,11900)
 
 &#x1f3ae; demo-07 简单美食小摊&#xff08;绿幕版&#xff09;
 
-### [text] @(6300,11920)
-
-★★ 五关完整通关演示片&#xff08;v5&#xff09;&#xff1a;https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
-761帧/219s 真实通关 → 33s 延时&#xff08;CDP 无窗口录制&#xff0c;内置巡游机器人 ?tour&#61;1&#xff09;&#xff1b;末帧 L5 四DNA&#43;超级弹跳/夜翼双组合&#43;西侧栈道&#xff0c;12/17 碎片。
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v5/index.html
-
-### [text] @(6300,12020)
-
-截图1(L1 出生·HUD): https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-cdp-a.png
-截图2(蹦蹦兽融合提示·输入已生效): https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-cdp-fuse.jpg
-演示片(CDP 按键注入·行走&#43;跳): https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
-通路: Edge headless &#43; Emulation.setFocusEmulationEnabled&#xff08;无窗口&#xff0c;符合用户红线&#xff09;
-
 ### [text] @(4400,12092)
 
 <p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-07.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-07.mp4 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;</p>
-
-### [text] @(6300,12120)
-
-Web 验收实测&#xff08;v6&#xff0c;全无窗口&#xff09;&#xff1a;iframe 嵌入 ✅ · 遥测下载落地 ✅&#xff08;5事件信封解析&#xff09;· 实验房K ✅ · 中文字体 ✅ · 连续换关 ✅
-实证: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-web-telemetry.png
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v6/index.html
 
 ### [sticker] @(4400,12180)
 
@@ -406,24 +348,11 @@ Web 验收实测&#xff08;v6&#xff0c;全无窗口&#xff09;&#xff1a;iframe 嵌入 ✅ 
 
 &#x1f3ae; demo-07-v2 简单美食小摊 v2&#xff08;四关卡&#xff09;
 
-### [text] @(6300,12320)
-
-v7 可读性增强&#xff1a;暗区实体化&#xff08;半透明黑暗体积&#xff0c;可见机制而非纯HUD文字&#xff09;· 终点信标光柱 · 碎片脉冲。
-L3 暗区实拍: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-darkzone-108.png
-23/23 用例 &#43; 2D 回归 7/7。
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v7/index.html
-
 ### [text] @(4400,12480)
 
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-07-v2.png
 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-07-v2.mp4
 试玩: https://tonyguan530.github.io/taptap2026/builds/demo-07-v2/index.html
-
-### [text] @(6300,12520)
-
-v8 新交互机制「弹跳板」&#xff08;规则变化·供判断&#xff09;&#xff1a;L1 平坦段 z 侧带&#xff08;主动侧移触发&#xff09;&#xff0c;踩上弹起 3.09m&#xff08;高跳2.2 与超级弹跳4.15 之间&#xff09;。
-门控安全分析在案&#xff1a;不构成任何 DNA 门旁路。重录五关通关片(821帧 tourDone&#61;0): https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v8/index.html
 
 ### [sticker] @(1081,13586)
 
