@@ -625,6 +625,43 @@ func settle_gate_swing_text() -> String:
 	return "门摆：" + " / ".join(parts)
 
 
+## 阶段 C45 打磨：气流区关结算出口高度文本（无带返回空串；headless 可断言）。
+## 双带（沉后托）以第二带出口为复盘点——波形关心的是热流出口高度；未飞到出口（落地/超时）返回空串
+func settle_zone_text() -> String:
+	var L: Dictionary = core.LEVELS[core.level_idx]
+	var x_m: float = float(L.get("wind_up_x", 0.0))
+	var a: float = float(L.get("wind_up", 0.0))
+	if x_m <= 0.0 or absf(a) < 1e-6:
+		return ""
+	var exit_m: float = x_m + float(L.get("wind_up_len", 10.0))
+	var tag := "谷出口" if a < 0.0 else "上升带出口"
+	var x2_m: float = float(L.get("wind_up2_x", 0.0))
+	var a2: float = float(L.get("wind_up2", 0.0))
+	if x2_m > 0.0 and absf(a2) > 1e-6:
+		exit_m = x2_m + float(L.get("wind_up2_len", 10.0))
+		tag = "热流出口" if a2 > 0.0 else tag
+	for p in core.trail:
+		var pp: Vector2 = p
+		if (pp.x - core.START_X) / core.PX_PER_M >= exit_m:
+			return "%s %.1f 米" % [tag, (core.GROUND_Y - pp.y) / core.PX_PER_M]
+	return ""
+
+
+## 阶段 C37 起商店策略提示函数化（C45 补气流区行；headless 可断言）
+func shop_strategy_hints() -> Array:
+	var L: Dictionary = core.LEVELS[core.level_idx]
+	var hint_parts: Array = []
+	if core.wind_mode() == "head":
+		hint_parts.append("逆风关：纸面加固降阻力")
+	elif core.wind_mode() == "side":
+		hint_parts.append("侧风关：重心铅条驯配平")
+	if float(L.get("gate_swing", 0.0)) > 0.0 or float(L.get("low_gate_swing", 0.0)) > 0.0:
+		hint_parts.append("摆门关：配平仪精确切门")
+	if absf(float(L.get("wind_up", 0.0))) > 0.0:
+		hint_parts.append("气流区关：翼面升力扛谷，螺旋桨保速乘流")
+	return hint_parts
+
+
 func paint_chart_axes(r: Rect2, max_d: float, max_h: float) -> void:
 	chart.draw_rect(r, Color(1, 1, 1, 0.55))
 	chart.draw_line(r.position + Vector2(0, r.size.y), r.position + Vector2(r.size.x, r.size.y), Color("607d8b"), 1.5)
@@ -722,15 +759,8 @@ func _show_final() -> void:
 
 func _refresh_shop() -> void:
 	shop_coins.text = "金币：%d" % core.coins
-	# C37 打磨：按当前关机制推荐购物方向
-	var L: Dictionary = core.LEVELS[core.level_idx]
-	var hint_parts: Array = []
-	if core.wind_mode() == "head":
-		hint_parts.append("逆风关：纸面加固降阻力")
-	elif core.wind_mode() == "side":
-		hint_parts.append("侧风关：重心铅条驯配平")
-	if float(L.get("gate_swing", 0.0)) > 0.0 or float(L.get("low_gate_swing", 0.0)) > 0.0:
-		hint_parts.append("摆门关：配平仪精确切门")
+	# C37 打磨/C45 函数化：按当前关机制推荐购物方向（逆风/侧风/摆门/气流区）
+	var hint_parts: Array = shop_strategy_hints()
 	shop_hint_label.text = " · ".join(hint_parts) if hint_parts.size() > 0 else ""
 	for c in shop_box.get_children():
 		c.queue_free()
@@ -906,6 +936,10 @@ func _show_settle_panel() -> void:
 	var swing_info: String = settle_gate_swing_text()
 	if swing_info != "":
 		lat_info += " · " + swing_info
+	# C45 打磨：气流区关结算补出口高度（帮助玩家把乘流与门高关联）
+	var zone_info: String = settle_zone_text()
+	if zone_info != "":
+		lat_info += " · " + zone_info
 	settle_body.text = "%s\n飞行距离 %.1f 米 · 目标 %.0f 米 · 顶点 %.1f 米%s\n%s\n小贴士：%s" % [
 		String(L.name), core.flight_distance, float(L.target_m), core.apex_m, lat_info, earn_txt, String(L.tip)]
 	# 轨迹复盘小图（阶段 C）：高度-距离 + 门/终点标记
