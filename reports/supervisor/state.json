@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-05T17:52:00+08:00",
-  "round": 121,
+  "checkedAt": "2026-10-05T18:52:00+08:00",
+  "round": 122,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（17:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（18:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "🚀 demo-08-3d v10 第 19/20 关（三风交汇扩展至 20 关，190+ 断言全绿）——⚠️ FB-104（真折纸物理）未启动，催办线 18:52"
+      "evidence": "🟢 FB-102 修复完成（demo-03-3d v14 火山口烟柱+三岩浆流束，状态纪律佳：自行 responded 待复测）；⚠️ FB-104 催办批示已发 demo-08"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -47,15 +47,16 @@
     "godotProcs": 0,
     "miro": "84 条稳态（无新用户反馈）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 待推",
+    "git": "本轮 HEAD ca83285 已推送",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "FB-102 修复中；FB-104 催办线 18:52；FB-103/105~107 待首响应"
+    "queue": "FB-102 responded 待用户复测；FB-104 催办已发；FB-103/105~107 待首响应"
   },
   "watch": [
+    "🔴【硬红线】18:50 巡检合规——持续",
     "🔴【硬红线】17:50 巡检合规——持续",
     "🔴【硬红线】16:50 巡检合规——持续",
     "🟢 FB-101 复核完：demo-02 分诊科学性认可+轻裁决（第三人称=负责人偏好进 backlog 保留通道，不阻塞基线）",
@@ -80,7 +81,9 @@
     "🔴【调度变更·需用户操作】督导自动化改 1h（Automations 界面）；其他任务 30min 不动",
     "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B",
     "⚠️ demo-02 L3 调试须 headless（编辑器禁开）",
-    "⚠️ FB-104 催办线 18:52（demo-08 在做风场扩展而未动折纸物理）——18:52 无响应即批示催办"
+    "⚠️ FB-104 催办线 18:52（demo-08 在做风场扩展而未动折纸物理）——18:52 无响应即批示催办",
+    "🟢 FB 状态盘：101 triaged / 102 responded（待复测）/ 103~107 open（104 催办已发）",
+    "📢【用户复测入口】demo-03-3d-v14——岩浆已入画，请您复测确认后 FB-102 转 fixed"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
