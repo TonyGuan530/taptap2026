@@ -45,7 +45,9 @@
       "phase3dV11Pending": "reviews/chatgpt-demo-03-3d-v11-pending.md",
       "phase3dV11Note": "v11 待发送（2026-10-05）：风暴「热浪」38~43s 升温×1.5（不与酸雨重叠）；fallback 清单收口，玩法冻结待盲测+督导回看；v4~v11 八份备案一并待发",
       "phase3dV12Pending": "reviews/chatgpt-demo-03-3d-v12-pending.md",
-      "phase3dV12Note": "v12 待发送（2026-10-05）：指南验收矩阵查缺补漏（spend_log 目标字段/重开残留断言/分辨率 letterbox 拾取/手册入口 v12）；规则零改动；v4~v12 九份备案一并待发"
+      "phase3dV12Note": "v12 待发送（2026-10-05）：指南验收矩阵查缺补漏（spend_log 目标字段/重开残留断言/分辨率 letterbox 拾取/手册入口 v12）；规则零改动；v4~v12 九份备案一并待发",
+      "phase3dFidelity": "reports/miro-fidelity-3d.md",
+      "phase3dFidelityNote": "Idea Fidelity 对照（2026-10-05）：Miro 卡片级承诺逐条兑现；大愿景有意取舍且均经 2D 线历轮确认，3D 未引入新偏离。督导评审 v4~v12 时随九份草案一并参考。"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",
