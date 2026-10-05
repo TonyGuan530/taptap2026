@@ -705,6 +705,9 @@ func _process(delta: float) -> void:
 	if core.state != prev_state:
 		if core.state == "settle":
 			_show_settle_panel()
+		# C15 修复：离开 fly 态清零横向输入（防止按住 A/D 跨掷残留带偏下一掷）
+		if prev_state == "fly" and core.state != "fly":
+			core.lateral_input = 0.0
 		prev_state = core.state
 	_update_status()
 	_update_visuals()
