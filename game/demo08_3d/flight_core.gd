@@ -120,6 +120,9 @@ const LEVELS := [
 	{name = "第 28 关 · 谷风低门", short = "谷风低门", ratio = 0.6, folds = 6, target_m = 65.0, wind = "head", side_wind = 60.0, wind_up = -2000.0, wind_up_x = 36.0, wind_up_len = 10.0, reward = 14,
 		gate_x = 28.0, gate_h = 14.0, gate_bonus = 3, low_gate_x = 52.0, low_gate_top = 8.0, low_gate_side = 240.0,
 		tip = "谷风低门：逆风加右推侧风（60px/s²），36-46 米下沉谷把低线压到 8m 以下——谷底正好是侧风把你送进 52 米右侧低空门（+4m 横位、8m 以下）+3 门带的时机，切忌补舵（按 D 冲过头、按 A 被带出带）；抬头线先吃 28 米高空门（14m 以上）+3。一掷二选一，65 米过关。新机制关（用户指令扩展）"},
+	{name = "第 29 关 · 双谷接力", short = "双谷接力", ratio = 0.6, folds = 6, target_m = 62.0, wind = "head", wind_up = -1400.0, wind_up_x = 30.0, wind_up_len = 10.0, wind_up2 = -1400.0, wind_up2_x = 50.0, wind_up2_len = 10.0, reward = 14,
+		gate_x = 24.0, gate_h = 14.0, gate_bonus = 3, low_gate_x = 46.0, low_gate_top = 14.0,
+		tip = "双谷接力：逆风 62 米有两段下沉谷（30-40 米、50-60 米）——高度要省着用：先吃 24 米高空门（14m 以上）+3，或平折线从第一谷出来在 40-50 米喘息窗口吃 46 米低空门（14m 以下）+3，闯过第二谷收 62 米。两谷三站一掷到底。新机制关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [

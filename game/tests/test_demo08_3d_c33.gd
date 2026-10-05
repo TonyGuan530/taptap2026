@@ -68,18 +68,19 @@ func _recipe(i: int) -> Array:
 		25: return [4, 28.0, 1.0, 0.0, 0.0, 0.35]
 		26: return [4, 40.0, 1.0, 0.0, 0.0, 0.2]
 		27: return [4, 24.0, 1.0, 0.0, 0.0, 0.35]
+		28: return [4, 30.0, 1.0, 0.0, 0.0, 0.2]
 	return [3, 30.0, 1.0, 0.0, 0.0]
 
 
 func _run() -> void:
 	await process_frame
-	_log("demo-08 3D 难度曲线分析开始（二十八关顺序通关，无商店购买）")
+	_log("demo-08 3D 难度曲线分析开始（二十九关顺序通关，无商店购买）")
 	_log("关 | 时长s | 距离m | 金币 | 高门 | 低门 | 过关")
 	var c: Object = CoreScript.new()
 	var total_t := 0.0
 	var total_d := 0.0
 	var all_pass := true
-	for i in 28:
+	for i in 29:
 		c.start_level(i)
 		var r := _recipe(i)
 		if r.size() > 5:
@@ -111,7 +112,7 @@ func _run() -> void:
 		total_d += d
 		all_pass = all_pass and c.last_pass
 		_log("%2d | %5.1f | %5.1f | %3d | %s | %s | %s" % [i + 1, ft, d, int(c.coins), str(c.gate_hit), str(c.low_gate_hit), str(c.last_pass)])
-	_check(all_pass, "C33-A 二十八关全部过关（无商店购买强化）")
+	_check(all_pass, "C33-A 二十九关全部过关（无商店购买强化）")
 	_check(absf(float(c.total_distance) - total_d) < 0.5, "C33-B 总里程 %.1fm 一致" % total_d)
 	_log("--------------------------------------")
 	_log("汇总：总飞行 %.1f 秒 / 总里程 %.1f 米 / 总金币 %d" % [total_t, total_d, int(c.coins)])
