@@ -47,3 +47,7 @@ node tools/hub-smoke.mjs https://tonyguan530.github.io/taptap2026/ <版本> revi
   **classic 42.6 fps / storm 36.7 fps，最差帧 34ms**。
 - 结论：即使完全无 GPU 加速也可玩（>30fps）；真核显（Intel/AMD iGPU）介于两者与独显之间。盲测可告知"任意现代机器可玩"，无需优化。
 - 工具：perf-fps.mjs 支持 PERF_SW=1 开关。
+
+## 补录（2026-10-05 17:40 轮）：跨浏览器验证
+- Firefox 155（playwright firefox，headless）实测 v13：启动/菜单点击/世界射线拾取建造/键盘 1 与 F 全通，0 页面错误（reviews/shots/firefox-v13/；工具 tools/firefox-smoke.mjs）。
+- 教训：世界点击的坐标证据脚本与相机取景耦合——v13 起证据脚本优先用键盘通道（1/2/3/F），世界点击仅作专项验证。
