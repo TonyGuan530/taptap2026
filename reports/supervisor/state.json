@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-05T11:52:00+08:00",
-  "round": 116,
+  "checkedAt": "2026-10-05T12:03:00+08:00",
+  "round": 117,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard SKIP not-foreground（11:50 实跑）"
@@ -53,9 +53,11 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "3D 迁移多线推进（demo-02 v14 探索版/demo-06 v9 回归修复）；真人 Gate 等派人"
+    "queue": "🔴 3D 质量红线修复（FB-101~107 分派七任务）；真人 Gate 等派人"
   },
   "watch": [
+    "🔴【最高优先·用户七条反馈】3D 迁移质量红线（核心身份铁律：3D 换皮不换魂）——demo-03 岩浆回归/demo-06 画回归/demo-02 第三人称+扩展/demo-08 真折纸物理/demo-09/10/11 启动 3D 化（总批示 reviews/supervisor-directive-2026-10-05-3d-quality.md）",
+    "⚠️ 核心身份缺失修复前，问题 3D 版不得切 hub 主槽",
     "🔴【硬红线】11:50 巡检合规——持续",
     "✅ PINNED 规则首次被任务遵守（demo-02 v14 上线不切基线槽）",
     "⚠️【清扫规则修正】PINNED.md 标记目录无条件保留（当前：demo-02-3d-v10 Batch 01 基线）——督导第114轮误删事故复盘已固化（批示 pages-cleanup.md）",

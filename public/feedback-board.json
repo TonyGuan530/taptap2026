@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-05T02:55:00+08:00",
+  "updated": "2026-10-05T12:01:00+08:00",
   "items": [
     {
       "id": "FB-001",
@@ -30,6 +30,62 @@
       "status": "fixed",
       "fixedIn": "2026-10-03 修复版",
       "reply": "导出脚本已改无 BOM 写出，build.json 已修复，随下次发布带出"
+    },
+    {
+      "id": "FB-101",
+      "build": "demo-02-3d",
+      "ts": "2026-10-05",
+      "text": "不能第三视角，玩法单一——要求第三人称+玩法扩展",
+      "status": "open",
+      "reply": ""
+    },
+    {
+      "id": "FB-102",
+      "build": "demo-03-3d",
+      "ts": "2026-10-05",
+      "text": "岩浆消失了（核心主题丢失），玩法需扩展",
+      "status": "open",
+      "reply": ""
+    },
+    {
+      "id": "FB-103",
+      "build": "demo-06-3d",
+      "ts": "2026-10-05",
+      "text": "不符合：没有画的环节、交互不对（核心涂鸦玩法丢失）",
+      "status": "open",
+      "reply": ""
+    },
+    {
+      "id": "FB-104",
+      "build": "demo-08-3d",
+      "ts": "2026-10-05",
+      "text": "折纸要有物理模拟：真的可以模拟折纸并射出",
+      "status": "open",
+      "reply": ""
+    },
+    {
+      "id": "FB-105",
+      "build": "demo-09",
+      "ts": "2026-10-05",
+      "text": "没有 3D 化",
+      "status": "open",
+      "reply": ""
+    },
+    {
+      "id": "FB-106",
+      "build": "demo-10",
+      "ts": "2026-10-05",
+      "text": "没有 3D 化",
+      "status": "open",
+      "reply": ""
+    },
+    {
+      "id": "FB-107",
+      "build": "demo-11",
+      "ts": "2026-10-05",
+      "text": "没有 3D 化",
+      "status": "open",
+      "reply": ""
     }
   ]
 }
