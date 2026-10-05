@@ -874,8 +874,14 @@ func _update_status() -> void:
 		"fly":
 			var live_m: float = (core.plane_pos.x - START_X) / PX_PER_M
 			var h_m: float = (GROUND_Y - core.plane_pos.y) / PX_PER_M
-			status_label.text = "%s · 飞行中 %.1f 米 / 目标 %.0f 米 · 高度 %.1f 米 · 横移 %.1f 米" % [
-				String(L.name), live_m, float(L.target_m), h_m, float(core.lateral) / PX_PER_M]
+			# C36 打磨：摆动门关状态栏补实时门位（与判定共用 gate_side_at/low_gate_side_at）
+			var gate_pos_txt: String = ""
+			if float(L.get("gate_swing", 0.0)) > 0.0:
+				gate_pos_txt = " · 高门位 %+.1f m" % (float(core.gate_side_at(core.flight_time)) / PX_PER_M)
+			if float(L.get("low_gate_swing", 0.0)) > 0.0:
+				gate_pos_txt += " · 低门位 %+.1f m" % (float(core.low_gate_side_at(core.flight_time)) / PX_PER_M)
+			status_label.text = "%s · 飞行中 %.1f 米 / 目标 %.0f 米 · 高度 %.1f 米 · 横移 %.1f 米%s" % [
+				String(L.name), live_m, float(L.target_m), h_m, float(core.lateral) / PX_PER_M, gate_pos_txt]
 			# C30 打磨：飞行提示按关卡机制定制（摆门/侧风关提醒时机与漂移）
 			var fly_hint := "A/D 横移（门有横向宽度），R 复位相机"
 			if float(L.get("gate_swing", 0.0)) > 0.0 or float(L.get("low_gate_swing", 0.0)) > 0.0:
