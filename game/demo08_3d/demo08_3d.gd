@@ -495,17 +495,19 @@ func chart_points() -> PackedVector2Array:
 	return pts
 
 
-## 轨迹复盘标记：门/终点（米）
+## 轨迹复盘标记：门/终点（米）；C21 补摆动门摆幅/周期数据（0=静止门）
 func chart_marks() -> Array:
 	var L: Dictionary = core.LEVELS[core.level_idx]
 	var marks: Array = []
 	var gate_x_m: float = float(L.get("gate_x", 0.0))
 	if gate_x_m > 0.0:
-		marks.append({x = gate_x_m, kind = "high", side = float(L.get("gate_side", 0.0)) / PX_PER_M})
+		marks.append({x = gate_x_m, kind = "high", side = float(L.get("gate_side", 0.0)) / PX_PER_M,
+			swing = float(L.get("gate_swing", 0.0)) / PX_PER_M, period = float(L.get("gate_period", 0.0))})
 	var lg_x_m: float = float(L.get("low_gate_x", 0.0))
 	if lg_x_m > 0.0:
-		marks.append({x = lg_x_m, kind = "low", side = float(L.get("low_gate_side", 0.0)) / PX_PER_M})
-	marks.append({x = float(L.target_m), kind = "finish", side = 0.0})
+		marks.append({x = lg_x_m, kind = "low", side = float(L.get("low_gate_side", 0.0)) / PX_PER_M,
+			swing = float(L.get("low_gate_swing", 0.0)) / PX_PER_M, period = float(L.get("low_gate_period", 0.0))})
+	marks.append({x = float(L.target_m), kind = "finish", side = 0.0, swing = 0.0, period = 0.0})
 	return marks
 
 
@@ -530,11 +532,19 @@ func _on_chart_draw() -> void:
 		var mx: float = r.position.x + float(m.x) / max_d * r.size.x
 		var col := Color("b71c1c") if String(m.kind) == "finish" else (Color("f9a825") if String(m.kind) == "high" else Color("0277bd"))
 		chart.draw_line(Vector2(mx, r.position.y), Vector2(mx, r.position.y + r.size.y), Color(col, 0.7), 2.0)
-		# C17 打磨：门线标注横位（finish 无横位不标）
+		# C17/C21 打磨：门线标注横位与摆幅（finish 无横位不标）
 		if String(m.kind) != "finish":
 			var side_m: float = float(m.side)
-			chart.draw_string(FONT, Vector2(mx + 3.0, r.position.y + 11.0), chart_gate_label(float(m.x), side_m),
+			var label_text: String = chart_gate_label(float(m.x), side_m) + chart_gate_swing_label(float(m.swing), float(m.period))
+			chart.draw_string(FONT, Vector2(mx + 3.0, r.position.y + 11.0), label_text,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(col, 0.9))
+
+
+## 阶段 C21 打磨：摆动门摆幅标注文本（静止门返回空串；headless 可断言）
+func chart_gate_swing_label(swing_m: float, period_s: float) -> String:
+	if swing_m < 0.01 or period_s < 0.01:
+		return ""
+	return " ±%.0fm/%.1fs" % [swing_m, period_s]
 
 
 ## 阶段 C17 打磨：复盘小图门线标注文本（headless 可断言）
