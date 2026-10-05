@@ -554,6 +554,21 @@ func chart_gate_label(x_m: float, side_m: float) -> String:
 	return "%.0fm 门%+.0fm" % [x_m, side_m]
 
 
+## 阶段 C29 打磨：摆动门关结算门摆信息文本（无摆动门返回空串；headless 可断言）
+func settle_gate_swing_text() -> String:
+	var L: Dictionary = core.LEVELS[core.level_idx]
+	var parts: Array = []
+	var hs_m: float = float(L.get("gate_swing", 0.0)) / core.PX_PER_M
+	if hs_m > 0.01:
+		parts.append("高门±%.0fm/%.1fs" % [hs_m, float(L.get("gate_period", 0.0))])
+	var ls_m: float = float(L.get("low_gate_swing", 0.0)) / core.PX_PER_M
+	if ls_m > 0.01:
+		parts.append("低门±%.0fm/%.1fs" % [ls_m, float(L.get("low_gate_period", 0.0))])
+	if parts.is_empty():
+		return ""
+	return "门摆：" + " / ".join(parts)
+
+
 func paint_chart_axes(r: Rect2, max_d: float, max_h: float) -> void:
 	chart.draw_rect(r, Color(1, 1, 1, 0.55))
 	chart.draw_line(r.position + Vector2(0, r.size.y), r.position + Vector2(r.size.x, r.size.y), Color("607d8b"), 1.5)
@@ -807,6 +822,10 @@ func _show_settle_panel() -> void:
 	var lat_info: String = ""
 	if core.wind_mode() == "side" or absf(core.side_wind_accel()) > 0.0:
 		lat_info = " · 横移 %+.1f 米" % (float(core.lateral) / 60.0)
+	# C29 打磨：摆动门关卡结算补门摆信息（摆幅/周期，帮助玩家数拍）
+	var swing_info: String = settle_gate_swing_text()
+	if swing_info != "":
+		lat_info += " · " + swing_info
 	settle_body.text = "%s\n飞行距离 %.1f 米 · 目标 %.0f 米 · 顶点 %.1f 米%s\n%s\n小贴士：%s" % [
 		String(L.name), core.flight_distance, float(L.target_m), core.apex_m, lat_info, earn_txt, String(L.tip)]
 	# 轨迹复盘小图（阶段 C）：高度-距离 + 门/终点标记
