@@ -123,6 +123,9 @@ const LEVELS := [
 	{name = "第 29 关 · 双谷接力", short = "双谷接力", ratio = 0.6, folds = 6, target_m = 62.0, wind = "head", wind_up = -1400.0, wind_up_x = 30.0, wind_up_len = 10.0, wind_up2 = -1400.0, wind_up2_x = 50.0, wind_up2_len = 10.0, reward = 14,
 		gate_x = 24.0, gate_h = 14.0, gate_bonus = 3, low_gate_x = 46.0, low_gate_top = 14.0,
 		tip = "双谷接力：逆风 62 米有两段下沉谷（30-40 米、50-60 米）——高度要省着用：先吃 24 米高空门（14m 以上）+3，或平折线从第一谷出来在 40-50 米喘息窗口吃 46 米低空门（14m 以下）+3，闯过第二谷收 62 米。两谷三站一掷到底。新机制关（用户指令扩展）"},
+	{name = "第 30 关 · 终局峡谷", short = "终局峡谷", ratio = 0.6, folds = 6, target_m = 70.0, wind = "head", side_wind = -60.0, wind_up = -1600.0, wind_up_x = 36.0, wind_up_len = 8.0, wind_up2 = 2400.0, wind_up2_x = 48.0, wind_up2_len = 12.0, reward = 14,
+		gate_x = 66.0, gate_h = 16.0, gate_bonus = 3, gate_side = -240.0,
+		tip = "终局峡谷：全机制终考——逆风 1.25 倍、左推侧风（60px/s²）、36-44 米下沉谷压你下去、48-60 米热气流把你托回来，出口高度够不够得着 66 米左侧高空门（-4m 横位、16m 以上）+3：谷里被压多低、热流里爬多高、风替你漂多左，三件事拼成最后一掷，70 米冲线。新机制关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
