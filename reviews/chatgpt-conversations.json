@@ -47,7 +47,9 @@
       "phase3dV12Pending": "reviews/chatgpt-demo-03-3d-v12-pending.md",
       "phase3dV12Note": "v12 待发送（2026-10-05）：指南验收矩阵查缺补漏（spend_log 目标字段/重开残留断言/分辨率 letterbox 拾取/手册入口 v12）；规则零改动；v4~v12 九份备案一并待发",
       "phase3dFidelity": "reports/miro-fidelity-3d.md",
-      "phase3dFidelityNote": "Idea Fidelity 对照（2026-10-05）：Miro 卡片级承诺逐条兑现；大愿景有意取舍且均经 2D 线历轮确认，3D 未引入新偏离。督导评审 v4~v12 时随九份草案一并参考。"
+      "phase3dFidelityNote": "Idea Fidelity 对照（2026-10-05）：Miro 卡片级承诺逐条兑现；大愿景有意取舍且均经 2D 线历轮确认，3D 未引入新偏离。督导评审 v4~v12 时随九份草案一并参考。",
+      "phase3dConsolidatedPending": "reviews/chatgpt-demo-03-3d-consolidated-pending.md",
+      "phase3dConsolidatedNote": "合并版主备案（v4~v12 一次发送版，2026-10-05）：九份单版草案以此为发送主件；附三张截图与四个裁定问题（整体判定/冻结进盲测/平衡预判/C 收口确认）"
     },
     "demo-04": {
       "url": "https://chatgpt.com/c/6ac0e8ee-ce2c-83ec-b46c-bf1da4ee74f5",
