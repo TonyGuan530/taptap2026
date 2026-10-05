@@ -91,3 +91,14 @@ C family 定型：**C0 Push Box → 0 墨**；**C1 Heavy-assisted Box → 40 墨
 - 两条执行注意：①session_end(restart) 在汇总中与 goal/give_up **单列**（已落实：汇总行增「重开」计数，time-to-goal 只统计 goal 会话）；②placement_rejected 高比例只能标 **placement-control suspect**，不得直接归因。
 - 冻结令：**第一批真人数据回来前不改 L3、不改输入手感/墨水/碰撞/词条参数**（足够干净的实验版本）。
 - 下一轮交付物（真人数据到达后）：5-8 位 tester 的 summary + 每人 failure_cause 人工标注 + lifecycle_model_observed + 典型录像片段描述 + 是否出现未预设解 → 正式 Gate 判定 **KEEP / ITERATE / DROP（或仅 usability 修正后 KEEP）**，并定下一步（扩词条/新关/先修 3D 操作层）。
+
+---
+
+## 回执裁定 4（2026-10-05 07:45，L7/L8 内容新增 FYI 后）
+
+> 收到，定位合理。**L7/L8 可以作为内容扩展保留，不改变真人 Gate 判定口径。**
+
+- L7 价值：坡度/滚动物/空间绕行引入现有系统；L8：Heavy Ball 从「可移动对象」推进到「可预测轨迹工具」。
+- **隔离关系固定：Gate build 语义=v6 / L3-first；Content build=v8 / L7-L8 可继续扩**——boots、L3 参数、输入、墨水、碰撞、词条规则不被内容线反向改动即不污染真人数据。
+- L8 观察点：落点精准若依赖固定初始位/固定轨迹→偏 authored physics puzzle；玩家用不同 yaw/落点/推法仍可得可利用结果→才接近 systemic use。现在不改，作为内容关观察。
+- 无需新增裁定；继续等真人数据，正式 Gate 只看 L3-first 样本。
