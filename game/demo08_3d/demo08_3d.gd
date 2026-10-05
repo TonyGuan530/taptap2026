@@ -998,6 +998,9 @@ func _draw_wind_tag() -> void:
 func wind_tag_text() -> String:
 	var w: String = core.wind_mode()
 	if w == "none":
+		# C41 打磨：无基础风但有正交侧风（L20 切变低门）也显示风信息，不再返回空串
+		if absf(core.side_wind_accel()) > 0.0:
+			return _ortho_wind_text("")
 		return ""
 	if w == "side":
 		var left: bool = core.wind_side() < 0.0
@@ -1012,12 +1015,26 @@ func wind_tag_text() -> String:
 			var after: bool = core.wind_side2() < 0.0
 			return "风切变 %.0fm：侧风 %s → %s" % [shear_m, dir1, "←" if after else "→"]
 		return "侧风 %s（A/D 顶风）" % dir1
-	var head: bool = w == "head"
-	var label := "逆风 阻力 x1.25" if head else "顺风 恒定推力"
+	var base := "逆风 阻力 x1.25" if w == "head" else "顺风 恒定推力"
+	if absf(core.side_wind_accel()) > 0.0:
+		return _ortho_wind_text(base + " ＋ ")
+	return base
+
+
+## 正交侧风（C13）标签段：切变面按符号翻转 side_wind（幅值不变），段向 = d1 / -d1 / d1
+func _ortho_wind_text(prefix: String) -> String:
 	var sw: float = core.side_wind_accel()
-	if absf(sw) > 0.0:
-		label += " ＋ 侧风%s" % ("←" if sw < 0.0 else "→")
-	return label
+	var dir1: String = "←" if sw < 0.0 else "→"
+	var dir_flip: String = "→" if sw < 0.0 else "←"
+	var shear_m: float = float(core.LEVELS[core.level_idx].get("shear_x", 0.0))
+	var shear2_m: float = float(core.LEVELS[core.level_idx].get("shear_x2", 0.0))
+	if shear_m > 0.0 and shear2_m > 0.0:
+		return "%s三段侧风 %.0f/%.0fm：%s%s%s" % [prefix, shear_m, shear2_m, dir1, dir_flip, dir1]
+	if shear_m > 0.0:
+		return "%s切变侧风 %.0fm：%s → %s" % [prefix, shear_m, dir1, dir_flip]
+	if prefix == "":
+		return "%s侧风%s（A/D 顶风）" % [prefix, dir1]
+	return "%s侧风%s" % [prefix, dir1]
 
 
 # ---------------- 自动演示 + 离线截图（DEMO08_SHOTS_DIR 环境变量触发） ----------------

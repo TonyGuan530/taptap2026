@@ -102,6 +102,9 @@ const LEVELS := [
 	{name = "第 22 关 · 顺风斜风", short = "顺风斜风", ratio = 0.85, folds = 6, target_m = 65.0, wind = "tail", side_wind = 60.0, reward = 14,
 		gate_x = 42.0, gate_h = 12.0, gate_bonus = 3, gate_side = -240.0,
 		tip = "顺风斜风：顺风恒推让你冲得更快，侧风又向右推（60px/s²）——高门 42 米却在左边（-4m 横位、12m 以上）+3：提前按住 A 顶风左切，飞得越快修正窗口越短，65 米过关。更多机制关卡（用户指令扩展）"},
+	{name = "第 23 关 · 顺风S形", short = "顺风S形", ratio = 0.85, folds = 6, target_m = 70.0, wind = "tail", side_wind = -60.0, shear_x = 30.0, shear_x2 = 55.0, reward = 14,
+		gate_x = 45.0, gate_h = 12.0, gate_bonus = 3, gate_side = 240.0,
+		tip = "顺风S形：顺风恒推冲得快，侧风先左后右再左（30/55 米两次切变）——中段乘风右切吃 45 米高空门（+4m 横位、12m 以上）+3，末段左风帮你回正收尾 70 米。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
