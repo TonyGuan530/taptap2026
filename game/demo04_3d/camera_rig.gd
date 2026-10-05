@@ -25,7 +25,13 @@ func _ready() -> void:
 	cam.position = Vector3(0, 0, 0)
 	arm.add_child(cam)
 	cam.current = true
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	# v10 鼠标捕获修复：Web 无手势下捕获必失败（NotAllowedError）且 captured 标志失真，
+	# 导致指针可见却拖拽转相机——Web 初始不捕获（键盘可通全关），点击画布后再尝试捕获
+	if OS.has_feature("web"):
+		captured = false
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	apply_rotation()
 
 func _unhandled_input(event: InputEvent) -> void:

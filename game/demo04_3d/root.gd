@@ -125,6 +125,7 @@ var _prev_player_pos := Vector3.ZERO         # 上一帧玩家位置（传送帧
 var stats := {"jumps": 0, "doubles": 0, "falls": 0, "dark_enter": 0, "fuses": 0}  # 会话聚合（遥测 v2）
 var _in_dark_prev := false
 var shard_vis: Array = []            # 碎片视觉节点（脉冲动画）
+var alien_vis: Array = []            # 外星生物视觉节点（待机动画）
 
 var lbl_level: Label
 var lbl_dna: Label
@@ -262,6 +263,7 @@ func load_level(idx: int) -> void:
 	add_child(level_root)
 	alien_nodes = {}
 	cracks = []
+	alien_vis = []
 	shard_vis = []
 	ability.reset_level_state(true)   # 每关重教 DNA，组合发现跨关保留（对齐 2D）
 	var L: Dictionary = LEVELS[level_idx]
@@ -387,6 +389,7 @@ func _build_alien(a: Dictionary) -> void:
 	mat.emission = a.col * 0.4
 	vis.material_override = mat
 	level_root.add_child(vis)
+	alien_vis.append(vis)
 	var lbl := Label3D.new()
 	lbl.text = a.name
 	lbl.font_size = 40
@@ -522,11 +525,16 @@ func _physics_process(delta: float) -> void:
 		_grounded_ticks = 0
 	_update_fuse_candidate()
 	_check_crack_smash()
-	# 碎片呼吸脉冲
+	# 碎片呼吸脉冲 + 外星生物待机动画（视觉层；融合判定用 Area 位置不受影响）
 	var pulse := 1.0 + 0.18 * sin(Time.get_ticks_msec() / 220.0)
 	for sv in shard_vis:
 		if is_instance_valid(sv):
 			sv.scale = Vector3(pulse, pulse, pulse)
+	var t := Time.get_ticks_msec() / 1000.0
+	for av in alien_vis:
+		if is_instance_valid(av):
+			av.rotation.y += delta * 1.2
+			av.position.y = 0.8 + sin(t * 2.0 + av.position.x) * 0.08
 	if toast_age < 3.0:
 		toast_age += delta
 		if toast_age >= 3.0:
