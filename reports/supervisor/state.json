@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-05T22:52:00+08:00",
-  "round": 124,
+  "checkedAt": "2026-10-05T23:52:00+08:00",
+  "round": 125,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（22:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（23:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -28,7 +28,7 @@
     "demo-04": {
       "cron": "15,45 * * * *",
       "runCount": 24,
-      "evidence": "✅ 3D 演示片更新为最新巡游版本（843 帧证据保鲜，发版冻结期）"
+      "evidence": "✅ 3D v10 发布（鼠标捕获修复+Pointer Lock 异常清零+待机动画；净零替换控体积）"
     },
     "demo-05": {
       "cron": "20,50 * * * *",
@@ -53,9 +53,11 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "FB-102 responded 待复测；FB-104 催办消化中（demo-08 22:20 槽未动，23:20 再核——仍无则升级）"
+    "queue": "FB-104 第二轮点名已发（00:20 槽必须开工 spike，暂停加关）；FB-102 responded 待复测；FB-103/105~107 待首响应"
   },
   "watch": [
+    "🔴【硬红线】23:50 巡检合规——持续",
+    "⚠️ FB-104 第二轮点名已发（demo-08 00:20 槽必须开工折纸 spike，暂停加关）——00:52 核对",
     "🔴【硬红线·执行记录】22:50 巡检击杀 2 违规进程（45880/33664）——发现即杀机制生效",
     "⚠️ FB-104 观察：demo-08 22:20 槽未动折纸（23:20 再核，仍无则升级催办）",
     "⚠️ FB-104 催办后动向 22:20 核对（demo-08 19:20 轮无新提交属长测试正常）",
