@@ -1,9 +1,9 @@
 extends Node3D
-## demo-02 3D 上板素材驱动：L1→L2→L3→L4→L5→L6→L7 七关连打（与 b 套件同款解法）
+## demo-02 3D 上板素材驱动：L1→L2→L3→L4→L5→L6→L7→L8 八关连打（与 b 套件同款解法）
 ## 运行：godot --path game --write-movie <绝对路径>/f.png --fixed-fps 30 res://tests/movie_demo02_3d.tscn
 
 var game: Node3D
-var phase := 0          # 0=L1 1=L2 2=L3 3=L4(羽毛路线) 4=L5(零输入) 5=L6(羽毛接力) 6=L7(砸天窗)
+var phase := 0          # 0=L1 1=L2 2=L3 3=L4(羽毛路线) 4=L5(零输入) 5=L6(羽毛接力) 6=L7(砸天窗) 7=L8(砸桥)
 var sub := 0            # 阶段内步骤
 var hold := 0           # 过关停留帧数（30fps × 1.2s）
 var released := false
@@ -15,7 +15,7 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if game == null or phase >= 7:
+	if game == null or phase >= 8:
 		return
 	if game.goal_reached:
 		hold += 1
@@ -27,7 +27,7 @@ func _physics_process(_delta: float) -> void:
 			Input.action_release("p_fwd")   # 换关必须松净按键，否则漂移会被顶回
 			Input.action_release("p_left")
 			released = false
-			if phase >= 7:
+			if phase >= 8:
 				get_tree().quit()
 		return
 	match phase:
@@ -38,6 +38,16 @@ func _physics_process(_delta: float) -> void:
 		4: _drive_l5()
 		5: _drive_l6()
 		6: _drive_l7()
+		7: _drive_l8()
+
+
+func _drive_l8() -> void:
+	if game.ball == null:
+		return
+	if sub == 0:
+		game._load_level(7)
+		game.switch_tag(2)
+		sub = 1   # 皮球不切词条全弧砸断脆桥坠谷底（零输入路线B）
 
 
 func _drive_l1() -> void:
