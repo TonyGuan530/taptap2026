@@ -773,8 +773,12 @@ func _show_settle_panel() -> void:
 			core.gate_coins + core.coins_earned, core.gate_coins, core.coins_earned, core.coins]
 	else:
 		earn_txt = "金币 +%d（门奖 %d 失败仍保留）· 现有 %d" % [core.gate_coins, core.gate_coins, core.coins]
-	settle_body.text = "%s\n飞行距离 %.1f 米 · 目标 %.0f 米 · 顶点 %.1f 米\n%s\n小贴士：%s" % [
-		String(L.name), core.flight_distance, float(L.target_m), core.apex_m, earn_txt, String(L.tip)]
+	# C16 打磨：有横向风的关卡结算补横移信息（帮助玩家把侧风与轨迹关联）
+	var lat_info: String = ""
+	if core.wind_mode() == "side" or absf(core.side_wind_accel()) > 0.0:
+		lat_info = " · 横移 %+.1f 米" % (float(core.lateral) / 60.0)
+	settle_body.text = "%s\n飞行距离 %.1f 米 · 目标 %.0f 米 · 顶点 %.1f 米%s\n%s\n小贴士：%s" % [
+		String(L.name), core.flight_distance, float(L.target_m), core.apex_m, lat_info, earn_txt, String(L.tip)]
 	# 轨迹复盘小图（阶段 C）：高度-距离 + 门/终点标记
 	chart_cache = chart_points()
 	chart_marks_cache = chart_marks()
@@ -881,25 +885,36 @@ func _draw_throw_ui() -> void:
 
 
 func _draw_wind_tag() -> void:
+	var tag: String = wind_tag_text()
+	if tag == "":
+		return
+	paint.draw_string(FONT, Vector2(730.0, 60.0), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("5c6bc0"))
+
+
+## 阶段 C16 打磨：风标签文本函数化（headless 可测；覆盖 none/head/tail/侧风/切变/双段切变/正交侧风）
+func wind_tag_text() -> String:
 	var w: String = core.wind_mode()
 	if w == "none":
-		return
+		return ""
 	if w == "side":
 		var left: bool = core.wind_side() < 0.0
-		var tag := "侧风 %s（A/D 顶风）" % ("←" if left else "→")
+		var dir1: String = "←" if left else "→"
 		var shear_m: float = float(core.LEVELS[core.level_idx].get("shear_x", 0.0))
+		var shear2_m: float = float(core.LEVELS[core.level_idx].get("shear_x2", 0.0))
+		if shear_m > 0.0 and shear2_m > 0.0:
+			var dir2: String = "←" if core.wind_side2() < 0.0 else "→"
+			var dir3: String = "←" if core.wind_side3() < 0.0 else "→"
+			return "双段切变 %.0f/%.0fm：侧风 %s→%s→%s" % [shear_m, shear2_m, dir1, dir2, dir3]
 		if shear_m > 0.0:
 			var after: bool = core.wind_side2() < 0.0
-			tag = "风切变 %.0fm：侧风 %s → %s" % [shear_m, "→" if left else "←", "←" if after else "→"]
-		paint.draw_string(FONT, Vector2(730.0, 60.0), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("5c6bc0"))
-		return
+			return "风切变 %.0fm：侧风 %s → %s" % [shear_m, dir1, "←" if after else "→"]
+		return "侧风 %s（A/D 顶风）" % dir1
 	var head: bool = w == "head"
-	var col := Color("5c6bc0") if head else Color("43a047")
 	var label := "逆风 阻力 x1.25" if head else "顺风 恒定推力"
 	var sw: float = core.side_wind_accel()
 	if absf(sw) > 0.0:
 		label += " ＋ 侧风%s" % ("←" if sw < 0.0 else "→")
-	paint.draw_string(FONT, Vector2(730.0, 60.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, col)
+	return label
 
 
 # ---------------- 自动演示 + 离线截图（DEMO08_SHOTS_DIR 环境变量触发） ----------------
