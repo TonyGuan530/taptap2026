@@ -1024,15 +1024,19 @@ func wind_tag_text() -> String:
 	return label
 
 
-## C42 气流区标签：wind_up_x 未配置或 wind_up=0 返回空串（既有关路径不变）
+## C42 气流区标签：wind_up_x 未配置或 wind_up=0 返回空串（既有关路径不变）；C43 双区带依次列出
 func updraft_text() -> String:
-	var x_m: float = float(core.LEVELS[core.level_idx].get("wind_up_x", 0.0))
-	var a: float = float(core.LEVELS[core.level_idx].get("wind_up", 0.0))
-	if x_m <= 0.0 or absf(a) < 1e-6:
-		return ""
-	var len_m: float = float(core.LEVELS[core.level_idx].get("wind_up_len", 10.0))
-	var tag := "上升气流" if a > 0.0 else "下沉气流"
-	return "%s %.0f-%.0f 米（%s）" % [tag, x_m, x_m + len_m, "乘流爬升" if a > 0.0 else "俯冲穿越"]
+	var parts := PackedStringArray()
+	for b in 2:
+		var suf := "" if b == 0 else "2"
+		var x_m: float = float(core.LEVELS[core.level_idx].get("wind_up" + suf + "_x", 0.0))
+		var a: float = float(core.LEVELS[core.level_idx].get("wind_up" + suf, 0.0))
+		if x_m <= 0.0 or absf(a) < 1e-6:
+			continue
+		var len_m: float = float(core.LEVELS[core.level_idx].get("wind_up" + suf + "_len", 10.0))
+		var tag := "上升气流" if a > 0.0 else "下沉气流"
+		parts.append("%s %.0f-%.0f 米（%s）" % [tag, x_m, x_m + len_m, "乘流爬升" if a > 0.0 else "俯冲穿越"])
+	return " ＋ ".join(parts)
 
 
 ## 正交侧风（C13）标签段：切变面按符号翻转 side_wind（幅值不变），段向 = d1 / -d1 / d1
