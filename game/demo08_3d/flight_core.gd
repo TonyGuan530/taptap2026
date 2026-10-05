@@ -108,6 +108,21 @@ const SHOP_POOL := [
 	{id = "tough", name = "韧性", price = 3, unique = true, desc = "落地弹跳一次不直接判负，唯一"},
 ]
 
+## C37 打磨：七物机制适配提示（选关/商店帮助玩家按当前关机制选购物）
+const SHOP_HINTS := {
+	"power": "长距离关利器",
+	"wing": "滑翔关/高门关通用",
+	"prop": "平飞稳定，侧风关好搭档",
+	"trimtool": "精确切门必备",
+	"stiff": "逆风关利器（降阻力）",
+	"ballast": "摆门关好搭档（驯配平）",
+	"tough": "低空关门保底",
+}
+
+
+func shop_hint(id: String) -> String:
+	return String(SHOP_HINTS.get(id, ""))
+
 ## 跑局经济（跨关持续）
 var rng := RandomNumberGenerator.new()
 var state := "menu"          # menu / fold / throw / fly / settle / shop / final

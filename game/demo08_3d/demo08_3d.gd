@@ -56,6 +56,7 @@ var chart_cache := PackedVector2Array()
 var chart_marks_cache: Array = []
 var shop_panel: Panel
 var shop_coins: Label
+var shop_hint_label: Label   # C37 打磨：按当前关机制推荐购物方向
 var shop_box: Control
 var shop_skip: Button
 var final_panel: Panel
@@ -421,6 +422,14 @@ func _build_shop_panel() -> void:
 	st.add_theme_font_size_override("font_size", 20)
 	st.add_theme_color_override("font_color", Color("111111"))
 	shop_panel.add_child(st)
+	# C37 打磨：按当前关机制推荐购物方向（动态刷新于 _refresh_shop）
+	shop_hint_label = Label.new()
+	shop_hint_label.name = "ShopHint"
+	shop_hint_label.position = Vector2(24, 42)
+	shop_hint_label.add_theme_font_size_override("font_size", 13)
+	shop_hint_label.add_theme_color_override("font_color", Color("0d47a1"))
+	shop_panel.add_child(shop_hint_label)
+	shop_panel.add_child(shop_hint_label)
 	shop_coins = Label.new()
 	shop_coins.name = "ShopCoins"
 	shop_coins.position = Vector2(24, 48)
@@ -674,6 +683,16 @@ func _show_final() -> void:
 
 func _refresh_shop() -> void:
 	shop_coins.text = "金币：%d" % core.coins
+	# C37 打磨：按当前关机制推荐购物方向
+	var L: Dictionary = core.LEVELS[core.level_idx]
+	var hint_parts: Array = []
+	if core.wind_mode() == "head":
+		hint_parts.append("逆风关：纸面加固降阻力")
+	elif core.wind_mode() == "side":
+		hint_parts.append("侧风关：重心铅条驯配平")
+	if float(L.get("gate_swing", 0.0)) > 0.0 or float(L.get("low_gate_swing", 0.0)) > 0.0:
+		hint_parts.append("摆门关：配平仪精确切门")
+	shop_hint_label.text = " · ".join(hint_parts) if hint_parts.size() > 0 else ""
 	for c in shop_box.get_children():
 		c.queue_free()
 	for i in core.shop_items.size():
