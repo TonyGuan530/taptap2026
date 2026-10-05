@@ -129,6 +129,28 @@ const LEVELS := [
 		fragile = null,
 		goal = { pos = Vector3(13.75, 6.65, 0), size = Vector3(2.4, 1.1, 2.4) },   # 基座顶，底 6.1 离座面 0.1
 	},
+	{
+		name = "第七关 · 破窗密室", solution = "弹簧冲天，顶点切石头高速坠落砸穿密室天窗（皮球不切只有 12.2 < 窗阈 14）",
+		spawn = Vector3(-8, 1.6, 0),
+		boxes = [
+			[Vector3(-7, -0.25, 0), Vector3(11, 0.5, 10), "field"],     # 发射场 x -12.5..-1.5
+			[Vector3(1, -0.25, 0), Vector3(7, 0.5, 10), "field"],       # 密室地板 x -2.5..4.5
+			[Vector3(-1.95, 4.75, 0), Vector3(1.1, 0.5, 8), "wall"],    # 顶棚左段（天窗 x -1.4..0.2）
+			[Vector3(3.3, 4.75, 0), Vector3(2.4, 0.5, 8), "wall"],      # 顶棚右段 x 2.1..4.5
+			[Vector3(-2.75, 2.25, 0), Vector3(0.5, 4.5, 8), "wall"],    # 密室左墙
+			[Vector3(4.75, 2.25, 0), Vector3(0.5, 4.5, 8), "wall"],     # 密室右墙
+			[Vector3(-4, 6, -5.25), Vector3(18, 12, 0.5), "wall"],
+			[Vector3(-4, 6, 5.25), Vector3(18, 12, 0.5), "wall"],
+			[Vector3(-12.75, 6, 0), Vector3(0.5, 12, 11), "wall"],
+			[Vector3(5.75, 6, 0), Vector3(0.5, 12, 11), "wall"],
+			[Vector3(-3.5, 12.25, 0), Vector3(19, 0.5, 11), "wall"],
+		],
+		springs = [
+			{ pos = Vector3(-8, 0.15, 0), imp = Vector3(4.9, 15, 0) },  # 冲天：顶点 y≈12 高于天窗，坠落段攒速度
+		],
+		fragile = { pos = Vector3(1.55, 4.75, 0), size = Vector3(5.9, 0.3, 3), speed = 14.0 },   # 整条天窗缝=脆板（阈 14）：石头坠落 15+ 破，皮球不切 12 破不了
+		goal = { pos = Vector3(2.5, 0.65, 0), size = Vector3(2.4, 1.1, 2.4) },   # 室内，底 0.1 离地
+	},
 ]
 
 var level_idx := 0
@@ -139,6 +161,7 @@ var ground_ray: RayCast3D
 var fragile: StaticBody3D
 var goal_reached := false
 var fragile_broken := false
+var fragile_need := 11.0
 var spring_used := false
 var in_spring := false
 var spring_ready := true
@@ -289,6 +312,8 @@ func _load_level(idx: int) -> void:
 		var blk: Node3D = ModelLibrary.create_model("iron_block")
 		blk.scale = Vector3(lv.fragile.size.x / 0.92, lv.fragile.size.y / 0.85, lv.fragile.size.z / 0.92)
 		fragile.add_child(blk)
+		# 每关可覆盖阈值（L7 破窗=14：皮球自然弹道 12.4 不够，逼最后一刻切石头）
+		fragile_need = lv.fragile.get("speed", FRAGILE_SPEED)
 	# GOAL
 	var goal := Area3D.new()
 	goal.name = "Goal"
@@ -458,7 +483,7 @@ func _on_goal_enter(other: Node) -> void:
 
 func _on_ball_hit(other: Node) -> void:
 	var lv: Dictionary = LEVELS[level_idx]
-	if other == fragile and not fragile_broken and prev_speed >= FRAGILE_SPEED:
+	if other == fragile and not fragile_broken and prev_speed >= fragile_need:
 		fragile_broken = true
 		level_nodes.erase(fragile)   # 摘除幽灵引用，防下次 _load_level 对已释放节点 queue_free
 		fragile.queue_free()

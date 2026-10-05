@@ -71,6 +71,10 @@ func _run() -> void:
 		await _case_9()
 	if wanted < 0 or wanted == 10:
 		await _case_10()
+	if wanted < 0 or wanted == 11:
+		await _case_11()
+	if wanted < 0 or wanted == 12:
+		await _case_12()
 	_log("ALL DONE fails=%d" % fails)
 	logf.flush()
 	quit(1 if fails > 0 else 0)
@@ -254,4 +258,30 @@ func _case_10() -> void:
 	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 12000:
 		await physics_frame
 	_check("⑪ L6 石头弹道落谷不误通关", not scene.goal_reached)
+	scene.queue_free()
+
+# ⑫ L7 破窗密室：冲天到顶点切石头，高速坠落砸穿天窗入室
+func _case_11() -> void:
+	await _new_scene(6)
+	scene.switch_tag(2)
+	var launched: bool = await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > 9.0, 10000)
+	var t0 := Time.get_ticks_msec()
+	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 15000:
+		if scene.ball.position.y > 8.0 and scene.ball.linear_velocity.y < 1.0 and scene.tag_idx != 1:
+			scene.switch_tag(1)   # 顶点切石头（与 L2/L3 同款自然时机）
+		await physics_frame
+	_check("⑫ L7 顶点切石头砸穿天窗", scene.goal_reached and scene.fragile_broken)
+	_log("⑫ switches=%s" % [str(scene.tel_switches)])
+	scene.queue_free()
+	await physics_frame
+
+# ⑬ L7 皮球直飞对照：弹道穿窗速度 12.4 < 阈值 14，破不了窗不误通关
+func _case_12() -> void:
+	await _new_scene(6)
+	scene.switch_tag(2)
+	var t0 := Time.get_ticks_msec()
+	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 15000:
+		await physics_frame
+	_check("⑬ L7 皮球直飞破不了窗", not scene.goal_reached)
+	_log("⑬ broken=%s（应为 false）" % str(scene.fragile_broken))
 	scene.queue_free()
