@@ -13,7 +13,8 @@
 ## 规格
 requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-export.md）。玩法：形状(圆球/长板/方块)×词条(Heavy/Float/Fire/Sticky)统一规则物理解谜，目标 3-4 关。
 
-## 当前状态（2026-10-06 凌晨 · v10 冻结 + L6/L7/L8 robustness 全过）
+## 当前状态（2026-10-06 晨 · 探索线定稿于 L8，L9 设计 dead-end 已撤）
+- **L9（走道弹射+回落重试）设计并撤销**：实测球体落地即冻结（无地面驱动，W 无效）——「落地走回弹射器重试」的回路结构性不成立，玩家会硬死锁。已回退 L9 全部改动（LEVELS/用例），套件保持 15/15（HEAD 66b32c4 状态）。**设计空间结论入指南附录#4：所有路线必须纯空中链路。**探索线定稿于 L8（v14）；再加关前先等 Batch 01/监督裁定。
 - **L8 robustness gate 完成（test_demo02_3d_r8.gd）**：砸桥冲击 12.5 对阈 11（+13%）跨 30/60/120Hz+扰动全稳（30Hz 桥漏接已由调参消除）；羽毛轻过全配置不碎桥且过关。L8 弹簧调参 (5.5,14)→(4.5,15.5)，(4,16.5) 高弧落点飘过桥尾被否——margin 上限受桥位约束，已记入并入检查单。v14 探索版直链 https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v14/index.html （hub 未切）。
 - **L8 桥上桥下落地（demo-02-3d-v13 直链 https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v13/index.html ，hub 槽未切）**：同一脆板双语义——羽毛轻落桥面滚过桥尾（桥不碎）／皮球全弧砸断脆桥坠谷底；b 套件扩至 **15/15 全绿**；机制扩展=脆板 require_break 过关门可按关关闭（L2/L7 默认 true 不变）。探索内容不并入基线。
 - 新增工程坑：④批跑 15 连发引擎后必现启动停振——批内清僵尸（两个镜像名 taskkill）+ 必要时删 .godot；yaw=-PI/2 时 p_left 刹车推的是 Z 轴不是 -X（L2/L8 两次踩中——横向刹车用「松 W 靠阻尼」替代）；测试节点替换用 node 正则跨行匹配会吞码——恢复用 git checkout HEAD + 精确 Edit 重打。
