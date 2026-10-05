@@ -67,6 +67,10 @@ func _run() -> void:
 		await _case_7()
 	if wanted < 0 or wanted == 8:
 		await _case_8()
+	if wanted < 0 or wanted == 9:
+		await _case_9()
+	if wanted < 0 or wanted == 10:
+		await _case_10()
 	_log("ALL DONE fails=%d" % fails)
 	logf.flush()
 	quit(1 if fails > 0 else 0)
@@ -215,4 +219,39 @@ func _case_8() -> void:
 	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 15000:
 		await physics_frame
 	_check("⑨ L5 石头弹不上高环", not scene.goal_reached)
+	scene.queue_free()
+
+# ⑩ L6 抛接峡谷：起飞切羽毛，W 飘到 x=3.5 松键垂降浮板，二次点火后再 W 落基座 GOAL
+func _case_9() -> void:
+	await _new_scene(5)
+	scene.switch_tag(2)
+	var launched: bool = await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > 9.0, 10000)
+	scene.switch_tag(0)   # 起飞即切羽毛
+	scene.yaw = -PI / 2   # 面朝 +X（与 L1/L3/L4 同款方向惯例）
+	Input.action_press("p_fwd")
+	var released := false
+	var flung := false
+	var t0 := Time.get_ticks_msec()
+	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 25000:
+		if not released and scene.ball.position.x >= 3.5:
+			released = true
+			Input.action_release("p_fwd")   # 半程松 W，靠阻尼刹住垂降上浮板
+		if released and not flung and scene.ball.linear_velocity.y >= 7.5 and scene.ball.position.y > 5.5:
+			flung = true   # 浮板二次点火已发生
+			Input.action_press("p_fwd")     # 点火后继续 W 飞向基座
+		await physics_frame
+	Input.action_release("p_fwd")
+	_check("⑩ L6 羽毛接力上基座", scene.goal_reached and flung)
+	_log("⑩ tel switches=%s spring=%s" % [str(scene.tel_switches), str(scene.spring_used)])
+	scene.queue_free()
+	await physics_frame
+
+# ⑪ L6 石头对照：直线弹道落谷，够不着浮板与高台
+func _case_10() -> void:
+	await _new_scene(5)
+	scene.switch_tag(1)
+	var t0 := Time.get_ticks_msec()
+	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 12000:
+		await physics_frame
+	_check("⑪ L6 石头弹道落谷不误通关", not scene.goal_reached)
 	scene.queue_free()

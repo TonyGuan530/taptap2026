@@ -108,6 +108,27 @@ const LEVELS := [
 		fragile = null,
 		goal = { pos = Vector3(-3, 11, 0), size = Vector3(2.4, 1.0, 2.4) },   # 高空环：二级弹簧顶点 ≈12 穿过
 	},
+	{
+		name = "第六关 · 抛接峡谷", solution = "弹簧斜抛切羽毛：W 飘到峡谷中段松键垂降浮空弹板，二次点火抛上基座 GOAL（直线滑翔会被基座挡住）",
+		spawn = Vector3(-8, 1.6, 0),
+		boxes = [
+			[Vector3(-8, -0.25, 0), Vector3(8, 0.5, 12), "field"],      # 左岸 x -12..-4
+			[Vector3(13.75, 1.75, 0), Vector3(3.5, 3.5, 6), "wall"],    # 高台 x 12..15.5 顶面 y=3.5
+			[Vector3(13.75, 3, 0), Vector3(2.5, 6, 3), "wall"],         # 基座 x 12.5..15 顶面 y=6（挡直线滑翔）
+			[Vector3(2.5, 6, -6.25), Vector3(29, 12, 0.5), "wall"],
+			[Vector3(2.5, 6, 6.25), Vector3(29, 12, 0.5), "wall"],
+			[Vector3(-12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
+			[Vector3(16.25, 6, 0), Vector3(0.5, 12, 13), "wall"],
+			[Vector3(-2, 9.25, 0), Vector3(20, 0.5, 13), "wall"],       # 左半顶棚 y 9..9.5（发射段）
+			[Vector3(12.5, 11.75, 0), Vector3(11, 0.5, 13), "wall"],    # 右半顶棚抬高 y 11.5..12（接力段）
+		],
+		springs = [
+			{ pos = Vector3(-8, 0.15, 0), imp = Vector3(4.5, 13, 0) },  # 斜抛：石头直线弹道落谷（g=23.5 顶点仅 4.3m）
+			{ pos = Vector3(5, 5.5, 0), imp = Vector3(5, 9.5, 0), size = Vector3(3.5, 1.2, 3.5) },   # 浮空弹板：二次点火抛上基座
+		],
+		fragile = null,
+		goal = { pos = Vector3(13.75, 6.65, 0), size = Vector3(2.4, 1.1, 2.4) },   # 基座顶，底 6.1 离座面 0.1
+	},
 ]
 
 var level_idx := 0
@@ -121,7 +142,7 @@ var fragile_broken := false
 var spring_used := false
 var in_spring := false
 var spring_ready := true
-var active_imp := Vector3.ZERO
+var spring_areas: Array[Area3D] = []
 var flap_used := false
 var prev_speed := 0.0
 var tel_switches: Array[String] = []
@@ -236,6 +257,7 @@ func _load_level(idx: int) -> void:
 		if is_instance_valid(n):   # 碎板已被 queue_free 但仍挂在 level_nodes，直接 free 会中断协程
 			n.queue_free()
 	level_nodes.clear()
+	spring_areas.clear()
 	level_idx = idx
 	var lv: Dictionary = LEVELS[idx]
 	for b: Array in lv.boxes:
@@ -249,14 +271,14 @@ func _load_level(idx: int) -> void:
 		spring.position = s.pos
 		var scs := CollisionShape3D.new()
 		var ssh := BoxShape3D.new()
-		ssh.size = Vector3(2, 0.4, 2)
+		ssh.size = s.get("size", Vector3(2, 1.2, 2))   # 触发带 1.2m 厚：高反弹皮球的微弹跳必须触发（0.4m 薄带会帧运气漏接）
 		scs.shape = ssh
 		spring.add_child(scs)
 		var plate: Node3D = ModelLibrary.create_model("pressure_plate")
 		plate.position = Vector3(0, -0.2, 0)
 		spring.add_child(plate)
-		spring.body_entered.connect(_on_spring_enter.bind(s.imp))
-		spring.body_exited.connect(_on_spring_exit)
+		spring.set_meta("imp", s.imp)
+		spring_areas.append(spring)   # 点火走每帧 overlaps_body 查询（body_exited 在斜抛+CCD 下不可靠）
 		add_child(spring)
 		level_nodes.append(spring)
 	# 脆板
@@ -319,6 +341,7 @@ func _spawn_ball(pos: Vector3) -> void:
 	ground_ray.target_position = Vector3(0, -(BALL_R + 0.15), 0)
 	ball.add_child(ground_ray)
 	add_child(ball)
+	level_nodes.append(ball)   # 球入清理清单：否则换关后旧球泄漏成物理幽灵（与真球互撞毁发射）
 	if cam_rig == null:
 		cam_rig = Node3D.new()
 		cam_rig.name = "CameraRig"
@@ -420,16 +443,6 @@ func _zone_name() -> String:
 	return "field"
 
 
-func _on_spring_enter(_other: Node, imp: Vector3) -> void:
-	in_spring = true
-	active_imp = imp
-
-
-func _on_spring_exit(_other: Node) -> void:
-	in_spring = false
-	spring_ready = true
-
-
 func _on_goal_enter(other: Node) -> void:
 	if not (other is RigidBody3D):
 		return   # 只认玩家球体；StaticBody(地板)贴邻边界会误触发
@@ -484,10 +497,16 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("p_tag3"):
 		switch_tag(2)
 
-	if in_spring and spring_ready:
-		ball.linear_velocity = active_imp   # 全矢量抛射：imp 可含横向分量（L4 弹板抛射路线）
-		spring_ready = false
-		spring_used = true
+	in_spring = false
+	for a in spring_areas:
+		if is_instance_valid(a) and a.overlaps_body(ball):
+			in_spring = true
+			if spring_ready:
+				ball.linear_velocity = a.get_meta("imp")   # 全矢量抛射：横分量=定向弹板（L4/L6）；纯竖直=重置横向（L1 调好的越墙落点）
+				spring_ready = false
+				spring_used = true
+	if not spring_ready and in_spring == false:
+		spring_ready = true   # 离开所有弹簧即再武装（几何事实，不依赖事件）
 
 	if cam_rig != null and is_instance_valid(ball):
 		cam_rig.global_position = ball.global_position + Vector3(0, 0.3, 0)
