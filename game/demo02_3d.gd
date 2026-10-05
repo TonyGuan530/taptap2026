@@ -164,7 +164,7 @@ const LEVELS := [
 			[Vector3(-2, 12.25, 0), Vector3(21, 0.5, 11), "wall"],
 		],
 		springs = [
-			{ pos = Vector3(-8, 0.15, 0), imp = Vector3(5.5, 14, 0) },  # 全弧：皮球落桥面冲击 ≈12.6 破桥；羽毛切羽早刹可从桥下过
+			{ pos = Vector3(-8, 0.15, 0), imp = Vector3(4.5, 15.5, 0) },  # 高抛：皮球落桥面冲击 12.5 破桥（对阈 11 +13%，robustness gate 30/60/120Hz+扰动全稳）；羽毛 W 滑翔轻落同点不碎
 		],
 		fragile = { pos = Vector3(2.875, 3, 0), size = Vector3(8.25, 0.3, 4), require_break = false },   # 脆桥（默认阈 11）：既是路（轻过勿碎）也是门（砸断开下行）；过关不强制砸
 		goal = { pos = Vector3(7, -2.65, 0), size = Vector3(3.2, 1.1, 2.8) },   # 谷底加宽：接住桥下低压滑翔与砸桥坠落两条线
