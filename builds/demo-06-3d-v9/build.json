@@ -1,0 +1,7 @@
+{
+  "title": "TapTap2026 Demo",
+  "version": "demo-06-3d-v9",
+  "date": "2026-10-05T08:00:00.000Z",
+  "author": "49321",
+  "notes": "DEMO6 3D 迭代美术（冻结面外，评审已裁定视觉升级不构成实验污染）：玩家可见体=2D 线绿幕蜡笔小恐龙（固定 Y 广告牌，碰撞胶囊零改动）；装饰植被挂 layer 2——推 SpringArm 镜头但不参与玩法碰撞（修复树挡镜头的 camera friction）。levels 11/11+回归绿。Gate 语义不变（boots=L3）。"
+}
