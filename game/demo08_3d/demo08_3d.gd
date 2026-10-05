@@ -255,6 +255,22 @@ func _apply_level_props() -> void:
 		low.position = Vector3(float(L.get("low_gate_side", 0.0)) / PX_PER_M, 0.0, -lg_x_m)
 		level_props.add_child(low)
 		low_gate = low
+	# C44 打磨：气流区可视化——贴地色带（下沉深蓝/上升暖橙），横跨场地宽，长度=区带宽
+	for b in 2:
+		var zsuf := "" if b == 0 else "2"
+		var zx_m: float = float(L.get("wind_up" + zsuf + "_x", 0.0))
+		var za: float = float(L.get("wind_up" + zsuf, 0.0))
+		if zx_m <= 0.0 or absf(za) < 1e-6:
+			continue
+		var zlen_m: float = float(L.get("wind_up" + zsuf + "_len", 10.0))
+		var zone: Node3D = ComicObjectScript.new()
+		zone.name = "WindZone" + ("1" if b == 0 else "2")
+		var strip := BoxMesh.new()
+		strip.size = Vector3(24.0, 0.08, zlen_m)
+		zone.add_part(strip, Color("01579b") if za < 0.0 else Color("e65100"),
+			Transform3D(Basis.IDENTITY, Vector3(0.0, 0.04, 0.0)))
+		zone.position = Vector3(0.0, 0.0, -(zx_m + zlen_m / 2.0))
+		level_props.add_child(zone)
 
 
 # ---------------- 坐标转换 ----------------
@@ -512,7 +528,7 @@ func chart_points() -> PackedVector2Array:
 	return pts
 
 
-## 轨迹复盘标记：门/终点（米）；C21 补摆动门摆幅/周期数据（0=静止门）
+## 轨迹复盘标记：门/终点（米）；C21 补摆动门摆幅/周期数据（0=静止门）；C44 补气流带（kind="band"）
 func chart_marks() -> Array:
 	var L: Dictionary = core.LEVELS[core.level_idx]
 	var marks: Array = []
@@ -525,7 +541,21 @@ func chart_marks() -> Array:
 		marks.append({x = lg_x_m, kind = "low", side = float(L.get("low_gate_side", 0.0)) / PX_PER_M,
 			swing = float(L.get("low_gate_swing", 0.0)) / PX_PER_M, period = float(L.get("low_gate_period", 0.0))})
 	marks.append({x = float(L.target_m), kind = "finish", side = 0.0, swing = 0.0, period = 0.0})
+	for b in 2:
+		var suf := "" if b == 0 else "2"
+		var bx_m: float = float(L.get("wind_up" + suf + "_x", 0.0))
+		var ba: float = float(L.get("wind_up" + suf, 0.0))
+		if bx_m > 0.0 and absf(ba) > 1e-6:
+			marks.append({x = bx_m, kind = "band", side = 0.0, swing = 0.0, period = 0.0,
+				a = ba, len = float(L.get("wind_up" + suf + "_len", 10.0))})
 	return marks
+
+
+## 阶段 C44 打磨：气流带标注文本（无带返回空串；headless 可断言）
+func chart_band_label(a: float, x_m: float, len_m: float) -> String:
+	if absf(a) < 1e-6 or x_m <= 0.0:
+		return ""
+	return ("%s%.0f-%.0fm" % [("↓" if a < 0.0 else "↑"), x_m, x_m + len_m])
 
 
 func _on_chart_draw() -> void:
@@ -547,6 +577,15 @@ func _on_chart_draw() -> void:
 	chart.draw_circle(pts[pts.size() - 1], 3.0, Color("e53935"))
 	for m in chart_marks_cache:
 		var mx: float = r.position.x + float(m.x) / max_d * r.size.x
+		# C44 打磨：气流带画半透明竖直矩形（下沉蓝/上升橙）+ 短标注
+		if String(m.kind) == "band":
+			var bx1: float = r.position.x + (float(m.x) + float(m.len)) / max_d * r.size.x
+			var band_col := Color("01579b") if float(m.a) < 0.0 else Color("e65100")
+			chart.draw_rect(Rect2(Vector2(mx, r.position.y), Vector2(bx1 - mx, r.size.y)), Color(band_col, 0.10), true)
+			var band_txt: String = chart_band_label(float(m.a), float(m.x), float(m.len))
+			chart.draw_string(FONT, Vector2(mx + 3.0, r.position.y + 11.0), band_txt,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(band_col, 0.9))
+			continue
 		var col := Color("b71c1c") if String(m.kind) == "finish" else (Color("f9a825") if String(m.kind) == "high" else Color("0277bd"))
 		chart.draw_line(Vector2(mx, r.position.y), Vector2(mx, r.position.y + r.size.y), Color(col, 0.7), 2.0)
 		# C17/C21 打磨：门线标注横位与摆幅（finish 无横位不标）
