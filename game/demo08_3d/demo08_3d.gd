@@ -43,6 +43,8 @@ var status_label: Label
 var hint_label: Label
 var fold_btn: Button
 var menu_panel: Panel
+var tip_timer: Timer
+var tip_idx := 0
 var level_buttons: Array = []
 var menu_tip: Label
 var settle_panel: Panel
@@ -344,6 +346,12 @@ func _build_menu_panel() -> void:
 	menu_tip.add_theme_font_size_override("font_size", 14)
 	menu_tip.add_theme_color_override("font_color", Color("0d47a1"))
 	menu_panel.add_child(menu_tip)
+	# C30 打磨：选关提示自动轮播（新机制可发现性——玩家不悬停也能看到各关机制说明）
+	tip_timer = Timer.new()
+	tip_timer.wait_time = 2.5
+	tip_timer.autostart = true
+	tip_timer.timeout.connect(_on_menu_tip_rotate)
+	add_child(tip_timer)
 	var rules := Label.new()
 	rules.text = "3D 灰模：跟随视角观察同一套折线规则。折线靠右升力大、靠上抬头、长线多阻力。\n60 像素 = 1 米；R 复位相机；门奖即时入账，失败仍保留。\n阶段 B：飞行中 A/D 横移（加速 240/上限 320/阻尼 160 px/s²，边界 ±20m），门有横向宽度 5m。\n商店七物：力气/翼面/纸面加固/重心铅条/螺旋桨/配平仪/韧性——加固降阻力、铅条驯配平。"
 	rules.position = Vector2(24, 186)
@@ -690,6 +698,20 @@ func _on_menu_hover(i: int) -> void:
 		menu_tip.text = String(core.LEVELS[i].tip)
 
 
+## C30 打磨：选关提示自动轮播（仅在菜单态轮播已解锁关卡的机制说明）
+func _on_menu_tip_rotate() -> void:
+	if core.state != "menu" or menu_tip == null:
+		return
+	var tips: Array = []
+	for i in core.LEVELS.size():
+		if i <= core.unlocked:
+			tips.append(String(core.LEVELS[i].tip))
+	if tips.is_empty():
+		return
+	tip_idx = (tip_idx + 1) % tips.size()
+	menu_tip.text = tips[tip_idx]
+
+
 # ---------------- 输入（真实事件路径） ----------------
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -854,7 +876,13 @@ func _update_status() -> void:
 			var h_m: float = (GROUND_Y - core.plane_pos.y) / PX_PER_M
 			status_label.text = "%s · 飞行中 %.1f 米 / 目标 %.0f 米 · 高度 %.1f 米 · 横移 %.1f 米" % [
 				String(L.name), live_m, float(L.target_m), h_m, float(core.lateral) / PX_PER_M]
-			hint_label.text = "A/D 横移（门有横向宽度），R 复位相机"
+			# C30 打磨：飞行提示按关卡机制定制（摆门/侧风关提醒时机与漂移）
+			var fly_hint := "A/D 横移（门有横向宽度），R 复位相机"
+			if float(L.get("gate_swing", 0.0)) > 0.0 or float(L.get("low_gate_swing", 0.0)) > 0.0:
+				fly_hint = "门在摆动，注意穿越时机 · " + fly_hint
+			if core.wind_mode() == "side" or absf(core.side_wind_accel()) > 0.0:
+				fly_hint = "侧风会带偏航向 · " + fly_hint
+			hint_label.text = fly_hint
 		"settle":
 			status_label.text = ("过关！" if core.last_pass else "挑战失败") + " · 飞行 %.1f 米 · 金币 %d" % [core.flight_distance, core.coins]
 			hint_label.text = ""
