@@ -13,7 +13,10 @@
 ## 规格
 requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-export.md）。玩法：形状(圆球/长板/方块)×词条(Heavy/Float/Fire/Sticky)统一规则物理解谜，目标 3-4 关。
 
-## 当前状态（2026-10-05 晨 · 3D 阶段 B 收官）
+## 当前状态（2026-10-05 午 · v10 冻结 + L6 探索版）
+- **v10 = Batch 01 基线（冻结，试玩链接钉死 play.html?id=demo-02-3d-v10）**；本轮按用户「没活干就做更多机制关卡」指令产出 **L6 抛接峡谷（探索版 demo-02-3d-v11，直链可达 https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v11/index.html ，hub 槽未切）**：羽毛斜抛空中转向接力浮空弹板二次点火抛上基座，石头直线弹道对照失败；b 套件扩至 11/11 全绿。L6/L7 探索内容不并入基线，Batch 01 数据回来后由督导定取舍。
+- 本轮工程修复（6e90a38）：**换关球泄漏**（_spawn_ball 未入 level_nodes → 旧球成物理幽灵与真球互撞毁发射，v10 亦带此 leak，v11 修复）；**弹簧点火改每帧 overlaps_body 查询**（body_exited 事件在斜抛+CCD 下延迟/丢失，spring_ready 永不再武装）；**触发带 0.4→1.2m**（高反弹微弹跳帧运气漏接）。
+- 新增工程坑：①超时杀壳会泄漏 Godot 子进程（taskkill 按两个镜像名各杀一次）②硬杀损坏 .godot 缓存 → 引擎初始化 100% CPU 死循环且日志文件都不建 —— 删 game/.godot 重建即愈 ③同帧 queue_free 的节点 dump 仍在 children 里（别当幽灵 bug）。
 - **ChatGPT 专属监督对话 URL（定时任务提示词 2026-10-05 补记）：https://chatgpt.com/c/6abf238d-6dc0-83ec-aa5e-43c62aebe892** —— 2026-10-05 收官评审因侧边栏找不到该线另开了新对话 https://chatgpt.com/c/6ac2d990-1b54-83ec-aa58-aca4ab18859d ，后续里程碑优先用专属线。
 - **3D 五关齐并收官（demo-02-3d-v10 已上 Pages，build.json 200）**：L1 弹簧越墙 / L2 错位脆板（未砸板不入洞）/ L3 羽毛跨峡谷 / L4 开放高台双路线（羽毛飘台、皮球弹板全矢量抛射）/ L5 皮球零输入弹簧链穿环（石头对照失败）。headless b 套件 9/9 PASS（真实时间，含 4 个石头失败对照）；单实例 L1→L5 连打验证跨关装载链。五关视频重录（Movie Maker 32s，L5 段遥测 idle=true）。
 - **ChatGPT 阶段 B 收官裁定（2026-10-05，存 reviews/chatgpt-demo-02-full.md）**：**阶段 B 收官、冻结 v10；demo-02 总体 ITERATE；下一 Gate=Batch 01 真人试玩，不进阶段 C 美术**。L4 皮球抛射路线=合格第二路线（保留，勿人工补第三条）；L5=KEEP AS TOY 勿修、统计时与 L2-L4 分开。Batch 01 Gate 已定死（L4 ≥2 solution family + ≥1 未预设合法序列 + ≥2 人迁移物理关系 → 升 KEEP）。
