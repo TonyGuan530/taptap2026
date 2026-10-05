@@ -786,7 +786,7 @@ func _process(delta: float) -> void:
 	rain.emitting = sim.round_state == "play" and sim.acid_active()
 	# v11 热浪表现：岩浆辉光增强（风暴限定，只读 heatwave_active）
 	lava_mat.emission_energy_multiplier = lerpf(
-			lava_mat.emission_energy_multiplier, 2.6 if sim.surge_active() else (2.2 if sim.heatwave_active() else 1.2),
+			lava_mat.emission_energy_multiplier, 1.9 if sim.surge_active() else (2.2 if sim.heatwave_active() else 1.2),
 			minf(3.0 * delta, 1.0))
 	# v13 涌潮：岩浆面向村庄推进（-46 → -22），退潮归位
 	var lava_target_z := -22.0 if sim.surge_active() else -46.0
