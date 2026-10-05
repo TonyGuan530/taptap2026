@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-05T09:52:00+08:00",
-  "round": 114,
+  "checkedAt": "2026-10-05T10:52:00+08:00",
+  "round": 115,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（09:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（10:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -18,7 +18,7 @@
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "🔴 空转第 16 轮守望（2f07d2f）——失能维持"
+      "evidence": "✅ 自愈+立规：发现 v10 基线被误删→恢复+PINNED.md 保护声明（督导清扫规则已修正纳入）"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
@@ -38,16 +38,16 @@
     "demo-06": {
       "cron": "25,55 * * * *",
       "runCount": 24,
-      "evidence": "✅ 自瘦 700MB（547e884：留 v12 Playtest Baseline+v14 线上版）；v14 Pages 200"
+      "evidence": "✅ demo-06-3d v9（蜡笔小恐龙广告牌玩家+植被 layer2 修复，碰撞零改动 11/11 绿）"
     }
   },
   "envSnapshot": {
-    "health": "ok builds=16 目录/731M（巡检清理后）",
+    "health": "ok builds=18 目录/822M（含恢复的基线 v10）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "97 条（+3 展示卡；反馈区无新增）",
+    "miro": "97 条无新增（反馈区无新用户反馈）",
     "feedback": "db.json 零反馈",
-    "git": "main 0e45c79 已推送",
+    "git": "本轮 HEAD 待推",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
@@ -56,7 +56,8 @@
     "queue": "3D 迁移多线推进（demo-08 16关/demo-06 8关/demo-02 v12 七关）；真人 Gate 等派人"
   },
   "watch": [
-    "🔴【硬红线】09:50 巡检合规——持续",
+    "🔴【硬红线】10:50 巡检合规——持续",
+    "⚠️【清扫规则修正】PINNED.md 标记目录无条件保留（当前：demo-02-3d-v10 Batch 01 基线）——督导第114轮误删事故复盘已固化（批示 pages-cleanup.md）",
     "✅ builds 731M（09:52 巡检清理 7 个被取代版本）——体积巡检每轮执行",
     "📢【用户行动项】demo-05 真人 Gate 招募已上 Miro：2-3 人×2 夜×重开≥1（v6 链接+记录单+勿剧透纪律齐备，判定=2/3 人主动改变建窝策略→KEEP）——等用户派人",
     "🔴【硬红线】06:50 巡检合规——持续",
