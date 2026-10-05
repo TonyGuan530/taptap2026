@@ -33,6 +33,7 @@ var trail_mesh: MeshInstance3D
 var trail_imm: ImmediateMesh
 var level_props: Node3D
 var high_gate: Node3D = null       # C10：摆动门节点引用（每帧随 gate_side_at 更新）
+var low_gate: Node3D = null        # C19：低空摆门节点引用
 var sun: DirectionalLight3D
 
 ## HUD
@@ -200,6 +201,8 @@ func _build_world() -> void:
 func _apply_level_props() -> void:
 	for c in level_props.get_children():
 		c.queue_free()
+	high_gate = null
+	low_gate = null
 	var L: Dictionary = core.LEVELS[core.level_idx]
 	var finish_z := -float(L.target_m)
 	# 终点旗门：自建 ComicObject（柱 frame 色 + 横幅/地线红）
@@ -228,6 +231,8 @@ func _apply_level_props() -> void:
 		hg.position = Vector3(float(L.get("gate_side", 0.0)) / PX_PER_M, 0.0, -gate_x_m)
 		level_props.add_child(hg)
 		high_gate = hg
+	else:
+		high_gate = null
 	var lg_x_m: float = float(L.get("low_gate_x", 0.0))
 	if lg_x_m > 0.0:
 		# 低门：自建 ComicObject（双柱 + 横杆，杆顶=low_gate_top）；横位随 low_gate_side
@@ -246,6 +251,7 @@ func _apply_level_props() -> void:
 			Transform3D(Basis.IDENTITY, Vector3(0.0, float(L.low_gate_top), 0.0)))
 		low.position = Vector3(float(L.get("low_gate_side", 0.0)) / PX_PER_M, 0.0, -lg_x_m)
 		level_props.add_child(low)
+		low_gate = low
 
 
 # ---------------- 坐标转换 ----------------
@@ -740,6 +746,8 @@ func _update_visuals() -> void:
 	# C10 摆动门：高门横位每帧随 gate_side_at(flight_time)（与规则判定同一公式）
 	if high_gate != null and core.state == "fly":
 		high_gate.position.x = float(core.gate_side_at(float(core.flight_time))) / PX_PER_M
+	if low_gate != null and core.state == "fly":
+		low_gate.position.x = float(core.low_gate_side_at(float(core.flight_time))) / PX_PER_M
 	if core.state != "fly" and core.state != "settle":
 		cam_rig.position = Vector3(0.0, 1.2, 0.0)
 		cam_rig.rotation = Vector3(0.0, 0.0, 0.0)

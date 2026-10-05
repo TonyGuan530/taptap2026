@@ -87,6 +87,9 @@ const LEVELS := [
 	{name = "第 17 关 · 摆门斜风", short = "摆门斜风", ratio = 0.9, folds = 6, target_m = 60.0, wind = "head", side_wind = -60.0, reward = 14,
 		gate_x = 44.0, gate_h = 12.0, gate_bonus = 3, gate_side = 300.0, gate_swing = 240.0, gate_period = 4.0,
 		tip = "斜风摆门：逆风 1.25 倍 + 侧风向左推（60px/s²），门横位在 +5m 上 ±4m 摆动（4 秒来回）——顶住左漂向右切，对准门的摆位，44 米高空门（12m 以上）+3，60 米过关。更多机制关卡（用户指令扩展）"},
+	{name = "第 18 关 · 低空摆门", short = "低空摆门", ratio = 0.9, folds = 6, target_m = 60.0, wind = "none", reward = 12,
+		gate_x = 40.0, gate_h = 12.0, gate_bonus = 3, gate_swing = 240.0, gate_period = 3.0, low_gate_x = 44.0, low_gate_top = 10.0, low_gate_swing = 300.0, low_gate_period = 3.0,
+		tip = "两扇门都在摆！高门固定 +0m（±4m 摆动），低门 44 米处横位 ±5m 摆动（3 秒来回）——走高门看准摆位，俯冲吃低门要看它摆到哪，一掷二选一，60 米过关。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
@@ -336,7 +339,7 @@ func step(delta: float) -> String:
 	if lg_x_m > 0.0 and not low_gate_hit and not gate_hit:
 		var lg_px := START_X + lg_x_m * PX_PER_M
 		if prev_x < lg_px and plane_pos.x >= lg_px:
-			var lg_side: float = float(LEVELS[level_idx].get("low_gate_side", 0.0))
+			var lg_side: float = low_gate_side_at(flight_time)  # C19：含低空门摆动项
 			if plane_pos.y >= GROUND_Y - float(LEVELS[level_idx].low_gate_top) * PX_PER_M and absf(lateral - lg_side) <= GATE_HALF_PX:
 				low_gate_hit = true
 				var lgb: int = int(LEVELS[level_idx].gate_bonus)
@@ -504,12 +507,22 @@ func wind_side3() -> float:
 	return float(LEVELS[level_idx].get("wind_side3", wind_side2()))
 
 
-## 阶段 C10 摆动门：门横位随飞行时间正弦摆动（gate_swing 振幅 px、gate_period 周期 s；0=静止）
-## 判定与场景渲染共用此函数，保证同一时刻同一横位
+## 阶段 C10/C19 摆动门：门横位随飞行时间正弦摆动（gate_swing 振幅 px、gate_period 周期 s；0=静止）
+## 判定与场景渲染共用此函数，保证同一时刻同一横位；C19 扩展 low_gate_swing/low_gate_period（低空门独立摆动）
 func gate_side_at(t: float) -> float:
 	var base: float = float(LEVELS[level_idx].get("gate_side", 0.0))
 	var swing: float = float(LEVELS[level_idx].get("gate_swing", 0.0))
 	var period: float = float(LEVELS[level_idx].get("gate_period", 3.0))
+	if swing == 0.0 or period <= 0.0:
+		return base
+	return base + swing * sin(TAU * t / period)
+
+
+## 阶段 C19：低空门独立摆动（low_gate_swing/low_gate_period；0=静止，缺省随高门摆动参数）
+func low_gate_side_at(t: float) -> float:
+	var base: float = float(LEVELS[level_idx].get("low_gate_side", 0.0))
+	var swing: float = float(LEVELS[level_idx].get("low_gate_swing", 0.0))
+	var period: float = float(LEVELS[level_idx].get("low_gate_period", 3.0))
 	if swing == 0.0 or period <= 0.0:
 		return base
 	return base + swing * sin(TAU * t / period)
