@@ -164,6 +164,9 @@ var owned := []
 var shop_items := []
 var total_distance := 0.0
 var best_distance := 0.0
+var gates_offered := 0   # C54 打磨：本趟出现过的门总数（终局面板吃门统计，每关首次进入计一次）
+var gates_eaten := 0     # 本趟吃下的门数（门奖结算点累计；重试已吃门计入 N 不计入 M）
+var offered_mark := -1   # 去重标记：start_level 同关重入（失败重试）不重复累计 offered
 
 ## 本关折纸
 var paper_rect := Rect2(90, GROUND_Y - 300.0, 420.0, 300.0)
@@ -217,6 +220,9 @@ func start_level(i: int) -> void:
 	if i < 0 or i >= LEVELS.size():
 		return
 	level_idx = i
+	if i != offered_mark:   # C54：同关重试重入不重复计门
+		offered_mark = i
+		gates_offered += (1 if float(LEVELS[i].get("gate_x", 0.0)) > 0.0 else 0) + (1 if float(LEVELS[i].get("low_gate_x", 0.0)) > 0.0 else 0)
 	var ph := 300.0
 	var pw := ph * float(LEVELS[i].ratio)
 	paper_rect = Rect2(90, GROUND_Y - ph, pw, ph)
@@ -384,6 +390,7 @@ func step(delta: float) -> String:
 			var gate_side: float = gate_side_at(flight_time)  # C10：含摆动项（穿越时刻的瞬时横位）
 			if plane_pos.y <= GROUND_Y - float(LEVELS[level_idx].gate_h) * PX_PER_M and absf(lateral - gate_side) <= GATE_HALF_PX:
 				gate_hit = true
+				gates_eaten += 1
 				var gb: int = int(LEVELS[level_idx].gate_bonus)
 				coins += gb
 				coins_earned += gb
@@ -396,6 +403,7 @@ func step(delta: float) -> String:
 			var lg_side: float = low_gate_side_at(flight_time)  # C19：含低空门摆动项
 			if plane_pos.y >= GROUND_Y - float(LEVELS[level_idx].low_gate_top) * PX_PER_M and absf(lateral - lg_side) <= GATE_HALF_PX:
 				low_gate_hit = true
+				gates_eaten += 1
 				var lgb: int = int(LEVELS[level_idx].gate_bonus)
 				coins += lgb
 				coins_earned += lgb
@@ -500,6 +508,9 @@ func shop_skip() -> void:
 
 func reset_run() -> void:
 	coins = 0
+	gates_offered = 0
+	gates_eaten = 0
+	offered_mark = -1
 	upgrades = {power = 0, wing = 0, stiff = 0, ballast = 0}
 	owned = []
 	unlocked = 0

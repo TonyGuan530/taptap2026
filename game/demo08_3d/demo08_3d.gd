@@ -758,8 +758,8 @@ func _show_shop() -> void:
 
 func _show_final() -> void:
 	var owned_txt: String = ", ".join(core.owned) if core.owned.size() > 0 else "无特殊部件"
-	final_body.text = "%d 关全部飞过终点旗！\n总飞行 %d 米 · 最远一掷 %.1f 米 · 金币余额 %d\n强化：力气 x%d · 翼面 x%d · 加固 x%d · 铅条 x%d · %s" % [
-		core.LEVELS.size(), int(core.total_distance), core.best_distance, core.coins,
+	final_body.text = "%d 关全部飞过终点旗！\n总飞行 %d 米 · 最远一掷 %.1f 米 · 金币余额 %d · 吃门 %d/%d 扇\n强化：力气 x%d · 翼面 x%d · 加固 x%d · 铅条 x%d · %s" % [
+		core.LEVELS.size(), int(core.total_distance), core.best_distance, core.coins, int(core.gates_eaten), int(core.gates_offered),
 		int(core.upgrades.power), int(core.upgrades.wing),
 		int(core.upgrades.get("stiff", 0)), int(core.upgrades.get("ballast", 0)), owned_txt]
 	final_panel.visible = true
