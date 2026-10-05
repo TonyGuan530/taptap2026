@@ -37,16 +37,17 @@ try {
 	};
 	console.log('经典模式开局');
 	await click(385 / 960, 325 / 540);
-	await sleep(4000);
-	await click(SLOT[0][0], SLOT[0][1]);   // ~4s 建槽1
-	await sleep(9000);
-	await click(SLOT[1][0], SLOT[1][1]);   // ~13s 建槽2
-	await sleep(12000);                     // 20s 村民、22s 酸雨
-	await click(SLOT[0][0], SLOT[0][1]);   // ~25s 升级槽1
 	await sleep(8000);
-	await page.keyboard.press('F');        // ~33s 灭火指挥
-	console.log('经典段完成（40s）');
-	await sleep(7000);
+	await page.keyboard.press('1');        // ~4-5 游戏秒建槽1（键盘通道，与相机解耦）
+	await sleep(8000);
+	await page.keyboard.press('2');        // ~13 游戏秒建槽2
+	await sleep(11000);                     // 20s 村民、22s 酸雨
+	await page.keyboard.press('1');        // ~24 游戏秒升级槽1
+	await sleep(8000);
+	await page.keyboard.press('F');        // ~33 游戏秒灭火指挥（衔接 34s 涌潮）
+	console.log('灭火指挥已发，等待岩浆涌潮推进…');
+	await sleep(22000);                     // 34s 涌潮预警+推进（重头戏）
+	console.log('经典段完成（~56 游戏秒）');
 	// 风暴之夜段
 	await page.reload({ waitUntil: 'load', timeout: 90000 });
 	await page.waitForSelector('canvas', { timeout: 90000 });
@@ -54,8 +55,8 @@ try {
 	console.log('风暴之夜开局');
 	await click(575 / 960, 325 / 540);
 	await sleep(8000);
-	await click(SLOT[0][0], SLOT[0][1]);   // 建槽1（细雨背景）
-	await sleep(9000);                      // 15s±2 酸雨（紫雨+细雨叠加）
+	await page.keyboard.press('1');        // 建槽1（细雨背景）
+	await sleep(12000);                     // 15s±2 酸雨（紫雨+细雨叠加）
 	console.log('风暴段完成');
 	await sleep(3000);
 } finally {
