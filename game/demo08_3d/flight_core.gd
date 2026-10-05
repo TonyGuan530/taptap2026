@@ -75,6 +75,9 @@ const LEVELS := [
 	{name = "第 13 关 · 三风交汇", short = "三风交汇", ratio = 0.85, folds = 6, target_m = 55.0, wind = "head", side_wind = -60.0, reward = 14,
 		gate_x = 42.0, gate_h = 12.0, gate_bonus = 3, gate_side = 180.0, gate_swing = 300.0, gate_period = 2.5,
 		tip = "三风交汇：逆风阻力 1.25 倍、侧风向左推（60px/s²），门横位还在 +3m 上 ±5m 摆动（2.5 秒来回）——顶住左漂向右切，数准门摆节奏，42 米高空门（12m 以上）+3，55 米过关。更多机制关卡（用户指令扩展）"},
+	{name = "第 14 关 · 逆风三段走廊", short = "逆风三段", ratio = 0.85, folds = 6, target_m = 70.0, wind = "head", side_wind = -60.0, shear_x = 35.0, shear_x2 = 60.0, reward = 14,
+		gate_x = 48.0, gate_h = 12.0, gate_bonus = 3, gate_side = 120.0,
+		tip = "逆风 1.25 倍 + 三段侧风：35 米前左漂、35-60 米右送（趁势吃 48 米高空门 +4m 横位 +3）、60 米后再左漂收尾 70 米。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
@@ -250,13 +253,14 @@ func step(delta: float) -> String:
 	if state != "fly":
 		return ""
 	flight_time += delta
-	# 阶段 B1/C2/C5/C6：横向独立运动学（不触碰下方旧纵向/高度积分，升力不耦合）
-	# C2：wind="side" 恒定侧风（可切变）；C6 新增正交字段 side_wind：与 forward 风（head/tail/none）叠加
+	# 阶段 B1/C2/C5/C6/C13：横向独立运动学（不触碰下方旧纵向/高度积分，升力不耦合）
+	# C2：wind="side" 恒定侧风（可切变）；C6：正交字段 side_wind 与 forward 风叠加；
+	# C13：切变面同样作用于正交侧风——每越过一个已配置切变面，符号翻转一次（L9 无切变面 → 恒号不变）
 	var wind_a: float = 0.0
 	if wind_mode() == "side":
 		wind_a = eff_wind_side() * LAT_WIND
 	else:
-		wind_a = side_wind_accel()
+		wind_a = side_wind_accel() * shear_sign_flip()
 	if lateral_input != 0.0 or wind_a != 0.0:
 		lateral_vel += (lateral_input * LAT_ACCEL + wind_a) * delta
 	else:
@@ -505,3 +509,16 @@ func gate_side_at(t: float) -> float:
 ## 阶段 C6 正交侧风（px/s²，带符号）：与 forward 风（head/tail/none）叠加，用于非 "side" 风型关卡
 func side_wind_accel() -> float:
 	return float(LEVELS[level_idx].get("side_wind", 0.0))
+
+
+## 阶段 C13：切变面对正交侧风的符号翻转——每越过一个已配置切变面翻转一次
+## （无切变面恒 +1，L9 等既有正交关卡路径不变）
+func shear_sign_flip() -> float:
+	var flips := 0
+	var shear_m: float = float(LEVELS[level_idx].get("shear_x", 0.0))
+	if shear_m > 0.0 and plane_pos.x >= START_X + shear_m * PX_PER_M:
+		flips += 1
+	var shear2_m: float = float(LEVELS[level_idx].get("shear_x2", 0.0))
+	if shear2_m > 0.0 and plane_pos.x >= START_X + shear2_m * PX_PER_M:
+		flips += 1
+	return -1.0 if flips % 2 == 1 else 1.0

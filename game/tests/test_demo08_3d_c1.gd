@@ -55,6 +55,7 @@ func _recipe(i: int) -> Array:
 		10: return [5, 35.0, 1.0, 0.0, 0.0]
 		11: return [5, 35.0, 1.0, 0.0, 0.0, 0.35]
 		12: return [5, 30.0, 1.0, 1.0, 0.8]
+		13: return [5, 30.0, 1.0, 1.0, 0.0, 0.2, 30.2, 61.8]
 	return [3, 30.0, 1.0, 0.0, 0.0]
 
 
@@ -74,7 +75,15 @@ func _throw_and_fly(c: Object) -> void:
 	c.do_throw(float(r[1]), float(r[2]))
 	var g := 0
 	while String(c.state) == "fly" and g < MAX_STEPS:
-		c.lateral_input = float(r[3]) if c.flight_time < float(r[4]) else 0.0
+		# 第 7/8 元素（可选）= 位置窗顶风（L14 逆风三段配方用）：x ∈ [START+lo, START+hi) 时按住
+		var input_on: bool
+		if r.size() > 7:
+			var lo_px: float = 60.0 + float(r[6]) * 60.0
+			var hi_px: float = 60.0 + float(r[7]) * 60.0
+			input_on = c.plane_pos.x >= lo_px and c.plane_pos.x < hi_px
+		else:
+			input_on = c.flight_time < float(r[4])
+		c.lateral_input = float(r[3]) if input_on else 0.0
 		c.step(DELTA)
 		g += 1
 
@@ -90,7 +99,7 @@ func _run() -> void:
 	var best_d := 0.0
 	var coins_expect := 0
 	var all_pass := true
-	for i in 13:
+	for i in 14:
 		c.start_level(i)
 		_throw_and_fly(c)
 		var d: float = float(c.flight_distance)
@@ -102,18 +111,18 @@ func _run() -> void:
 		coins_expect += int(d / 10.0) + int(c.LEVELS[i].reward) + c.gate_coins
 		if not ok:
 			break
-		if i < 12:
+		if i < 13:
 			c.settle_continue()
 			if String(c.state) == "shop":
 				c.shop_skip()
-	_check(all_pass and String(c.state) == "settle" and c.level_idx == 12,
-		"C1-A 十三关依次过关（L4 转向吃高门含在流程内）")
+	_check(all_pass and String(c.state) == "settle" and c.level_idx == 13,
+		"C1-A 十四关依次过关（L4 转向吃高门含在流程内）")
 	var go: String = c.settle_continue()
-	_check(go == "final" and String(c.state) == "final", "C1-A2 L13 结算继续 → final")
+	_check(go == "final" and String(c.state) == "final", "C1-A2 L14 结算继续 → final")
 	_check(absf(float(c.total_distance) - sum_d) < 0.01 and absf(float(c.best_distance) - best_d) < 0.01,
 		"C1-A3 总里程/最远一致（%.1fm）" % float(c.total_distance))
 	_check(c.coins == coins_expect, "C1-A4 金币累计 %d = 各关门奖+结算之和" % c.coins)
-	_check(c.unlocked == 12, "C1-A5 解锁至第 13 关（unlocked=12）")
+	_check(c.unlocked == 13, "C1-A5 解锁至第 14 关（unlocked=13）")
 
 	# B 强化可解释性：力气 +1 级 → 初速比恰为 1.2，距离有可测变化
 	var base: Object = CoreScript.new()
