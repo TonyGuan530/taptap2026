@@ -1,0 +1,7 @@
+{
+  "title": "TapTap2026 Demo",
+  "version": "demo-02-3d-v14",
+  "date": "2026-10-05T12:40:00+08:00",
+  "author": "49321",
+  "notes": "exploration: L8 smash margin widened per robustness gate (12.5 vs 11, all tick rates stable); Batch 01 baseline remains v10; hub slot unchanged"
+}
