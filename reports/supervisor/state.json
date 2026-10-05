@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-06T01:52:00+08:00",
-  "round": 127,
+  "checkedAt": "2026-10-06T02:52:00+08:00",
+  "round": 128,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（01:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（02:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -53,9 +53,10 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "FB-104 等用户处置 demo-08 会话；FB-102 responded 待复测；FB-103/105~107 待首响应"
+    "queue": "FB-104 等 demo-08 会话处置；FB-102 responded 待复测；FB-103/105~107 待首响应"
   },
   "watch": [
+    "🔴【硬红线】02:50 巡检合规——持续",
     "🔴【硬红线·执行记录】01:50 巡检击杀 2 违规进程（22116/43632）",
     "🔴【硬红线·执行记录】00:50 巡检击杀 2 违规进程（5260/43244）——机制持续生效",
     "⚠️ FB-104：01:50 再核折纸 spike，仍无动作则跨会话诊断 demo-08",
