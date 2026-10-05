@@ -166,3 +166,9 @@
 - miro-post-shots SHOTS 表正式化 demo-04-3d 行（主仓库规范工具）并上板（真实截图+演示片 RAW 链接，日志去重生效只贴新行）。
 - reviews/chatgpt-demo-04-3d-v8.md 备案稿预写（含三处结构性适配说明与三个待决问题，状态=未发送）。
 - worktree 同步该工具行（secrets 缺失改由主仓库运行，已在案）。
+
+## 2026-10-05 09:50（轮33·实验房选关 v9）
+- fallback 启动：实验房关卡选择器（lab 内 1~5 直达任意关，全 DNA 自动带上；campaign 零影响；B 仍回来源关）——直接服务 Phase D lab-first 被试。
+- 规则变化：实验房新增 1~5 选关键。用例 24；25/25 + 2D 7/7 全绿；v9 发布（Pages 换版，demos.json→v9，pck 核过）。
+- 踩坑：match 分支内 var idx := 推断失败（keycode-KEY_1 无静态类型）→ 显式 : int。
+- 盲测协议同步补 1~5 选关说明。

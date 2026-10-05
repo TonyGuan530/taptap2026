@@ -572,6 +572,42 @@ func _run() -> void:
 	else:
 		_fail("相机跟随异常：worst=%.2f m on_floor=%s" % [worst, player.is_on_floor()])
 
+	# ---- 24. 实验房关卡选择器：lab 内按 3 直达 L3，全 DNA 保持，B 仍回来源关 ----
+	scene_root.load_level(1)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	var ev_k3 := InputEventKey.new()
+	ev_k3.keycode = KEY_K
+	ev_k3.physical_keycode = KEY_K
+	ev_k3.pressed = true
+	Input.parse_input_event(ev_k3)
+	await physics_frame
+	var ev_k3u := InputEventKey.new()
+	ev_k3u.keycode = KEY_K
+	ev_k3u.physical_keycode = KEY_K
+	ev_k3u.pressed = false
+	Input.parse_input_event(ev_k3u)
+	await physics_frame
+	var ev_3 := InputEventKey.new()
+	ev_3.keycode = KEY_3
+	ev_3.physical_keycode = KEY_3
+	ev_3.pressed = true
+	Input.parse_input_event(ev_3)
+	await physics_frame
+	var ev_3u := InputEventKey.new()
+	ev_3u.keycode = KEY_3
+	ev_3u.physical_keycode = KEY_3
+	ev_3u.pressed = false
+	Input.parse_input_event(ev_3u)
+	await physics_frame
+	await _settle(10)
+	var sel_ok: bool = scene_root.mode == "lab" and scene_root.level_idx == 2 and ability.dna.size() == 4
+	if sel_ok:
+		_ok("实验房选关：K 进 → 按 3 直达 L3「%s」，全 DNA 保持" % scene_root.LEVELS[2].name)
+	else:
+		_fail("实验房选关异常：mode=%s idx=%d dna=%d" % [scene_root.mode, scene_root.level_idx, ability.dna.size()])
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:

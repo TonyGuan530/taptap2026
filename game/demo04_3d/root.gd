@@ -702,7 +702,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if mode == "campaign":
 				mode = "lab"
 				load_level(level_idx)
-				_toast("实验室模式：全 DNA · R重置 B返回 T导出 G测试员")
+				_toast("实验室：全DNA · 1~5选关 · R重置 B返回 T导出 G测试员")
 		KEY_B:
 			if mode == "lab":
 				mode = "campaign"
@@ -713,6 +713,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			_toast("测试员编号：%s" % tester_id)
 		KEY_T:
 			_export_telemetry()
+		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5:
+			# 实验房关卡选择器（Phase D lab-first）：1~5 直达对应关卡，全 DNA 自动带上
+			if mode == "lab":
+				var idx: int = event.keycode - KEY_1
+				if idx != level_idx:
+					saved_campaign_idx = level_idx   # 记住来源关，B 仍返回
+					load_level(idx)
+					_toast("实验房直达：第 %d 关（B 返回第 %d 关）" % [idx + 1, saved_campaign_idx + 1])
 
 func _export_telemetry() -> void:
 	var stats := []

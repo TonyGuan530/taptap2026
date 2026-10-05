@@ -2,7 +2,7 @@
 
 ## 构建与入口
 - 版本：demo-04-3d-v8（或更新）；Web 试玩：https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v8/index.html
-- 操作：WASD/方向键移动 · Space 跳（二段需 DNA）· E 融合 · R 重开本关 · Shift+R 完整再跑 · K 实验房 / B 返回 / G 切被试编号 / T 导出遥测
+- 操作：WASD/方向键移动 · Space 跳（二段需 DNA）· E 融合 · R 重开本关 · Shift+R 完整再跑 · K 实验房 / 1~5 选关（实验房内直达任意关）/ B 返回 / G 切被试编号 / T 导出遥测
 - 遥测：G 键设定被试编号（P1~P5）后，T 键双写导出（浏览器下载 + IndexedDB）。**每名被试开始前务必按 G 切换到自己的编号。**
 
 ## 样本与流程（沿用 2D 协议骨架）
