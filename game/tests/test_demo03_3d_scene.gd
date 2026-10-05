@@ -94,5 +94,15 @@ func _run() -> void:
 	scene.sim.elapsed = 21.0
 	check(scene.sim.acid_active(), "风暴酸雨窗判定不因表现层改动变化")
 
+	# ---- 6. v14 火山口烟柱 + 岩浆流束（批示"火山口/岩浆流"形态）----
+	check(scene.plume != null and scene.plume.emitting, "火山口烟柱常驻")
+	check(scene.flow_mats.size() == 3, "三条岩浆流束就位")
+	scene.sim.elapsed = 53.0  # 风暴涌潮 52~58
+	await pump(120)
+	check(scene.flow_mats[0].emission_energy_multiplier > 1.05, "涌潮时流束增亮（离开基线 0.9）",
+			"e=%.2f" % scene.flow_mats[0].emission_energy_multiplier)
+	check(scene.plume.speed_scale > 1.05, "涌潮时烟柱加速（离开基线 1.0）",
+			"s=%.2f" % scene.plume.speed_scale)
+
 	print("==== 3D v5 场景表现测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)

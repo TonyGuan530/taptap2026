@@ -33,6 +33,8 @@ var cam: Camera3D
 var rig: Node3D
 var lava_mat: StandardMaterial3D
 var lava_node: MeshInstance3D
+var plume: CPUParticles3D
+var flow_mats: Array[StandardMaterial3D] = []
 var rain: CPUParticles3D
 var drizzle: CPUParticles3D
 var env_node: WorldEnvironment
@@ -178,6 +180,39 @@ func _build_world() -> void:
 	crater.material_override.emission_enabled = true
 	crater.material_override.emission = Color("ff5722")
 	crater.material_override.emission_energy_multiplier = 2.0
+	# v14 火山口烟柱（批示"火山口"形态）：灰烟顺风漂向镜头方向进入画面；涌潮时加速
+	plume = CPUParticles3D.new()
+	plume.amount = 44
+	plume.lifetime = 3.6
+	plume.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	plume.emission_box_extents = Vector3(2.5, 0.8, 2.5)
+	plume.position = Vector3(-38, 27.5, -52)
+	plume.direction = Vector3(0.55, 1.0, 0.45)
+	plume.spread = 12.0
+	plume.gravity = Vector3(0.4, 1.2, 0.3)
+	plume.initial_velocity_min = 2.5
+	plume.initial_velocity_max = 5.0
+	plume.scale_amount_min = 1.6
+	plume.scale_amount_max = 3.4
+	var pmat := StandardMaterial3D.new()
+	pmat.albedo_color = Color(0.16, 0.13, 0.15, 0.5)
+	pmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	pmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	pmat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	plume.mesh = QuadMesh.new()
+	(plume.mesh as QuadMesh).size = Vector2(2.0, 2.0)
+	plume.mesh.material = pmat
+	plume.emitting = true
+	add_child(plume)
+	# v14 岩浆流束（批示"岩浆流"形态）：火山方向汇入岩浆原的发光束，涌潮时增亮
+	for i in 3:
+		var flow := _box(self, Vector3(-26 + 10.0 * i, 0.12, -31.5 + 1.2 * i),
+				Vector3(18 - 2.0 * i, 0.12, 1.6 - 0.2 * i), Color("ff5722"), "LavaFlow%d" % i)
+		flow.rotation.y = 0.18 - 0.12 * i
+		flow.material_override.emission_enabled = true
+		flow.material_override.emission = Color("ff5722")
+		flow.material_override.emission_energy_multiplier = 0.9
+		flow_mats.append(flow.material_override)
 	# 四座小屋（v3 场景应用：ComicObject 静物 + 暖窗发光特效）
 	for i in HOUSE_POS.size():
 		var hp: Vector3 = HOUSE_POS[i]
@@ -793,6 +828,11 @@ func _process(delta: float) -> void:
 	lava_node.position.z = move_toward(lava_node.position.z, lava_target_z, 4.0 * delta)
 	lava_mat.albedo_color = lava_mat.albedo_color.lerp(
 			Color("7a1508") if sim.surge_active() else Color("d84315"), minf(3.0 * delta, 1.0))
+	# v14 火山口烟柱加速 + 岩浆流束增亮（只读 surge_active）
+	plume.speed_scale = lerpf(plume.speed_scale, 1.6 if sim.surge_active() else 1.0, minf(2.0 * delta, 1.0))
+	var flow_target := 2.0 if sim.surge_active() else 0.9
+	for m: StandardMaterial3D in flow_mats:
+		m.emission_energy_multiplier = lerpf(m.emission_energy_multiplier, flow_target, minf(3.0 * delta, 1.0))
 	_update_hover_proxy()
 	_update_tooltip(get_viewport().get_mouse_position())
 	# toast 淡出
