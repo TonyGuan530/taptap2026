@@ -553,6 +553,25 @@ func _run() -> void:
 	else:
 		_fail("弹跳板弹高异常：%.2f m（期望 2.6~3.6）" % rise)
 
+	# ---- 23. 相机跟随：下落全程镜头看得见落点（与玩家距离有界，验收矩阵「镜头看得见落点」） ----
+	scene_root.load_level(0)
+	await physics_frame
+	await physics_frame
+	var cam: Node3D = scene_root.get_node("CameraRig")
+	ability.reset_level_state(false)
+	await _teleport(Vector3(20.0, 5.5, 0))   # 高空落入 L1 中段平台
+	cam.position = player.position           # 吸附相机（排除传送瞬断），只测真实跟随滞后
+	var worst := 0.0
+	for i in 150:
+		await physics_frame
+		worst = maxf(worst, cam.position.distance_to(player.position))
+		if player.is_on_floor() and i > 20:
+			break
+	if worst > 0.0 and worst < 6.0 and player.is_on_floor():
+		_ok("相机跟随：下落全程与玩家最远 %.2f m（<6，落点可见）" % worst)
+	else:
+		_fail("相机跟随异常：worst=%.2f m on_floor=%s" % [worst, player.is_on_floor()])
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:
