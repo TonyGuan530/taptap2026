@@ -299,3 +299,9 @@
 ## 2026-10-05 20:30（轮62·例行巡检）
 - 全部健康：v12-3D/v12-2D 双链接 200 ✓；worktree 零未提交、远端同步 ✓；Pages 958M（demo-02-3d 4 版未清，余量裁决仍待用户）。
 - 稳态确认：v12 为当前发布，验证全绿，Phase D 材料齐备。外部输入（资产/ChatGPT/余量裁决）未变。
+
+## 2026-10-05 20:40（轮63·v10 上线 ★）
+- 发版冻结解除：Pages 跨 demo 维护（demo-02-3d 清 92M，槽位版+最新版保留、git 历史可恢复）→ 余量 867M → 守卫通过 → v10 上线（index 200 + demos.json 槽位确认，Pages 912M=89%）。
+- v10 内容：Web 鼠标捕获修复 + Pointer Lock 清零 + 外星生物待机动画。预验证（pck/巡游/混沌 A/B）此前全过。
+- 脚本坑：嵌套 node -e 的转义在 sed 迭代中失守——换槽逻辑改为 fs 直写并实测。
+- 试玩：https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v10/index.html
