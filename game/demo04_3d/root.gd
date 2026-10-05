@@ -46,6 +46,7 @@ const LEVELS := [
 			{id = "glow", name = "灯灯菌", x = 13.5, col = Color("ffd54f")},
 		],
 		shards = [Vector3(9.25, 3.3, 0), Vector3(16.0, 1.9, 0), Vector3(21.5, 1.4, 0)],
+		bounces = [{x = 10.3, z = 1.1}],   # 弹跳板（z 侧带；东侧落 13.6 ✓ 西侧墙基推出 ✓）
 		dark = [13.0, 24.0],
 		goal = 23.5,
 	},
@@ -77,6 +78,7 @@ const LEVELS := [
 			{id = "glow", name = "灯灯菌", x = 14.0, col = Color("ffd54f")},
 		],
 		shards = [Vector3(6.25, 2.7, 0), Vector3(19.25, 0.7, 0), Vector3(25.25, 3.4, 0)],
+		bounces = [{x = 21.0, z = 1.1}],   # 弹跳板（z 侧带；东侧落 24.3 ✓ 组合墙前；西侧入坑=自伤可恢复）
 		dark = [],
 		goal = 30.0,
 	},
