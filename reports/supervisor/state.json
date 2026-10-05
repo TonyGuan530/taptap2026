@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-06T06:52:00+08:00",
-  "round": 132,
+  "checkedAt": "2026-10-06T07:54:00+08:00",
+  "round": 133,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（06:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（07:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "✅ Pages 体积维护（槽位版+最新版规则）：demo-02-3d 超留版本清理 -92M；PINNED v10 正确保留"
+      "evidence": "🟢 demo-08 复活：v11 发布（30 关收卷方向+自清 92M）——停滞判定撤销；⚠️ FB-104 折纸物理仍未做（两轮批示未达，第三轮催办已换通道写入 backlog demo-08 节每轮必读位置）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -42,20 +42,21 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=19 目录/867M（警戒内）",
+    "health": "ok builds=18 目录/822M（警戒内）",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "84 条稳态（无新用户反馈）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 待推",
+    "git": "本轮 HEAD 588e00b 已推送",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "FB-104 等 demo-08 会话处置；FB-102 responded 待复测；FB-103/105~107 待首响应"
+    "queue": "FB-104 第三轮催办消化核对（08:52）；FB-102 responded 待复测；FB-103/105~107 待首响应"
   },
   "watch": [
+    "🔴【硬红线】07:50 巡检合规——持续",
     "🔴【硬红线】05:50 巡检合规——持续",
     "✅ 体积维护规则成熟运转（槽位版+最新版+PINNED 三规则并行无冲突）",
     "🔴【硬红线】03:50 巡检合规——持续",
@@ -96,7 +97,7 @@
     "⚠️ FB-104 催办线 18:52（demo-08 在做风场扩展而未动折纸物理）——18:52 无响应即批示催办",
     "🟢 FB 状态盘：101 triaged / 102 responded（待复测）/ 103~107 open（104 催办已发）",
     "📢【用户复测入口】demo-03-3d-v14——岩浆已入画，请您复测确认后 FB-102 转 fixed",
-    "🔴【需用户决策】demo-08 会话停滞/死亡（FB-104 三槽未动+rollout 活跃窗口无其踪迹+5槽无产出）——请轻推该会话或授权重建；两轮点名批示在 reviews/ 就位，轻推即消化"
+    "🔴 FB-104 第三轮催办（backlog 通道）消化核对 08:52——仍无动作则升级为 hub 槽公告"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
