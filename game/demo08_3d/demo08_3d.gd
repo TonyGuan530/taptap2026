@@ -647,6 +647,14 @@ func settle_zone_text() -> String:
 	return ""
 
 
+## 阶段 C55 打磨：商店状态栏函数化并补当前强化明细（headless 可断言）
+func shop_status_text() -> String:
+	return "肉鸽商店 · 金币 %d · 店内 %d 件 · 买强化带入第 %d 关 · 强化：力气 x%d · 翼面 x%d · 加固 x%d · 铅条 x%d" % [
+		core.coins, core.shop_items.size(), core.level_idx + 2,
+		int(core.upgrades.power), int(core.upgrades.wing),
+		int(core.upgrades.get("stiff", 0)), int(core.upgrades.get("ballast", 0))]
+
+
 ## 阶段 C53 打磨：飞行中当前气流区实时指示（不在带内返回空串；headless 可断言）
 func fly_zone_text() -> String:
 	var a: float = core.updraft_accel()
@@ -997,8 +1005,7 @@ func _update_status() -> void:
 			status_label.text = ("过关！" if core.last_pass else "挑战失败") + " · 飞行 %.1f 米 · 金币 %d" % [core.flight_distance, core.coins]
 			hint_label.text = ""
 		"shop":
-			status_label.text = "肉鸽商店 · 金币 %d · 店内 %d 件 · 买强化带入第 %d 关" % [
-				core.coins, core.shop_items.size(), core.level_idx + 2]
+			status_label.text = shop_status_text()
 			hint_label.text = "买不起就点跳过；金币 = 门奖（即时）+ 距离/10 + 过关奖励"
 		"final":
 			status_label.text = "全通关！金币 %d" % core.coins
