@@ -1,7 +1,0 @@
-{
-  "title": "TapTap2026 Demo",
-  "version": "demo-02-3d-v3",
-  "date": "2026-10-04T13:30:46.881Z",
-  "author": "49321",
-  "notes": "3d-shared base merged (comic_style kit); scene application: terrain unified comic material, spring=pressure_plate, fragile=iron_block, goal=gate_frame; gameplay untouched, 11/11 headless PASS"
-}

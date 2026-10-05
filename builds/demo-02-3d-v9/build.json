@@ -1,7 +1,0 @@
-{
-  "title": "TapTap2026 Demo",
-  "version": "demo-02-3d-v9",
-  "date": "2026-10-05T06:20:00+08:00",
-  "author": "49321",
-  "notes": "fix: fragile ghost-ref broke L2-to-L3 load; spring uses level imp data; 3-level chain verified"
-}
