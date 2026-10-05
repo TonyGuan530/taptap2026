@@ -531,6 +531,28 @@ func _run() -> void:
 	else:
 		_fail("可读性组件异常：DarkVisual=%s GoalBeacon=%s pulse=%s" % [dv != null, gb != null, pulse_ok])
 
+	# ---- 22. 弹跳板：踩上弹起 ~3.0m（新交互机制；门控安全=平坦段无墙沟） ----
+	scene_root.load_level(0)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	await _teleport(Vector3(11.6, 1.3, 1.0))   # 侧带感应区外起步（z 同带）
+	await _settle_until_floor()
+	var base_y := player.position.y
+	var max_y := base_y
+	_key(KEY_D, true)
+	var t0b := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0b < 2500:
+		await physics_frame
+		max_y = maxf(max_y, player.position.y)
+	_key(KEY_D, false)
+	await physics_frame
+	var rise := max_y - base_y
+	if rise > 2.6 and rise < 3.6:
+		_ok("弹跳板：弹起 %.2f m（高跳 2.2 之上、超级弹跳 4.15 之下）" % rise)
+	else:
+		_fail("弹跳板弹高异常：%.2f m（期望 2.6~3.6）" % rise)
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:

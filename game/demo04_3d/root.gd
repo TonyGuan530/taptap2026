@@ -30,6 +30,7 @@ const LEVELS := [
 			{id = "glow", name = "灯灯菌", x = 23.8, col = Color("ffd54f")},
 		],
 		shards = [Vector3(10.3, 1.6, 0), Vector3(18.0, 1.2, 0), Vector3(27.5, 1.2, 0)],
+		bounces = [{x = 13.0, z = 1.1}],   # 弹跳板（新交互；z 侧带=主动侧移触发，不在主行走线上，不干扰巡游/门控）
 		dark = [23.4, 36.0],
 		goal = 31.0,
 	},
@@ -280,6 +281,8 @@ func load_level(idx: int) -> void:
 		_build_alien(a)
 	for spos in L.shards:
 		_build_shard(spos)
+	for b in L.get("bounces", []):
+		_build_bounce(b.x, b.z)
 	_build_goal(L.goal)
 	# 暗区实体化：半透明黑暗体积（纯视觉无碰撞）——黑暗成为可见机制而非纯 HUD 文字
 	var dark: Array = L.dark
@@ -414,6 +417,41 @@ func _build_shard(spos: Vector3) -> void:
 	level_root.add_child(vis)
 	area.set_meta("vis", vis)
 	shard_vis.append(vis)
+
+func _build_bounce(x: float, z: float = 1.1) -> void:
+	## 弹跳板：踩上即弹起（vy=9.5 → 升高 ~3.0m，介于高跳 2.2 与超级弹跳 4.15 之间）
+	var vis := MeshInstance3D.new()
+	vis.name = "BouncePad"
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.85
+	cm.bottom_radius = 0.95
+	cm.height = 0.35
+	vis.mesh = cm
+	vis.position = Vector3(x, 0.18, z)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1.0, 0.55, 0.2)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.45, 0.1)
+	mat.emission_energy_multiplier = 0.8
+	vis.material_override = mat
+	level_root.add_child(vis)
+	var area := Area3D.new()
+	area.name = "BounceArea"
+	var cs := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(1.7, 0.6, 1.7)
+	cs.shape = box
+	area.position = Vector3(x, 0.35, z)
+	area.add_child(cs)
+	level_root.add_child(area)
+	area.body_entered.connect(_on_bounce_entered)
+
+func _on_bounce_entered(body: Node3D) -> void:
+	if body != player:
+		return
+	player.velocity.y = 9.5
+	_toast("弹！弹跳板把你抛了起来")
+	_log_ev("bounce", {"level": level_idx})
 
 func _build_goal(goal_x: float) -> void:
 	var pod := ComicObjectScript.new()
