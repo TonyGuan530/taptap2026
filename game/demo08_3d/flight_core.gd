@@ -72,6 +72,9 @@ const LEVELS := [
 	{name = "第 12 关 · 乘风摆门", short = "乘风摆门", ratio = 0.9, folds = 6, target_m = 60.0, wind = "side", wind_side = 1.0, reward = 12,
 		gate_x = 40.0, gate_h = 12.0, gate_bonus = 3, gate_swing = 360.0, gate_period = 4.0,
 		tip = "侧风向右推，门横位还在 ±6m 摆动（4 秒来回）：乘风向右漂，数准门的节奏，40 米高空门（12m 以上）+3，60 米过关。更多机制关卡（用户指令扩展）"},
+	{name = "第 13 关 · 三风交汇", short = "三风交汇", ratio = 0.85, folds = 6, target_m = 55.0, wind = "head", side_wind = -60.0, reward = 14,
+		gate_x = 42.0, gate_h = 12.0, gate_bonus = 3, gate_side = 180.0, gate_swing = 300.0, gate_period = 2.5,
+		tip = "三风交汇：逆风阻力 1.25 倍、侧风向左推（60px/s²），门横位还在 +3m 上 ±5m 摆动（2.5 秒来回）——顶住左漂向右切，数准门摆节奏，42 米高空门（12m 以上）+3，55 米过关。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
