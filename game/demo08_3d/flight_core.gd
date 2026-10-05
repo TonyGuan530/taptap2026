@@ -99,6 +99,9 @@ const LEVELS := [
 	{name = "第 21 关 · 顺风摆门", short = "顺风摆门", ratio = 0.85, folds = 6, target_m = 70.0, wind = "tail", reward = 14,
 		gate_x = 50.0, gate_h = 12.0, gate_bonus = 3, low_gate_x = 55.0, low_gate_top = 10.0, low_gate_swing = 240.0, low_gate_period = 3.0, low_gate_side = 120.0,
 		tip = "顺风 + 摆动低门：顺风推你加速，低门 55 米处横位 +2m 上 ±4m 摆动（3 秒来回）——顺风冲到低门位置时看准它摆到哪，俯冲穿越 +3，一掷二选一，70 米过关。更多机制关卡（用户指令扩展）"},
+	{name = "第 22 关 · 顺风斜风", short = "顺风斜风", ratio = 0.85, folds = 6, target_m = 65.0, wind = "tail", side_wind = 60.0, reward = 14,
+		gate_x = 42.0, gate_h = 12.0, gate_bonus = 3, gate_side = -240.0,
+		tip = "顺风斜风：顺风恒推让你冲得更快，侧风又向右推（60px/s²）——高门 42 米却在左边（-4m 横位、12m 以上）+3：提前按住 A 顶风左切，飞得越快修正窗口越短，65 米过关。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
