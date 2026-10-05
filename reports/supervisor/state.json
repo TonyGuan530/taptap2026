@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-05T07:52:00+08:00",
-  "round": 112,
+  "checkedAt": "2026-10-05T08:52:00+08:00",
+  "round": 113,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（07:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（08:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "🚀 3D 迁移：demo-06-3d v8（L8 引球入瓮，8 关 11/11）、demo-04 3D 多分辨率补测无破版、demo-05 发真人招募卡"
+      "evidence": "🚀 3D 迁移：demo-08-3d v7 第13/14关（14 关 177 断言全绿）、demo-04 3D v8 弹跳板机制+演示片重录；评审回执4=L7/L8 扩展不改 Gate 口径（Gate/Content 隔离自觉维护）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -45,18 +45,18 @@
     "health": "ok builds=21 目录/957M（警戒内）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "93 条（+6：demo-05 招募卡+hd2d 展示卡×3+杂项；反馈区无新增）",
+    "miro": "94 条（+1=demo-06-3d 上板卡；反馈区无新增）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 84b8b40",
+    "git": "本轮 HEAD 25209f6",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "3D 迁移多线推进（demo-06 8关/demo-05 C2 完）；真人 Gate 排期等用户派人"
+    "queue": "3D 迁移多线推进（demo-08 14关/demo-06 8关/demo-02 v10/demo-04 v8）；真人 Gate 等派人"
   },
   "watch": [
-    "🔴【硬红线】07:50 巡检合规——持续",
+    "🔴【硬红线】08:50 巡检合规——持续",
     "📢【用户行动项】demo-05 真人 Gate 招募已上 Miro：2-3 人×2 夜×重开≥1（v6 链接+记录单+勿剧透纪律齐备，判定=2/3 人主动改变建窝策略→KEEP）——等用户派人",
     "🔴【硬红线】06:50 巡检合规——持续",
     "✅【Pages 超限已解】第二轮清理+补救完成：822M/18 目录，抽查 4 最新版全 200（05:10 督导代执行）",

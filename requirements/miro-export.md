@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/5 07:50:55 · 共 93 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/5 08:50:25 · 共 94 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -404,6 +404,12 @@ L3 暗区实拍: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/r
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-07-v2.png
 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-07-v2.mp4
 试玩: https://tonyguan530.github.io/taptap2026/builds/demo-07-v2/index.html
+
+### [text] @(6300,12520)
+
+v8 新交互机制「弹跳板」&#xff08;规则变化·供判断&#xff09;&#xff1a;L1 平坦段 z 侧带&#xff08;主动侧移触发&#xff09;&#xff0c;踩上弹起 3.09m&#xff08;高跳2.2 与超级弹跳4.15 之间&#xff09;。
+门控安全分析在案&#xff1a;不构成任何 DNA 门旁路。重录五关通关片(821帧 tourDone&#61;0): https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v8/index.html
 
 ### [sticker] @(1081,13586)
 
