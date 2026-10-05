@@ -55,3 +55,9 @@
 - 机制扩展：脆板 require_break 过关门按关关闭（L2/L7 默认 true 不变）。
 - b 套件扩至 **15/15 全绿**；v13 直链：https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v13/index.html （hub 槽未切，Batch 01 仍钉 v10）。
 - 工程坑新增：批跑 15 连发后必现启动停振（清僵尸+删 .godot 即愈）；yaw=-PI/2 下 p_left 刹车推 Z 轴；node 正则跨行替换吞测试代码（已 git 恢复）。
+
+## 追加（同日）：探索线素材补齐轮
+- movie 驱动扩至八关连打；**八关视频重录**（35s/1050 帧，L5 与 L8 为 idle=true 零输入段）替换 reviews/videos/demo-02.mp4。
+- 新增 L6/L7/L8 实机帧（reviews/shots/demo-02-3d-v13-L{6,7,8}.png），监督裁探索关时有完整视觉材料。
+- L3 电影编排修正：30Hz 羽毛终端速过低飘不过降 → 松 W 切石头陡落入带（60Hz 套件判定不受影响）。
+- 巡检：v10/v13/2D v7 全 200；反馈板无新数据。基线 PINNED 保护生效中。
