@@ -524,6 +524,18 @@ func _on_chart_draw() -> void:
 		var mx: float = r.position.x + float(m.x) / max_d * r.size.x
 		var col := Color("b71c1c") if String(m.kind) == "finish" else (Color("f9a825") if String(m.kind) == "high" else Color("0277bd"))
 		chart.draw_line(Vector2(mx, r.position.y), Vector2(mx, r.position.y + r.size.y), Color(col, 0.7), 2.0)
+		# C17 打磨：门线标注横位（finish 无横位不标）
+		if String(m.kind) != "finish":
+			var side_m: float = float(m.side)
+			chart.draw_string(FONT, Vector2(mx + 3.0, r.position.y + 11.0), chart_gate_label(float(m.x), side_m),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(col, 0.9))
+
+
+## 阶段 C17 打磨：复盘小图门线标注文本（headless 可断言）
+func chart_gate_label(x_m: float, side_m: float) -> String:
+	if absf(side_m) < 0.01:
+		return "%.0fm 门" % x_m
+	return "%.0fm 门%+.0fm" % [x_m, side_m]
 
 
 func paint_chart_axes(r: Rect2, max_d: float, max_h: float) -> void:
@@ -810,7 +822,8 @@ func _update_status() -> void:
 			status_label.text = ("过关！" if core.last_pass else "挑战失败") + " · 飞行 %.1f 米 · 金币 %d" % [core.flight_distance, core.coins]
 			hint_label.text = ""
 		"shop":
-			status_label.text = "肉鸽商店 · 金币 %d · 买强化带入第 %d 关" % [core.coins, core.level_idx + 2]
+			status_label.text = "肉鸽商店 · 金币 %d · 店内 %d 件 · 买强化带入第 %d 关" % [
+				core.coins, core.shop_items.size(), core.level_idx + 2]
 			hint_label.text = "买不起就点跳过；金币 = 门奖（即时）+ 距离/10 + 过关奖励"
 		"final":
 			status_label.text = "全通关！金币 %d" % core.coins
