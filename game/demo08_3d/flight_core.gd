@@ -117,6 +117,9 @@ const LEVELS := [
 	{name = "第 27 关 · 热流摆门", short = "热流摆门", ratio = 0.6, folds = 6, target_m = 80.0, wind = "head", wind_up = -2500.0, wind_up_x = 40.0, wind_up_len = 12.0, wind_up2 = 3000.0, wind_up2_x = 54.0, wind_up2_len = 16.0, reward = 14,
 		gate_x = 74.0, gate_h = 18.0, gate_bonus = 3, gate_swing = 420.0, gate_period = 3.5,
 		tip = "热流摆门：逆风 80 米，先沉后托（40-52 米谷、54-70 米热流）——爬出热流的出口高度决定你够不够得着 74 米摆动高门（18m 以上、±7m、3.5 秒来回）+3：能量与门位双时序，冲得早不如冲得巧，80 米过关。新机制关（用户指令扩展）"},
+	{name = "第 28 关 · 谷风低门", short = "谷风低门", ratio = 0.6, folds = 6, target_m = 65.0, wind = "head", side_wind = 60.0, wind_up = -2000.0, wind_up_x = 36.0, wind_up_len = 10.0, reward = 14,
+		gate_x = 28.0, gate_h = 14.0, gate_bonus = 3, low_gate_x = 52.0, low_gate_top = 8.0, low_gate_side = 240.0,
+		tip = "谷风低门：逆风加右推侧风（60px/s²），36-46 米下沉谷把低线压到 8m 以下——谷底正好是侧风把你送进 52 米右侧低空门（+4m 横位、8m 以下）+3 门带的时机，切忌补舵（按 D 冲过头、按 A 被带出带）；抬头线先吃 28 米高空门（14m 以上）+3。一掷二选一，65 米过关。新机制关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
