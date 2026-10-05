@@ -156,7 +156,7 @@ func _build_world() -> void:
 	# 地面
 	_box(self, Vector3(0, -0.5, 4), Vector3(120, 1, 70), Color("3a2f28"), "Ground")
 	# 岩浆（远景发光面）
-	var lava := _box(self, Vector3(0, 0.2, -46), Vector3(150, 0.6, 26), Color("d84315"), "Lava")
+	var lava := _box(self, Vector3(0, 0.2, -42), Vector3(150, 0.6, 26), Color("d84315"), "Lava")
 	lava_mat = lava.material_override
 	lava_node = lava
 	lava_mat.emission_enabled = true
@@ -789,7 +789,7 @@ func _process(delta: float) -> void:
 			lava_mat.emission_energy_multiplier, 1.0 if sim.surge_active() else (2.2 if sim.heatwave_active() else 1.2),
 			minf(3.0 * delta, 1.0))
 	# v13 涌潮：岩浆面向村庄推进（-46 → -22），退潮归位；albedo 压暗防加法混色过曝（G 通道累加会变核弹黄）
-	var lava_target_z := -22.0 if sim.surge_active() else -46.0
+	var lava_target_z := -30.0 if sim.surge_active() else -42.0
 	lava_node.position.z = move_toward(lava_node.position.z, lava_target_z, 4.0 * delta)
 	lava_mat.albedo_color = lava_mat.albedo_color.lerp(
 			Color("7a1508") if sim.surge_active() else Color("d84315"), minf(3.0 * delta, 1.0))
