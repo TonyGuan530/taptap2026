@@ -608,6 +608,47 @@ func _run() -> void:
 	else:
 		_fail("实验房选关异常：mode=%s idx=%d dna=%d" % [scene_root.mode, scene_root.level_idx, ability.dna.size()])
 
+	# ---- 25. 实验房终点结算：面板出现、输入停、B 返回战役（未覆盖路径补强） ----
+	scene_root.load_level(0)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	var evk := InputEventKey.new()
+	evk.keycode = KEY_K
+	evk.physical_keycode = KEY_K
+	evk.pressed = true
+	Input.parse_input_event(evk)
+	await physics_frame
+	var evku := InputEventKey.new()
+	evku.keycode = KEY_K
+	evku.physical_keycode = KEY_K
+	evku.pressed = false
+	Input.parse_input_event(evku)
+	await physics_frame
+	await _teleport(Vector3(30.5, 1.3, 0))   # L1 终点感应区
+	await _settle_until_floor()
+	await _settle(30)
+	var panel_visible: bool = scene_root.get_node("HUD/Root/WinPanel").visible
+	var lab_won: bool = scene_root.won and scene_root.mode == "lab"
+	var ev_b2 := InputEventKey.new()
+	ev_b2.keycode = KEY_B
+	ev_b2.physical_keycode = KEY_B
+	ev_b2.pressed = true
+	Input.parse_input_event(ev_b2)
+	await physics_frame
+	var ev_b2u := InputEventKey.new()
+	ev_b2u.keycode = KEY_B
+	ev_b2u.physical_keycode = KEY_B
+	ev_b2u.pressed = false
+	Input.parse_input_event(ev_b2u)
+	await physics_frame
+	await _settle(10)
+	var back_ok: bool = not scene_root.won and scene_root.mode == "campaign" and not scene_root.get_node("HUD/Root/WinPanel").visible
+	if panel_visible and lab_won and back_ok:
+		_ok("实验房终点：结算面板出现、输入停、B 返回战役干净复位")
+	else:
+		_fail("实验房终点异常：panel=%s won=%s back=%s" % [panel_visible, lab_won, back_ok])
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:
