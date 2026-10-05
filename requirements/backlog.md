@@ -190,4 +190,5 @@
 - 质量基线：模拟 94 + 输入 46（真实事件管线 headless）+ 场景 12 断言；2D 对照回归 PASS；浏览器双冒烟（直连三模式+Hub iframe 一致性）PASS；SwiftShader 弱机下限 36.7~42.6 fps（>30 可玩）；发布一键巡检 tools/verify-release.mjs。
 - 现状：**玩法冻结于 demo-03-3d-v12，等真人盲测**（手册 reports/2026-10-05-0310-blindtest-kit-3d.md；入口 https://tonyguan530.github.io/taptap2026/builds/demo-03-3d-v12/ ）与督导回看（v4~v12 备案草案九份待发，附 Idea Fidelity 对照 reports/miro-fidelity-3d.md）。
 - v13 上线 2026-10-05（FB-102 回应）：岩浆涌潮事件（岩浆推进村庄+升温+1.2/s，各模式错峰酸雨）——岩浆主题回归+中期压力；会玩策略三模式仍 5/5 胜（sweep 复跑）。此前冻结仅针对无反馈状态，FB-102 解冻扩展。
+- v14 上线 2026-10-05（12:02 批示「火山口/岩浆流」形态补齐）：火山口烟柱常驻+三条岩浆流束（涌潮增亮）；表现层零规则改动。
 - 已知数据点：会玩局终局零压力（reports/2026-10-05-0540-demo03-3d-balance-sweep.md 发现 2）——盲测确认"高手无聊"后再调参，届时须重跑全部用例+2D 对照。
