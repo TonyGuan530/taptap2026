@@ -4,7 +4,7 @@
 > 阶段总览：reports/demo04-3d-stage-report.md（四阶段验收对照，单一入口）。
 
 ## 试玩
-- Web（恒新）：https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v11/index.html
+- Web（恒新）：https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v12/index.html
 - 原生：builds/native/demo04_3d.exe（本地产物，不入库）
 
 ## 操作
