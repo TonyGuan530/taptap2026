@@ -647,6 +647,14 @@ func settle_zone_text() -> String:
 	return ""
 
 
+## 阶段 C53 打磨：飞行中当前气流区实时指示（不在带内返回空串；headless 可断言）
+func fly_zone_text() -> String:
+	var a: float = core.updraft_accel()
+	if absf(a) < 1e-6:
+		return ""
+	return " · 谷中↓" if a < 0.0 else " · 热流中↑"
+
+
 ## 阶段 C37 起商店策略提示函数化（C45 补气流区行；headless 可断言）
 func shop_strategy_hints() -> Array:
 	var L: Dictionary = core.LEVELS[core.level_idx]
@@ -972,14 +980,18 @@ func _update_status() -> void:
 				gate_pos_txt = " · 高门位 %+.1f m" % (float(core.gate_side_at(core.flight_time)) / PX_PER_M)
 			if float(L.get("low_gate_swing", 0.0)) > 0.0:
 				gate_pos_txt += " · 低门位 %+.1f m" % (float(core.low_gate_side_at(core.flight_time)) / PX_PER_M)
-			status_label.text = "%s · 飞行中 %.1f 米 / 目标 %.0f 米 · 高度 %.1f 米 · 横移 %.1f 米%s" % [
-				String(L.name), live_m, float(L.target_m), h_m, float(core.lateral) / PX_PER_M, gate_pos_txt]
-			# C30 打磨：飞行提示按关卡机制定制（摆门/侧风关提醒时机与漂移）
+			# C53 打磨：气流区关状态栏补实时区带指示（与判定共用 updraft_accel）
+			var zone_txt: String = fly_zone_text()
+			status_label.text = "%s · 飞行中 %.1f 米 / 目标 %.0f 米 · 高度 %.1f 米 · 横移 %.1f 米%s%s" % [
+				String(L.name), live_m, float(L.target_m), h_m, float(core.lateral) / PX_PER_M, gate_pos_txt, zone_txt]
+			# C30 打磨：飞行提示按关卡机制定制（摆门/侧风/气流区关提醒）
 			var fly_hint := "A/D 横移（门有横向宽度），R 复位相机"
 			if float(L.get("gate_swing", 0.0)) > 0.0 or float(L.get("low_gate_swing", 0.0)) > 0.0:
 				fly_hint = "门在摆动，注意穿越时机 · " + fly_hint
 			if core.wind_mode() == "side" or absf(core.side_wind_accel()) > 0.0:
 				fly_hint = "侧风会带偏航向 · " + fly_hint
+			if float(L.get("wind_up_x", 0.0)) > 0.0:
+				fly_hint = "气流区会改变高度 · " + fly_hint
 			hint_label.text = fly_hint
 		"settle":
 			status_label.text = ("过关！" if core.last_pass else "挑战失败") + " · 飞行 %.1f 米 · 金币 %d" % [core.flight_distance, core.coins]
