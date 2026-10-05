@@ -111,6 +111,9 @@ const LEVELS := [
 	{name = "第 25 关 · 热气流救援", short = "热气流救援", ratio = 0.6, folds = 6, target_m = 80.0, wind = "head", wind_up = -2500.0, wind_up_x = 40.0, wind_up_len = 12.0, wind_up2 = 3000.0, wind_up2_x = 54.0, wind_up2_len = 16.0, reward = 14,
 		gate_x = 72.0, gate_h = 18.0, gate_bonus = 3,
 		tip = "热气流救援：逆风 80 米，40-52 米下沉谷会把你压下去——没有 54-70 米的热气流托一把，谁都滑不到终点也够不着 72 米高空门（18m 以上）+3。带着谷底攒下的俯冲速度冲进热流爬升，出口高度决定吃不吃门。新机制关（用户指令扩展）"},
+	{name = "第 26 关 · 谷底摆门", short = "谷底摆门", ratio = 0.6, folds = 6, target_m = 70.0, wind = "head", wind_up = -2000.0, wind_up_x = 40.0, wind_up_len = 12.0, reward = 14,
+		gate_x = 30.0, gate_h = 14.0, gate_bonus = 3, low_gate_x = 58.0, low_gate_top = 10.0, low_gate_swing = 420.0, low_gate_period = 3.0,
+		tip = "谷底摆门：逆风 70 米，40-52 米下沉谷把低线压到 10m 以下——58 米低空门还在横摆（±7m、3 秒来回）+3，俯冲穿谷还得数准它摆到哪；抬头吃 30 米高空门（14m 以上）+3 则完全不同路。一掷二选一，70 米过关。新机制关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
