@@ -151,6 +151,24 @@ const LEVELS := [
 		fragile = { pos = Vector3(1.55, 4.75, 0), size = Vector3(5.9, 0.3, 3), speed = 14.0 },   # 整条天窗缝=脆板（阈 14）：石头坠落 15+ 破，皮球不切 12 破不了
 		goal = { pos = Vector3(2.5, 0.65, 0), size = Vector3(2.4, 1.1, 2.4) },   # 室内，底 0.1 离地
 	},
+	{
+		name = "第八关 · 桥上桥下", solution = "双路线：羽毛刹车低压从桥下滑翔入谷底 ／ 皮球不切词条全弧砸断脆桥坠入谷底",
+		spawn = Vector3(-8, 1.6, 0),
+		boxes = [
+			[Vector3(-6.5, -0.25, 0), Vector3(10, 0.5, 10), "field"],   # 发射场 x -11.5..-1.5
+			[Vector3(3.5, -3.25, 0), Vector3(10, 0.5, 10), "field"],    # 谷底 x -1.5..8.5
+			[Vector3(-12, 6, 0), Vector3(0.5, 12, 11), "wall"],
+			[Vector3(8.75, 4.5, 0), Vector3(0.5, 15, 11), "wall"],   # 下延到谷底 y-3，防滚出界
+			[Vector3(-1.75, 6, -5.25), Vector3(21, 12, 0.5), "wall"],
+			[Vector3(-1.75, 6, 5.25), Vector3(21, 12, 0.5), "wall"],
+			[Vector3(-2, 12.25, 0), Vector3(21, 0.5, 11), "wall"],
+		],
+		springs = [
+			{ pos = Vector3(-8, 0.15, 0), imp = Vector3(5.5, 14, 0) },  # 全弧：皮球落桥面冲击 ≈12.6 破桥；羽毛切羽早刹可从桥下过
+		],
+		fragile = { pos = Vector3(2.875, 3, 0), size = Vector3(8.25, 0.3, 4), require_break = false },   # 脆桥（默认阈 11）：既是路（轻过勿碎）也是门（砸断开下行）；过关不强制砸
+		goal = { pos = Vector3(7, -2.65, 0), size = Vector3(3.2, 1.1, 2.8) },   # 谷底加宽：接住桥下低压滑翔与砸桥坠落两条线
+	},
 ]
 
 var level_idx := 0
@@ -473,8 +491,8 @@ func _on_goal_enter(other: Node) -> void:
 		return   # 只认玩家球体；StaticBody(地板)贴邻边界会误触发
 	if goal_reached:
 		return
-	if LEVELS[level_idx].fragile != null and not fragile_broken:
-		return   # 脆板关卡：砸穿才算过关，滚落绕进洞无效
+	if LEVELS[level_idx].fragile != null and LEVELS[level_idx].fragile.get("require_break", true) and not fragile_broken:
+		return   # 脆板关卡默认砸穿才算过关；L8 桥=可保留语义（require_break=false）不受此限
 	goal_reached = true
 	var sw := "无切换" if tel_switches.is_empty() else "→".join(tel_switches)
 	var idle := (not tel_moved) and (not tel_flapped) and (not tel_mid_switch)

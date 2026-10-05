@@ -75,6 +75,10 @@ func _run() -> void:
 		await _case_11()
 	if wanted < 0 or wanted == 12:
 		await _case_12()
+	if wanted < 0 or wanted == 13:
+		await _case_13()
+	if wanted < 0 or wanted == 14:
+		await _case_14()
 	_log("ALL DONE fails=%d" % fails)
 	logf.flush()
 	quit(1 if fails > 0 else 0)
@@ -284,4 +288,33 @@ func _case_12() -> void:
 		await physics_frame
 	_check("⑬ L7 皮球直飞破不了窗", not scene.goal_reached)
 	_log("⑬ broken=%s（应为 false）" % str(scene.fragile_broken))
+	scene.queue_free()
+
+# ⑭ L8 路线B：皮球不切词条全弧砸断脆桥坠入谷底 GOAL
+func _case_13() -> void:
+	await _new_scene(7)
+	scene.switch_tag(2)
+	var t0 := Time.get_ticks_msec()
+	while not scene.goal_reached and Time.get_ticks_msec() - t0 < 15000:
+		await physics_frame
+	_check("⑭ L8 皮球砸桥坠谷", scene.goal_reached and scene.fragile_broken)
+	_log("⑭ broken=%s" % str(scene.fragile_broken))
+	scene.queue_free()
+	await physics_frame
+
+# ⑮ L8 路线A：起飞切羽毛全程 W——轻落桥面（冲击 1.35 << 11 不碎桥）滚过桥尾坠谷底
+func _case_14() -> void:
+	await _new_scene(7)
+	scene.switch_tag(2)
+	var launched: bool = await _until(func(): return scene.ball != null and scene.ball.linear_velocity.y > 9.0, 10000)
+	scene.switch_tag(0)
+	scene.yaw = -PI / 2
+	Input.action_press("p_fwd")
+	var t1 := Time.get_ticks_msec()
+	while not scene.goal_reached and Time.get_ticks_msec() - t1 < 30000:
+		await physics_frame
+	Input.action_release("p_fwd")
+	var ok: bool = scene.goal_reached and not scene.fragile_broken
+	_check("⑮ L8 羽毛轻过桥面（桥未碎）", ok)
+	_log("⑮ broken=%s goal=%s pos=%s" % [str(scene.fragile_broken), str(scene.goal_reached), str(scene.ball.position)])
 	scene.queue_free()
