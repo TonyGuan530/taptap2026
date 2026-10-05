@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/5 08:50:25 · 共 94 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/5 09:50:29 · 共 97 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -297,6 +297,10 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 &#x1f9ec; demo-04-3d 3D 迁移 Phase B ▼
 
+### [sticker] @(6300,10560)
+
+&#x1f3ae; demo-04-3d 运行画面 &#43; 录屏 ▼
+
 ### [card] @(4400,10700)
 
 &#x1f3ae; demo-04 SOUP 2.0 DNA 融合逃生
@@ -304,6 +308,10 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 ### [card] @(6300,10700)
 
 &#x1f9ec; demo-04-3d v1 五关数据驱动灰模&#xff08;Phase B&#xff09;
+
+### [card] @(6300,10700)
+
+&#x1f3ae; demo-04-3d SOUP 2.0 DNA 融合逃生 3D
 
 ### [sticker] @(671,10751)
 
@@ -326,6 +334,12 @@ DNA 语义对齐 2D v12&#xff1a;高跳×1.45 / 二段×0.95 / 暗区×0.45 / 碎�
 测试 14/14 ALL PASS &#43; 2D 回归 7/7 PASS&#xff1b;裂纹墙顶 2.9m&#xff08;3D 胶囊骑角加固&#xff0c;碎岩仍唯一解&#xff09;。
 试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v1/index.html
 录像/截图&#xff1a;待机器空闲离线补录&#xff08;当前禁止抢占前台&#xff09;。
+
+### [text] @(6300,10860)
+
+截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-cdp-a.png
+录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v8/index.html
 
 ### [text] @(6300,11120)
 
