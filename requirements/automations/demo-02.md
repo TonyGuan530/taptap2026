@@ -13,7 +13,8 @@
 ## 规格
 requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-export.md）。玩法：形状(圆球/长板/方块)×词条(Heavy/Float/Fire/Sticky)统一规则物理解谜，目标 3-4 关。
 
-## 当前状态（2026-10-05 下午 · v10 冻结 + L6/L7 探索版）
+## 当前状态（2026-10-05 傍晚 · v10 冻结 + 探索关 robustness 完成）
+- **L7 robustness gate 完成（test_demo02_3d_r7.gd）**：石头破窗冲击 16.8-17.0 对阈 14（+20%）在 60/120Hz+出生扰动全稳；皮球 ≤12.2 全配置不破（-13%）；30Hz 失败为测试架构伪影（Movie Maker 实测 30Hz 正常）。监督三原则已写入 3D 指南附录；L7 并入正篇前再过一次该 gate 即可。
 - **L7 破窗密室落地（demo-02-3d-v12 直链 https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v12/index.html ，hub 槽未切）**：弹簧冲天顶点切石头（L2/L3 已教时机）高速坠落砸穿整缝脆板天窗（阈 14/石坠 15+，皮球不切 12 破不了）；b 套件扩至 **13/13 全绿**；新机制能力=每关脆板阈值可覆盖（fragile.speed）。探索内容不并入基线。
 - **v10 = Batch 01 基线（冻结，试玩链接钉死 play.html?id=demo-02-3d-v10）**；本轮按用户「没活干就做更多机制关卡」指令产出 **L6 抛接峡谷（探索版 demo-02-3d-v11，直链可达 https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v11/index.html ，hub 槽未切）**：羽毛斜抛空中转向接力浮空弹板二次点火抛上基座，石头直线弹道对照失败；b 套件扩至 11/11 全绿。L6/L7 探索内容不并入基线，Batch 01 数据回来后由督导定取舍。
 - 本轮工程修复（6e90a38）：**换关球泄漏**（_spawn_ball 未入 level_nodes → 旧球成物理幽灵与真球互撞毁发射，v10 亦带此 leak，v11 修复）；**弹簧点火改每帧 overlaps_body 查询**（body_exited 事件在斜抛+CCD 下延迟/丢失，spring_ready 永不再武装）；**触发带 0.4→1.2m**（高反弹微弹跳帧运气漏接）。
