@@ -137,7 +137,7 @@ func _run() -> void:
 	check(scene.sim.towers[2] == 1 or before == 1, "旋转缩放后点击槽位 2 生效")
 	shot("05-旋转后拾取")
 	scene.rig.rotation.y = 0.0
-	scene.cam.size = 26.0
+	scene.cam.size = 32.0
 	await process_frame
 
 	# ---- 7. 悬停提示（MouseMotion 注入）----

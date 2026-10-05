@@ -41,6 +41,16 @@ const STORM_DUR := 4.0
 const HEATWAVE_START := 38.0
 const HEATWAVE_DUR := 5.0
 const HEATWAVE_MULT := 1.5
+## v13 岩浆涌潮（FB-102：岩浆主题回归+玩法扩展）：岩浆向村庄推进 + 窗口内升温加成。
+## 时刻表按模式错开酸雨窗（classic 34~42 在 30~46 空档；storm 52~58 在 45±2+4 之后；hard 40~46 在 34+6 与 48±2.5 之间）；
+## jitter=0 完全可测。加成只乘升温，不动降温乘区。回应"会玩局终局零压力"（balance-sweep 发现 2）。
+const SURGE_RISE := 1.2
+const SURGE_WARN := 3.0
+const SURGE_SCHEDULE: Array[Dictionary] = [
+	{"mode": "classic", "start": 34.0, "dur": 8.0},
+	{"mode": "storm", "start": 52.0, "dur": 6.0},
+	{"mode": "hard", "start": 27.0, "dur": 4.0},
+]
 ## v6 第 2 章「寒夜守卫」（hard）：起始 50 度、三场 6s 酸雨、村民 30/50s 才来。
 ## 经济/建造/晋升/曲线与经典完全一致——难在资源更紧、人手更晚。
 const HARD_START_HEAT := 50.0
@@ -89,6 +99,8 @@ var npc_next := 0
 var acid_events: Array[Dictionary] = [] # {start, dur, announced, warned}
 var acid_was_on := false
 var heatwave_was_on := false
+var surge_was_on := false
+var surge_warned := false
 var spend_log: Array[Dictionary] = []   # {t, kind, amount}
 var villager_seq := 0
 var cmd_until := -1.0   # 灭火指挥生效窗截止（sim elapsed）
@@ -114,6 +126,8 @@ func setup_round(p_mode: String, seed_value: int = -1) -> void:
 	cmd_ready_at = 0.0
 	cmd_was_on = false
 	heatwave_was_on = false
+	surge_was_on = false
+	surge_warned = false
 	if seed_value >= 0:
 		rng.seed = seed_value
 	else:
@@ -170,6 +184,19 @@ func acid_at(t: float) -> bool:
 ## v11 热浪：仅风暴模式，38~43s（半开区间）
 func heatwave_active() -> bool:
 	return mode == "storm" and elapsed >= HEATWAVE_START and elapsed < HEATWAVE_START + HEATWAVE_DUR
+
+
+## v13 岩浆涌潮：本模式排定的 [start,dur]（无则不在）
+func surge_window() -> Dictionary:
+	for w: Dictionary in SURGE_SCHEDULE:
+		if w.mode == mode:
+			return w
+	return {}
+
+
+func surge_active() -> bool:
+	var w := surge_window()
+	return not w.is_empty() and elapsed >= float(w.start) and elapsed < float(w.start) + float(w.dur)
 
 
 func build_cost() -> int:
@@ -294,6 +321,19 @@ func tick(delta: float) -> void:
 	heatwave_was_on = hw_on
 	if hw_on:
 		rise *= HEATWAVE_MULT
+	# v13 涌潮：预警（提前 3s 一次）→ 窗口内 rise 直加 SURGE_RISE；结束回落
+	var sw := surge_window()
+	var surge_on := not sw.is_empty() and elapsed >= float(sw.start) and elapsed < float(sw.start) + float(sw.dur)
+	if not surge_warned and not sw.is_empty() and elapsed >= float(sw.start) - SURGE_WARN and elapsed < float(sw.start):
+		surge_warned = true
+		sim_event.emit("surge_warn", {"start": float(sw.start)})
+	if surge_on and not surge_was_on:
+		sim_event.emit("surge_started", {"until": elapsed + float(sw.dur)})
+	elif not surge_on and surge_was_on:
+		sim_event.emit("surge_ended", {"at": elapsed})
+	surge_was_on = surge_on
+	if surge_on:
+		rise += SURGE_RISE
 	var acid_now := acid_active()
 	for e: Dictionary in acid_events:
 		if not e.warned and elapsed >= float(e.start) - ACID_WARN and elapsed < float(e.start):

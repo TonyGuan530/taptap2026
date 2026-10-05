@@ -420,5 +420,69 @@ func _run() -> void:
 	s18a.tick(0.2)
 	check(counter18.end == 1, "越过 43s 发出热浪结束事件", "e%d" % counter18.end)
 
+	# ---- 19. v13 岩浆涌潮：时刻表/无重叠/边界/单tick解析/事件 ----
+	var s19c = Sim.new()
+	s19c.setup_round("classic", 7)
+	check(s19c.surge_window().get("start", 0.0) == 34.0 and s19c.surge_window().get("dur", 0.0) == 8.0,
+			"经典涌潮窗 34~42")
+	var s19h = Sim.new()
+	s19h.setup_round("hard", 7)
+	check(s19h.surge_window().get("start", 0.0) == 27.0, "寒夜涌潮窗 27~31（酸雨空档）")
+	# 无重叠（最坏 jitter）：硬边界算术断言
+	check(34.0 + 8.0 <= 46.0 - 3.0, "经典涌潮结束≤酸雨2最早开始")
+	check(27.0 >= 18.0 + 2.5 + 6.0 and 27.0 + 4.0 <= 34.0 - 2.5, "寒夜涌潮夹在酸雨1/2 最坏边界之间")
+	check(52.0 >= 45.0 + 2.0 + 4.0, "风暴涌潮开始≥酸雨3最晚结束")
+	var s19a = Sim.new()
+	s19a.setup_round("classic", 7)
+	s19a.acid_events[0].start = 22.0
+	s19a.acid_events[1].start = 46.0
+	s19a.elapsed = 33.9
+	check(not s19a.surge_active(), "33.9 未入涌潮")
+	s19a.elapsed = 34.0
+	check(s19a.surge_active(), "34.0 入涌潮")
+	s19a.elapsed = 41.9
+	check(s19a.surge_active(), "41.9 仍在涌潮")
+	s19a.elapsed = 42.0
+	check(not s19a.surge_active(), "42.0 出涌潮（半开区间）")
+	# 单 tick 解析：窗内 rise+1.2。35.1 处 rise=2.7+0.055×35.1=4.6305，塔L1 降温 2.0
+	s19a.towers[0] = 1
+	s19a.npc_next = 2
+	s19a.elapsed = 35.0
+	s19a.heat = 50.0
+	s19a.tick(0.1)
+	check(approx(s19a.heat - 50.0, (4.6305 + 1.2 - 2.0) * 0.1, 0.02), "涌潮窗内单 tick 升温 +1.2",
+			"d=%.3f" % (s19a.heat - 50.0))
+	s19a.elapsed = 43.0
+	s19a.heat = 50.0
+	s19a.tick(0.1)
+	# 43.1 已是第四阶段：rise=3.1+0.07×43.1=6.117，无涌潮加成
+	check(approx(s19a.heat - 50.0, (3.1 + 0.07 * 43.1 - 2.0) * 0.1, 0.02), "涌潮窗外正常升温（无加成残留）",
+			"d=%.3f" % (s19a.heat - 50.0))
+	# 事件序列：全新模拟、时间只前进（回拨会造成假结束/再开始）
+	var s19e = Sim.new()
+	s19e.setup_round("classic", 7)
+	s19e.acid_events[0].start = 22.0
+	s19e.acid_events[1].start = 46.0
+	s19e.npc_next = 2
+	var counter19 := {"warn": 0, "start": 0, "end": 0}
+	s19e.sim_event.connect(func(kind: String, _p: Dictionary) -> void:
+		if kind == "surge_warn":
+			counter19.warn += 1
+		elif kind == "surge_started":
+			counter19.start += 1
+		elif kind == "surge_ended":
+			counter19.end += 1
+	)
+	s19e.elapsed = 30.9
+	s19e.tick(0.2)
+	check(counter19.warn == 1, "提前 3s 预警一次（越过 31s）",
+			"w%d" % counter19.warn)
+	s19e.elapsed = 33.9
+	s19e.tick(0.2)
+	check(counter19.start == 1, "涌潮开始事件", "s%d" % counter19.start)
+	s19e.elapsed = 41.9
+	s19e.tick(0.2)
+	check(counter19.end == 1, "越过 42s 涌潮结束事件", "e%d" % counter19.end)
+
 	print("==== 3D 迁移阶段 A 测试：checks=%d failures=%d ====" % [checks, failures])
 	quit(1 if failures > 0 else 0)

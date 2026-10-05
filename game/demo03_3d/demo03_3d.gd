@@ -18,9 +18,9 @@ const PROF_COLORS := {
 	"工程师": Color("c9a227"), "植物学家": Color("7cbf6b"),
 	"气象学家": Color("5a8fd0"), "搬运工": Color("d8d8d8"),
 }
-const CAM_POS := Vector3(0, 30, 24)
+const CAM_POS := Vector3(0, 30, 14)   # v13：前移视口，岩浆(-33)与村庄同框（FB-102 根因）
 const CAM_PITCH := -50.0
-const CAM_SIZE := 26.0
+const CAM_SIZE := 38.0   # v13：拉出纵深，默认取景必须可见岩浆（FB-102；几何余量 2.9）
 # v5 风暴之夜视觉辨识（对齐 2D v14）：紫黑夜空常驻 + 环境细雨；
 # 酸雨信息优先——酸雨紫主雨永远比细雨更亮更密，紫黑夜空不得吞掉它
 const CLASSIC_BG := Color("2b1738")
@@ -32,6 +32,7 @@ var sim: KingdomSimulation
 var cam: Camera3D
 var rig: Node3D
 var lava_mat: StandardMaterial3D
+var lava_node: MeshInstance3D
 var rain: CPUParticles3D
 var drizzle: CPUParticles3D
 var env_node: WorldEnvironment
@@ -155,8 +156,9 @@ func _build_world() -> void:
 	# 地面
 	_box(self, Vector3(0, -0.5, 4), Vector3(120, 1, 70), Color("3a2f28"), "Ground")
 	# 岩浆（远景发光面）
-	var lava := _box(self, Vector3(0, 0.2, -46), Vector3(150, 0.6, 26), Color("d84315"), "Lava")
+	var lava := _box(self, Vector3(0, 0.2, -42), Vector3(150, 0.6, 26), Color("d84315"), "Lava")
 	lava_mat = lava.material_override
+	lava_node = lava
 	lava_mat.emission_enabled = true
 	lava_mat.emission = Color("ff5722")
 	lava_mat.emission_energy_multiplier = 1.2
@@ -568,6 +570,15 @@ func _on_sim_event(kind: String, p: Dictionary) -> void:
 		"reservoir_built":
 			_update_reservoir_visual()
 			_toast("蓄水池建成！（酸雨时失效，注意时机）", Color("81d4fa"))
+		"surge_warn":
+			banner_label.text = "【预警】岩浆涌潮逼近村庄！（3 秒）"
+			banner_label.add_theme_color_override("font_color", Color("ff8a65"))
+		"surge_started":
+			banner_label.text = "【岩浆涌潮】岩浆推进！升温 +1.2/s"
+			banner_label.add_theme_color_override("font_color", Color("ff5722"))
+		"surge_ended":
+			if String(banner_label.text).begins_with("【岩浆涌潮】") or String(banner_label.text).begins_with("【预警】"):
+				banner_label.text = ""
 		"heatwave_started":
 			banner_label.text = "【热浪】岩浆加剧！升温 ×1.5（5 秒）"
 			banner_label.add_theme_color_override("font_color", Color("ff8a65"))
@@ -608,6 +619,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventKey and event.pressed and not event.echo \
 			and event.keycode == KEY_F and sim.round_state == "play":
 		_try_command_ui()
+	elif event is InputEventKey and event.pressed and not event.echo \
+			and sim.round_state == "play" \
+			and event.keycode in [KEY_1, KEY_2, KEY_3, KEY_KP_1, KEY_KP_2, KEY_KP_3]:
+		var k: int = event.keycode
+		var idx: int = (k - KEY_KP_1) if k >= KEY_KP_1 else (k - KEY_1)
+		_activate_slot(idx)
 
 
 ## v3 悬停代理：射线命中拾取体 → 对应 ComicObject 高亮（统一 toon 描边反馈）
@@ -684,6 +701,18 @@ func _update_tooltip(mouse: Vector2) -> void:
 		tooltip_label.visible = false
 
 
+## v13 无障碍输入：键盘 1/2/3 直达槽位（与点击拾取同一套规则与反馈）
+func _activate_slot(i: int) -> void:
+	if i < 0 or i >= sim.towers.size():
+		return
+	var lv: int = sim.towers[i]
+	var ok: bool = sim.try_upgrade(i) if lv == 1 else sim.try_build(i)
+	if not ok:
+		_toast("水滴不够（需要 %d水）" % (sim.upgrade_cost() if lv == 1 else sim.build_cost()), Color("ef9a9a"))
+	elif lv == 0:
+		pass
+
+
 func _pick(screen_pos: Vector2) -> void:
 	var from := cam.project_ray_origin(screen_pos)
 	var dir := cam.project_ray_normal(screen_pos)
@@ -757,8 +786,13 @@ func _process(delta: float) -> void:
 	rain.emitting = sim.round_state == "play" and sim.acid_active()
 	# v11 热浪表现：岩浆辉光增强（风暴限定，只读 heatwave_active）
 	lava_mat.emission_energy_multiplier = lerpf(
-			lava_mat.emission_energy_multiplier, 2.2 if sim.heatwave_active() else 1.2,
+			lava_mat.emission_energy_multiplier, 1.0 if sim.surge_active() else (2.2 if sim.heatwave_active() else 1.2),
 			minf(3.0 * delta, 1.0))
+	# v13 涌潮：岩浆面向村庄推进（-46 → -22），退潮归位；albedo 压暗防加法混色过曝（G 通道累加会变核弹黄）
+	var lava_target_z := -30.0 if sim.surge_active() else -42.0
+	lava_node.position.z = move_toward(lava_node.position.z, lava_target_z, 4.0 * delta)
+	lava_mat.albedo_color = lava_mat.albedo_color.lerp(
+			Color("7a1508") if sim.surge_active() else Color("d84315"), minf(3.0 * delta, 1.0))
 	_update_hover_proxy()
 	_update_tooltip(get_viewport().get_mouse_position())
 	# toast 淡出
