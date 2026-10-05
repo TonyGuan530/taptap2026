@@ -13,7 +13,9 @@
 ## 规格
 requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-export.md）。玩法：形状(圆球/长板/方块)×词条(Heavy/Float/Fire/Sticky)统一规则物理解谜，目标 3-4 关。
 
-## 当前状态（2026-10-05 晚 · v10 基线险情与保护）
+## 当前状态（2026-10-05 深夜 · v10 冻结 + L6/L7/L8 探索版）
+- **L8 桥上桥下落地（demo-02-3d-v13 直链 https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v13/index.html ，hub 槽未切）**：同一脆板双语义——羽毛轻落桥面滚过桥尾（桥不碎）／皮球全弧砸断脆桥坠谷底；b 套件扩至 **15/15 全绿**；机制扩展=脆板 require_break 过关门可按关关闭（L2/L7 默认 true 不变）。探索内容不并入基线。
+- 新增工程坑：④批跑 15 连发引擎后必现启动停振——批内清僵尸（两个镜像名 taskkill）+ 必要时删 .godot；yaw=-PI/2 时 p_left 刹车推的是 Z 轴不是 -X（L2/L8 两次踩中——横向刹车用「松 W 靠阻尼」替代）；测试节点替换用 node 正则跨行匹配会吞码——恢复用 git checkout HEAD + 精确 Edit 重打。
 - **⚠️ v10 基线险情（当日）**：并行会话的「体积自动清理」把 builds/demo-02-3d-v10 当被取代版本删除（commit 0e45c79），hub 槽与试玩链接一度全坏——已从 git 历史恢复并重新上线（200）。**任何版本清扫不得删 builds/demo-02-3d-v10**（目录内已放 PINNED.md 标记）：它是 Batch 01 唯一基线，直到数据回收出 Gate。同理 2D 的 demo-02-v7 亦为冻结基线勿删。
 - **L7 robustness gate 完成（test_demo02_3d_r7.gd）**：石头破窗冲击 16.8-17.0 对阈 14（+20%）在 60/120Hz+出生扰动全稳；皮球 ≤12.2 全配置不破（-13%）；30Hz 失败为测试架构伪影（Movie Maker 实测 30Hz 正常）。监督三原则已写入 3D 指南附录；L7 并入正篇前再过一次该 gate 即可。
 - **L7 破窗密室落地（demo-02-3d-v12 直链 https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v12/index.html ，hub 槽未切）**：弹簧冲天顶点切石头（L2/L3 已教时机）高速坠落砸穿整缝脆板天窗（阈 14/石坠 15+，皮球不切 12 破不了）；b 套件扩至 **13/13 全绿**；新机制能力=每关脆板阈值可覆盖（fragile.speed）。探索内容不并入基线。

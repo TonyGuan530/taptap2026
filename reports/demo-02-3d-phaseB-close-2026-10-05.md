@@ -49,3 +49,9 @@
 - 新增 **L7 破窗密室**：弹簧冲天→顶点切石头（复用 L2/L3 已教时机）→高速坠落砸穿密室整缝脆板天窗入室。判据干净：石头坠落 15+ m/s 破阈 14；皮球不切 12.2 破不了；羽毛更不行。首个侧面破窗方案因切石时机窗口仅 0.15s（对玩家过苛）被推翻，天窗方案时机=已教动作、容错大。
 - 机制扩展：每关脆板阈值可覆盖（fragile.speed），全局默认 11 不变。
 - b 套件扩至 **13/13 全绿**；v12 直链：https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v12/index.html （hub 槽未切，Batch 01 仍钉 v10）。
+
+## 追加（同日深夜）：L8 探索版轮
+- 新增 **L8 桥上桥下**：同一脆板双语义——路线A 羽毛全程 W 轻落桥面滚过桥尾（broken=false，require_break=false 不强制砸）；路线B 皮球不切词条全弧砸断脆桥坠谷底（broken=true）。双路线同 GOAL，反向教学 L2 的「轻过勿砸」。
+- 机制扩展：脆板 require_break 过关门按关关闭（L2/L7 默认 true 不变）。
+- b 套件扩至 **15/15 全绿**；v13 直链：https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v13/index.html （hub 槽未切，Batch 01 仍钉 v10）。
+- 工程坑新增：批跑 15 连发后必现启动停振（清僵尸+删 .godot 即愈）；yaw=-PI/2 下 p_left 刹车推 Z 轴；node 正则跨行替换吞测试代码（已 git 恢复）。
