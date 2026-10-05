@@ -1,5 +1,6 @@
 #!/bin/bash
 # demo-04 3D 一键全量验证：3D 套件 → 2D 冻结基线 → 巡游机器人 → 混沌浸泡
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # 用法：bash tools/verify-all-demo04-3d.sh [game目录] [混沌秒数，0=跳过]
 set -e
 GAME="${1:-$(dirname "$0")/../game}"
@@ -16,6 +17,7 @@ echo "==== 3/4 五关巡游机器人 ===="
 "$GODOT" --headless --path . res://tests/movie_demo04_3d.tscn 2>&1 | grep -E "TOUR DONE|ALL PASS"
 echo "==== 4/4 混沌浸泡（${CHAOS}s，0 跳过）===="
 if [ "$CHAOS" != "0" ]; then
-  node "$(dirname "$0")/cdp-chaos-demo04-3d.mjs" ../builds/demo-04-3d-v9 "$CHAOS" || { echo "FAIL: 混沌浸泡"; exit 1; }
+  BUILD_DIR="../builds/demo-04-3d-v10"; [ -d "$BUILD_DIR" ] || BUILD_DIR="../builds/demo-04-3d-v9"
+  node "$SCRIPT_DIR/cdp-chaos-demo04-3d.mjs" "$BUILD_DIR" "$CHAOS" || { echo "FAIL: 混沌浸泡"; exit 1; }
 fi
 echo "==== 全量验证通过 ===="

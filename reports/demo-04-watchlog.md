@@ -251,3 +251,7 @@
 ## 2026-10-05 18:40（轮50·运维脚本固化）
 - tools/verify-all-demo04-3d.sh：一键全量验证（3D 套件单跑→2D 基线→巡游→混沌，任一失败非零退出）。
 - tools/release-v10-when-ready.mjs：带余量守卫的 v10 发布脚本（<900MB 上限自动 ABORT 并指引清理；--force 明示跳过）——守卫自测通过（当前正确 ABORT：957+46>900）。冻结期任何会话可安全执行。
+
+## 2026-10-05 19:00（轮51·验证脚本端到端跑通）
+- verify-all 端到端实测：3D 套件 ALL PASS / 2D 7 PASS / 巡游 won=true 碎片12 ✓；混沌段路径 bug（cd 后 dirname 错位）已修 + 优先测本地 v10 构建，standalone 复验 0 错误。
+- 脚本可用性确认：verify-all 全链 + release 守卫两件运维工具均已实测。
