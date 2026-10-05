@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-05T12:52:00+08:00",
-  "round": 118,
+  "checkedAt": "2026-10-05T13:52:00+08:00",
+  "round": 119,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（12:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（13:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -18,12 +18,12 @@
     "demo-02": {
       "cron": "5,35 * * * *",
       "runCount": 22,
-      "evidence": "✅ 3D v14 探索版上 Pages（仅直链，hub 不切——Batch 01 基线保持 v10，PINNED 规则被遵守）+ L8 robustness gate 文档"
+      "evidence": "🟢 FB-101 分诊完成：公开回应+监督裁定存档（POV 偏好 vs 可读性区分/探索关维持隐藏/≥2of5 升级规则）+Batch 01 手册增视角/内容量观察字段——裁定细节督导复核"
     },
     "demo-03": {
       "cron": "10,40 * * * *",
       "runCount": 23,
-      "evidence": "✅ v14 交付（b800628：风暴之夜视觉差异化模式辨识，零平衡四用例 PASS+视频重录）；v13 Pages 已 200（404 修复）"
+      "evidence": "🟢 FB-102 响应中：v13 岩浆入画修复——CAM_SIZE 38 相机拉远+涌潮岩浆 albedo 压暗/辉光红橙主题（修加法混色过曝）+涌潮前沿 -30 可见；键盘 1/2/3 建造槽位（无障碍）"
     },
     "demo-04": {
       "cron": "15,45 * * * *",
@@ -45,7 +45,7 @@
     "health": "ok builds=21 目录/958M（警戒内）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "84 条稳态（板面整理后；无新用户反馈）",
+    "miro": "84 条稳态（无新用户反馈）",
     "feedback": "db.json 零反馈",
     "git": "本轮 HEAD 待推",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
@@ -53,9 +53,11 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "🔴 FB-101~107 3D 质量修复（批示 12:02 发，任务轮次消化中——13:52 核对首批响应）"
+    "queue": "FB-101~107 修复推进中（demo-03 响应快/demo-02 分诊完）；FB-103/104/105~107 待首响应（13:52→14:52 核对）"
   },
   "watch": [
+    "🔴【硬红线】13:50 巡检合规——持续",
+    "🟢 FB 闭环运转：demo-03 岩浆修复中（相机+视觉双修）、demo-02 FB-101 分诊完（裁定存档待督导复核）——FB-103/104/105~107 下轮核对",
     "🔴【硬红线】12:50 巡检合规——持续",
     "🔴【最高优先·用户七条反馈】3D 迁移质量红线（核心身份铁律：3D 换皮不换魂）——demo-03 岩浆回归/demo-06 画回归/demo-02 第三人称+扩展/demo-08 真折纸物理/demo-09/10/11 启动 3D 化（总批示 reviews/supervisor-directive-2026-10-05-3d-quality.md）",
     "⚠️ 核心身份缺失修复前，问题 3D 版不得切 hub 主槽",
@@ -73,8 +75,7 @@
     "🔴 真人反馈三通道全空：Miro 无新增（60 条基线）/GitHub Issues 零条/db.json 未生成——数据仍在用户侧，等用户直接发对话里或贴上平台",
     "🔴【调度变更·需用户操作】督导自动化改 1h（Automations 界面）；其他任务 30min 不动",
     "🔴【需用户决策·在账】Batch 01 人选与排期；demo-02 会话失能；itch A/B",
-    "⚠️ demo-02 L3 调试须 headless（编辑器禁开）",
-    "🔴 FB-101~107 消化核对：13:52 无首批响应则逐任务催办"
+    "⚠️ demo-02 L3 调试须 headless（编辑器禁开）"
   ],
   "pending": [
     "【需用户决策】demo-02 会话失能（轻推或授权重建）",
