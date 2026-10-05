@@ -93,6 +93,9 @@ const LEVELS := [
 	{name = "第 19 关 · 逆风S形摆门", short = "逆风S形", ratio = 0.8, folds = 6, target_m = 70.0, wind = "head", side_wind = -60.0, shear_x = 30.0, shear_x2 = 55.0, reward = 14,
 		gate_x = 45.0, gate_h = 12.0, gate_bonus = 3, gate_side = 240.0, gate_swing = 300.0, gate_period = 4.0,
 		tip = "逆风 1.25 倍 + 双段切变侧风：30 米前左漂、30-55 米右送（趁势吃 45 米摆动高门 +3）、55 米后左漂收尾 70 米。更多机制关卡（用户指令扩展）"},
+	{name = "第 20 关 · 切变低门", short = "切变低门", ratio = 0.85, folds = 6, target_m = 60.0, wind = "none", side_wind = 60.0, shear_x = 30.0, shear_x2 = 50.0, reward = 14,
+		gate_x = 44.0, gate_h = 12.0, gate_bonus = 3, gate_swing = 240.0, gate_period = 3.5, low_gate_x = 48.0, low_gate_top = 10.0, low_gate_swing = 240.0, low_gate_period = 3.5, low_gate_side = 0.0,
+		tip = "双段切变 + 双摆门：30 米前右送、30-50 米左拽、50 米后右送；高门 44 米固定，低门 48 米横位 ±4m 摆动（3.5 秒来回）——左拽段俯冲向左切吃低门 +3，一掷二选一，60 米过关。更多机制关卡（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
