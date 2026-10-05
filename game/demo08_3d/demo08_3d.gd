@@ -997,11 +997,6 @@ func _draw_wind_tag() -> void:
 ## 阶段 C16 打磨：风标签文本函数化（headless 可测；覆盖 none/head/tail/侧风/切变/双段切变/正交侧风）
 func wind_tag_text() -> String:
 	var w: String = core.wind_mode()
-	if w == "none":
-		# C41 打磨：无基础风但有正交侧风（L20 切变低门）也显示风信息，不再返回空串
-		if absf(core.side_wind_accel()) > 0.0:
-			return _ortho_wind_text("")
-		return ""
 	if w == "side":
 		var left: bool = core.wind_side() < 0.0
 		var dir1: String = "←" if left else "→"
@@ -1015,10 +1010,29 @@ func wind_tag_text() -> String:
 			var after: bool = core.wind_side2() < 0.0
 			return "风切变 %.0fm：侧风 %s → %s" % [shear_m, dir1, "←" if after else "→"]
 		return "侧风 %s（A/D 顶风）" % dir1
-	var base := "逆风 阻力 x1.25" if w == "head" else "顺风 恒定推力"
+	# head/tail/none：基础风 ＋ 正交侧风段 ＋ 气流区段（C42），none 且全无则空串（L1 路径不变）
+	var label := ""
+	if w == "head":
+		label = "逆风 阻力 x1.25"
+	elif w == "tail":
+		label = "顺风 恒定推力"
 	if absf(core.side_wind_accel()) > 0.0:
-		return _ortho_wind_text(base + " ＋ ")
-	return base
+		label = _ortho_wind_text(label + " ＋ ") if label != "" else _ortho_wind_text("")
+	var up_txt := updraft_text()
+	if up_txt != "":
+		label = ("%s ＋ %s" % [label, up_txt]) if label != "" else up_txt
+	return label
+
+
+## C42 气流区标签：wind_up_x 未配置或 wind_up=0 返回空串（既有关路径不变）
+func updraft_text() -> String:
+	var x_m: float = float(core.LEVELS[core.level_idx].get("wind_up_x", 0.0))
+	var a: float = float(core.LEVELS[core.level_idx].get("wind_up", 0.0))
+	if x_m <= 0.0 or absf(a) < 1e-6:
+		return ""
+	var len_m: float = float(core.LEVELS[core.level_idx].get("wind_up_len", 10.0))
+	var tag := "上升气流" if a > 0.0 else "下沉气流"
+	return "%s %.0f-%.0f 米（%s）" % [tag, x_m, x_m + len_m, "乘流爬升" if a > 0.0 else "俯冲穿越"]
 
 
 ## 正交侧风（C13）标签段：切变面按符号翻转 side_wind（幅值不变），段向 = d1 / -d1 / d1

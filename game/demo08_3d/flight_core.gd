@@ -105,6 +105,9 @@ const LEVELS := [
 	{name = "第 23 关 · 顺风S形", short = "顺风S形", ratio = 0.85, folds = 6, target_m = 70.0, wind = "tail", side_wind = -60.0, shear_x = 30.0, shear_x2 = 55.0, reward = 14,
 		gate_x = 45.0, gate_h = 12.0, gate_bonus = 3, gate_side = 240.0,
 		tip = "顺风S形：顺风恒推冲得快，侧风先左后右再左（30/55 米两次切变）——中段乘风右切吃 45 米高空门（+4m 横位、12m 以上）+3，末段左风帮你回正收尾 70 米。更多机制关卡（用户指令扩展）"},
+	{name = "第 24 关 · 下沉峡谷", short = "下沉峡谷", ratio = 0.6, folds = 6, target_m = 75.0, wind = "head", wind_up = -1600.0, wind_up_x = 50.0, wind_up_len = 20.0, reward = 14,
+		gate_x = 30.0, gate_h = 14.0, gate_bonus = 3, low_gate_x = 72.0, low_gate_top = 12.0,
+		tip = "下沉峡谷：逆风阻力 1.25 倍，50-70 米有一段猛烈下沉气流压你的高度——平折低抛（约 26°）被气流压到 72 米低空门（12m 以下）+3，抬头一点（27-32°）吃 30 米高空门（14m 以上）+3 但会从低门上方飘过——一掷二选一靠出手角度选择，75 米过关。新机制关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
@@ -336,6 +339,9 @@ func step(delta: float) -> String:
 	var acc := lift_dir * (lift_up * lift_scale) + drag_vec + Vector2(0.0, GRAV)
 	if wind_mode() == "tail":
 		acc += Vector2(TAIL_THRUST, 0.0)
+	var up_a: float = updraft_accel()
+	if absf(up_a) > 0.0:
+		acc += Vector2(0.0, -up_a)   # 屏幕系 y 向下：+wind_up（上升）取负
 	if has_upgrade("prop"):
 		acc += Vector2.from_angle(pitch) * PROP_THRUST
 	velocity += acc * delta
@@ -561,6 +567,19 @@ func low_gate_side_at(t: float) -> float:
 ## 阶段 C6 正交侧风（px/s²，带符号）：与 forward 风（head/tail/none）叠加，用于非 "side" 风型关卡
 func side_wind_accel() -> float:
 	return float(LEVELS[level_idx].get("side_wind", 0.0))
+
+
+## 阶段 C42 新机制·气流区（规则变化）：wind_up_x（米，区起点）起 wind_up_len 米宽的竖直风带，
+## wind_up（px/s²，+上升/-下沉）仅在带内生效——竖直轴风系，独立于横向（B1 不耦合）
+func updraft_accel() -> float:
+	var x_m: float = float(LEVELS[level_idx].get("wind_up_x", 0.0))
+	if x_m <= 0.0:
+		return 0.0
+	var rel: float = (plane_pos.x - START_X) / PX_PER_M
+	var len_m: float = float(LEVELS[level_idx].get("wind_up_len", 10.0))
+	if rel < x_m or rel >= x_m + len_m:
+		return 0.0
+	return float(LEVELS[level_idx].get("wind_up", 0.0))
 
 
 ## 阶段 C13：切变面对正交侧风的符号翻转——每越过一个已配置切变面翻转一次
