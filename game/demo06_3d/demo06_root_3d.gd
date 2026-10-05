@@ -404,19 +404,27 @@ func _do_restart() -> void:
 	print("RESTART level=", LEVELS[level_idx].id)
 
 
-## 阶段 C 场景植被（纯视觉无碰撞，z 边缘带，不占解法空间、不遮 SpringArm 判定）
+## 阶段 C 场景植被（layer 2：推 SpringArm 镜头、不与玩法体碰撞——玩法体掩码为 1）
 func _add_dressing() -> void:
 	var span: float = maxf(LEVELS[level_idx].goal.x + 1.0, 6.0)
 	var i := 0
 	var x := 0.5
 	while x < span:
-		var m: Node3D = ModelLibrary.create_model("tree" if i % 2 == 0 else "bush")
+		var model: Node3D = ModelLibrary.create_model("tree" if i % 2 == 0 else "bush")
 		var s: float = 0.8 if i % 2 == 0 else 0.6
-		m.scale = Vector3(s, s, s)
-		var b := ModelLibrary.geometry_bounds(m)
-		var y: float = 1.2 + b.size.y * s * 0.5 - b.get_center().y * s
-		m.position = Vector3(x, y, 2.75 if i % 2 == 0 else -2.75)
-		add_child(m)
+		model.scale = Vector3(s, s, s)
+		var b := ModelLibrary.geometry_bounds(model)
+		var body := StaticBody3D.new()
+		body.collision_layer = 2
+		body.collision_mask = 0
+		body.position = Vector3(x, 1.2 + b.size.y * s * 0.5 - b.get_center().y * s, 2.75 if i % 2 == 0 else -2.75)
+		var cs := CollisionShape3D.new()
+		var bsh := BoxShape3D.new()
+		bsh.size = b.size * s
+		cs.shape = bsh
+		body.add_child(cs)
+		body.add_child(model)
+		add_child(body)
 		i += 1
 		x += 3.1
 
@@ -431,12 +439,14 @@ func _build_player() -> void:
 	cap.height = 1.0
 	cs.shape = cap
 	player.add_child(cs)
-	var vis := MeshInstance3D.new()
-	var cm := CapsuleMesh.new()
-	cm.radius = 0.25
-	cm.height = 1.0
-	vis.mesh = cm
-	vis.material_override = style.body_material(Color("6fbf73"))
+	# 迭代美术（冻结面外）：玩家可见体 = 2D 线绿幕蜡笔小恐龙（固定 Y 广告牌）；碰撞胶囊不变
+	var vis := Sprite3D.new()
+	var ptex: Texture2D = load("res://art/demo06_player.png")
+	vis.texture = ptex
+	vis.billboard = StandardMaterial3D.BILLBOARD_FIXED_Y
+	vis.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+	vis.pixel_size = 1.15 / maxf(ptex.get_height(), 1.0)
+	vis.position.y = 0.08
 	player.add_child(vis)
 	var pivot := Node3D.new()
 	pivot.name = "CamPivot"
@@ -444,7 +454,7 @@ func _build_player() -> void:
 	player.add_child(pivot)
 	var arm := SpringArm3D.new()
 	arm.spring_length = 4.5
-	arm.collision_mask = 1
+	arm.collision_mask = 3  # 1=地形/物体 2=装饰植被（树推镜头但不挡玩法——玩法体掩码仍为 1）
 	pivot.add_child(arm)
 	cam = Camera3D.new()
 	cam.fov = 75.0
