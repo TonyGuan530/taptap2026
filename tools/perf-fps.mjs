@@ -32,7 +32,9 @@ const sample = (page, ms) => page.evaluate((dur) => new Promise((res) => {
 	requestAnimationFrame(f);
 }), ms);
 
-const browser = await chromium.launch({ channel: 'msedge', headless: true });
+// PERF_SW=1 → 强制软件渲染（SwiftShader 下限），评估弱核显机器
+const swArgs = process.env.PERF_SW === '1' ? ['--disable-gpu', '--use-gl=angle', '--use-angle=swiftshader'] : [];
+const browser = await chromium.launch({ channel: 'msedge', headless: true, args: swArgs });
 const result = { url, viewport: '1280x720', when: new Date().toISOString(), host: os.hostname(), cpu: os.cpus()[0].model, modes: {} };
 try {
 	const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });

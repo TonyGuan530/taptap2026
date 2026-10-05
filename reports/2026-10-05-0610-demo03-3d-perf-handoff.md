@@ -41,3 +41,9 @@ node tools/hub-smoke.mjs https://tonyguan530.github.io/taptap2026/ <版本> revi
 
 ### 已知坑（详见 reviews/STANDING-CONSTRAINTS.md）
 - 改 UI 文案必须重跑 subset-font；发布必须跑双冒烟；/api/* 404 是静态托管预期；不弹窗、不占鼠标。
+
+## 补录（2026-10-05 07:40 轮）：SwiftShader 软件渲染下限
+- `PERF_SW=1 node tools/perf-fps.mjs …` 强制 SwiftShader（纯 CPU 渲染，数据 reports/perf-fps-v12-swiftshader.json）：
+  **classic 42.6 fps / storm 36.7 fps，最差帧 34ms**。
+- 结论：即使完全无 GPU 加速也可玩（>30fps）；真核显（Intel/AMD iGPU）介于两者与独显之间。盲测可告知"任意现代机器可玩"，无需优化。
+- 工具：perf-fps.mjs 支持 PERF_SW=1 开关。

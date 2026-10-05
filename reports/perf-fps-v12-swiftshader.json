@@ -1,0 +1,18 @@
+{
+  "url": "https://tonyguan530.github.io/taptap2026/builds/demo-03-3d-v12/index.html",
+  "viewport": "1280x720",
+  "when": "2026-10-05T01:12:50.134Z",
+  "host": "GSX-PC",
+  "cpu": "Intel(R) Core(TM) i7-14700KF",
+  "modes": {
+    "classic": {
+      "avgFps": 42.6,
+      "worstFrameMs": 34
+    },
+    "storm": {
+      "avgFps": 36.7,
+      "worstFrameMs": 34
+    }
+  },
+  "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+}
