@@ -773,7 +773,8 @@ func _on_goal_entered(body: Node3D) -> void:
 		for r in level_ratings:
 			letters += str(r)
 		win_panel.visible = true
-		lbl_win.text = "全线逃脱成功！\n总用时 %d 秒 · 碎片 %d/%d · 评级 %s" % [
+		lbl_win.text = "全线逃脱成功！\n总用时 %d 秒 · 碎片 %d/%d · 评级 %s
+K 实验房 · R 重玩本关 · Shift+R 全部重来" % [
 			int(total), ability.shards_total, _total_shards(), letters]
 
 func _rating(t: float) -> String:
