@@ -98,6 +98,23 @@ const LEVELS := [
 		dark = [5.0, 25.0],
 		goal = 31.0,
 	},
+	{
+		name = "终局回廊",
+		floors = [[0,6],[6.5,12],[14,19],[21,27],[29,33]],
+		walls = [{x0 = 6, x1 = 6.5, h = 2.4},{x0 = 21, x1 = 21.5, h = 2.9}],
+		cracked = [{x0 = 14, x1 = 14.5, h = 2.9}],
+		up = [],
+		bounces = [{x = 8.0, z = 1.1}],
+		aliens = [
+			{id = "glow", name = "灯灯菌", x = 2.0, col = Color("ffd54f")},
+			{id = "highjump", name = "蹦蹦兽", x = 3.0, col = Color("ab47bc")},
+			{id = "double", name = "双翼虫", x = 4.5, col = Color("4fc3f7")},
+			{id = "break", name = "恐龙兽", x = 6.0, col = Color("e05a3a")},
+		],
+		shards = [],
+		dark = [],
+		goal = 31.0,
+	},
 ]
 
 const RATINGS := {"S": 45.0, "A": 90.0}   # ≤45s S / ≤90s A / 其余 B（对齐 2D）

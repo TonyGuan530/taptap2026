@@ -680,6 +680,17 @@ func _run() -> void:
 	else:
 		_fail("键位条异常：vis0=%s hidden=%s" % [vis0, hidden_ok])
 
+	# ---- 27. 终局回廊（L6）：六关结构 + 零新碎片（全收集维持 17）+ 四 DNA 教学完备 ----
+	if scene_root.LEVELS.size() == 6 and String(scene_root.LEVELS[5].name) == "终局回廊":
+		var l6: Dictionary = scene_root.LEVELS[5]
+		var l6ok: bool = l6.shards.is_empty() and l6.aliens.size() == 4 				and l6.walls.size() == 2 and l6.cracked.size() == 1 and l6.bounces.size() == 1
+		if l6ok and scene_root._total_shards() == 17:
+			_ok("终局回廊：六关结构完整（2门+1裂纹墙+1弹跳板+4DNA），全收集维持 17")
+		else:
+			_fail("终局回廊结构异常：l6ok=%s total=%d" % [l6ok, scene_root._total_shards()])
+	else:
+		_fail("LEVELS 异常：size=%d name=%s" % [scene_root.LEVELS.size(), scene_root.LEVELS.get(5, {}).get("name", "?")])
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:
