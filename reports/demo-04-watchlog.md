@@ -408,3 +408,8 @@
 ## 2026-10-05 23:00（轮82·v15 资产接入加载器上线）
 - v15 净零上线（200 确认）：资产接入加载器（回退链兼容 headless）随发版入库。
 - 素材到位后接入动作 = 放 PNG 进 game/assets/ → 发版，零代码改动；接入效果已由用例 29 实测。
+
+## 2026-10-05 22:50（轮80 补·外星生物资产接入完成）
+- 用例30 外星生物 billboard 接入全过（alien_highjump.png → billboard 替换灰盒 + 灰盒隐藏）；修复过程：CR 游离/孤儿 for/字符串前缀被吞 三处补丁伤依次清理。
+- 资产接入面完备：player.png + alien_{glow,highjump,break,double}.png 共 5 张 PNG 放入 game/assets/ 即全角色 billboard 化。
+- 29/29 + 2D 7/7 全绿；无发版（v15 已含此能力，头less 测试为验证性）。

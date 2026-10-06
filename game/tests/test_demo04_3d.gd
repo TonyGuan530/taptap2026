@@ -749,6 +749,32 @@ func _run() -> void:
 	else:
 		_fail("资产清理异常：billboard 残留")
 
+	# ---- 30. 外星生物资产接入：alien_highjump.png → billboard 替换灰盒 → 清理 ----
+	var img2 := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	img2.fill(Color(0.3, 0.7, 0.9))
+	img2.save_png("res://assets/alien_highjump.png")
+	await physics_frame
+	scene_root.queue_free()
+	await physics_frame
+	await physics_frame
+	scene_root = (load("res://demo04_3d.tscn") as PackedScene).instantiate()
+	root.add_child(scene_root)
+	await physics_frame
+	await physics_frame
+	player = scene_root.get_node("Player")
+	ability = scene_root.get_node("AbilityState")
+	var bb2: Sprite3D = scene_root.alien_billboards.get("highjump", null)
+	var alien_swap: bool = bb2 != null and bb2.texture != null and bb2.visible
+	var alien_gray_hidden := false
+	for c in scene_root.get_node("LevelRoot").get_children():
+		if c is MeshInstance3D and c.position.distance_to(Vector3(6.2, 0.8, 0)) < 0.5:
+			alien_gray_hidden = not c.visible
+	if alien_swap and alien_gray_hidden:
+		_ok("外星生物资产：alien_highjump.png 加载 → billboard 替换灰盒")
+	else:
+		_fail("外星生物资产异常：swap=%s gray_hidden=%s" % [alien_swap, alien_gray_hidden])
+	DirAccess.remove_absolute("res://assets/alien_highjump.png")
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:

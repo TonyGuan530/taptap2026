@@ -147,6 +147,7 @@ var shard_vis: Array = []            # 碎片视觉节点（脉冲动画）
 var alien_vis: Array = []            # 外星生物视觉节点（待机动画）
 var asset_sprites: Array = []        # 资产化 Sprite3D（玩家/外星生物；有 PNG 时替换灰盒）
 var player_billboard: Sprite3D = null
+var alien_billboards: Dictionary = {}   # id → Sprite3D（有资产时）
 
 var lbl_level: Label
 var lbl_dna: Label
@@ -441,12 +442,32 @@ func _build_alien(a: Dictionary) -> void:
 	vis.material_override = mat
 	level_root.add_child(vis)
 	alien_vis.append(vis)
+	_try_alien_asset(a.id, vis)
 	var lbl := Label3D.new()
 	lbl.text = a.name
 	lbl.font_size = 40
 	lbl.position = area.position + Vector3(0, 1.0, 0)
 	lbl.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	level_root.add_child(lbl)
+
+func _try_alien_asset(id: String, box: MeshInstance3D) -> void:
+	## 外星生物资产接入：res://assets/alien_<id>.png 存在即 billboard 替换灰盒
+	var path := "res://assets/alien_%s.png" % id
+	var tex: Texture2D = load(path) if ResourceLoader.exists(path) else null
+	if tex == null and FileAccess.file_exists(path):
+		var img := Image.load_from_file(path)
+		if img != null:
+			tex = ImageTexture.create_from_image(img)
+	if tex == null:
+		return
+	var sp := Sprite3D.new()
+	sp.texture = tex
+	sp.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	sp.pixel_size = 0.006
+	sp.position = Vector3(0, 0.15, 0)
+	box.add_child(sp)
+	box.visible = false
+	alien_billboards[id] = sp
 
 func _build_shard(spos: Vector3) -> void:
 	var area := Area3D.new()
