@@ -1,5 +1,5 @@
 {
-  "validatedAt": "2026-10-06T16:15:45.708Z",
+  "validatedAt": "2026-10-06T16:47:26.929Z",
   "build": {
     "title": "墨迹漂流 / INKBOUND",
     "version": "demo-06-inkbound-v10",
@@ -1285,7 +1285,1120 @@
     ]
   },
   "release": {
-    "onlineVerified": false
+    "commit": "2393839cdbe2c711e107e710d6a6fd157c677b32",
+    "workflow": "37494892795",
+    "url": "https://tonyguan530.github.io/taptap2026/inkbound-v10.html",
+    "onlineVerified": true,
+    "verifiedAt": "2026-10-06T16:41:04.463Z",
+    "entry": {
+      "base": "https://tonyguan530.github.io/taptap2026/",
+      "errors": [],
+      "evidence": [
+        {
+          "phase": "video",
+          "duration": 110.279,
+          "width": 960,
+          "height": 540,
+          "url": "https://tonyguan530.github.io/taptap2026/inkbound-v10-art/ladder-play.mp4"
+        },
+        {
+          "phase": "embedded",
+          "url": "https://tonyguan530.github.io/taptap2026/builds/demo-06-inkbound-v10/index.html?qa=1",
+          "version": 10
+        },
+        {
+          "phase": "embedded-input",
+          "method": "actual page mouse and keyboard",
+          "moved": true
+        },
+        {
+          "phase": "mobile",
+          "width": 390,
+          "overflow": false
+        }
+      ]
+    },
+    "routes": [
+      {
+        "route": "ladder",
+        "blackOnly": false,
+        "build": {
+          "url": "https://tonyguan530.github.io/taptap2026/builds/demo-06-inkbound-v10/index.html?qa=1",
+          "expectedPckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5",
+          "pckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5"
+        },
+        "errors": [],
+        "evidence": [
+          {
+            "phase": "world",
+            "player": [
+              0,
+              0.6,
+              0
+            ],
+            "goals": [
+              false,
+              false,
+              false
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                1814.9,
+                279.8
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "",
+              "property": "None",
+              "length": 0
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "threshold",
+            "player": [
+              4.863,
+              1.851,
+              0.048
+            ],
+            "goals": [
+              true,
+              false,
+              false
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                1604.8,
+                313.4
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "ladder",
+              "property": "None",
+              "length": 3.22000002861023
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "courtyard",
+            "player": [
+              13.363,
+              2.651,
+              0.123
+            ],
+            "goals": [
+              true,
+              true,
+              false
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                1237.6,
+                333.4
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "ladder",
+              "property": "None",
+              "length": 3.22000002861023
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "black-complete",
+            "player": [
+              21.98,
+              3.701,
+              -0.729
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                865.4,
+                390.9
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "ladder",
+              "property": "Elastic",
+              "length": 4.50799989700317
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "short-blade",
+            "player": [
+              28.689,
+              0.601,
+              0.087
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                575.5,
+                277
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "blade",
+              "property": "Sharp",
+              "length": 0.84
+            },
+            "weapon": {
+              "equipped": true,
+              "length": 0.84,
+              "property": "Sharp"
+            }
+          },
+          {
+            "phase": "yellow",
+            "player": [
+              28.689,
+              0.601,
+              0.087
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": false,
+            "vines": {
+              "collision": 0,
+              "cut": true,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                575.5,
+                277
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "blade",
+              "property": "Sharp",
+              "length": 2.38
+            },
+            "weapon": {
+              "equipped": true,
+              "length": 2.38,
+              "property": "Sharp"
+            }
+          },
+          {
+            "phase": "enemy-hit",
+            "player": [
+              32.364,
+              0.601,
+              0.087
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": false,
+            "vines": {
+              "collision": 0,
+              "cut": true,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                416.8,
+                277
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "attack",
+              "timer": 0.09
+            },
+            "combat": {
+              "hp": 2,
+              "invulnerability": 0.85,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "blade",
+              "property": "Sharp",
+              "length": 2.38
+            },
+            "weapon": {
+              "equipped": true,
+              "length": 2.38,
+              "property": "Sharp"
+            }
+          },
+          {
+            "phase": "enemy-defeated",
+            "player": [
+              32.83,
+              0.601,
+              0.087
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": false,
+            "vines": {
+              "collision": 0,
+              "cut": true,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": false,
+              "ground_screen": [
+                396.6,
+                277
+              ],
+              "hp": 0,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "dead",
+              "timer": 0.6
+            },
+            "combat": {
+              "hp": 1,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "blade",
+              "property": "Sharp",
+              "length": 2.38
+            },
+            "weapon": {
+              "equipped": true,
+              "length": 2.38,
+              "property": "Sharp"
+            }
+          },
+          {
+            "phase": "ending",
+            "player": [
+              35.806,
+              1.201,
+              0.087
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": true,
+            "vines": {
+              "collision": 0,
+              "cut": true,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": false,
+              "ground_screen": [
+                268.1,
+                294.3
+              ],
+              "hp": 0,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "dead",
+              "timer": 0.6
+            },
+            "combat": {
+              "hp": 1,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": true,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "blade",
+              "property": "Sharp",
+              "length": 2.38
+            },
+            "weapon": {
+              "equipped": true,
+              "length": 2.38,
+              "property": "Sharp"
+            }
+          }
+        ],
+        "method": "ordinary Playwright mouse and physical keyboard; QA read-only"
+      },
+      {
+        "route": "board",
+        "blackOnly": false,
+        "build": {
+          "url": "https://tonyguan530.github.io/taptap2026/builds/demo-06-inkbound-v10/index.html?qa=1",
+          "expectedPckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5",
+          "pckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5"
+        },
+        "errors": [],
+        "evidence": [
+          {
+            "phase": "world",
+            "player": [
+              0,
+              0.6,
+              0
+            ],
+            "goals": [
+              false,
+              false,
+              false
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                1814.9,
+                279.8
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "",
+              "property": "None",
+              "length": 0
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "threshold",
+            "player": [
+              5.162,
+              1.851,
+              0
+            ],
+            "goals": [
+              true,
+              false,
+              false
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                1591.9,
+                315
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "board",
+              "property": "None",
+              "length": 3.22000002861023
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "courtyard",
+            "player": [
+              13.586,
+              2.651,
+              0.001
+            ],
+            "goals": [
+              true,
+              true,
+              false
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                1228,
+                337.4
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "board",
+              "property": "Sticky",
+              "length": 2.80000019073486
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "black-complete",
+            "player": [
+              21.278,
+              3.7,
+              0.002
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                895.7,
+                366.9
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "board",
+              "property": "Sticky",
+              "length": 4.20000028610229
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "yellow",
+            "player": [
+              29.224,
+              3.201,
+              0.457
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                552.4,
+                337.9
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "ladder",
+              "property": "None",
+              "length": 3.92000007629395
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "black-bypass",
+            "player": [
+              32.141,
+              0.601,
+              1.39
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": false,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                426.4,
+                234.2
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "idle",
+              "timer": 0
+            },
+            "combat": {
+              "hp": 3,
+              "invulnerability": 0,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": false,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "ladder",
+              "property": "None",
+              "length": 3.92000007629395
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          },
+          {
+            "phase": "ending",
+            "player": [
+              35.805,
+              1.2,
+              -0.068
+            ],
+            "goals": [
+              true,
+              true,
+              true
+            ],
+            "won": true,
+            "vines": {
+              "collision": 5,
+              "cut": false,
+              "pos": [
+                30.4,
+                0,
+                0
+              ]
+            },
+            "enemy": {
+              "alive": true,
+              "ground_screen": [
+                268.1,
+                299
+              ],
+              "hp": 3,
+              "max_hp": 3,
+              "pos": [
+                33.6,
+                0.35,
+                0
+              ],
+              "state": "cooldown",
+              "timer": 1.23333333333333
+            },
+            "combat": {
+              "hp": 2,
+              "invulnerability": 0.633333333333332,
+              "max_hp": 3
+            },
+            "final_goal": {
+              "collected": true,
+              "pos": [
+                36.5,
+                0.6,
+                0
+              ]
+            },
+            "tool": {
+              "kind": "ladder",
+              "property": "None",
+              "length": 3.92000007629395
+            },
+            "weapon": {
+              "equipped": false,
+              "length": 0,
+              "property": "None"
+            }
+          }
+        ],
+        "method": "ordinary Playwright mouse and physical keyboard; QA read-only"
+      }
+    ],
+    "assets": {
+      "checkedAt": "2026-10-06T16:29:34.022Z",
+      "base": "https://tonyguan530.github.io/taptap2026/",
+      "assets": [
+        {
+          "file": "ladder-play.mp4",
+          "bytes": 1718015,
+          "sha256": "f72c266c6197303b1b672196bed4f55939ff52b6bd7615b04661705fbd459df2"
+        },
+        {
+          "file": "board-play.mp4",
+          "bytes": 1596274,
+          "sha256": "83e39646f46ed555f26e9c933691a332b8344cdc6d8693106714a6e6061d19b3"
+        },
+        {
+          "file": "world.png",
+          "bytes": 68065,
+          "sha256": "b5c3443a6c359542424b0b8439d05109ad343e20b2c48d95dbcc88c7d20cd3bb"
+        },
+        {
+          "file": "ladder.png",
+          "bytes": 71058,
+          "sha256": "911bde8b27f2d5dfbfd961596406c61678004a8d04db2271e945181f98d98818"
+        },
+        {
+          "file": "board.png",
+          "bytes": 72999,
+          "sha256": "c55a166d1869b0e50d52394009891fe41fa44bedfa3b5f80a09064fb7fdb8cc9"
+        },
+        {
+          "file": "yellow.png",
+          "bytes": 78867,
+          "sha256": "0d67ce8038612e9d8772d075335cc974ce02afea206ad73cf6c0352ac1159f17"
+        },
+        {
+          "file": "ending.png",
+          "bytes": 66143,
+          "sha256": "21729e4c9ede39e585a8e2d263af9d03fb5630dcce2e4b419ed7c23969630b40"
+        }
+      ],
+      "card": "demo-06-inkbound-v10",
+      "homepage": true,
+      "historical": [
+        {
+          "url": "inkbound.html",
+          "status": 200
+        },
+        {
+          "url": "builds/demo-06-inkbound-v9/index.html",
+          "status": 200
+        },
+        {
+          "url": "builds/demo-06-tonight-v8/index.html",
+          "status": 200
+        },
+        {
+          "url": "builds/demo-05-tonight-v8/index.html",
+          "status": 200
+        }
+      ]
+    }
   },
   "scope": {
     "implemented": [
@@ -1304,5 +2417,11 @@
       "template recognition candidate UI"
     ],
     "humanDuration": "7–10 minute design target; no measured human playtest average"
+  },
+  "miro": {
+    "url": "https://miro.com/app/board/uXjVHggi_m8%3D/?moveToWidget=3458764686237509345",
+    "frame": "3458764686237509345",
+    "verifiedAt": "2026-10-06T16:46:44.557Z",
+    "itemCount": 9
   }
 }

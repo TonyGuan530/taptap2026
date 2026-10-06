@@ -36,7 +36,12 @@ page.on('pageerror',e=>errors.push(String(e)));
 page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
 const state=()=>page.evaluate(()=>window.__v10_ink_qa);
 async function shot(name){await page.waitForTimeout(200);await page.screenshot({path:path.join(dir,route+'-'+name+'.png')});}
-async function button(name){const s=await state();check(Array.isArray(s.ui.buttons[name]),'button available '+name);await page.mouse.click(...s.ui.buttons[name]);await page.waitForTimeout(150);}
+async function button(name){
+  const s=await state();check(Array.isArray(s.ui.buttons[name]),'button available '+name);
+  await page.mouse.click(...s.ui.buttons[name]);await page.waitForTimeout(150);
+  // Wait for the real save acknowledgement; software-rendered frames can exceed 150 ms.
+  if(name==='confirm')await page.waitForFunction(()=>!window.__v10_ink_qa.ui.notebook,null,{timeout:10000});
+}
 async function key(name,ms=0){if(ms){await page.keyboard.down(name);await page.waitForTimeout(ms);await page.keyboard.up(name);}else await page.keyboard.press(name);await page.waitForTimeout(110);}
 async function move(x,z,tolerance=.28){
   for(const axis of [0,2]){
@@ -92,8 +97,13 @@ async function climb(){
 }
 function compact(s){return {player:s.player,tool:s.active_tool,words:s.words,ink:s.ink,structures:s.structures,goals:s.goals,yellow_unlocked:s.yellow_unlocked,won:s.won,message:s.ui.message,weapon:s.weapon,vines:s.vines,enemy:s.enemy,combat:s.combat,final_goal:s.final_goal,result_text:s.ui.result_text};}
 async function milestone(phase){const s=await state();evidence.push({phase,state:compact(s)});await shot(phase);}
-async function faceRight(){await key('d',60);await page.waitForTimeout(350);check((await state()).facing[0]>.9,'ordinary D faces the actual weapon right');}
-async function swing(){await key('f');await page.waitForTimeout(800);}
+async function faceRight(ms=60){await key('d',ms);await page.waitForTimeout(350);check((await state()).facing[0]>.9,'ordinary D faces the actual weapon right');}
+async function swing(){
+  await page.waitForFunction(()=>window.__v10_ink_qa.weapon.cooldown<=0&&!window.__v10_ink_qa.weapon.swinging,null,{timeout:10000});
+  const before=(await state()).weapon.swing;await key('f');
+  await page.waitForFunction(n=>window.__v10_ink_qa.weapon.swing>n,before,{timeout:5000});
+  await page.waitForFunction(()=>window.__v10_ink_qa.weapon.cooldown<=0&&!window.__v10_ink_qa.weapon.swinging,null,{timeout:10000});
+}
 async function finalJump(){
   await move(34.85,0);
   await page.keyboard.down('d');await page.keyboard.press('Space');
@@ -160,7 +170,7 @@ try{
       await move(32.5,0);const hp=(await state()).combat.hp;
       await page.waitForFunction(h=>window.__v10_ink_qa.combat.hp<h,hp,{timeout:5000});
       check((await state()).combat.hp<hp,'enemy windup causes a real hit rather than contact every frame');await milestone('enemy-hit');
-      await move(32.0,0);await faceRight();await swing();await swing();
+      await move(32.0,0);await faceRight(220);await swing();await swing();
       check(!(await state()).enemy.alive&&(await state()).enemy.hp===0,'actual drawn blade strikes defeat the inkling');await milestone('enemy-defeated');
     }else{
       await move(27.2,1.15);await key('e');check((await state()).ink.black>=319,'ordinary courtyard fountain refills building ink');

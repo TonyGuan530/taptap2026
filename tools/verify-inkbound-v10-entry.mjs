@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {browser,check} from './v8-browser-harness.mjs';
-const root=process.cwd(),dir=path.join(root,'.codex-tmp/inkbound-v10');fs.mkdirSync(dir,{recursive:true});
+const root=process.cwd(),dir=path.resolve(process.env.INKBOUND_V10_QA_DIR||path.join(root,'.codex-tmp/inkbound-v10'));fs.mkdirSync(dir,{recursive:true});
 const base=process.env.INKBOUND_V10_SITE||'http://127.0.0.1:8788/';
 const b=await browser(),errors=[],evidence=[];
 try{

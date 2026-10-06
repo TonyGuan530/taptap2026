@@ -9,12 +9,20 @@ if(!token||!board)throw Error('Miro credentials missing');
 const base='https://api.miro.com/v2/boards/'+encodeURIComponent(board);
 async function request(method,route,body,multipart=false){
   const response=await fetch(base+route,{method,headers:{Authorization:'Bearer '+token,...(multipart?{}:{'Content-Type':'application/json'})},body:body?(multipart?body:JSON.stringify(body)):undefined,signal:AbortSignal.timeout(30000)});
-  if(!response.ok)throw Error('Miro '+method+' '+route+' HTTP '+response.status);
+  if(!response.ok){
+    const detail=await response.json().catch(()=>({}));
+    const message=String(detail.message||detail.code||'').replaceAll(token,'[redacted]').slice(0,600);
+    throw Error('Miro '+method+' '+route+' HTTP '+response.status+' '+message);
+  }
   return response.json();
 }
 const log=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{board,items:[],createdAt:new Date().toISOString()};
 function save(){fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,JSON.stringify(log,null,2)+'\n');}
-if(!log.frame){const frame=await request('POST','/frames',{data:{title:'INKBOUND V10 · 几何与墨刃 · 已发布实机',type:'freeform'},style:{fillColor:'#f3e8cd'},position:{x:15500,y:6900},geometry:{width:2400,height:2400}});log.frame=frame.id;save();}
+// Frame backgrounds use Miro's documented palette.
+if(!log.frame){const frame=await request('POST','/frames',{data:{title:'INKBOUND V10 · 几何与墨刃 · 已发布实机',type:'freeform'},style:{fillColor:'#fff9b1'},position:{x:28500,y:6900},geometry:{width:2400,height:2400}});log.frame=frame.id;save();}
+// Keep the new frame in the inspected empty area to the right of the idea board.
+const frame=await request('GET','/items/'+log.frame);
+if(frame.position.x!==28500||frame.position.y!==6900)await request('PATCH','/frames/'+log.frame,{position:{x:28500,y:6900}});
 const url=proof.release.url;
 const sections=[
   ['主题：规则组合产生通路','黑墨限定建造几何，黄墨限定手持墨刃。实际原笔迹决定长度、宽度与碰撞；野外拾取的词条改变同一张画稿。手动意图选择保障可靠性，后续 $P/$Q 有限模板候选只帮助选择用途。没有把自由画枪、动物、载具标为已完成。',600,190],
@@ -38,7 +46,14 @@ for(const [key,name,x,y]of [['world','world.png',600,1150],['ladder','ladder.png
 }
 // Feedback Slide explicitly asks authors to mark completed feedback themselves.
 if(!log.feedbackNote){
-  const item=await request('POST','/texts',{data:{content:'<p><strong>✅ INKBOUND V10 · 实机验收完成</strong></p><p>真实原笔迹梯架/板面/墨刃；键鼠两条路线、音画录像、Web 导出和 Pages 线上验收已完成。保留恐龙 V8 与画家 V8/V9。新版：'+url+'</p>'},style:{fontSize:18,color:'#263d47'},geometry:{width:600},parent:{id:'3458764685857034950'},position:{x:1380,y:870}});log.feedbackNote=item.id;save();
+  // The nested Feedback Slide rejects new-child positions. Append to its existing
+  // author-completion instruction, preserving the original text and geometry.
+  const id='3458764685857034952',actual=await request('GET','/items/'+id);
+  const marker='FB-103 · INKBOUND V10';
+  if(!actual.data.content.includes(marker))await request('PATCH','/texts/'+id,{data:{content:actual.data.content+'<p><strong>✅ '+marker+' 已修复</strong></p><p>真实多笔绘画＋野外词条；切藤战斗／搭建绕行两条路线已在线通关。<a href="'+url+'">试玩与含游戏音频的实机录像</a></p>'}});
+  const saved=await request('GET','/items/'+id);
+  if(!saved.data?.content?.includes(marker)||!saved.data.content.includes(url))throw Error('Feedback completion readback mismatch');
+  log.feedbackNote=id;log.feedbackMode='append-existing-instruction';save();
 }
 const verified=[];for(const item of [...log.items,{key:'feedback',id:log.feedbackNote}]){const actual=await request('GET','/items/'+item.id);verified.push({key:item.key,id:actual.id,type:actual.type});}
 log.verified=verified;log.verifiedAt=new Date().toISOString();log.release=proof.release;log.url='https://miro.com/app/board/'+encodeURIComponent(board)+'/?moveToWidget='+log.frame;save();

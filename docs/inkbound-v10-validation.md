@@ -1,6 +1,6 @@
 # 墨迹漂流 INKBOUND V10 · 几何与墨刃
 
-本地验收完成；发布及线上验收待执行。
+已发布并通过线上普通键鼠两条路线验收。提交 `2393839cdbe2c711e107e710d6a6fd157c677b32`，Pages workflow `37494892795`。
 
 试玩与实机录像：https://tonyguan530.github.io/taptap2026/inkbound-v10.html
 
@@ -25,7 +25,7 @@ WASD 移动；Space 跳/离梯；Tab 画纸；鼠标多笔绘画、选择用途�
 | 展示页 | 桌面视频实际播放、iframe 鼠标开始与键盘移动；390px 手机页无横向溢出 |
 | 实机录像 | 两段 H.264/AAC MP4，含实际游戏音频，完整解码通过；画面960×540 |
 
-游戏源码提交 `1dfe94acaa7b4cbd754fbafed5adcf1dca591205`；实际浏览器 HTTP PCK 字节与本地 SHA256 一致：`be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5`。两段录像及 QA 均绑定此 PCK，禁止混用早期测试录像。完整结构化证据在 [inkbound-v10-validation.json](inkbound-v10-validation.json)。
+本机游戏源码提交 `1dfe94acaa7b4cbd754fbafed5adcf1dca591205`；实际浏览器 HTTP PCK 字节与本地 SHA256 一致：`be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5`。两段录像及 QA 均绑定此 PCK，禁止混用早期测试录像。完整结构化证据在 [inkbound-v10-validation.json](inkbound-v10-validation.json)。
 
 密集转折合法画稿：851 点、24 笔、827 段、黄墨119.9/120；所有可见笔段及转角保留。独立 CPU 接触更新 p95 11.912ms，最大 14.531ms。这是开发机原生接触运算测量，不能当作浏览器整体帧率。保守范围筛选之后仍由实际 Godot 胶囊接触与遮挡决定命中。缩放余量独立探针4/4通过。
 
@@ -35,4 +35,5 @@ WASD 移动；Space 跳/离梯；Tab 画纸；鼠标多笔绘画、选择用途�
 
 “涌现”展示来自尺寸、几何连接、物性与接触的组合：同一张画稿换词条形成新路线，同一目标可切藤或建造越过。弓、枪、防具、红墨载具和蓝墨动物留在后续范围；[$P/$Q候选识别方案](inkbound-equipment-recognition.md)尚未接入试玩。设计目标7–10分钟，尚无真实玩家平均时长。
 
-恐龙V8、画家V8/V9保持固定入口。后台任务说明见 [inkbound-overnight.md](inkbound-overnight.md)。Miro实际更新记录在 `reviews/miro-inkbound-v10.json`。
+恐龙V8、画家V8/V9保持固定入口。后台任务说明见 [inkbound-overnight.md](inkbound-overnight.md)。
+[Miro 实机与反馈完成标注](https://miro.com/app/board/uXjVHggi_m8%3D/?moveToWidget=3458764686237509345)：9 个内容项已从 API 读回确认，记录在 `reviews/miro-inkbound-v10.json`。
