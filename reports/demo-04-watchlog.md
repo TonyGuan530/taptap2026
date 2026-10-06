@@ -454,3 +454,8 @@
 - 5 个核心 GDScript 文件静态检查全部零错误（root/player/camera_rig/tour_driver/ability_state）。
 - camera_rig.gd 详细审计：无新缺陷（v10 鼠标修复正确、yaw/pitch 分离正确、SpringArm 排除正确）。
 - v16 在线、30/30 + 2D 7/7、阻塞清单不变。
+
+## 2026-10-05 23:00（轮82·原生导出成功 ★）
+- Windows 原生导出成功（此前模板缺失阻塞——模板包已安装到位）：demo04_3d.exe 104MB + pck 7.5MB，headless 冒烟 EXIT=0，pck 核对通过。
+- 阻塞清单 #4（原生导出）消解。剩余三项：资产产出/ChatGPT 会话/itch 上传。
+- 产物本地留存 builds/native/（gitignore 已排除，不入库）。
