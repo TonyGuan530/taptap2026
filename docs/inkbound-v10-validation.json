@@ -1,0 +1,1308 @@
+{
+  "validatedAt": "2026-10-06T16:15:45.708Z",
+  "build": {
+    "title": "墨迹漂流 / INKBOUND",
+    "version": "demo-06-inkbound-v10",
+    "date": "2026-10-07T00:04:26.9763377+08:00",
+    "sourceCommit": "1dfe94acaa7b4cbd754fbafed5adcf1dca591205",
+    "pckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5",
+    "author": "Codex",
+    "notes": "黑墨多笔梯架与板面、真实尺寸攀爬与三段立体纸页；黄墨原笔迹挥砍、锋利切藤或黑墨搭梯绕行，抵达末页结局"
+  },
+  "native": {
+    "sourceGameCommit": "1dfe94acaa7b4cbd754fbafed5adcf1dca591205",
+    "reviewedAtUTC": "2026-10-06 16:05:14 UTC",
+    "godot": "4.7.2.stable.steam.ed1daf0bf",
+    "method": "Independent native --headless --script runs with captured real process exit codes. No Godot editor/import/export, project config writes, source edits or GUI.",
+    "suites": [
+      {
+        "name": "geometry",
+        "checks": 23,
+        "failures": 0,
+        "exitCode": 0,
+        "stderr": "",
+        "stdout": "Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org\r\n\r\nPASS: V10 pure geometry module exists\r\nPASS: geometry script parses\r\nPASS: two actual rails joined by two rungs are climbable\r\nPASS: pixels map to real dimensions without normalizing length\r\nPASS: pen-up produces four real segments and no connectors\r\nPASS: short ladder keeps shorter length and lower ink use\r\nPASS: short ladder can have rungs wider than its rail height\r\nPASS: Elastic scales actual geometry by exactly 1.4\r\nPASS: Elastic scales actual retained segments\r\nPASS: skewed connected ladder preserves nonstandard drawing\r\nPASS: unequal rails limit climbing height to their actual shared extent\r\nPASS: rungs that do not reach either rail are rejected\r\nPASS: unconnected rails cannot become a ladder\r\nPASS: closed hand-drawn board creates its real polygon\r\nPASS: long board has real bridge/ramp dimensions\r\nPASS: open decorative stroke cannot extend the walkable polygon dimensions\r\nPASS: decorated board retains extra original ink without a false connector\r\nPASS: self-intersecting board gives a correctable failure\r\nPASS: open board cannot receive a filled collision\r\nPASS: black geometry accepts one supported property only\r\nPASS: 25th stroke is rejected rather than silently changing artwork\r\nPASS: 257th point is rejected by pure analysis\r\nPASS: nonfinite input cannot generate physics geometry\r\nINK_V10_GEOMETRY_CHECKS=23 FAILURES=0\r\n"
+      },
+      {
+        "name": "smoke",
+        "checks": 40,
+        "failures": 0,
+        "exitCode": 0,
+        "stderr": "",
+        "stdout": "Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org\r\n\r\nPASS: V10 independent runnable scene exists\r\nPASS: V10 world script parses\r\nPASS: V10 scene parses\r\nPASS: hybrid world keeps 3D player and 2D drawing\r\nPASS: three black goals precede yellow unlock\r\nPASS: original portrait introduction is displayed\r\nPASS: begin action enters playable chapter\r\nPASS: second stroke is additive and first stroke remains unchanged\r\nPASS: undo removes only last complete stroke\r\nPASS: clear is an explicit drawing operation\r\nPASS: valid short drawing can be retained as active tool\r\nPASS: actual short geometry cannot reach the first platform\r\nPASS: failed placement retains drawing and consumes no ink\r\nPASS: longer original ladder is accepted\r\nPASS: real ladder reaches existing top support\r\nPASS: placement records retained geometry and spends black ink\r\nPASS: placing ladder never collects a distant goal\r\nPASS: ladder climb uses actual retained endpoints\r\nPASS: E-equivalent gameplay action enters nearby actual ladder\r\nPASS: climb moves along actual rail before any goal collection\r\nPASS: cannot remove ladder while standing on/climbing it\r\nPASS: actual climb reaches top and exits onto platform support\r\nPASS: ladder exit has real support under the capsule\r\nPASS: supported exit does not teleport the player to distant page pickup\r\nPASS: safe reclaim refunds full paid ink\r\nPASS: real closed polygon is placed as a walkable inclined board\r\nPASS: ray support lands on actual drawn polygon collision\r\nRAMP_DIAGNOSTIC player=(4.294766, 2.54681, -0.000018) start=(1.24, 0.035, 0.0) direction=(0.858002, 0.513647, 0.0) held=false\r\nPASS: ordinary movement physically walks up the inclined board\r\nPASS: ordinary board cannot walkably span a steep short approach\r\nPASS: same original board with Sticky supports a steeper real ramp\r\nSTICKY_DIAGNOSTIC player=(3.908233, 2.966238, -0.000039) start=(2.64, 0.035, 0.0) direction=(0.527996, 0.849247, 0.0) floor_angle=63.9999995042325\r\nPASS: Sticky changes actual floor traction so steep board can be climbed\r\nPASS: leaving Sticky board restores ordinary ground floor angle\r\nPASS: fountain replenishes ink without a scarce resource\r\nPASS: actual player contact collects all goals and unlocks yellow hook\r\nPASS: black chapter transitions to yellow before final courtyard ending\r\nPASS: read-only QA includes camera projections and yellow hooks\r\nPASS: restart restores finite black chapter and ink\r\nOBSTRUCTION_DIAGNOSTIC { \"ok\": false, \"reachable\": true, \"climbable\": false, \"reason\": \"途中有实体挡住了边梁，绕开侧台再瞄准。\", \"start\": (3.298488, 0.035, 3.781139), \"end\": (4.643038, 1.919964, 0.793247), \"direction\": (0.355701, 0.498668, -0.790447), \"climb_end\": (4.193683, 1.29, 1.791815), \"exit\": (4.501457, 1.91, 1.107874), \"required\": 2.51670622825623 }\r\nPASS: ladder cannot pass through an intervening solid side platform\r\nPASS: real long flat board can extend past immutable terrain\r\nPASS: out-of-bounds board walking restores a valid immutable-ground safety point\r\nINK_V10_SMOKE_CHECKS=40 FAILURES=0\r\n"
+      },
+      {
+        "name": "yellow",
+        "checks": 42,
+        "failures": 0,
+        "exitCode": 0,
+        "stderr": "",
+        "stdout": "Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org\r\n\r\nPASS: yellow blade module exists\r\nPASS: blade keeps actual short and long dimensions\r\nPASS: blade retains original outline and separate handguard without pen-up connector\r\nPASS: Elastic scales both real blade mesh and contact coordinates\r\nPASS: Sharp is a valid single yellow property\r\nPASS: unsupported yellow property fails explicitly\r\nPASS: yellow is locked before actual black pickups\r\nPASS: two black goals cannot unlock yellow or final ending\r\nPASS: three actual black contacts unlock chapter transition without winning\r\nPASS: transition copy is distinct from final ending\r\nPASS: yellow exposes blade with clear color/category relationship\r\nPASS: uncollected Sharp cannot be activated\r\nPASS: Sharp word is picked up at its actual world location\r\nPASS: saving yellow drawing equips original geometry at the hand\r\nPASS: yellow drawing spends only yellow ink\r\nPASS: held mesh uses retained analysis and follows original painter\r\nPASS: notebook drawing clicks never swing or place into the world\r\nPASS: failed expensive replacement preserves equipped tool and drawing\r\nPASS: courtyard fountain refills both independently metered inks\r\nPASS: safe blade refund has no ink softlock\r\nPASS: attack has a real cooldown preventing repeated immediate strikes\r\nPASS: short original blade cannot contact same far vine\r\nPASS: long Sharp blade physically contacts and cuts blocking vine collision\r\nPASS: reset restores vines, health, locked yellow and unequipped state\r\nPASS: plain blade contact cannot cut soft vines without Sharp\r\nPASS: switching to black stows real blade and cancels hidden combat\r\nPASS: ordinary 130px blade cannot reach far inkling at same player position\r\nPASS: equipped Elastic blade has its larger physical reach\r\nPASS: same original Elastic blade now physically contacts far inkling collider\r\nPASS: each swing damages a contacted target only once\r\nPASS: enemy has readable windup followed by actual near attack\r\nPASS: enemy recovery prevents frame-by-frame contact damage\r\nPASS: death safely restores health while preserving drawing and held weapon\r\nPASS: actual uncut vine blocks ordinary walking and cannot trigger ending\r\nPASS: black original ladder reaches actual bypass ledge above vines\r\nPASS: ordinary E beside bypass ladder foot enters real climb instead of nearby fountain\r\nPASS: bypass ladder exits on supported ledge above obstruction\r\nPASS: black bypass physically crosses vine without cutting or walking around fence\r\nPASS: crossing vines and enemy alone does not complete final page\r\nPASS: ordinary E at fountain still refills when bypass ladder is also nearby\r\nFINAL_PAGE_DIAGNOSTIC player=(35.80531, 1.20068, 0.0) final=true message=墨泉补满了黑墨和黄墨；你随时可以再试。\r\nPASS: only actual final courtyard page arrival completes ending\r\nPASS: read-only QA publishes real combat, geometry, target and distinct result text\r\nINK_V10_YELLOW_CHECKS=42 FAILURES=0\r\n"
+      },
+      {
+        "name": "blade_perf",
+        "checks": 21,
+        "failures": 0,
+        "exitCode": 0,
+        "stderr": "",
+        "stdout": "Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org\r\n\r\nPASS: dense24stroke851point fixture is legal and affordable\r\nPASS: all827 original visible segments survive contact optimization\r\nDENSE_BLADE_TIMING label=collinear_dense segments=827 mean_ms=0.302 p95_ms=0.411 max_ms=0.471 contacts=3\r\nPASS: dense affordable blade stays below robust40ms regression ceiling\r\nPASS: compressed dense geometry still physically touches vine exactly once per swing\r\nPASS: collinear and retraced contact runs compress to24 without dropping strokes\r\nPASS: every original dense segment is covered by an identical contact line\r\nPASS: contact compression never inserts a pen-up connector\r\nPASS: bent original blade keeps its noncollinear contact corners\r\nPASS: bent dense legal fixture keeps all827 original visible segments\r\nPASS: tiny genuine noncollinear bends are retained in contact geometry\r\nDENSE_BLADE_TIMING label=bent_dense segments=827 mean_ms=2.869 p95_ms=3.996 max_ms=4.907 contacts=3\r\nPASS: bent dense affordable blade stays below robust40ms regression ceiling\r\nPASS: bent dense geometry physically touches vine once per swing\r\nPASS: continuous-corner851point fixture is legal and keeps all827 visible segments\r\nPASS: continuous genuine turns are all retained for exact contact\r\nDENSE_BLADE_TIMING label=continuous_corners segments=827 mean_ms=8.094 p95_ms=9.428 max_ms=10.014 contacts=3\r\nPASS: continuous-corner blade stays below24ms ceiling with load tolerance\r\nPASS: continuous-corner blade physically touches vine once per swing\r\nPASS: physical vine obstruction still blocks long dense blade from hitting inkling behind it\r\nPASS: scaled 0.1x world-margin exact capsule contact survives blade broad filter\r\nPASS: scaled 0.5x world-margin exact capsule contact survives blade broad filter\r\nPASS: scaled 1.0x world-margin exact capsule contact survives blade broad filter\r\nPASS: scaled 2.0x world-margin exact capsule contact survives blade broad filter\r\nINK_V10_BLADE_PERF_CHECKS=21 FAILURES=0\r\n"
+      }
+    ],
+    "totalSuiteChecks": 126,
+    "totalSuiteFailures": 0,
+    "scaleMarginProbe": {
+      "checks": 4,
+      "failures": 0,
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org\r\n\r\nFILTER_SCALE factor=0.1 exact_hit=true broadphase_kept=true nearby=1\r\nFILTER_SCALE factor=0.5 exact_hit=true broadphase_kept=true nearby=1\r\nFILTER_SCALE factor=1.0 exact_hit=true broadphase_kept=true nearby=1\r\nFILTER_SCALE factor=2.0 exact_hit=true broadphase_kept=true nearby=1\r\nFILTER_BOUNDS_CHECKS=4 FAILURES=0\r\n",
+      "script": ".codex-tmp/inkbound-v10/review/test_blade_filter_bounds.gd"
+    },
+    "cpuTimingBench": {
+      "script": ".codex-tmp/inkbound-v10/review/bench_affordable_corners.gd",
+      "fixture": "Original reviewer continuous-corner drawing, 851 points / 24 strokes / 827 exact contact segments / 119.9 yellow ink",
+      "exitCode": 0,
+      "stderr": "",
+      "timings": [
+        {
+          "label": "typical_20_points",
+          "points": 20,
+          "strokes": 2,
+          "segments": 18,
+          "min_gui_step_px": 19.763,
+          "length_m": 2.352,
+          "cost": 29.1,
+          "samples60hz": 9,
+          "mean_ms": 0.006,
+          "p95_ms": 0.008,
+          "max_ms": 0.121,
+          "contacts": 3
+        },
+        {
+          "label": "typical_60_points",
+          "points": 60,
+          "strokes": 2,
+          "segments": 58,
+          "min_gui_step_px": 6.383,
+          "length_m": 2.38,
+          "cost": 29.4,
+          "samples60hz": 9,
+          "mean_ms": 0.01,
+          "p95_ms": 0.013,
+          "max_ms": 0.138,
+          "contacts": 3
+        },
+        {
+          "label": "typical_100_points",
+          "points": 100,
+          "strokes": 2,
+          "segments": 98,
+          "min_gui_step_px": 3.295,
+          "length_m": 2.38,
+          "cost": 29.4,
+          "samples60hz": 9,
+          "mean_ms": 0.01,
+          "p95_ms": 0.011,
+          "max_ms": 0.091,
+          "contacts": 3
+        },
+        {
+          "label": "typical_100_points_long",
+          "points": 100,
+          "strokes": 2,
+          "segments": 98,
+          "min_gui_step_px": 8.094,
+          "length_m": 7.35,
+          "cost": 78.7,
+          "samples60hz": 25,
+          "mean_ms": 0.174,
+          "p95_ms": 0.361,
+          "max_ms": 0.379,
+          "contacts": 3
+        },
+        {
+          "label": "typical_100_points_elastic",
+          "points": 100,
+          "strokes": 2,
+          "segments": 98,
+          "min_gui_step_px": 3.295,
+          "length_m": 3.332,
+          "cost": 41.1,
+          "samples60hz": 12,
+          "mean_ms": 0.008,
+          "p95_ms": 0.008,
+          "max_ms": 0.094,
+          "contacts": 3
+        },
+        {
+          "label": "gui_max_affordable",
+          "points": 851,
+          "strokes": 24,
+          "segments": 827,
+          "min_gui_step_px": 2.05,
+          "length_m": 7.56,
+          "cost": 119.9,
+          "samples60hz": 25,
+          "mean_ms": 9.342,
+          "p95_ms": 11.912,
+          "max_ms": 14.531,
+          "contacts": 3
+        }
+      ],
+      "stdout": "Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org\r\n\r\nCONTACT_GEOMETRY label=typical_20_points original=18 queries=4\r\nBLADE_BENCH label=typical_20_points points=20 strokes=2 segments=18 min_gui_step_px=19.763 length_m=2.352 cost=29.1 samples60hz=9 mean_ms=0.006 p95_ms=0.008 max_ms=0.121 contacts=3\r\nCONTACT_GEOMETRY label=typical_60_points original=58 queries=9\r\nBLADE_BENCH label=typical_60_points points=60 strokes=2 segments=58 min_gui_step_px=6.383 length_m=2.380 cost=29.4 samples60hz=9 mean_ms=0.010 p95_ms=0.013 max_ms=0.138 contacts=3\r\nCONTACT_GEOMETRY label=typical_100_points original=98 queries=11\r\nBLADE_BENCH label=typical_100_points points=100 strokes=2 segments=98 min_gui_step_px=3.295 length_m=2.380 cost=29.4 samples60hz=9 mean_ms=0.010 p95_ms=0.011 max_ms=0.091 contacts=3\r\nCONTACT_GEOMETRY label=typical_100_points_long original=98 queries=10\r\nBLADE_BENCH label=typical_100_points_long points=100 strokes=2 segments=98 min_gui_step_px=8.094 length_m=7.350 cost=78.7 samples60hz=25 mean_ms=0.174 p95_ms=0.361 max_ms=0.379 contacts=3\r\nCONTACT_GEOMETRY label=typical_100_points_elastic original=98 queries=12\r\nBLADE_BENCH label=typical_100_points_elastic points=100 strokes=2 segments=98 min_gui_step_px=3.295 length_m=3.332 cost=41.1 samples60hz=12 mean_ms=0.008 p95_ms=0.008 max_ms=0.094 contacts=3\r\nCONTACT_GEOMETRY label=gui_max_affordable original=827 queries=827\r\nBLADE_BENCH label=gui_max_affordable points=851 strokes=24 segments=827 min_gui_step_px=2.050 length_m=7.560 cost=119.9 samples60hz=25 mean_ms=9.342 p95_ms=11.912 max_ms=14.531 contacts=3\r\n",
+      "contractTimings": [
+        {
+          "label": "collinear_dense",
+          "segments": 827,
+          "mean_ms": 0.302,
+          "p95_ms": 0.411,
+          "max_ms": 0.471,
+          "contacts": 3
+        },
+        {
+          "label": "bent_dense",
+          "segments": 827,
+          "mean_ms": 2.869,
+          "p95_ms": 3.996,
+          "max_ms": 4.907,
+          "contacts": 3
+        },
+        {
+          "label": "continuous_corners",
+          "segments": 827,
+          "mean_ms": 8.094,
+          "p95_ms": 9.428,
+          "max_ms": 10.014,
+          "contacts": 3
+        }
+      ],
+      "scope": "Native CPU contact work on this development machine; not a whole-frame or browser performance claim."
+    },
+    "review": {
+      "verdict": "clean for reviewed Task1/Task2 source and Task3 tooling guards",
+      "actionableIssues": [],
+      "resolved": [
+        "Connected stroke-only contact compaction preserves all original visible segments and true corners.",
+        "Dense continuous-corner contact work is filtered conservatively before exact Godot queries.",
+        "World-space capsule margin is preserved under scaled parents; original .1/.5/1/2 probe now passes.",
+        "Solid vine obstruction still blocks blade contacts with the inkling behind it.",
+        "GLB external images and import metadata are included in the publication dependency closure.",
+        "Actual HTTP PCK bytes are hashed before QA acceptance and captured-media association."
+      ],
+      "declinedToJudge": [
+        "Final two-route Web recording and media generation are running in the coordinator.",
+        "Final published-site and deployment acceptance are outside this native review."
+      ]
+    }
+  },
+  "routes": [
+    {
+      "route": "ladder",
+      "blackOnly": false,
+      "build": {
+        "url": "http://127.0.0.1:8788/builds/demo-06-inkbound-v10/index.html?qa=1",
+        "expectedPckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5",
+        "pckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5"
+      },
+      "errors": [],
+      "evidence": [
+        {
+          "phase": "world",
+          "player": [
+            0,
+            0.6,
+            0
+          ],
+          "goals": [
+            false,
+            false,
+            false
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              1814.9,
+              279.8
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "",
+            "property": "None",
+            "length": 0
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "threshold",
+          "player": [
+            4.863,
+            1.851,
+            -0.127
+          ],
+          "goals": [
+            true,
+            false,
+            false
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              1604.8,
+              319.1
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "ladder",
+            "property": "None",
+            "length": 3.22000002861023
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "courtyard",
+          "player": [
+            13.363,
+            2.651,
+            -0.109
+          ],
+          "goals": [
+            true,
+            true,
+            false
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              1237.6,
+              341
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "ladder",
+            "property": "None",
+            "length": 3.22000002861023
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "black-complete",
+          "player": [
+            21.338,
+            3.701,
+            -0.27
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              893.1,
+              375.8
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "ladder",
+            "property": "Elastic",
+            "length": 4.50799989700317
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "short-blade",
+          "player": [
+            28.805,
+            0.601,
+            0.138
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              570.5,
+              275.3
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "blade",
+            "property": "Sharp",
+            "length": 0.84
+          },
+          "weapon": {
+            "equipped": true,
+            "length": 0.84,
+            "property": "Sharp"
+          }
+        },
+        {
+          "phase": "yellow",
+          "player": [
+            28.805,
+            0.601,
+            0.138
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": false,
+          "vines": {
+            "collision": 0,
+            "cut": true,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              570.5,
+              275.3
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "blade",
+            "property": "Sharp",
+            "length": 2.38
+          },
+          "weapon": {
+            "equipped": true,
+            "length": 2.38,
+            "property": "Sharp"
+          }
+        },
+        {
+          "phase": "enemy-hit",
+          "player": [
+            32.481,
+            0.601,
+            0.138
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": false,
+          "vines": {
+            "collision": 0,
+            "cut": true,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              411.7,
+              275.3
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "attack",
+            "timer": 0.0566666666666667
+          },
+          "combat": {
+            "hp": 2,
+            "invulnerability": 0.816666666666666,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "blade",
+            "property": "Sharp",
+            "length": 2.38
+          },
+          "weapon": {
+            "equipped": true,
+            "length": 2.38,
+            "property": "Sharp"
+          }
+        },
+        {
+          "phase": "enemy-defeated",
+          "player": [
+            32.247,
+            0.601,
+            0.138
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": false,
+          "vines": {
+            "collision": 0,
+            "cut": true,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": false,
+            "ground_screen": [
+              421.8,
+              275.3
+            ],
+            "hp": 0,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "dead",
+            "timer": 0.6
+          },
+          "combat": {
+            "hp": 2,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "blade",
+            "property": "Sharp",
+            "length": 2.38
+          },
+          "weapon": {
+            "equipped": true,
+            "length": 2.38,
+            "property": "Sharp"
+          }
+        },
+        {
+          "phase": "ending",
+          "player": [
+            35.802,
+            1.201,
+            0.138
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": true,
+          "vines": {
+            "collision": 0,
+            "cut": true,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": false,
+            "ground_screen": [
+              268.2,
+              292.4
+            ],
+            "hp": 0,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "dead",
+            "timer": 0.6
+          },
+          "combat": {
+            "hp": 2,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": true,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "blade",
+            "property": "Sharp",
+            "length": 2.38
+          },
+          "weapon": {
+            "equipped": true,
+            "length": 2.38,
+            "property": "Sharp"
+          }
+        }
+      ],
+      "method": "ordinary Playwright mouse and physical keyboard; QA read-only"
+    },
+    {
+      "route": "board",
+      "blackOnly": false,
+      "build": {
+        "url": "http://127.0.0.1:8788/builds/demo-06-inkbound-v10/index.html?qa=1",
+        "expectedPckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5",
+        "pckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5"
+      },
+      "errors": [],
+      "evidence": [
+        {
+          "phase": "world",
+          "player": [
+            0,
+            0.6,
+            0
+          ],
+          "goals": [
+            false,
+            false,
+            false
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              1814.9,
+              279.8
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "",
+            "property": "None",
+            "length": 0
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "threshold",
+          "player": [
+            4.833,
+            1.851,
+            0
+          ],
+          "goals": [
+            true,
+            false,
+            false
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              1606.1,
+              315
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "board",
+            "property": "None",
+            "length": 3.22000002861023
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "courtyard",
+          "player": [
+            13.271,
+            2.651,
+            0.001
+          ],
+          "goals": [
+            true,
+            true,
+            false
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              1241.6,
+              337.4
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "board",
+            "property": "Sticky",
+            "length": 2.80000019073486
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "black-complete",
+          "player": [
+            21.271,
+            3.701,
+            0.002
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              896,
+              366.9
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "board",
+            "property": "Sticky",
+            "length": 4.20000028610229
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "yellow",
+          "player": [
+            29.224,
+            3.201,
+            0.341
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              552.4,
+              341.7
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "ladder",
+            "property": "None",
+            "length": 3.92000007629395
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "black-bypass",
+          "player": [
+            31.966,
+            0.601,
+            1.566
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": false,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              434,
+              228.5
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "idle",
+            "timer": 0
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": false,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "ladder",
+            "property": "None",
+            "length": 3.92000007629395
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        },
+        {
+          "phase": "ending",
+          "player": [
+            35.804,
+            1.201,
+            0.166
+          ],
+          "goals": [
+            true,
+            true,
+            true
+          ],
+          "won": true,
+          "vines": {
+            "collision": 5,
+            "cut": false,
+            "pos": [
+              30.4,
+              0,
+              0
+            ]
+          },
+          "enemy": {
+            "alive": true,
+            "ground_screen": [
+              268.2,
+              291.3
+            ],
+            "hp": 3,
+            "max_hp": 3,
+            "pos": [
+              33.6,
+              0.35,
+              0
+            ],
+            "state": "cooldown",
+            "timer": 1.26666666666667
+          },
+          "combat": {
+            "hp": 3,
+            "invulnerability": 0,
+            "max_hp": 3
+          },
+          "final_goal": {
+            "collected": true,
+            "pos": [
+              36.5,
+              0.6,
+              0
+            ]
+          },
+          "tool": {
+            "kind": "ladder",
+            "property": "None",
+            "length": 3.92000007629395
+          },
+          "weapon": {
+            "equipped": false,
+            "length": 0,
+            "property": "None"
+          }
+        }
+      ],
+      "method": "ordinary Playwright mouse and physical keyboard; QA read-only"
+    }
+  ],
+  "entry": {
+    "base": "http://127.0.0.1:8788/",
+    "errors": [],
+    "evidence": [
+      {
+        "phase": "video",
+        "duration": 110.279,
+        "width": 960,
+        "height": 540,
+        "url": "http://127.0.0.1:8788/inkbound-v10-art/ladder-play.mp4"
+      },
+      {
+        "phase": "embedded",
+        "url": "http://127.0.0.1:8788/builds/demo-06-inkbound-v10/index.html?qa=1",
+        "version": 10
+      },
+      {
+        "phase": "embedded-input",
+        "method": "actual page mouse and keyboard",
+        "moved": true
+      },
+      {
+        "phase": "mobile",
+        "width": 390,
+        "overflow": false
+      }
+    ]
+  },
+  "media": {
+    "method": "real game recording, ordinary mouse/keyboard, read-only QA",
+    "videos": [
+      {
+        "route": "ladder",
+        "capture": {
+          "bytes": 4686689,
+          "build": {
+            "url": "http://127.0.0.1:8788/builds/demo-06-inkbound-v10/index.html?qa=1",
+            "expectedPckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5",
+            "pckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5"
+          },
+          "videoSha256": "f39e9f0091a8e81c00fc6ca1090cffa327f3b0d187eebb23a94766eb60aa09f0",
+          "audioTracks": 1,
+          "method": "actual game canvas and audio; ordinary Playwright mouse/keyboard"
+        },
+        "file": "ladder-play.mp4",
+        "bytes": 1718015,
+        "decoded": true,
+        "audioPeakDb": -19.3
+      },
+      {
+        "route": "board",
+        "capture": {
+          "bytes": 4104135,
+          "build": {
+            "url": "http://127.0.0.1:8788/builds/demo-06-inkbound-v10/index.html?qa=1",
+            "expectedPckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5",
+            "pckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5"
+          },
+          "videoSha256": "eadff33d95d6de18237354585a81f60573edb35029b55939e72f2241832d41bd",
+          "audioTracks": 1,
+          "method": "actual game canvas and audio; ordinary Playwright mouse/keyboard"
+        },
+        "file": "board-play.mp4",
+        "bytes": 1596274,
+        "decoded": true,
+        "audioPeakDb": -25.2
+      }
+    ]
+  },
+  "release": {
+    "onlineVerified": false
+  },
+  "scope": {
+    "implemented": [
+      "black multi-stroke ladder and closed board",
+      "three real vertical pages",
+      "Sticky traction and Elastic real dimensions",
+      "yellow retained-stroke hand weapon",
+      "Sharp world pickup and physical vine cut",
+      "one telegraphed inkling",
+      "building bypass and final page ending"
+    ],
+    "future": [
+      "bow/gun/armor behaviors",
+      "red vehicles",
+      "blue animals",
+      "template recognition candidate UI"
+    ],
+    "humanDuration": "7–10 minute design target; no measured human playtest average"
+  }
+}

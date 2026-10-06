@@ -1,0 +1,41 @@
+{
+  "method": "real game recording, ordinary mouse/keyboard, read-only QA",
+  "videos": [
+    {
+      "route": "ladder",
+      "capture": {
+        "bytes": 4686689,
+        "build": {
+          "url": "http://127.0.0.1:8788/builds/demo-06-inkbound-v10/index.html?qa=1",
+          "expectedPckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5",
+          "pckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5"
+        },
+        "videoSha256": "f39e9f0091a8e81c00fc6ca1090cffa327f3b0d187eebb23a94766eb60aa09f0",
+        "audioTracks": 1,
+        "method": "actual game canvas and audio; ordinary Playwright mouse/keyboard"
+      },
+      "file": "ladder-play.mp4",
+      "bytes": 1718015,
+      "decoded": true,
+      "audioPeakDb": -19.3
+    },
+    {
+      "route": "board",
+      "capture": {
+        "bytes": 4104135,
+        "build": {
+          "url": "http://127.0.0.1:8788/builds/demo-06-inkbound-v10/index.html?qa=1",
+          "expectedPckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5",
+          "pckSha256": "be633490eff5878c47729192d1bfbc4417725320327ca68e8f95b2a43b349da5"
+        },
+        "videoSha256": "eadff33d95d6de18237354585a81f60573edb35029b55939e72f2241832d41bd",
+        "audioTracks": 1,
+        "method": "actual game canvas and audio; ordinary Playwright mouse/keyboard"
+      },
+      "file": "board-play.mp4",
+      "bytes": 1596274,
+      "decoded": true,
+      "audioPeakDb": -25.2
+    }
+  ]
+}

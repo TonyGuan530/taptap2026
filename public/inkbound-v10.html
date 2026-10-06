@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>墨迹漂流 INKBOUND · 把笔迹走成一条路</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='5' fill='%23f3e8cd' stroke='%23263d47' stroke-width='2'/%3E%3Cpath d='M9 23L15 10L24 7L21 16Z' fill='%23263d47'/%3E%3Ccircle cx='19' cy='12' r='2' fill='%23d1a553'/%3E%3C/svg%3E">
+  <style>
+    :root{color-scheme:light;--paper:#f3e8cd;--ink:#263d47;--muted:#637870;--line:#c5b797;--green:#c4d7c7;--gold:#d1a553}
+    *{box-sizing:border-box}body{margin:0;background:#c0cbc1;color:var(--ink);font-family:system-ui,"Microsoft YaHei",sans-serif;line-height:1.65}a{color:inherit}button,a{touch-action:manipulation}main{max-width:1160px;margin:auto;padding:46px 26px 30px}.brand{font-size:12px;letter-spacing:.2em;font-weight:650;margin:0 0 18px}.hero{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}.intro{padding:15px 0 22px}h1{font-size:clamp(36px,5vw,64px);line-height:1.16;font-weight:650;letter-spacing:-.04em;margin:0 0 25px}.lead{font-size:17px;max-width:490px;margin-bottom:24px}.links{display:flex;flex-wrap:wrap;gap:12px}.button,button{display:inline-block;border:1.5px solid var(--ink);border-radius:5px;background:var(--paper);padding:11px 18px;font:inherit;font-size:14px;text-decoration:none;cursor:pointer}.button.primary{background:var(--ink);color:var(--paper)}.portrait{width:100%;aspect-ratio:16/9;object-fit:contain;border:2px solid var(--ink);border-radius:9px;box-shadow:8px 9px 0 #93a69b}.caption{font-size:12px;margin:13px 0;color:var(--muted)}.section{margin-top:55px}h2{font-size:24px;font-weight:650;margin:0 0 15px}video{display:block;width:100%;background:var(--ink);border:2px solid var(--ink);border-radius:7px;aspect-ratio:16/9}.video-note{font-size:14px;margin:12px 0;color:var(--muted)}.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}.rule{background:var(--paper);padding:23px 24px;border:1.5px solid var(--ink);border-radius:6px}.rule b{display:block;font-size:18px;margin-bottom:9px}.rule p{margin:0;font-size:14px}.dot{display:inline-block;width:13px;height:13px;border-radius:50%;background:var(--ink);margin-right:8px}.dot.gold{background:var(--gold)}.game{background:var(--ink);border:2px solid var(--ink);border-radius:7px;overflow:hidden}.game iframe{display:block;border:0;width:100%;aspect-ratio:16/9;background:var(--ink)}.bar{display:flex;justify-content:space-between;align-items:center;gap:14px;background:var(--paper);padding:13px 16px}.bar p{font-size:13px;margin:0}.bar button{padding:6px 14px;white-space:nowrap}.gallery{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:25px}.gallery img{width:100%;aspect-ratio:16/9;object-fit:cover;border:1.5px solid var(--ink);border-radius:5px}.gallery p{margin:7px 0;font-size:13px;color:var(--muted)}footer{border-top:1px solid #a7b5a7;padding-top:22px;margin-top:45px;font-size:12px;color:var(--muted)}footer a{margin-right:20px}@media(max-width:700px){main{padding:28px 18px}.hero{grid-template-columns:1fr;gap:15px}.intro{padding-bottom:8px}h1{font-size:43px}.rules,.gallery{grid-template-columns:1fr}.section{margin-top:38px}.bar{align-items:flex-start}.bar p{max-width:240px}.portrait{aspect-ratio:16/9;box-shadow:5px 6px 0 #93a69b}}
+  </style>
+</head>
+<body>
+<main>
+  <p class="brand">INKBOUND / 墨迹漂流 · 第一本绘本</p>
+  <div class="hero">
+    <div class="intro">
+      <h1>把笔迹，<br>走成一条路。</h1>
+      <p class="lead">画页散了，还好笔在。亲手画下梯子与坡板，把野外捡到的词条放进墨水，找回高处的三张碎页。</p>
+      <div class="links"><a class="button primary" href="#video">先看实机</a><a class="button" href="#play">打开绘本</a></div>
+    </div>
+    <div><img class="portrait" src="inkbound-v10-art/world.png" alt="绘画学徒站在立体纸页世界，前方是高台和需要自己搭出的道路"><p class="caption">画短一点，就得走近一点。形状和尺寸参与每一次搭建。</p></div>
+  </div>
+  <section class="section" id="video">
+    <h2>一段亲手画出来的冒险</h2>
+    <video id="gameplay" controls playsinline preload="metadata" poster="inkbound-v10-art/world.png"><source src="inkbound-v10-art/ladder-play.mp4" type="video/mp4"></video>
+    <p class="video-note">实机录像，包含绘画、搭建、攀爬、墨刃切藤和最终画页。也可以<a href="inkbound-v10-art/board-play.mp4">看板面与搭梯绕行路线</a>。</p>
+    <div class="rules">
+      <div class="rule"><b><span class="dot"></span>黑墨搭出身体</b><p>多笔画出边梁和横档，闭合轮廓成为板面。你的线条会留在世界里。</p></div>
+      <div class="rule"><b>词条改变性质</b><p>弹性让原笔迹真正伸长；黏性让板面抓住更陡的坡。换一个词，继续用同一张画稿。</p></div>
+      <div class="rule"><b><span class="dot gold"></span>黄墨带来墨刃</b><p>找回画页后走进藤庭。挥动亲手画的武器，或继续搭出另一条路。</p></div>
+    </div>
+  </section>
+  <section class="section" id="play">
+    <h2>轮到你落笔了</h2>
+    <div class="game"><iframe id="game" title="墨迹漂流 V10 试玩" src="builds/demo-06-inkbound-v10/index.html" loading="lazy" allow="autoplay; fullscreen" allowfullscreen></iframe><div class="bar"><p>电脑键鼠试玩 · WASD 移动 · Tab 画纸 · 点击台沿搭建 · E 攀爬 · Q 回收</p><button type="button" id="fullscreen">全屏试玩</button></div></div>
+    <div class="gallery"><div><img src="inkbound-v10-art/ladder.png" alt="用真实多笔画梯架攀上高台"><p>沿自己的笔迹，走到画页旁。</p></div><div><img src="inkbound-v10-art/board.png" alt="黏性板面搭出的坡道与另一条登高路线"><p>同一个高台，可以有另一种走法。</p></div></div>
+  </section>
+  <footer><a href="tonight.html">返回试玩合集</a><a href="inkbound.html">上一册绘本</a><span>墨迹漂流 / INKBOUND · V10</span></footer>
+</main>
+<script>document.getElementById('fullscreen').addEventListener('click',async()=>{const game=document.getElementById('game');try{await game.requestFullscreen();game.focus();}catch{window.open(game.src,'_blank','noopener');}});</script>
+</body>
+</html>
