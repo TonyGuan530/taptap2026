@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-07T00:52:00+08:00",
-  "round": 145,
+  "checkedAt": "2026-10-07T00:56:00+08:00",
+  "round": 146,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（00:50 实跑）"
+    "thisRound": "守卫下轮实跑"
   },
   "automations": {
     "supervisor": {
@@ -47,15 +47,17 @@
     "godotProcs": 0,
     "miro": "102 条（+9 上板卡；反馈区无新增）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 33a07c3 已推送",
+    "git": "本轮 HEAD 待推",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "FB-104 responded 待用户复测折纸 spike；FB-109 预览/回退评估；FB-103/105~107 各 worktree 开发中"
+    "queue": "🔴 GPT 视频验收制度落地：FB-102/104/109 优先送验；各任务按批示流程执行"
   },
   "watch": [
+    "🔴【验收制度改革·用户指令】复测/验收裁决权移交 GPT 视频验证（用户不再逐一复测）——验收标准两条：①支撑 gamejam 涌现主题？②完成度够玩家理解机制？流程=mp4/抽帧送 GPT 专属对话→意见归档→修改→复验→PASS 转 fixed（批示 reviews/supervisor-directive-2026-10-06-gpt-video-acceptance.md）",
+    "🔴 FB-102/104/109 优先送 GPT 视频验证；FB-103/105~107 修复版产出即送验",
     "🔴【硬红线】00:50 巡检合规——持续",
     "✅ builds 巡检清理 1.1G→842M（每线最新1版+PINNED v10 保留检查生效）",
     "🔴【硬红线】22:50 巡检合规——持续",
