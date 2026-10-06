@@ -691,6 +691,20 @@ func _run() -> void:
 	else:
 		_fail("LEVELS 异常：size=%d name=%s" % [scene_root.LEVELS.size(), scene_root.LEVELS.get(5, {}).get("name", "?")])
 
+	# ---- 28. 程序化音效：动作触发后音频播放器存在并播放 ----
+	scene_root._play_tone(440, 2.0, 0.3)   # 直触 2s 长音验证音频系统
+	await physics_frame
+	await physics_frame
+	var audio_ok := false
+	for pl in scene_root.get_children():
+		if pl is AudioStreamPlayer and pl.playing:
+			audio_ok = true
+			break
+	if audio_ok:
+		_ok("程序化音效：音频播放器触发并播放中")
+	else:
+		_fail("程序化音效：未检测到播放中的 AudioStreamPlayer")
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:

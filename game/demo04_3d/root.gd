@@ -189,6 +189,7 @@ func _ready() -> void:
 	add_child(player)
 	player.ability_state = ability
 	player.fused.connect(_on_fuse_request)
+	player.jump_performed.connect(_on_jump_sound)
 	player.jump_performed.connect(_on_jump_performed)
 
 	cam_rig = Node3D.new()
@@ -474,12 +475,46 @@ func _build_bounce(x: float, z: float = 1.1) -> void:
 	level_root.add_child(area)
 	area.body_entered.connect(_on_bounce_entered)
 
+func _on_jump_sound(jump_type: String) -> void:
+	if jump_type == "first":
+		_play_tone(520, 0.08, 0.3, 1.4)
+	else:
+		_play_tone(660, 0.08, 0.28, 1.4)
+
 func _on_bounce_entered(body: Node3D) -> void:
 	if body != player:
 		return
 	player.velocity.y = 9.5
+	_play_tone(180, 0.18, 0.5, 2.2)
 	_toast("弹！弹跳板把你抛了起来")
 	_log_ev("bounce", {"level": level_idx})
+
+func _make_tone(freq: float, dur: float, vol: float = 0.35, sweep: float = 1.0) -> AudioStreamWAV:
+	## 程序化音效：正弦波+衰减包络（零外部资产）
+	var rate := 22050
+	var n := int(rate * dur)
+	var data := PackedByteArray()
+	data.resize(n * 2)
+	for i in n:
+		var t := float(i) / rate
+		var f := freq * (1.0 + (sweep - 1.0) * (t / dur))
+		var env := (1.0 - t / dur)
+		var v := int(clamp(sin(TAU * f * t) * env * vol, -1.0, 1.0) * 32767.0)
+		data.encode_s16(i * 2, v)
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
+	wav.mix_rate = rate
+	wav.data = data
+	return wav
+
+func _play_tone(freq: float, dur: float, vol: float = 0.35, sweep: float = 1.0) -> void:
+	var p := AudioStreamPlayer.new()
+	p.stream = _make_tone(freq, dur, vol, sweep)
+	p.volume_db = -10.0
+	p.bus = "Master"
+	add_child(p)
+	p.play()
+	p.finished.connect(p.queue_free)
 
 func _build_goal(goal_x: float) -> void:
 	var pod := ComicObjectScript.new()
@@ -617,6 +652,8 @@ func _on_fuse_request() -> void:
 	if _fuse_target.is_empty():
 		return
 	stats.fuses += 1
+	_play_tone(523, 0.12, 0.4, 1.5)
+	_play_tone(784, 0.2, 0.35)
 	_log_ev("dna_fuse", {"id": _fuse_target.id, "level": level_idx})
 	ability.gain_dna(_fuse_target.id)
 
@@ -629,6 +666,7 @@ func _on_shard_entered(body: Node3D, area: Area3D) -> void:
 		shard_vis.erase(vis)
 		vis.queue_free()
 	area.queue_free()
+	_play_tone(880, 0.1, 0.3, 1.3)
 	ability.collect_shard()
 	_log_ev("shard", {"level": level_idx})
 	_toast("基因碎片 +1")
@@ -679,6 +717,8 @@ func _on_goal_entered(body: Node3D) -> void:
 		load_level(level_idx + 1)
 	else:
 		won = true
+		for f in [523, 659, 784, 1047]:
+			_play_tone(f, 0.22, 0.4)
 		player.input_enabled = false
 		var total := 0.0
 		for t in level_times:
