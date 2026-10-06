@@ -161,6 +161,8 @@ var lbl_win: Label
 var toast_age := 99.0
 var lbl_keys: Label
 var keys_hint_visible := true
+var recovery_marker: MeshInstance3D = null
+var recovery_marker_age := -1.0
 
 func _ready() -> void:
 	ability = Node.new()
@@ -619,6 +621,7 @@ func _physics_process(delta: float) -> void:
 		player.velocity = Vector3.ZERO
 		_grounded_ticks = 0
 		_toast("掉坑了！回到安全边缘（DNA 与碎片保留）")
+		_spawn_recovery_marker(last_safe_pos)
 		stats.falls += 1
 		_log_ev("pit_fall", {"level": level_idx})
 	elif player.is_on_floor() and absf(player.velocity.y) < 0.01 and player.position.y > -0.5:
@@ -631,6 +634,19 @@ func _physics_process(delta: float) -> void:
 		_grounded_ticks = 0
 	_update_fuse_candidate()
 	_check_crack_smash()
+	# 恢复标记渐隐
+	if recovery_marker_age >= 0.0:
+		recovery_marker_age += delta
+		if recovery_marker != null and is_instance_valid(recovery_marker):
+			var fade := 1.0 - minf(recovery_marker_age / 2.0, 1.0)
+			var mat := recovery_marker.material_override as StandardMaterial3D
+			if mat != null:
+				mat.albedo_color.a = 0.7 * fade
+				mat.emission_energy_multiplier = 1.5 * fade
+		if recovery_marker_age >= 2.0 and recovery_marker != null and is_instance_valid(recovery_marker):
+			recovery_marker.queue_free()
+			recovery_marker = null
+			recovery_marker_age = -1.0
 	# 碎片呼吸脉冲 + 外星生物待机动画（视觉层；融合判定用 Area 位置不受影响）
 	var pulse := 1.0 + 0.18 * sin(Time.get_ticks_msec() / 220.0)
 	for sv in shard_vis:
@@ -789,6 +805,29 @@ func _total_shards() -> int:
 	for L in LEVELS:
 		n += L.shards.size()
 	return n
+
+func _spawn_recovery_marker(pos: Vector3) -> void:
+	## 掉坑恢复后在安全落点生成发光标记，2 秒后渐隐——让被试看见「回到哪了」
+	if recovery_marker != null and is_instance_valid(recovery_marker):
+		recovery_marker.queue_free()
+	var m := MeshInstance3D.new()
+	m.name = "RecoveryMarker"
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.6
+	cm.bottom_radius = 0.6
+	cm.height = 0.1
+	m.mesh = cm
+	m.position = pos + Vector3(0, 0.08, 0)
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.albedo_color = Color(0.4, 0.9, 1.0, 0.7)
+	mat.emission_enabled = true
+	mat.emission = Color(0.4, 0.9, 1.0)
+	m.material_override = mat
+	level_root.add_child(m)
+	recovery_marker = m
+	recovery_marker_age = 0.0
 
 func _toast(msg: String) -> void:
 	lbl_toast.text = msg

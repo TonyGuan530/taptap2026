@@ -775,6 +775,29 @@ func _run() -> void:
 		_fail("外星生物资产异常：swap=%s gray_hidden=%s" % [alien_swap, alien_gray_hidden])
 	DirAccess.remove_absolute("res://assets/alien_highjump.png")
 
+	# ---- 31. 掉坑恢复标记：生成发光标记 → 2 秒渐隐清除 ----
+	scene_root.load_level(0)
+	await physics_frame
+	await physics_frame
+	ability.reset_level_state(false)
+	await _teleport(Vector3(16.5, 1.3, 0))
+	await _settle_until_floor()
+	await _settle(5)
+	await _teleport(Vector3(18.0, 1.3, 0))   # 空传到坑上方 → 必坠
+	var marker_spawned := false
+	var marker_freed := false
+	for i in 180:
+		await physics_frame
+		if scene_root.recovery_marker != null and is_instance_valid(scene_root.recovery_marker):
+			marker_spawned = true
+		if scene_root.recovery_marker == null and marker_spawned:
+			marker_freed = true
+			break
+	if marker_spawned and marker_freed:
+		_ok("掉坑恢复标记：发光标记生成 → 2 秒渐隐清除")
+	else:
+		_fail("掉坑恢复标记异常：spawned=%s freed=%s" % [marker_spawned, marker_freed])
+
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
 	for f in fails:
