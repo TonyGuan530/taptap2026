@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-07T03:52:00+08:00",
-  "round": 150,
+  "checkedAt": "2026-10-07T04:54:00+08:00",
+  "round": 151,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（03:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（04:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "⚠️ demo-08 v20 又加一关（L36 时机门，36 关）——FB-104/109 仍未启动（批量点名已含其并列提出要求）"
+      "evidence": "demo-04 3D v16 掉坑恢复视觉标记交付、demo-08 3D v21 俯冲输入+L37（37 关）；[SENT] 零回执根因=SOP 不在任务流程——已模板化注入四任务必读位置"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -42,7 +42,7 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=19 目录/908M（警戒内）",
+    "health": "ok builds=20 目录/953M（警戒内）",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "102 条稳态（无新用户反馈）",
@@ -53,7 +53,7 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "🔴 GPT 对比送验批量点名已发（demo-02/03/04/08 下轮必须出双视频送验）"
+    "queue": "🔴 GPT 对比送验 SOP 已注入（demo-02/03/04/08 必读位置）——下轮核对 [SENT] 回执（05:52/06:52）"
   },
   "watch": [
     "🔴【硬红线】03:50 巡检合规——持续",
