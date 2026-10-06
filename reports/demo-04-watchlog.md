@@ -459,3 +459,8 @@
 - Windows 原生导出成功（此前模板缺失阻塞——模板包已安装到位）：demo04_3d.exe 104MB + pck 7.5MB，headless 冒烟 EXIT=0，pck 核对通过。
 - 阻塞清单 #4（原生导出）消解。剩余三项：资产产出/ChatGPT 会话/itch 上传。
 - 产物本地留存 builds/native/（gitignore 已排除，不入库）。
+
+## 2026-10-05 23:00（轮82·全量验证复确认 + macOS/Linux 模板评估）
+- 全量验证复确认：30/30 + 2D 7/7 + 六关巡游（tourDone=0 won=true 碎片12）全绿。
+- macOS/Linux 导出模板评估：tpz 已清理需重下载（1.2GB→D 盘可选解压）；实际价值有限（Web 优先 + itch 阻塞 + Windows 已完成）——暂缓，等 itch 上传解锁后视需求补装。
+- 30/30 全绿状态代码质量终审零错误；项目完整交付稳态确认。
