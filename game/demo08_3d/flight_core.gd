@@ -132,6 +132,9 @@ const LEVELS := [
 	{name = "第 32 关 · 狂风精准", short = "狂风精准", ratio = 0.6, folds = 6, target_m = 66.0, wind = "head", side_wind = 120.0, reward = 14,
 		gate_x = 44.0, gate_h = 12.0, gate_bonus = 3, gate_side = 700.0,
 		tip = "狂风精准（大师篇）：双倍侧风（120px/s²）全系列最横——44 米高空门（12m 以上）挂在 +12m 横位远右，只有全帆乘风让风把你送去才够得着：管住手别打舵、也千万别买侧翼配重（它让你漂不到那儿）+3。乘风课的对偶面——强项要看场合，66 米冲线。大师关（用户指令扩展）"},
+	{name = "第 33 关 · 热流之巅", short = "热流之巅", ratio = 0.6, folds = 6, target_m = 74.0, wind = "head", wind_up = -2200.0, wind_up_x = 34.0, wind_up_len = 10.0, wind_up2 = 3200.0, wind_up2_x = 46.0, wind_up2_len = 14.0, reward = 14,
+		gate_x = 60.0, gate_h = 24.0, gate_bonus = 3,
+		tip = "热流之巅（大师篇）：竖直风的精确高度课——34-44 米深谷砸你到底，46-60 米强热流把你抛回来，而 60 米高空门挂在 24m 以上（全系列最高门）+3：谷底攒的俯冲速度就是热流里的燃料，骑得越正抛得越高，够不着就是骑歪了。74 米冲线。大师关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [

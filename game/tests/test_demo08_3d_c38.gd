@@ -61,8 +61,8 @@ func _run() -> void:
 	var a_in: float = c1.updraft_accel()
 	c1.plane_pos.x = 60.0 + 71.0 * 60.0
 	var a_after: float = c1.updraft_accel()
-	_check(a_before == 0.0 and a_in == -1600.0 and a_after == 0.0 and int(c1.LEVELS.size()) == 32,
-		"C38-1 气流区分段：区外 0 / 区内 -1600 / 区外 0，32 关")
+	_check(a_before == 0.0 and a_in == -1600.0 and a_after == 0.0 and int(c1.LEVELS.size()) == 33,
+		"C38-1 气流区分段：区外 0 / 区内 -1600 / 区外 0，33 关")
 
 	# C38-2 高门线：4 折 v=0.2 27° → 过关吃高门漏低门，收益 24 = 3 + 7 + 14
 	var hi: Object = _mk_and_fly(23, 4, 0.2, 27.0, 1.0)

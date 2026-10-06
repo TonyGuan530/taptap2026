@@ -40,8 +40,8 @@ func _run() -> void:
 	var c1: Object = CoreScript.new()
 	c1.start_level(22)
 	_check(float(c1.side_wind_accel()) == -60.0 and float(c1.shear_sign_flip()) == 1.0
-		and int(c1.LEVELS.size()) == 32,
-		"C37-1 静态锚：侧风 -60 左推 / 起点切变符号 +1 / 32 关")
+		and int(c1.LEVELS.size()) == 33,
+		"C37-1 静态锚：侧风 -60 左推 / 起点切变符号 +1 / 33 关")
 
 	# C37-2 切变符号动态：越过 30m 翻 -1、再越 55m 翻回 +1（shear_sign_flip 位置状态函数）
 	c1.plane_pos.x = 60.0 + 31.0 * 60.0
