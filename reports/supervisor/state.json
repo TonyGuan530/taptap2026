@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-06T17:53:00+08:00",
-  "round": 138,
+  "checkedAt": "2026-10-06T18:53:00+08:00",
+  "round": 139,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard FAIL noring（间隔多轮非连续，沿用读数）"
+    "thisRound": "guard SKIP not-foreground（18:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "✅ demo-02 FB-108 分诊闭环（WASD=v8已修同源）；🟢 demo-08 复活后 v12→v14 高产（大师篇 33 关）但 FB-104/109 未启动（升级处置中）；✅ demo-04 3D v13 第六关交付"
+      "evidence": "🟢 FB-104 已响应：demo-08 折纸 3D 化 spike 发布（参数驱动机体形变+折纸态环绕预览+逐笔响应）——Miro Feedback Slide 协议生效；builds 巡检清理 1015→970M（含 PINNED 误删自纠恢复 demo-02-3d-v10/inkbound-v9/tonight-v8）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -42,10 +42,10 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=18 目录/822M（警戒内）",
+    "health": "ok builds=20 目录/970M（警戒内）",
     "exportLock": "none",
     "godotProcs": 0,
-    "miro": "93 条（+9 任务上板卡；无新用户反馈）；FB-104 催办贴纸在板",
+    "miro": "93 条稳态（FB-104 催办贴纸在板；无新用户反馈）",
     "feedback": "db.json 零反馈",
     "git": "本轮 HEAD 待推",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
@@ -53,14 +53,13 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "FB 分派全线开发中：demo-03 岩浆修复/demo-06 画回归/demo-09/10/11 3D 化（worktree 均活跃）；FB-104/109 demo-08 升级处置中"
+    "queue": "FB-104 responded 待用户复测折纸 spike；FB-109 预览/回退并入 demo-08 下阶段；FB-103/105~107 各 worktree 开发中"
   },
   "watch": [
     "⚠️【ChatGPT 通道】3D 迁移高峰评审归档放缓——批示各任务 3D 里程碑照常过 GPT 评审",
     "🔴【最高优先】FB-108 WASD 反向真 bug（用户本人实测卡住）——demo-02 下轮必修",
     "🟢 FB-109 fyh828（首位外部通关测试者）建议并入 demo-08 折纸 spike 设计——GitHub Issues 通道激活，巡查每轮必查 --state all",
     "🔴【硬红线】10:50 巡检合规——持续",
-    "⚠️ FB-104 升级催办 11:52 再核（Miro 贴纸已确认在板可见）",
     "🔴【硬红线】09:50 巡检合规——持续",
     "🚨 FB-104 升级：督导催办已直贴 Miro 反馈区 (-334,280)——10:52 核对消化",
     "🔴【硬红线】08:50 巡检合规——持续",
@@ -74,7 +73,6 @@
     "🔴【硬红线·执行记录】00:50 巡检击杀 2 违规进程（5260/43244）——机制持续生效",
     "⚠️ FB-104：01:50 再核折纸 spike，仍无动作则跨会话诊断 demo-08",
     "🔴【硬红线】23:50 巡检合规——持续",
-    "⚠️ FB-104 第二轮点名已发（demo-08 00:20 槽必须开工折纸 spike，暂停加关）——00:52 核对",
     "🔴【硬红线·执行记录】22:50 巡检击杀 2 违规进程（45880/33664）——发现即杀机制生效",
     "⚠️ FB-104 观察：demo-08 22:20 槽未动折纸（23:20 再核，仍无则升级催办）",
     "⚠️ FB-104 催办后动向 22:20 核对（demo-08 19:20 轮无新提交属长测试正常）",

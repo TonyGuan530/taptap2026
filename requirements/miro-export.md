@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/6 17:50:19 · 共 93 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/6 18:50:18 · 共 93 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -299,7 +299,7 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 ### [text] @(12900,7880)
 
-<p><strong>交付与边界</strong></p><p>10/06 19:30&#xff08;新加坡时间&#xff09;GitHub Pages。</p><p>策划 / 场景概念 / 角色图 → 视觉与绘画反馈实装 → Web 导出 → 普通输入验证 → 发布。</p><p>保留 V8 历史版本&#xff0c;不在本次添加新世界生成系统。</p>
+<p><strong>已发布&#xff1a;V8 固定版 &#43; INKBOUND V9</strong></p><p>策划、场景概念、原创角色、纸雕场景、实时笔迹与词条多解流程已交付。</p><p>两条完整普通输入路线通过&#xff1a;弹性长线 → 切藤&#xff1b;漂浮轮廓 → 磁吸机关。短线失败保留作品&#xff0c;同一画作换词条与旋转通过。展示页包含两段带游戏音频的实机录像。</p><p><a href="https://tonyguan530.github.io/taptap2026/inkbound.html">新版小画家试玩与实机录像</a></p><p><a href="https://tonyguan530.github.io/taptap2026/tonight.html">恐龙 &#43; 画家 V8 固定历史入口</a></p><p>V9 发布提交 5988b2f&#xff1b;V8 提交 622f2a9。键鼠试玩&#xff1b;手机可浏览展示页。</p>
 
 ### [sticker] @(4400,8460)
 
