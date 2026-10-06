@@ -145,6 +145,8 @@ var stats := {"jumps": 0, "doubles": 0, "falls": 0, "dark_enter": 0, "fuses": 0}
 var _in_dark_prev := false
 var shard_vis: Array = []            # 碎片视觉节点（脉冲动画）
 var alien_vis: Array = []            # 外星生物视觉节点（待机动画）
+var asset_sprites: Array = []        # 资产化 Sprite3D（玩家/外星生物；有 PNG 时替换灰盒）
+var player_billboard: Sprite3D = null
 
 var lbl_level: Label
 var lbl_dna: Label
@@ -203,7 +205,30 @@ func _ready() -> void:
 	ability.shards_changed.connect(_on_shards_changed)
 	load_level(0)
 	_log_ev("session_start", {"levels": LEVELS.size()})
+	_load_player_asset()
 	_maybe_start_tour()
+
+func _load_player_asset() -> void:
+	## 资产接入点：res://assets/player.png 存在则将玩家灰盒替换为 billboard 精灵。
+	## 素材未到位时静默跳过（灰盒即形态）；外星生物同类接入见 _load_alien_assets。
+	var tex: Texture2D = load("res://assets/player.png") if ResourceLoader.exists("res://assets/player.png") else null
+	if tex == null and FileAccess.file_exists("res://assets/player.png"):
+		# 回退链：headless/开发环境下新存 PNG 未过导入管线，用 Image 直读
+		var img := Image.load_from_file("res://assets/player.png")
+		if img != null:
+			tex = ImageTexture.create_from_image(img)
+	if tex == null:
+		return
+	player_billboard = Sprite3D.new()
+	player_billboard.texture = tex
+	player_billboard.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	player_billboard.pixel_size = 0.004
+	player_billboard.position = Vector3(0, 0.15, 0)
+	player.add_child(player_billboard)
+	for c in player.get_children():
+		if c is MeshInstance3D and c != player_billboard:
+			c.visible = false
+			break
 
 func _maybe_start_tour() -> void:
 	## 调试巡游：Web ?tour=1 或原生 --tour 显式开启；真实输入驱动五关通关，

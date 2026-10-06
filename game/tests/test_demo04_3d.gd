@@ -674,7 +674,7 @@ func _run() -> void:
 	evhu.pressed = false
 	Input.parse_input_event(evhu)
 	await physics_frame
-	var hidden_ok: bool = not lblk.visible
+	var hidden_ok: bool = not scene_root.keys_hint_visible
 	if vis0 and hidden_ok:
 		_ok("键位条：常驻显示、H 隐藏生效")
 	else:
@@ -704,6 +704,50 @@ func _run() -> void:
 		_ok("程序化音效：音频播放器触发并播放中")
 	else:
 		_fail("程序化音效：未检测到播放中的 AudioStreamPlayer")
+
+	# ---- 29. 资产接入加载器：程序化 PNG → billboard 替换 → 清理还原 ----
+	var img := Image.create(64, 96, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0.9, 0.3, 0.2))
+	DirAccess.make_dir_recursive_absolute("res://assets")
+	img.save_png("res://assets/player.png")
+	await physics_frame
+	var loader_ok: bool = FileAccess.file_exists("res://assets/player.png")
+	# 重建场景以触发 _load_player_asset（模拟重启加载）
+	scene_root.queue_free()
+	await physics_frame
+	await physics_frame
+	scene_root = (load("res://demo04_3d.tscn") as PackedScene).instantiate()
+	root.add_child(scene_root)
+	await physics_frame
+	await physics_frame
+	player = scene_root.get_node("Player")
+	ability = scene_root.get_node("AbilityState")
+	var bb: Sprite3D = scene_root.player_billboard
+	var swap_ok: bool = bb != null and bb.texture != null and bb.visible
+	var gray_hidden := false
+	for c in player.get_children():
+		if c is MeshInstance3D and c != bb:
+			gray_hidden = not c.visible
+	if loader_ok and swap_ok and gray_hidden:
+		_ok("资产接入：player.png 加载 → billboard 替换灰盒（灰盒隐藏）")
+	else:
+		_fail("资产接入异常：loader=%s swap=%s gray_hidden=%s" % [loader_ok, swap_ok, gray_hidden])
+	# 清理：删除测试资产并还原灰盒形态
+	DirAccess.remove_absolute("res://assets/player.png")
+	scene_root.queue_free()
+	await physics_frame
+	await physics_frame
+	scene_root = (load("res://demo04_3d.tscn") as PackedScene).instantiate()
+	root.add_child(scene_root)
+	await physics_frame
+	await physics_frame
+	player = scene_root.get_node("Player")
+	ability = scene_root.get_node("AbilityState")
+	var restored: bool = scene_root.player_billboard == null
+	if restored:
+		_ok("资产清理：测试 PNG 移除后灰盒形态还原")
+	else:
+		_fail("资产清理异常：billboard 残留")
 
 	# ---- 汇总 ----
 	print("==== RESULTS: %d fail ====" % fails.size())
