@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-06T18:34:11.861Z",
+  "date": "2026-10-06T18:47:28.551Z",
   "build": {
     "title": "墨迹漂流 / INKBOUND",
     "version": "demo-06-inkbound-v10-touch",
@@ -1514,5 +1514,31 @@
     "Touch patch retains V10 gameplay; emergence redesign remains a proposal"
   ],
   "review": "Independent input review passed; later ladder-arrival regression reproduced RED and fixed GREEN",
-  "release": null
+  "release": {
+    "commit": "7fcc1cab5423e796cfc96088e84f49669c69792f",
+    "workflow": 37512457979,
+    "attempt": 2,
+    "url": "https://tonyguan530.github.io/taptap2026/builds/demo-06-inkbound-v10-touch/index.html",
+    "landingUrl": "https://tonyguan530.github.io/taptap2026/inkbound-v10.html",
+    "onlineVerified": true,
+    "smoke": {
+      "date": "2026-10-06T18:47:02.033Z",
+      "url": "https://tonyguan530.github.io/taptap2026/builds/demo-06-inkbound-v10-touch/index.html?qa=1",
+      "pckSha256": "d33c9bcc249dac424484f0a21fdee18a31a49642f79a30a891954885d0368b5b",
+      "method": "actual CDP touch input, mobile 844x390, read-only QA",
+      "passed": true,
+      "before": [
+        0,
+        0.6,
+        0
+      ],
+      "after": [
+        1.784,
+        0.601,
+        0
+      ],
+      "strokes": 4,
+      "errors": []
+    }
+  }
 }

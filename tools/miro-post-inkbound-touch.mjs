@@ -16,14 +16,15 @@ if(process.argv.includes('--read')){
  }
 }else{
  const proof=JSON.parse(fs.readFileSync('docs/inkbound-touch-validation.json','utf8'));
- if(!proof.release?.onlineVerified)throw Error('Online touch release verification required');
+ const designOnly=process.argv.includes('--design-only');
+ if(!designOnly&&!proof.release?.onlineVerified)throw Error('Online touch release verification required');
  const marker='INKBOUND-TOUCH-20261007';
  const additions={
   design:'<p><strong>'+marker+' · GD／编剧新提案，尚未实现</strong></p><p>V10 多解不等于涌现。新主旨：可信结构＋相符词条授能，梯子外观不能自动可攀爬。取消墨色用途锁；首片可攀爬＋漂浮、两槽、一个开放邮台目标。能力读取结构，目标只认结果；同一稿从无能力到授能，再在新处境复用。需自由试玩验证。</p><p><a href="https://github.com/TonyGuan530/taptap2026/blob/main/docs/inkbound-emergence-redesign.md">修订策划</a> · <a href="https://github.com/TonyGuan530/taptap2026/blob/main/docs/inkbound-gd-writer-review.md">独立评审</a></p>',
-  release:'<p><strong>'+marker+' · 触控补丁已上线</strong></p><p><a href="'+proof.release.url+'">手机横屏触控试玩</a>：摇杆、独立手指点控与手绘。147 项原生检查及两条浏览器路线通过。实体 Android／iOS 尚未验证；新授能规则仍是提案。</p>',
+  release:'<p><strong>'+marker+' · 触控补丁已上线</strong></p><p><a href="'+(proof.release?.url||'')+'">手机横屏触控试玩</a>：摇杆、独立手指点控与手绘。147 项原生检查及两条浏览器路线通过。实体 Android／iOS 尚未验证；新授能规则仍是提案。</p>',
  };
  const results=[];
- for(const key of ['design','release']){
+ for(const key of (designOnly?['design']:['design','release'])){
   const item=await request('GET','/items/'+ids[key]);
   const original=item.data?.content;if(typeof original!=='string')throw Error('Owned Miro text missing');
   const content=original.includes(marker)?original:original+additions[key];

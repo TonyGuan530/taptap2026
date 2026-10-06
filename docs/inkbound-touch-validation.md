@@ -12,3 +12,7 @@
 - 验证设备为 Chromium 模拟移动浏览器，未使用实体 Android／iOS 手机。
 
 保留旧 V10 导出和录屏；原录像仍对应原版哈希。当前补丁验收的是操作与原有流程，不能作为新版涌现玩法已完成的证明。新设计见 [改版案](inkbound-emergence-redesign.md)。
+
+线上发布：提交 7fcc1cab5423e796cfc96088e84f49669c69792f，GitHub Pages [工作流 37512457979，第 2 次运行](https://github.com/TonyGuan530/taptap2026/actions/runs/37512457979) 成功。实际线上 PCK 与验收构建一致；手机浏览器真实触摸完成开始、摇杆移动、四笔绘画与保存，控制台无错误。
+
+[触控试玩](https://tonyguan530.github.io/taptap2026/builds/demo-06-inkbound-v10-touch/index.html) · [展示页](https://tonyguan530.github.io/taptap2026/inkbound-v10.html)。
