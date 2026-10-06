@@ -13,7 +13,7 @@ grep -E "RESULTS|ALL PASS|FAILED" /tmp/d04suite.log
 grep -q "ALL PASS" /tmp/d04suite.log || { echo "FAIL: 3D 套件"; exit 1; }
 echo "==== 2/4 2D 冻结基线（7 用例）===="
 "$GODOT" --headless --path . -s res://tests/test_demo04.gd 2>&1 | grep -cE "PASS" | xargs -I{} echo "PASS 行数: {}"
-echo "==== 3/4 五关巡游机器人 ===="
+echo "==== 3/4 六关巡游机器人 ===="
 "$GODOT" --headless --path . res://tests/movie_demo04_3d.tscn 2>&1 | grep -E "TOUR DONE|ALL PASS"
 echo "==== 4/4 混沌浸泡（${CHAOS}s，0 跳过）===="
 if [ "$CHAOS" != "0" ]; then

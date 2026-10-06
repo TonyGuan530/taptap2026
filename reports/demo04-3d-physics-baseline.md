@@ -47,6 +47,6 @@
 
 ## 5. 复查清单（改参数时逐项重跑）
 1. `tests/test_demo04_3d.gd` 25 项（高度窗口/门控/暗区/掉坑/遥测/相机）
-2. `tests/movie_demo04_3d.tscn` 五关巡游（tourDone=0）
+2. `tests/movie_demo04_3d.tscn` 六关巡游（tourDone=0，含终局回廊）
 3. `tests/test_demo04.gd` 2D 七用例（冻结基线）
 4. 换模型：碰撞体独立于视觉（ComicObject 无碰撞），仅需复查胶囊尺寸与栈道落台窗口
