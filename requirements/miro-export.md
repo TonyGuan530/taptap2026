@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/6 10:50:32 · 共 85 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/6 17:50:19 · 共 93 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -176,6 +176,14 @@ headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch C
 ③ L1-L4 玩法/几何零改动&#xff0c;headless 8/8 PASS&#xff08;含 telemetry 断言&#xff09;。
 试玩: https://tonyguan530.github.io/taptap2026/play.html?id&#61;demo-02 &#xff08;itch CDN 故障持续&#xff0c;Pages 为准&#xff09;
 
+### [text] @(12270,6020)
+
+<p><strong>核心与竞争策略</strong></p><p>亲手画出形状&#xff0c;再附上捡到的词条&#xff0c;让形状的长度、覆盖范围和接触决定工具用途。</p><p>一个精致的 5 分钟完整关卡&#xff1a;落笔 → 渡河 → 找回画页。对手已具备成熟美术与调查界面&#xff0c;本次集中独特操作体验和完整呈现。</p>
+
+### [text] @(13520,6020)
+
+<p><strong>关卡与多解</strong></p><p>01 钥匙&#xff1a;黏附长线抓取 / 磁性吸取 / 沉重轮廓压配重。</p><p>02 同一条河&#xff1a;漂浮闭合面承载 / 弹性开放线接木桩。</p><p>03 庭院&#xff1a;锋利线切藤 / 磁吸机关 / 闭合面挡弹。</p><p>关卡认可稳定规则的结果&#xff0c;不要求画得像预设图案。</p>
+
 ### [text] @(4400,6060)
 
 &#x1f195; demo-02 v4 更新&#xff08;2026-10-03 晚&#xff0c;落实 ChatGPT KEEP 后指令&#xff09;&#xff1a;
@@ -202,6 +210,14 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 ### [sticker] @(16706,6342)
 
 <p>角色​参考</p>
+
+### [text] @(12270,6480)
+
+<p><strong>手感验收</strong></p><p>即时笔迹 &#43; 起点/端点 &#43; 词条颜色。</p><p>开放线 / 闭合面显式切换&#xff0c;松开显示长度或面积与墨耗。</p><p>保留作品以便换词条&#xff1b;旋转、回收与墨泉支持试错。</p><p>接触目标有音效、机关变化与短提示。</p><p>普通键鼠验证两种渡河办法及结算。</p>
+
+### [text] @(13520,6480)
+
+<p><strong>美术与角色</strong></p><p>原创独游方向&#xff1a;低多边形纸雕庭院&#xff0c;奶油纸岩、青蓝墨河、深靛轮廓、珊瑚红点缀。</p><p>角色&#xff1a;大纸帽、红围巾、背墨瓶的绘画学徒&#xff0c;白纸面孔和墨点眼睛。</p><p>概念图是视觉目标&#xff1b;实机完成度以导出后的截图与试玩为准。</p>
 
 ### [sticker] @(4400,6560)
 
@@ -251,6 +267,10 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 <p>截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-02.png 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-02.mp4 试玩: <a href="https://sxguan.itch.io/taptap2026">https://sxguan.itch.io/taptap2026</a> &#xff08;密码 taptap&#xff09;</p>
 
+### [frame] @(12900,6900)
+
+墨迹漂流 INKBOUND · 10/06 19:30 发布冲刺
+
 ### [sticker] @(4400,6980)
 
 &#x1f3ae; demo-02-3d 运行画面 &#43; 录屏 ▼
@@ -265,9 +285,21 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 录屏: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-02.mp4
 试玩: https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v10/index.html
 
+### [image] @(12330,7300)
+
+场景概念图 · 非实机截图
+
+### [image] @(13470,7300)
+
+画家角色设计图
+
 ### [sticker] @(5714,7509)
 
 <p>塞尔​达式​箱庭​谜题​</p>
+
+### [text] @(12900,7880)
+
+<p><strong>交付与边界</strong></p><p>10/06 19:30&#xff08;新加坡时间&#xff09;GitHub Pages。</p><p>策划 / 场景概念 / 角色图 → 视觉与绘画反馈实装 → Web 导出 → 普通输入验证 → 发布。</p><p>保留 V8 历史版本&#xff0c;不在本次添加新世界生成系统。</p>
 
 ### [sticker] @(4400,8460)
 
@@ -332,7 +364,7 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-cdp-a.png
 暗区实拍: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-darkzone-108.png
 五关通关演示片: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v12/index.html
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v13/index.html
 
 操作&#xff1a;WASD/方向键 · Space 跳 · E 融合 · R 重开 · Shift&#43;R 完整再跑 · K 实验房(1~5选关)/B 返回 · G 被试编号 · T 遥测导出
 
