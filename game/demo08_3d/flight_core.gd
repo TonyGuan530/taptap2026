@@ -15,6 +15,7 @@ const LAUNCH_V := 1150.0        # 满力初速 px/s
 const PITCH_FOLLOW := 3.0       # 机头追随速度方向的速率（1/s）
 const PROP_THRUST := 120.0      # 螺旋桨恒推力 px/s^2（沿机头方向）
 const TAIL_THRUST := 90.0       # 顺风恒定推力 px/s^2（沿 +x）
+const DIVE_ACCEL := 320.0       # C88 俯冲下压 px/s^2（S/↓ 按住时叠加在重力上）
 const HEAD_DRAG_MULT := 1.25    # 逆风阻力倍率
 const MAX_FLIGHT_TIME := 14.0
 const LIFT_PER_FOLD := 0.45
@@ -121,7 +122,7 @@ const LEVELS := [
 		gate_x = 28.0, gate_h = 14.0, gate_bonus = 3, low_gate_x = 52.0, low_gate_top = 8.0, low_gate_side = 240.0,
 		tip = "谷风低门：逆风加右推侧风（60px/s²），36-46 米下沉谷把低线压到 8m 以下——谷底正好是侧风把你送进 52 米右侧低空门（+4m 横位、8m 以下）+3 门带的时机，切忌补舵（按 D 冲过头、按 A 被带出带）；抬头线先吃 28 米高空门（14m 以上）+3。一掷二选一，65 米过关。新机制关（用户指令扩展）"},
 	{name = "第 29 关 · 双谷接力", short = "双谷接力", ratio = 0.6, folds = 6, target_m = 62.0, wind = "head", wind_up = -1400.0, wind_up_x = 30.0, wind_up_len = 10.0, wind_up2 = -1400.0, wind_up2_x = 50.0, wind_up2_len = 10.0, reward = 14,
-		gate_x = 24.0, gate_h = 14.0, gate_bonus = 3, low_gate_x = 46.0, low_gate_top = 14.0,
+		gate_x = 24.0, gate_h = 14.0, gate_bonus = 3, low_gate_x = 46.0, low_gate_top = 21.0,
 		tip = "双谷接力：逆风 62 米有两段下沉谷（30-40 米、50-60 米）——高度要省着用：先吃 24 米高空门（14m 以上）+3，或平折线从第一谷出来在 40-50 米喘息窗口吃 46 米低空门（14m 以下）+3，闯过第二谷收 62 米。两谷三站一掷到底。新机制关（用户指令扩展）"},
 	{name = "第 30 关 · 终局峡谷", short = "终局峡谷", ratio = 0.6, folds = 6, target_m = 70.0, wind = "head", side_wind = -60.0, wind_up = -1600.0, wind_up_x = 36.0, wind_up_len = 8.0, wind_up2 = 2400.0, wind_up2_x = 48.0, wind_up2_len = 12.0, reward = 14,
 		gate_x = 66.0, gate_h = 16.0, gate_bonus = 3, gate_side = -240.0,
@@ -144,6 +145,9 @@ const LEVELS := [
 	{name = "第 36 关 · 时机走廊", short = "时机走廊", ratio = 0.7, folds = 5, target_m = 60.0, wind = "none", reward = 14,
 		gate_x = 40.0, gate_h = 12.0, gate_bonus = 3, gate_open_t0 = 2.0, gate_open_t1 = 3.2,
 		tip = "时机走廊（大师篇）：新门类型——40 米高空门（12m 以上）只在 2.0-3.2 秒的时间窗内存在：扔太快门还没开，太慢门已经关。折线定弧线、弧线定到达时刻，把穿越掐进窗里 +3。无风纯时序考，60 米冲线。新门类型（用户指令扩展）"},
+	{name = "第 37 关 · 俯冲峡", short = "俯冲峡", ratio = 0.7, folds = 5, target_m = 78.0, wind = "none", reward = 14,
+		low_gate_x = 70.0, low_gate_top = 21.0, gate_bonus = 3,
+		tip = "俯冲峡（大师篇）：新输入课——70 米低空门（21m 以下）+3 藏在你的自然滑翔高度之下：2 秒后按住 S 俯冲压低才能穿门，不俯冲冲线也没门奖。新输入 S 键，俯冲时机与压低深度全凭手感，78 米冲线。新输入（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
@@ -219,6 +223,7 @@ var trail := []
 var lateral := 0.0
 var lateral_vel := 0.0
 var lateral_input := 0.0     # -1/0/+1（A/D），由表现层输入事件设置
+var dive_input := false      # C88 新输入（规则变化）：飞行中 S/↓ 俯冲，表现层输入事件设置
 
 ## 结算
 var last_pass := false
@@ -389,6 +394,8 @@ func step(delta: float) -> String:
 	var up_a: float = updraft_accel()
 	if absf(up_a) > 0.0:
 		acc += Vector2(0.0, -up_a)   # 屏幕系 y 向下：+wind_up（上升）取负
+	if dive_input:
+		acc += Vector2(0.0, DIVE_ACCEL)   # C88 俯冲：额外下压（屏幕系 y 向下为正）
 	if has_upgrade("prop"):
 		acc += Vector2.from_angle(pitch) * PROP_THRUST
 	velocity += acc * delta

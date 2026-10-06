@@ -40,8 +40,8 @@ func _run() -> void:
 	var c1: Object = CoreScript.new()
 	c1.start_level(21)
 	_check(float(c1.side_wind_accel()) == 60.0 and float(c1.shear_sign_flip()) == 1.0
-		and int(c1.LEVELS.size()) == 36 and absf(float(c1.wind_side3()) + 1.0) < 1e-6,
-		"C36-1 静态锚：侧风 +60 右推 / 切变符号 +1 / 36 关 / wind_side3 回退默认 -1")
+		and int(c1.LEVELS.size()) == 37 and absf(float(c1.wind_side3()) + 1.0) < 1e-6,
+		"C36-1 静态锚：侧风 +60 右推 / 切变符号 +1 / 37 关 / wind_side3 回退默认 -1")
 
 	# C36-2 配方：4 折均匀 v=0.2 35°、前 1.0s 按住 A → 65.2m 过关 + 高门命中 + 收益 23 = 3 + 6 + 14
 	var c: Object = CoreScript.new()

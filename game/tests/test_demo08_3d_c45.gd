@@ -65,7 +65,7 @@ func _run() -> void:
 	c1.plane_pos.x = 60.0 + 61.0 * 60.0
 	var aout: float = c1.updraft_accel()
 	_check(a1 == -1400.0 and agap == 0.0 and a2 == -1400.0 and aout == 0.0
-		and int(c1.LEVELS.size()) == 36,
+		and int(c1.LEVELS.size()) == 37,
 		"C45-1 静态锚：谷1 -1400 / 窗口 0 / 谷2 -1400 / 谷后 0，29 关")
 
 	# C45-2 低线：4 折 v=0.2 30° → 过关吃窗口低门，23 = 3 + 6 + 14

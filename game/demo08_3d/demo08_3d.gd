@@ -922,11 +922,15 @@ func _unhandled_input(event: InputEvent) -> void:
 					core.lateral_input = -1.0
 				elif k.keycode == KEY_D:
 					core.lateral_input = 1.0
+				elif k.keycode == KEY_S or k.keycode == KEY_DOWN:
+					core.dive_input = true   # C88 俯冲输入
 			elif not k.pressed:
 				if k.keycode == KEY_A and float(core.lateral_input) < 0.0:
 					core.lateral_input = 0.0
 				elif k.keycode == KEY_D and float(core.lateral_input) > 0.0:
 					core.lateral_input = 0.0
+				elif k.keycode == KEY_S or k.keycode == KEY_DOWN:
+					core.dive_input = false
 		if k.pressed and not k.echo and k.keycode == KEY_R and core.state == "fly":
 			_snap_camera()
 	elif event is InputEventMouseMotion and core.state == "throw" and not charging:
@@ -944,6 +948,7 @@ func _process(delta: float) -> void:
 		# C15 修复：离开 fly 态清零横向输入（防止按住 A/D 跨掷残留带偏下一掷）
 		if prev_state == "fly" and core.state != "fly":
 			core.lateral_input = 0.0
+			core.dive_input = false   # C88 俯冲态跨掷清零（同 C15 横向教训）
 		prev_state = core.state
 	_update_status()
 	_update_visuals()
@@ -1072,7 +1077,7 @@ func _update_status() -> void:
 			status_label.text = "%s · 飞行中 %.1f 米 / 目标 %.0f 米 · 高度 %.1f 米 · 横移 %.1f 米%s%s" % [
 				String(L.name), live_m, float(L.target_m), h_m, float(core.lateral) / PX_PER_M, gate_pos_txt, zone_txt]
 			# C30 打磨：飞行提示按关卡机制定制（摆门/侧风/气流区关提醒）
-			var fly_hint := "A/D 横移（门有横向宽度），R 复位相机"
+			var fly_hint := "A/D 横移（门有横向宽度），S 俯冲，R 复位相机"
 			if float(L.get("gate_swing", 0.0)) > 0.0 or float(L.get("low_gate_swing", 0.0)) > 0.0:
 				fly_hint = "门在摆动，注意穿越时机 · " + fly_hint
 			if core.wind_mode() == "side" or absf(core.side_wind_accel()) > 0.0:

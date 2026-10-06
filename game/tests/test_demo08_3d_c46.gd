@@ -61,7 +61,7 @@ func _run() -> void:
 	c1.plane_pos.x = 60.0 + 54.0 * 60.0
 	var a2: float = c1.updraft_accel()
 	_check(float(c1.side_wind_accel()) == -60.0 and a1 == -1600.0 and a2 == 2400.0
-		and int(c1.LEVELS.size()) == 36,
+		and int(c1.LEVELS.size()) == 37,
 		"C46-1 静态锚：侧风 -60 / 谷 -1600 / 热流 +2400 / 30 关")
 
 	# C46-2 顺流配方：4 折 v=0.2 32° 无舵 → 过关吃左侧高门，24 = 3 + 7 + 14
