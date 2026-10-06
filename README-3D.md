@@ -46,5 +46,5 @@ root.gd（LEVELS 数据驱动六关+实验房+遥测）· player.gd（CharacterB
 ability_state.gd（DNA 参数）· camera_rig.gd（跟随）· tour_driver.gd（?tour=1 显式巡游组件）
 
 ## 关键规则（3D 适配，详见 physics-baseline.md）
-裂纹墙顶 2.9m（碎岩唯一解）· 上层捷径=西侧空中栈道（组合独占）· 弹跳板 z 侧带（纯可选）·
+裂纹墙顶 2.9m（碎岩唯一解）· 上层捷径=西侧空中栈道（组合独占）· 弹跳板（L1/L2/L4 z 侧带，纯可选）·
 掉坑回此前安全落点（保留 DNA/碎墙/碎片，计时继续）· 评级 ≤45s S / ≤90s A
