@@ -138,6 +138,9 @@ const LEVELS := [
 	{name = "第 34 关 · 配重峡", short = "配重峡", ratio = 0.6, folds = 6, target_m = 70.0, wind = "head", side_wind = 120.0, reward = 14,
 		gate_x = 46.0, gate_h = 12.0, gate_bonus = 3, gate_side = -660.0,
 		tip = "配重峡（大师篇）：顶风马拉松——双倍侧风（120px/s²）全程把你往右推，46 米高空门（12m 以上）挂在 -11m 横位极左：从起跳到冲线按住 A 不松手才顶得到 +3，一松手就被风带走。侧翼配重给你余量（1 级从容、2 级宽裕），但顶风的意志才是门票。70 米冲线。大师关（用户指令扩展）"},
+	{name = "第 35 关 · 终幕回廊", short = "终幕回廊", ratio = 0.6, folds = 6, target_m = 80.0, wind = "head", side_wind = -60.0, wind_up = -2000.0, wind_up_x = 30.0, wind_up_len = 8.0, wind_up2 = 2800.0, wind_up2_x = 42.0, wind_up2_len = 10.0, reward = 14,
+		gate_x = 60.0, gate_h = 18.0, gate_bonus = 3, gate_side = -240.0, gate_swing = 360.0, gate_period = 3.0,
+		tip = "终幕回廊（大师篇）：最终试炼——逆风 1.25 倍、左推侧风、30-38 米深谷、42-52 米热气流，尽头是 60 米摆动高门（18m 以上、-4m 上 ±6m 摆、3 秒来回）+3：能量、漂移、门相全时序收于一掷，80 米冲线。大师关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
