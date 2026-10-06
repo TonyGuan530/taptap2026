@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-06T22:52:00+08:00",
-  "round": 143,
+  "checkedAt": "2026-10-06T23:52:00+08:00",
+  "round": 144,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（22:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（23:50 实跑）"
   },
   "automations": {
     "supervisor": {
