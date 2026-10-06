@@ -754,6 +754,12 @@ func _go_menu() -> void:
 		var locked: bool = i > core.unlocked
 		lb.disabled = locked
 		lb.text = ("第%d关 · %s" % [i + 1, String(core.LEVELS[i].short)]) if not locked else ("第%d关（未解锁）" % [i + 1])
+		# C75 打磨：大师篇（L31+）金色字体 + 悬停提示，与主线关区分
+		if i >= 30:
+			lb.add_theme_color_override("font_color", Color("9c6f19"))
+			lb.tooltip_text = "大师篇：" + String(core.LEVELS[i].tip)
+		else:
+			lb.tooltip_text = String(core.LEVELS[i].tip)
 	menu_tip.text = "折纸三参数：升力面积（折线越靠外越大）· 配平（越靠上越正/抬头）· 阻力（线越长越大）"
 	_update_status()
 
