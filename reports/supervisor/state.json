@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-07T02:52:00+08:00",
-  "round": 149,
+  "checkedAt": "2026-10-07T03:52:00+08:00",
+  "round": 150,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（02:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（03:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "✅ demo-04 3D v15 资产接入加载器（净零替换）；🟢 demo-06 新线 Inkbound V10 发布（geometry+blade chapter）；✅ demo-08 3D v19 气流计+九物商店；✅ builds 巡检清理 1.1G→842M（PINNED 检查生效）"
+      "evidence": "⚠️ demo-08 v20 又加一关（L36 时机门，36 关）——FB-104/109 仍未启动（批量点名已含其并列提出要求）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -42,7 +42,7 @@
     }
   },
   "envSnapshot": {
-    "health": "ok builds=18 目录/842M（警戒内）",
+    "health": "ok builds=19 目录/908M（警戒内）",
     "exportLock": "none",
     "godotProcs": 0,
     "miro": "102 条稳态（无新用户反馈）",
@@ -53,9 +53,11 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "GPT 对比送验首批消化中——03:52 核对（仍无迹象则逐任务催办 demo-02/03/04/08）"
+    "queue": "🔴 GPT 对比送验批量点名已发（demo-02/03/04/08 下轮必须出双视频送验）"
   },
   "watch": [
+    "🔴【硬红线】03:50 巡检合规——持续",
+    "🔴【GPT 送验批量点名】demo-02/03/04/08 下轮必须出 3D+2D 双视频送验（批示 gpt-acceptance-kickoff.md）——04:52/05:52 核对 [SENT] 回执，违例升级跨会话诊断",
     "🔴【硬红线】01:50 巡检合规——持续",
     "⏳ GPT 对比送验首批消化中（批示后 43min）——02:52 再核，03:52 无迹象则逐任务催办",
     "🔴【管辖变更·用户指令】demo-05/demo-06 移交外部 AI——督导撤出催办/批示/送验排期；FB-103 移交标注完成；巡查仅知会不催办",
