@@ -1,0 +1,10 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V8 · 两款 Demo 实机录像</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23102e34'/%3E%3Cpath d='M12 7L26 16L12 25Z' fill='%23efb56c'/%3E%3C/svg%3E">
+<style>*{box-sizing:border-box}body{margin:0;background:#102e34;color:#f5efdb;font:16px/1.7 system-ui,"Microsoft YaHei",sans-serif}main{max-width:1040px;margin:auto;padding:28px 22px}h1{font-size:30px;margin:8px 0}p{color:#bdd0c4;margin:10px 0}video{display:block;width:100%;background:#09191e;border-radius:12px;margin-top:20px}.links{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}a,button{color:#f3ca8e}button{border:1px solid #698a7c;background:#234c51;border-radius:8px;padding:9px 16px;font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #f3ca8e;outline-offset:3px}.note{font-size:13px}</style></head><body><main>
+<p class="note">LOW POLY 3D / V8 普通键鼠实机</p><h1>交朋友，搭营地，把未来建出来。</h1>
+<p>恐龙实际采集食物、结交野外伙伴、雇佣分工、自由摆放并升级设施；画家走入重做的林地，拾词画工具解开机关。</p>
+<video id="movie" controls playsinline preload="metadata" poster="./tonight-v8-videos/poster.jpg"><source src="./tonight-v8-videos/demo-v8-showcase.mp4" type="video/mp4"></video>
+<div class="links"><button data-file="demo-v8-showcase.mp4">两款连看</button><button data-file="dino-v8.mp4">只看恐龙交友与建设</button><button data-file="ink-v8.mp4">只看画家随机机关</button></div>
+<p class="note"><a href="./tonight-v8-videos/demo-v8-showcase.mp4" download>下载 MP4</a> · <a href="./tonight.html">去试玩 V8</a></p>
+<p class="note">录像来自实际游戏画面、声音和正常键鼠操作，附中文字幕。合集剪短赶路，单款录像保留完整操作；两款都实际走过多个区块、回访已采或已解内容，并使用菜单保存读取。</p>
+</main><script>const movie=document.getElementById('movie');document.querySelectorAll('button[data-file]').forEach(button=>button.addEventListener('click',()=>{movie.src='./tonight-v8-videos/'+button.dataset.file;movie.load();movie.play().catch(()=>{});}));</script></body></html>
