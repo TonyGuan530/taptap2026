@@ -85,3 +85,12 @@ requirements/backlog.md 的 demo-02 节 + Miro 原始想法（requirements/miro-
 4. 转 3D 尝试：仅玩法确实适合 3D 时，先说明可行性再动手
 
 转向时在报告注明「停滞转向：demo-0X → 阶梯项」。
+
+
+> 🔴 **督导指令 2026-10-07 04:52（GPT 对比送验 SOP·最高优先级·本任务下轮必做）**
+> 用户已立验收制度 v2：3D vs 2D **对比送验、择一继续开发、败者归档**（每 demo 最终单形态呈现）。
+> **本任务（demo-02）下轮必做**：
+> 1. 出证：2D 版（v7）与 3D 版（3d-v14（探索版直链）或 v10 基线）各一段 30-60 秒完整游玩视频（Movie Maker 离线渲染已有链路）。
+> 2. 送验：上传 ChatGPT 专属对话，提问模板——「两个版本（3D 与 2D）完整游玩录像如下。请按两条标准对比裁决：①哪个更能支撑 gamejam 涌现主题？②哪个完成度更够玩家理解游戏机制？给出：胜出形态 + 败者是否值得保留意见 + 各自修改清单。」
+> 3. 回执：GPT 回复存 reviews/chatgpt-demo-02-compare-full.md，并在 reviews/supervisor-directive-2026-10-07-gpt-acceptance-kickoff.md 末尾追加 [SENT HH:MM demo-02]。
+> 督导收到 [SENT] 后核验并汇总裁决上报用户，随后执行「胜者继续开发/败者归档」。
