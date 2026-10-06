@@ -61,8 +61,8 @@ func _run() -> void:
 	c1.plane_pos.x = 60.0 + 52.0 * 60.0
 	var a2: float = c1.updraft_accel()
 	_check(a1 == -2200.0 and a2 == 3200.0 and float(c1.LEVELS[32].gate_h) == 24.0
-		and int(c1.LEVELS.size()) == 37,
-		"C54-1 静态锚：谷 -2200 / 热流 +3200 / 门高 24m 全系列最高 / 37 关")
+		and int(c1.LEVELS.size()) == 38,
+		"C54-1 静态锚：谷 -2200 / 热流 +3200 / 门高 24m 全系列最高 / 38 关")
 
 	# C54-2 配方：4 折 v=0.2 36° → 过关吃超高门，24 = 3 + 7 + 14
 	var good: Object = _mk_and_fly(4, 0.2, 36.0)

@@ -62,8 +62,8 @@ func _run() -> void:
 	var t_in: bool = c1.gate_open()
 	c1.flight_time = 3.5
 	var t_late: bool = c1.gate_open()
-	_check(t_early == false and t_in == true and t_late == false and int(c1.LEVELS.size()) == 37,
-		"C60-1 时机窗三态：窗前闭 / 窗内开 / 窗后闭，37 关")
+	_check(t_early == false and t_in == true and t_late == false and int(c1.LEVELS.size()) == 38,
+		"C60-1 时机窗三态：窗前闭 / 窗内开 / 窗后闭，38 关")
 
 	# C60-2 常开回归：L1（无时机字段）任意时刻 gate_open 恒真
 	c1.start_level(0)

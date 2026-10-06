@@ -148,6 +148,9 @@ const LEVELS := [
 	{name = "第 37 关 · 俯冲峡", short = "俯冲峡", ratio = 0.7, folds = 5, target_m = 78.0, wind = "none", reward = 14,
 		low_gate_x = 70.0, low_gate_top = 21.0, gate_bonus = 3,
 		tip = "俯冲峡（大师篇）：新输入课——70 米低空门（21m 以下）+3 藏在你的自然滑翔高度之下：2 秒后按住 S 俯冲压低才能穿门，不俯冲冲线也没门奖。新输入 S 键，俯冲时机与压低深度全凭手感，78 米冲线。新输入（用户指令扩展）"},
+	{name = "第 38 关 · 俯冲摆门", short = "俯冲摆门", ratio = 0.7, folds = 5, target_m = 74.0, wind = "none", reward = 14,
+		low_gate_x = 66.0, low_gate_top = 12.0, low_gate_side = 0.0, low_gate_swing = 360.0, low_gate_period = 3.0, gate_bonus = 3,
+		tip = "俯冲摆门（大师篇）：双时序复合课——66 米低空门（12m 以下）既在下沉等待俯冲，又在 ±6m 横摆：按 S 的时机定高度，门的相位定横位，两个节奏对上才穿得过 +3。先定俯冲点再对拍子，74 米冲线。大师关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [

@@ -90,7 +90,7 @@ func _run() -> void:
 	var f: Object = CoreScript.new()
 	f.rng.seed = 808
 	var offered_expect := 0
-	for i in 37:
+	for i in 38:
 		f.start_level(i)
 		offered_expect += (1 if float(f.LEVELS[i].get("gate_x", 0.0)) > 0.0 else 0) + (1 if float(f.LEVELS[i].get("low_gate_x", 0.0)) > 0.0 else 0)
 		var r: Array = _c1_recipe(i)
