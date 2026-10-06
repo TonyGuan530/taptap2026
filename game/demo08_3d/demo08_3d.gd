@@ -26,6 +26,11 @@ var last_throw := {angle = 30.0, power = 1.0}   # 测试/复盘用：最近一�
 ## 表现节点
 var world_root: Node3D
 var plane_visual: Node3D
+# C68 打磨B：折纸态 3D 预览（SubViewport 环绕相机 + HUD 小窗）
+var fold_preview_vp: SubViewport
+var fold_preview_cam: Camera3D
+var fold_preview_rect: TextureRect
+var fold_preview_orbit := 0.6
 var cam_rig: Node3D
 var spring_arm: SpringArm3D
 var camera: Camera3D
@@ -75,6 +80,7 @@ var _shot_stage := 0
 func _ready() -> void:
 	_build_world()
 	_build_hud()
+	_build_fold_preview()
 	_apply_level_props()
 	auto_shots_dir = String(OS.get_environment("DEMO08_SHOTS_DIR"))
 	if auto_shots_dir != "":
@@ -159,18 +165,8 @@ func _build_world() -> void:
 	world_root.add_child(trail_mesh)
 
 	# 场景应用：纸飞机 = 自建 ComicObject parts（统一 toon+描边；本地机头 -Z）
-	plane_visual = ComicObjectScript.new()
-	plane_visual.name = "PlaneVisual"
-	var bm := BoxMesh.new()
-	bm.size = Vector3(0.06, 0.05, 0.9)
-	plane_visual.add_part(bm, Color("fafafa"), Transform3D(Basis.IDENTITY, Vector3(0.0, 0.0, 0.1)))
-	var wm := BoxMesh.new()
-	wm.size = Vector3(0.55, 0.02, 0.4)
-	var wl_basis := Basis.IDENTITY.rotated(Vector3(0.0, 0.0, 1.0), deg_to_rad(7.0))
-	plane_visual.add_part(wm, Color("ffffff"), Transform3D(wl_basis, Vector3(-0.26, 0.02, 0.12)))
-	var wr_basis := Basis.IDENTITY.rotated(Vector3(0.0, 0.0, 1.0), deg_to_rad(-7.0))
-	plane_visual.add_part(wm, Color("ffffff"), Transform3D(wr_basis, Vector3(0.26, 0.02, 0.12)))
-	world_root.add_child(plane_visual)
+	# C68 打磨A：参数驱动形变——折线参数实时映射机体几何（翼面/上反角/折痕线），每次折完重建
+	_rebuild_plane_visual()
 
 	cam_rig = Node3D.new()
 	cam_rig.name = "CameraRig"
@@ -197,6 +193,66 @@ func _build_world() -> void:
 	ground_body.add_child(gcol)
 	ground_body.position = Vector3(0.0, -0.25, -100.0)
 	world_root.add_child(ground_body)
+
+
+## C68 打磨A：参数驱动机体形变——折线参数映射几何，每次折完/进场重建（规则不动，纯表现）
+## 映射：lift_area→翼展/翼弦（0.5~2.7 → 0.68~1.35 缩放）；trim→上反角（7°±trim×5°，夹 [1,20]）；
+## 折数→翼面折痕线（0~5 条深色细条）；drag_f 不再单独出形（折数已直观表达）
+func _rebuild_plane_visual() -> void:
+	if plane_visual != null:
+		world_root.remove_child(plane_visual)
+		plane_visual.queue_free()
+	plane_visual = ComicObjectScript.new()
+	plane_visual.name = "PlaneVisual"
+	var lift: float = float(core.plane_params.get("lift_area", 0.0))
+	var trim: float = float(core.plane_params.get("trim", 0.0))
+	var s: float = clampf(0.72 + lift * 0.24, 0.68, 1.35)
+	var dihedral_deg: float = clampf(7.0 + trim * 5.0, 1.0, 20.0)
+	var bm := BoxMesh.new()
+	bm.size = Vector3(0.06, 0.05, 0.9)
+	plane_visual.add_part(bm, Color("fafafa"), Transform3D(Basis.IDENTITY, Vector3(0.0, 0.0, 0.1)))
+	var wm := BoxMesh.new()
+	wm.size = Vector3(0.55 * s, 0.02, 0.4 * s)
+	var wl_basis := Basis.IDENTITY.rotated(Vector3(0.0, 0.0, 1.0), deg_to_rad(dihedral_deg))
+	plane_visual.add_part(wm, Color("ffffff"), Transform3D(wl_basis, Vector3(-0.26 * s, 0.02, 0.12)))
+	var wr_basis := Basis.IDENTITY.rotated(Vector3(0.0, 0.0, 1.0), deg_to_rad(-dihedral_deg))
+	plane_visual.add_part(wm, Color("ffffff"), Transform3D(wr_basis, Vector3(0.26 * s, 0.02, 0.12)))
+	# 折痕线：每侧 clampi(折数,0,5) 条深色细条沿翼弦排布
+	var creases := clampi(core.folds.size(), 0, 5)
+	var cm := BoxMesh.new()
+	cm.size = Vector3(0.55 * s, 0.024, 0.035)
+	for k in creases:
+		var cz: float = 0.12 - 0.16 * s + (0.32 * s) * (float(k) + 1.0) / float(creases + 1)
+		plane_visual.add_part(cm, Color("cfd8dc"), Transform3D(Basis.IDENTITY, Vector3(-0.26 * s, 0.024, cz)))
+		plane_visual.add_part(cm, Color("cfd8dc"), Transform3D(Basis.IDENTITY, Vector3(0.26 * s, 0.024, cz)))
+	world_root.add_child(plane_visual)
+
+
+## C68 打磨B：折纸态 3D 预览——SubViewport 环绕相机 + HUD 小窗（headless 无渲染，节点结构可断言）
+func _build_fold_preview() -> void:
+	fold_preview_vp = SubViewport.new()
+	fold_preview_vp.name = "FoldPreviewVP"
+	fold_preview_vp.size = Vector2i(288, 216)
+	fold_preview_vp.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
+	fold_preview_cam = Camera3D.new()
+	fold_preview_cam.fov = 55.0
+	fold_preview_vp.add_child(fold_preview_cam)
+	fold_preview_cam.current = true
+	add_child(fold_preview_vp)
+	fold_preview_rect = TextureRect.new()
+	fold_preview_rect.name = "FoldPreview"
+	# headless 构建无渲染模块（SubViewportTexture 未注册 ClassDB）——占位纹理兜底，窗口会话见真预览
+	if ClassDB.class_exists("SubViewportTexture"):
+		var tex: Texture2D = ClassDB.instantiate("SubViewportTexture")
+		tex.subviewport_path = fold_preview_vp.get_path()
+		fold_preview_rect.texture = tex
+	else:
+		fold_preview_rect.texture = PlaceholderTexture2D.new()
+	fold_preview_rect.position = Vector2(656, 84)
+	fold_preview_rect.size = Vector2(288, 216)
+	fold_preview_rect.stretch_mode = TextureRect.STRETCH_SCALE
+	fold_preview_rect.visible = false
+	hud.add_child(fold_preview_rect)
 
 
 ## 按关卡重建终点/门（场景应用：终点与低门为自建 ComicObject，高门用基座 gate_frame 模型；
@@ -271,6 +327,7 @@ func _apply_level_props() -> void:
 			Transform3D(Basis.IDENTITY, Vector3(0.0, 0.04, 0.0)))
 		zone.position = Vector3(0.0, 0.0, -(zx_m + zlen_m / 2.0))
 		level_props.add_child(zone)
+	_rebuild_plane_visual()   # C68：进场按当前折线参数重建机体（start_level 已重置参数为默认形）
 
 
 # ---------------- 坐标转换 ----------------
@@ -721,6 +778,7 @@ func _on_fold_done() -> void:
 	if core.state != "fold":
 		return
 	core.finish_folds()
+	_rebuild_plane_visual()   # C68 打磨A：折完即形变
 	fold_btn.visible = false
 	charging = false
 	charge = 0.0
@@ -882,6 +940,14 @@ func _process(delta: float) -> void:
 		prev_state = core.state
 	_update_status()
 	_update_visuals()
+	# C68 打磨B：折纸态预览窗——可见性随状态，相机绕机体慢速环绕
+	if fold_preview_rect != null:
+		fold_preview_rect.visible = core.state == "fold"
+	if core.state == "fold" and fold_preview_cam != null and plane_visual != null:
+		fold_preview_orbit += delta * 0.6
+		var pp: Vector3 = plane_visual.global_position
+		fold_preview_cam.position = pp + Vector3(sin(fold_preview_orbit) * 1.5, 0.55, cos(fold_preview_orbit) * 1.5)
+		fold_preview_cam.look_at(pp + Vector3(0.0, 0.05, 0.0))
 	paint.queue_redraw()
 
 
