@@ -1,0 +1,16 @@
+Animated Dinosaurs / Trex.fbx
+Author: Quaternius
+Source: https://quaternius.com/packs/animateddinosaurs.html
+Downloaded: 2026-10-05
+
+The author's pack page declares CC0 and links to:
+https://creativecommons.org/publicdomain/zero/1.0/
+Legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+This file records the author's declaration; it is not an additional license
+or a claim of authorship by this project. Original Trex.fbx is unmodified.
+
+Original public download folder:
+https://drive.google.com/drive/folders/1u5Fhu3ziuRlGonW6bUI7uClqBGoSNeF6
+Original file ID: 1JvVm-GNg4nD4MMWRxhsYu1AaxprOIUmy
+SHA256: db4ae6f657f32ce2253851c3eeca70602be2572b7f5e7fdda3c4c6e7132dea8c

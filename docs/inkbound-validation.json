@@ -1,0 +1,108 @@
+{
+  "verifiedAt": "2026-10-06T10:11:25.267Z",
+  "engine": "Godot 4.7.2 Steam",
+  "method": "Headless native and isolated headless Edge; ordinary keyboard/pointer; QA snapshots read only",
+  "routes": [
+    {
+      "route": "rope",
+      "won": true,
+      "errors": [],
+      "puzzles": {
+        "hazard": true,
+        "hazard_route": "sharp_stroke",
+        "key": true,
+        "key_route": "sticky_stroke",
+        "river": true,
+        "river_route": "elastic_rope",
+        "turret_disabled": false,
+        "vines": true
+      },
+      "result": "完成用时 00:41\n\n取回钥匙：黏性线条抓取\n渡过墨河：弹性长绳\n进入庭院：锋利线条切藤\n\n同一处难题，还能换一组形状和词条。",
+      "recording": {
+        "bytes": 5093527,
+        "audioTracks": 1,
+        "method": "canvas+game audio capture"
+      }
+    },
+    {
+      "route": "float",
+      "won": true,
+      "errors": [],
+      "puzzles": {
+        "hazard": true,
+        "hazard_route": "magnetic_lever",
+        "key": true,
+        "key_route": "sticky_stroke",
+        "river": true,
+        "river_route": "float_contour",
+        "turret_disabled": true,
+        "vines": false
+      },
+      "result": "完成用时 00:43\n\n取回钥匙：黏性线条抓取\n渡过墨河：漂浮轮廓承重\n进入庭院：磁吸停炮\n\n同一处难题，还能换一组形状和词条。",
+      "recording": {
+        "bytes": 5329130,
+        "audioTracks": 1,
+        "method": "canvas+game audio capture"
+      }
+    }
+  ],
+  "entry": {
+    "base": "http://127.0.0.1:8788",
+    "images": 4,
+    "ropeVideo": {
+      "duration": 62.218,
+      "width": 960,
+      "height": 540
+    },
+    "floatVideo": {
+      "duration": 63.72,
+      "width": 960,
+      "height": 540
+    },
+    "game": {
+      "version": 9,
+      "intro": true
+    },
+    "errors": [],
+    "failed": []
+  },
+  "exportLogs": [
+    {
+      "name": "import",
+      "stderrBytes": 0,
+      "modified": "2026-10-06T09:52:55.055Z"
+    },
+    {
+      "name": "native-start",
+      "stderrBytes": 0,
+      "modified": "2026-10-06T09:52:55.781Z"
+    },
+    {
+      "name": "export",
+      "stderrBytes": 0,
+      "modified": "2026-10-06T09:53:00.412Z"
+    }
+  ],
+  "files": [
+    {
+      "file": "builds/demo-06-inkbound-v9/index.pck",
+      "bytes": 28650588,
+      "sha256": "cfff2b76c8ab6a525f1537e27beb20e303a1947a6cf2e495e203144f174b72fb"
+    },
+    {
+      "file": "builds/demo-06-inkbound-v9/index.wasm",
+      "bytes": 39514754,
+      "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+    },
+    {
+      "file": "public/inkbound-art/rope-play.mp4",
+      "bytes": 3067959,
+      "sha256": "9810b37618fb7c0e88b1ec926a248925eb0245788440114263c20db2c5a6782b"
+    },
+    {
+      "file": "public/inkbound-art/float-play.mp4",
+      "bytes": 3143599,
+      "sha256": "eca71911f41c5e5752b2d4e849dec596d8b858b4223d7e8346242496a58587e9"
+    }
+  ]
+}
