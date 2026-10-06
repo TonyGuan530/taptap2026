@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-06T12:08:00+08:00",
-  "round": 136,
+  "checkedAt": "2026-10-06T17:44:00+08:00",
+  "round": 137,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（10:50 实跑）"
+    "thisRound": "未跑守卫（专项盘点轮）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "🟢 demo-08 复活：v11 发布（30 关收卷方向+自清 92M）——停滞判定撤销；⚠️ FB-104 折纸物理仍未做（两轮批示未达，第三轮催办已换通道写入 backlog demo-08 节每轮必读位置）"
+      "evidence": "✅ demo-02 FB-108 分诊闭环（WASD=v8已修同源）；🟢 demo-08 复活后 v12→v14 高产（大师篇 33 关）但 FB-104/109 未启动（升级处置中）；✅ demo-04 3D v13 第六关交付"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -53,9 +53,11 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "🔴 FB-108 WASD 反向真 bug（demo-02 高优先）；FB-109 折纸预览+回退（并入 demo-08 FB-104 spike）；FB-102 responded 待复测"
+    "queue": "🔴 FB-103/105~107 四任务点名核对（demo-06/09/10/11 无首响应）；FB-104/109 升级处置；ChatGPT 评审节奏恢复批示"
   },
   "watch": [
+    "🔴【点名核对】demo-06（FB-103 画回来）/demo-09/10/11（FB-105~107 3D 化）近 30 提交无动静——下轮逐个核对活跃度，无响应升级",
+    "⚠️【ChatGPT 通道】3D 迁移高峰评审归档放缓——批示各任务 3D 里程碑照常过 GPT 评审",
     "🔴【最高优先】FB-108 WASD 反向真 bug（用户本人实测卡住）——demo-02 下轮必修",
     "🟢 FB-109 fyh828（首位外部通关测试者）建议并入 demo-08 折纸 spike 设计——GitHub Issues 通道激活，巡查每轮必查 --state all",
     "🔴【硬红线】10:50 巡检合规——持续",
