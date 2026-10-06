@@ -49,6 +49,9 @@ func _goto(x_target: float, li_expected: int, timeout := 90.0) -> bool:
 	var dir := 1.0
 	var stuck_pos: Vector3 = player.position
 	var stuck_frames := 0
+	var last_wall_jump := -999.0
+	var last_gap_jump := -999.0
+	var last_air := -999.0
 	while Time.get_ticks_msec() - t0 < int(timeout * 1000.0):
 		await get_tree().physics_frame
 		tick += 1
@@ -88,11 +91,13 @@ func _goto(x_target: float, li_expected: int, timeout := 90.0) -> bool:
 		if player.is_on_floor() and absf(player.velocity.y) < 0.01:
 			var gap_ahead := not _ray_hit(player.position + Vector3(dir * 0.45, 0.3, 0), player.position + Vector3(dir * 0.45, -4.0, 0))
 			var wall_ahead := _ray_hit(player.position + Vector3(0, 0.2, 0), player.position + Vector3(dir * 0.85, 0.2, 0))
-			if gap_ahead or (wall_ahead and tick % 8 == 0):
+			if gap_ahead or (wall_ahead and (Time.get_ticks_msec() - last_wall_jump) >= 130):
+				last_wall_jump = Time.get_ticks_msec()
+				last_air = Time.get_ticks_msec()
 				await _tap_jump()
 		elif not player.is_on_floor() and player.jumps_used >= 1 \
 				and player.jumps_used < player.ability_state.max_jumps() \
-				and player.velocity.y <= 2.0 and tick % 4 == 0:
+				and player.velocity.y <= 2.0 and (Time.get_ticks_msec() - last_air) >= 70:
 			await _tap_jump()
 	_key(KEY_D, false)
 	_key(KEY_A, false)
