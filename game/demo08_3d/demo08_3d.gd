@@ -972,6 +972,8 @@ func _update_visuals() -> void:
 	# C10 摆动门：高门横位每帧随 gate_side_at(flight_time)（与规则判定同一公式）
 	if high_gate != null and core.state == "fly":
 		high_gate.position.x = float(core.gate_side_at(float(core.flight_time))) / PX_PER_M
+		# C84 时机门：飞行中门体随开启窗显隐（非飞行态常显供观察路线）
+		high_gate.visible = core.gate_open()
 	if low_gate != null and core.state == "fly":
 		low_gate.position.x = float(core.low_gate_side_at(float(core.flight_time))) / PX_PER_M
 	if core.state != "fly" and core.state != "settle":
@@ -1061,6 +1063,8 @@ func _update_status() -> void:
 			var gate_pos_txt: String = ""
 			if float(L.get("gate_swing", 0.0)) > 0.0:
 				gate_pos_txt = " · 高门位 %+.1f m" % (float(core.gate_side_at(core.flight_time)) / PX_PER_M)
+			if float(L.get("gate_open_t1", 0.0)) > 0.0:
+				gate_pos_txt += " · 门开 %.1f-%.1fs" % [float(L.get("gate_open_t0", 0.0)), float(L.get("gate_open_t1", 0.0))]
 			if float(L.get("low_gate_swing", 0.0)) > 0.0:
 				gate_pos_txt += " · 低门位 %+.1f m" % (float(core.low_gate_side_at(core.flight_time)) / PX_PER_M)
 			# C53 打磨：气流区关状态栏补实时区带指示（与判定共用 updraft_accel）

@@ -59,8 +59,8 @@ func _run() -> void:
 	c1.plane_pos.x = 60.0 + 45.0 * 60.0
 	_check(absf(float(c1.low_gate_side_at(0.75)) - 420.0) < 1e-6
 		and absf(float(c1.low_gate_side_at(2.25)) + 420.0) < 1e-6
-		and float(c1.updraft_accel()) == -2000.0 and int(c1.LEVELS.size()) == 35,
-		"C42-1 静态锚：低门摆 ±420/3s / 谷内 -2000 / 35 关")
+		and float(c1.updraft_accel()) == -2000.0 and int(c1.LEVELS.size()) == 36,
+		"C42-1 静态锚：低门摆 ±420/3s / 谷内 -2000 / 36 关")
 
 	# C42-2 低线配方：4 折 v=0.35 28° → 过关吃摆动低门，收益 24 = 3 + 7 + 14
 	var lo: Object = _mk_and_fly(4, 0.35, 28.0, 1.0)

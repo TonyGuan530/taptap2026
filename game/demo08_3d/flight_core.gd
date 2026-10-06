@@ -141,6 +141,9 @@ const LEVELS := [
 	{name = "第 35 关 · 终幕回廊", short = "终幕回廊", ratio = 0.6, folds = 6, target_m = 80.0, wind = "head", side_wind = -60.0, wind_up = -2000.0, wind_up_x = 30.0, wind_up_len = 8.0, wind_up2 = 2800.0, wind_up2_x = 42.0, wind_up2_len = 10.0, reward = 14,
 		gate_x = 60.0, gate_h = 18.0, gate_bonus = 3, gate_side = -240.0, gate_swing = 360.0, gate_period = 3.0,
 		tip = "终幕回廊（大师篇）：最终试炼——逆风 1.25 倍、左推侧风、30-38 米深谷、42-52 米热气流，尽头是 60 米摆动高门（18m 以上、-4m 上 ±6m 摆、3 秒来回）+3：能量、漂移、门相全时序收于一掷，80 米冲线。大师关（用户指令扩展）"},
+	{name = "第 36 关 · 时机走廊", short = "时机走廊", ratio = 0.7, folds = 5, target_m = 60.0, wind = "none", reward = 14,
+		gate_x = 40.0, gate_h = 12.0, gate_bonus = 3, gate_open_t0 = 2.0, gate_open_t1 = 3.2,
+		tip = "时机走廊（大师篇）：新门类型——40 米高空门（12m 以上）只在 2.0-3.2 秒的时间窗内存在：扔太快门还没开，太慢门已经关。折线定弧线、弧线定到达时刻，把穿越掐进窗里 +3。无风纯时序考，60 米冲线。新门类型（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
@@ -404,7 +407,7 @@ func step(delta: float) -> String:
 	# 高空门：穿越门位、高度 ≥ gate_h、横向 |lateral - gate_side| ≤ GATE_HALF（B2：门横位入配置）
 	# （与低空门互斥，一掷只吃其一；门奖即时入 coins、失败保留）
 	var gate_x_m: float = float(LEVELS[level_idx].get("gate_x", 0.0))
-	if gate_x_m > 0.0 and not gate_hit and not low_gate_hit:
+	if gate_x_m > 0.0 and not gate_hit and not low_gate_hit and gate_open():
 		var gate_px := START_X + gate_x_m * PX_PER_M
 		if prev_x < gate_px and plane_pos.x >= gate_px:
 			var gate_side: float = gate_side_at(flight_time)  # C10：含摆动项（穿越时刻的瞬时横位）
@@ -618,6 +621,20 @@ func low_gate_side_at(t: float) -> float:
 ## 阶段 C6 正交侧风（px/s²，带符号）：与 forward 风（head/tail/none）叠加，用于非 "side" 风型关卡
 func side_wind_accel() -> float:
 	return float(LEVELS[level_idx].get("side_wind", 0.0))
+
+
+## 阶段 C84 新门类型·时机门（规则变化）：gate_open_t0/t1（秒）为高门开启时间窗；
+## 两字段均 0（缺省）= 常开，既有 35 关路径不变。窗内穿越才可判定，窗外穿越视作未设门。
+func gate_open() -> bool:
+	var t0: float = float(LEVELS[level_idx].get("gate_open_t0", 0.0))
+	var t1: float = float(LEVELS[level_idx].get("gate_open_t1", 0.0))
+	if t0 <= 0.0 and t1 <= 0.0:
+		return true
+	if t0 > 0.0 and flight_time < t0:
+		return false
+	if t1 > 0.0 and flight_time > t1:
+		return false
+	return true
 
 
 ## 阶段 C60 新商店物品·侧翼配重（规则变化）：按级 -25% 风推分量（含 side 型与正交侧风），

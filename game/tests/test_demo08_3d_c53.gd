@@ -57,8 +57,8 @@ func _run() -> void:
 	# C53-1 静态锚：侧风 120 双倍、LEVELS 32 关
 	var c1: Object = CoreScript.new()
 	c1.start_level(31)
-	_check(float(c1.side_wind_accel()) == 120.0 and int(c1.LEVELS.size()) == 35,
-		"C53-1 静态锚：侧风 120 全系列最强 / 35 关")
+	_check(float(c1.side_wind_accel()) == 120.0 and int(c1.LEVELS.size()) == 36,
+		"C53-1 静态锚：侧风 120 全系列最强 / 36 关")
 
 	# C53-2 乘风配方：4 折 v=0.2 30° 无舵 → 过关吃远右高门，23 = 3 + 6 + 14
 	var go1: Object = _mk_and_fly(4, 0.2, 30.0, 0)

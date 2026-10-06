@@ -1088,10 +1088,32 @@ func _run() -> void:
 		guard46 += 1
 	if c14.last_pass:
 		var go33: String = c14.settle_continue()
-		_check(go33 == "final" and c14.state == "final" and c14.gate_hit,
-			"B6d31 L35 终幕回廊吃门→final（本次实现际过关 %.1fm）" % c14.flight_distance)
+		_check(go33 == "shop" and c14.gate_hit,
+			"B6d31 L35 终幕回廊吃门→商店（%.1fm；LEVELS 扩展后 L35 非末关）" % c14.flight_distance)
 	else:
 		_check(true, "B6d31 L35 本折法未过关（%.1fm，流转测试以 B6d 为准）" % c14.flight_distance)
+	# L36（时机走廊：3 折 v=0.2 26° 窗内穿越 → final）
+	if String(c14.state) == "shop":
+		c14.shop_skip()
+	c14.start_level(35)
+	var l36_ok := true
+	for k in 3:
+		var mid_y36: float = 0.5 - 0.5 * 0.2
+		l36_ok = l36_ok and c14.add_fold(
+			Vector2(c14.paper_rect.position.x + c14.paper_rect.size.x * 0.92, c14.paper_rect.position.y + c14.paper_rect.size.y * (mid_y36 - 0.23)),
+			Vector2(c14.paper_rect.position.x + c14.paper_rect.size.x * 0.92, c14.paper_rect.position.y + c14.paper_rect.size.y * (mid_y36 + 0.23)))
+	c14.finish_folds()
+	c14.do_throw(26.0, 1.0)
+	var guard47 := 0
+	while c14.state == "fly" and guard47 < MAX_STEPS:
+		c14.step(DELTA)
+		guard47 += 1
+	if c14.last_pass:
+		var go34: String = c14.settle_continue()
+		_check(go34 == "final" and c14.state == "final" and c14.gate_hit,
+			"B6d32 L36 时机走廊吃门→final（本次实现际过关 %.1fm）" % c14.flight_distance)
+	else:
+		_check(true, "B6d32 L36 本折法未过关（%.1fm，流转测试以 B6d 为准）" % c14.flight_distance)
 	c14.reset_run()
 	_check(c14.coins == 0 and c14.unlocked == 0 and int(c14.upgrades.power) == 0 and c14.owned.is_empty(),
 		"B6e reset_run 清空进度")
