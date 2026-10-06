@@ -133,7 +133,7 @@ func _run() -> void:
 		"C50-4 吃门统计「28/37 扇」（C1 配方基准线）")
 	_check(txt.contains("总飞行") and txt.contains("最远一掷") and txt.contains("金币余额"),
 		"C50-5 里程/最远/金币段保留")
-	_check(txt.contains("强化：力气 x0 · 翼面 x0 · 加固 x0 · 铅条 x0 · 无特殊部件"),
+	_check(txt.contains("强化：力气 x0 · 翼面 x0 · 加固 x0 · 铅条 x0 · 侧配 x0 · 无特殊部件"),
 		"C50-6 强化段与无部件段（本趟未购物）")
 
 	scene.queue_free()

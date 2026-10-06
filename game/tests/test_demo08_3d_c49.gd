@@ -44,7 +44,7 @@ func _run() -> void:
 	core.coins = 7
 	core.enter_shop()
 	var t0: String = String(scene.shop_status_text())
-	_check(t0 == "肉鸽商店 · 金币 7 · 店内 3 件 · 买强化带入第 3 关 · 强化：力气 x0 · 翼面 x0 · 加固 x0 · 铅条 x0",
+	_check(t0 == "肉鸽商店 · 金币 7 · 店内 3 件 · 买强化带入第 3 关 · 强化：力气 x0 · 翼面 x0 · 加固 x0 · 铅条 x0 · 侧配 x0",
 		"C49-1 零强化文本「%s」" % t0)
 
 	# C49-2 持强化：力气 x2 翼面 x1 加固 x1 铅条 x2 如实渲染

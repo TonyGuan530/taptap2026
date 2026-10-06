@@ -136,6 +136,7 @@ const SHOP_POOL := [
 	{id = "stiff", name = "纸面加固", price = 4, desc = "折线阻力 -15%/级，可叠加"},
 	{id = "ballast", name = "重心铅条", price = 5, desc = "配平收敛 30%/级（狂野折法变温顺），可叠加"},
 	{id = "tough", name = "韧性", price = 3, unique = true, desc = "落地弹跳一次不直接判负，唯一"},
+	{id = "sideweight", name = "侧翼配重", price = 4, desc = "侧风推力 -25%/级，可叠加"},
 ]
 
 ## C37 打磨：七物机制适配提示（选关/商店帮助玩家按当前关机制选购物）
@@ -145,6 +146,7 @@ const SHOP_HINTS := {
 	"prop": "平飞稳定，侧风关好搭档",
 	"trimtool": "精确切门必备",
 	"stiff": "逆风关利器（降阻力）",
+	"sideweight": "侧风关利器（抗漂移）",
 	"ballast": "摆门关好搭档（驯配平）",
 	"tough": "低空关门保底",
 }
@@ -159,7 +161,7 @@ var state := "menu"          # menu / fold / throw / fly / settle / shop / final
 var level_idx := 0
 var unlocked := 0
 var coins := 0
-var upgrades := {power = 0, wing = 0, stiff = 0, ballast = 0}   # 可叠加强化级数（C4 纸面加固 / C7 重心铅条）
+var upgrades := {power = 0, wing = 0, stiff = 0, ballast = 0, sideWeight = 0}   # 可叠加强化级数（C4 纸面加固 / C7 重心铅条 / C60 侧翼配重）
 var owned := []
 var shop_items := []
 var total_distance := 0.0
@@ -330,6 +332,7 @@ func step(delta: float) -> String:
 		wind_a = eff_wind_side() * LAT_WIND
 	else:
 		wind_a = side_wind_accel() * shear_sign_flip()
+	wind_a *= wind_damp_mult()   # C60：侧翼配重按级衰减风推分量（不改玩家输入与阻尼）
 	if lateral_input != 0.0 or wind_a != 0.0:
 		lateral_vel += (lateral_input * LAT_ACCEL + wind_a) * delta
 	else:
@@ -495,6 +498,8 @@ func buy(idx: int) -> bool:
 		upgrades.stiff = int(upgrades.stiff) + 1
 	elif id == "ballast":
 		upgrades.ballast = int(upgrades.ballast) + 1
+	elif id == "sideweight":
+		upgrades.sideWeight = int(upgrades.get("sideWeight", 0)) + 1
 	else:
 		owned.append(id)
 	shop_items.remove_at(idx)
@@ -511,7 +516,7 @@ func reset_run() -> void:
 	gates_offered = 0
 	gates_eaten = 0
 	offered_mark = -1
-	upgrades = {power = 0, wing = 0, stiff = 0, ballast = 0}
+	upgrades = {power = 0, wing = 0, stiff = 0, ballast = 0, sideWeight = 0}
 	owned = []
 	unlocked = 0
 	total_distance = 0.0
@@ -596,6 +601,12 @@ func low_gate_side_at(t: float) -> float:
 ## 阶段 C6 正交侧风（px/s²，带符号）：与 forward 风（head/tail/none）叠加，用于非 "side" 风型关卡
 func side_wind_accel() -> float:
 	return float(LEVELS[level_idx].get("side_wind", 0.0))
+
+
+## 阶段 C60 新商店物品·侧翼配重（规则变化）：按级 -25% 风推分量（含 side 型与正交侧风），
+## 不作用于玩家横向输入与无风阻尼——买的是"抗吹"不是"抗打舵"
+func wind_damp_mult() -> float:
+	return 1.0 - 0.25 * float(upgrades.get("sideWeight", 0))
 
 
 ## 阶段 C42 新机制·气流区（规则变化）：wind_up_x（米，区起点）起 wind_up_len 米宽的竖直风带，
