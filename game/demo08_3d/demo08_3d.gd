@@ -427,7 +427,7 @@ func _build_menu_panel() -> void:
 	tip_timer.timeout.connect(_on_menu_tip_rotate)
 	add_child(tip_timer)
 	var rules := Label.new()
-	rules.text = "3D 灰模：跟随视角观察同一套折线规则。折线靠右升力大、靠上抬头、长线多阻力。\n60 像素 = 1 米；R 复位相机；门奖即时入账，失败仍保留。\n阶段 B：飞行中 A/D 横移（加速 240/上限 320/阻尼 160 px/s²，边界 ±20m），门有横向宽度 5m。\n商店八物：力气/翼面/纸面加固/重心铅条/螺旋桨/配平仪/韧性/侧翼配重——加固降阻力、铅条驯配平、配重抗漂移。"
+	rules.text = "3D 灰模：跟随视角观察同一套折线规则。折线靠右升力大、靠上抬头、长线多阻力。\n60 像素 = 1 米；R 复位相机；门奖即时入账，失败仍保留。\n阶段 B：飞行中 A/D 横移（加速 240/上限 320/阻尼 160 px/s²，边界 ±20m），门有横向宽度 5m。\n商店九物：力气/翼面/纸面加固/重心铅条/螺旋桨/配平仪/韧性/侧翼配重/气流计——加固降阻力、铅条驯配平、配重抗漂移、气流计读风。"
 	rules.position = Vector2(24, 186)
 	rules.size = Vector2(612, 100)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -1164,6 +1164,7 @@ func _draw_wind_tag() -> void:
 ## 阶段 C16 打磨：风标签文本函数化（headless 可测；覆盖 none/head/tail/侧风/切变/双段切变/正交侧风）
 func wind_tag_text() -> String:
 	var w: String = core.wind_mode()
+	var anemo: bool = core.owned.has("anemo")   # C80 气流计：持有才显示精确数值
 	if w == "side":
 		var left: bool = core.wind_side() < 0.0
 		var dir1: String = "←" if left else "→"
@@ -1172,17 +1173,20 @@ func wind_tag_text() -> String:
 		if shear_m > 0.0 and shear2_m > 0.0:
 			var dir2: String = "←" if core.wind_side2() < 0.0 else "→"
 			var dir3: String = "←" if core.wind_side3() < 0.0 else "→"
-			return "双段切变 %.0f/%.0fm：侧风 %s→%s→%s" % [shear_m, shear2_m, dir1, dir2, dir3]
+			var base3: String = "双段切变 %.0f/%.0fm：侧风 %s→%s→%s" % [shear_m, shear2_m, dir1, dir2, dir3]
+			return base3 + _anemo_note("侧风 %dpx/s²" % int(abs(core.wind_side()) * core.LAT_WIND)) if anemo else base3
 		if shear_m > 0.0:
 			var after: bool = core.wind_side2() < 0.0
-			return "风切变 %.0fm：侧风 %s → %s" % [shear_m, dir1, "←" if after else "→"]
-		return "侧风 %s（A/D 顶风）" % dir1
+			var base1: String = "风切变 %.0fm：侧风 %s → %s" % [shear_m, dir1, "←" if after else "→"]
+			return base1 + _anemo_note("侧风 %dpx/s²" % int(abs(core.wind_side()) * core.LAT_WIND)) if anemo else base1
+		var base0: String = "侧风 %s" % dir1
+		return base0 + _anemo_note("侧风 %dpx/s²" % int(abs(core.wind_side()) * core.LAT_WIND)) if anemo else base0 + "（A/D 顶风）"
 	# head/tail/none：基础风 ＋ 正交侧风段 ＋ 气流区段（C42），none 且全无则空串（L1 路径不变）
 	var label := ""
 	if w == "head":
 		label = "逆风 阻力 x1.25"
 	elif w == "tail":
-		label = "顺风 恒定推力"
+		label = "顺风 恒定推力" + ("（+90px/s²）" if anemo else "")
 	if absf(core.side_wind_accel()) > 0.0:
 		label = _ortho_wind_text(label + " ＋ ") if label != "" else _ortho_wind_text("")
 	var up_txt := updraft_text()
@@ -1191,9 +1195,15 @@ func wind_tag_text() -> String:
 	return label
 
 
+## C80 气流计精确数值括注（未持有返回空串）
+func _anemo_note(txt: String) -> String:
+	return "（%s）" % txt if core.owned.has("anemo") else ""
+
+
 ## C42 气流区标签：wind_up_x 未配置或 wind_up=0 返回空串（既有关路径不变）；C43 双区带依次列出
 func updraft_text() -> String:
 	var parts := PackedStringArray()
+	var anemo: bool = core.owned.has("anemo")   # C80 气流计：持有显示精确加速度
 	for b in 2:
 		var suf := "" if b == 0 else "2"
 		var x_m: float = float(core.LEVELS[core.level_idx].get("wind_up" + suf + "_x", 0.0))
@@ -1202,7 +1212,8 @@ func updraft_text() -> String:
 			continue
 		var len_m: float = float(core.LEVELS[core.level_idx].get("wind_up" + suf + "_len", 10.0))
 		var tag := "上升气流" if a > 0.0 else "下沉气流"
-		parts.append("%s %.0f-%.0f 米（%s）" % [tag, x_m, x_m + len_m, "乘流爬升" if a > 0.0 else "俯冲穿越"])
+		var note := "，%+dpx/s²" % int(a) if anemo else ""
+		parts.append("%s %.0f-%.0f 米（%s%s）" % [tag, x_m, x_m + len_m, "乘流爬升" if a > 0.0 else "俯冲穿越", note])
 	return " ＋ ".join(parts)
 
 
@@ -1211,15 +1222,16 @@ func _ortho_wind_text(prefix: String) -> String:
 	var sw: float = core.side_wind_accel()
 	var dir1: String = "←" if sw < 0.0 else "→"
 	var dir_flip: String = "→" if sw < 0.0 else "←"
+	var anemo_note: String = _anemo_note("%+dpx/s²" % int(sw))   # C80 气流计
 	var shear_m: float = float(core.LEVELS[core.level_idx].get("shear_x", 0.0))
 	var shear2_m: float = float(core.LEVELS[core.level_idx].get("shear_x2", 0.0))
 	if shear_m > 0.0 and shear2_m > 0.0:
-		return "%s三段侧风 %.0f/%.0fm：%s%s%s" % [prefix, shear_m, shear2_m, dir1, dir_flip, dir1]
+		return "%s三段侧风 %.0f/%.0fm：%s%s%s%s" % [prefix, shear_m, shear2_m, dir1, dir_flip, dir1, anemo_note]
 	if shear_m > 0.0:
-		return "%s切变侧风 %.0fm：%s → %s" % [prefix, shear_m, dir1, dir_flip]
+		return "%s切变侧风 %.0fm：%s → %s%s" % [prefix, shear_m, dir1, dir_flip, anemo_note]
 	if prefix == "":
 		return "%s侧风%s（A/D 顶风）" % [prefix, dir1]
-	return "%s侧风%s" % [prefix, dir1]
+	return "%s侧风%s%s" % [prefix, dir1, anemo_note]
 
 
 # ---------------- 自动演示 + 离线截图（DEMO08_SHOTS_DIR 环境变量触发） ----------------

@@ -152,6 +152,7 @@ const SHOP_POOL := [
 	{id = "ballast", name = "重心铅条", price = 5, desc = "配平收敛 30%/级（狂野折法变温顺），可叠加"},
 	{id = "tough", name = "韧性", price = 3, unique = true, desc = "落地弹跳一次不直接判负，唯一"},
 	{id = "sideweight", name = "侧翼配重", price = 4, desc = "侧风推力 -25%/级，可叠加"},
+	{id = "anemo", name = "气流计", price = 3, unique = true, desc = "风标签显示精确数值（px/s²），唯一"},
 ]
 
 ## C37 打磨：七物机制适配提示（选关/商店帮助玩家按当前关机制选购物）
@@ -162,6 +163,7 @@ const SHOP_HINTS := {
 	"trimtool": "精确切门必备",
 	"stiff": "逆风关利器（降阻力）",
 	"sideweight": "侧风关利器（抗漂移）",
+	"anemo": "读风入门（数值党）",
 	"ballast": "摆门关好搭档（驯配平）",
 	"tough": "低空关门保底",
 }

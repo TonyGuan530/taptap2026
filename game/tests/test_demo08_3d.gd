@@ -376,8 +376,8 @@ func _run() -> void:
 				if c12.buy(i):
 					buys += 1
 				break
-	_check(buys == 2 and int(c12.upgrades.power) == power_lvl + 2 and absf(c12.power_mult() - 1.4) < VAL_EPS,
-		"B5c 力度线性叠加 ×2 级 → 1+0.2×2=1.4")
+	_check(buys == 2 and int(c12.upgrades.power) == power_lvl + 2 and absf(c12.power_mult() - (1.0 + 0.2 * float(power_lvl + 2))) < VAL_EPS,
+		"B5c 力度线性叠加 ×2 级 → 1+0.2×(lvl+2)（相对断言，对 B5b 购买物鲁棒）")
 	var c13 := _new_core()
 	c13.coins = 10
 	c13.enter_shop()

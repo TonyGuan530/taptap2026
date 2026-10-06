@@ -62,8 +62,8 @@ func _run() -> void:
 			found = true
 			_check(int(it.price) == 4 and not bool(it.get("unique", false)),
 				"C51-1 侧翼配重入池（4 币可叠加）")
-	_check(found and int(c1.SHOP_POOL.size()) == 8 and absf(float(c1.wind_damp_mult()) - 1.0) < 1e-6,
-		"C51-1b 池 8 物 / 零级阻尼 1.0")
+	_check(found and int(c1.SHOP_POOL.size()) == 9 and absf(float(c1.wind_damp_mult()) - 1.0) < 1e-6,
+		"C51-1b 池 9 物 / 零级阻尼 1.0")
 
 	# C51-2 购买语义：种子搜索抽池 → 买 1 扣 4 币级数 +1 → 阻尼 0.75；再买 → 0.5
 	var c: Object = CoreScript.new()
