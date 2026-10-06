@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/6 23:50:30 · 共 93 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/7 00:50:30 · 共 102 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -13,7 +13,7 @@
 
 ### [text] @(-218,-131)
 
-<p>for ​AL&#xff1a;​优先​阅读 ​如果​完成​请​自己​标注​</p>
+<p>for ​AL&#xff1a;​优先​阅读 ​如果​完成​请​自己​标注​</p><p><strong>✅ FB-103 · INKBOUND V10 已修复</strong></p><p>真实多笔绘画&#xff0b;野外词条&#xff1b;切藤战斗&#xff0f;搭建绕行两条路线已在线通关。<a href="https://tonyguan530.github.io/taptap2026/inkbound-v10.html">试玩与含游戏音频的实机录像</a></p>
 
 ### [sticker] @(-334,-12)
 
@@ -176,6 +176,14 @@ headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch C
 ③ L1-L4 玩法/几何零改动&#xff0c;headless 8/8 PASS&#xff08;含 telemetry 断言&#xff09;。
 试玩: https://tonyguan530.github.io/taptap2026/play.html?id&#61;demo-02 &#xff08;itch CDN 故障持续&#xff0c;Pages 为准&#xff09;
 
+### [text] @(27900,5890)
+
+<p><strong>主题&#xff1a;规则组合产生通路</strong></p><p>黑墨限定建造几何&#xff0c;黄墨限定手持墨刃。实际原笔迹决定长度、宽度与碰撞&#xff1b;野外拾取的词条改变同一张画稿。手动意图选择保障可靠性&#xff0c;后续 $P/$Q 有限模板候选只帮助选择用途。没有把自由画枪、动物、载具标为已完成。</p>
+
+### [text] @(29100,5890)
+
+<p><strong>黑墨三段垂直关卡</strong></p><p>低台 → 庭院高台 → 书塔&#xff0c;均可搭真实多笔梯架或闭合板面。短梯够不到时不会扣墨&#xff1b;弹性1.4倍改变真实轮廓与可达高度&#xff1b;黏性改变板面坡度与摩擦限制。E 攀爬、W/S 上下、Space 离梯&#xff0c;墨泉与回收支持试错。</p>
+
 ### [text] @(12270,6020)
 
 <p><strong>核心与竞争策略</strong></p><p>亲手画出形状&#xff0c;再附上捡到的词条&#xff0c;让形状的长度、覆盖范围和接触决定工具用途。</p><p>一个精致的 5 分钟完整关卡&#xff1a;落笔 → 渡河 → 找回画页。对手已具备成熟美术与调查界面&#xff0c;本次集中独特操作体验和完整呈现。</p>
@@ -206,6 +214,14 @@ headless 6/6 PASS&#xff08;L1-L3 回归 &#43; L4 双路线 &#43; 错误解法不�
 headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链接不变内容即最新&#xff09;。
 试玩: https://sxguan.itch.io/taptap2026 &#xff08;密码 taptap&#xff09;
 &#xff08;itch CDN 故障期备用镜像: https://tonyguan530.github.io/taptap2026/builds/demo-02-v3/ &#xff09;
+
+### [text] @(27900,6325)
+
+<p><strong>黄墨藤庭&#xff1a;同一目标两种解法</strong></p><p>实际画剑&#xff1a;短剑够不到&#xff1b;同一长剑加“锋利”后接触切断软藤、移除碰撞&#xff0c;再击退污墨。另一条完整录像仍用黑墨搭梯登上侧台&#xff0c;越过保持实体的藤墙并绕开污墨。最终必须真实抵达末页&#xff0c;黑章结束只是转章。</p>
+
+### [text] @(29100,6325)
+
+<p><strong>独游方向与实机入口</strong></p><p>奶油纸雕平台、青绿树林、深墨线条、金黄墨刃&#xff1b;沿用原绘画学徒角色。下方图片全部是实际导出游戏截图。</p><p>已验证桌面试玩、手机展示页和含游戏音频的两条完整录像。</p><p>https://tonyguan530.github.io/taptap2026/inkbound-v10.html</p><p>发布提交 2393839cdbe2c711e107e710d6a6fd157c677b32&#xff1b;Pages workflow 37494892795。</p>
 
 ### [sticker] @(16706,6342)
 
@@ -251,6 +267,14 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 <p>通过​改变​物品​的​单位​/词​条&#xff0c;​改变​物体​的​物理​属性&#xff0c;​以​此​</p>
 
+### [image] @(27900,6850)
+
+V10 实机 · world
+
+### [image] @(29100,6850)
+
+V10 实机 · ladder
+
 ### [text] @(4400,6860)
 
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-02.png
@@ -270,6 +294,10 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 ### [frame] @(12900,6900)
 
 墨迹漂流 INKBOUND · 10/06 19:30 发布冲刺
+
+### [frame] @(28500,6900)
+
+INKBOUND V10 · 几何与墨刃 · 已发布实机
 
 ### [sticker] @(4400,6980)
 
@@ -296,6 +324,14 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 ### [sticker] @(5714,7509)
 
 <p>塞尔​达式​箱庭​谜题​</p>
+
+### [image] @(27900,7530)
+
+V10 实机 · yellow
+
+### [image] @(29100,7530)
+
+V10 实机 · ending
 
 ### [text] @(12900,7880)
 
@@ -364,7 +400,7 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 截图: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-cdp-a.png
 暗区实拍: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/shots/demo-04-3d-darkzone-108.png
 五关通关演示片: https://raw.githubusercontent.com/TonyGuan530/taptap2026/main/reviews/videos/demo-04-3d.mp4
-试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v14/index.html
+试玩: https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v15/index.html
 
 操作&#xff1a;WASD/方向键 · Space 跳 · E 融合 · R 重开 · Shift&#43;R 完整再跑 · K 实验房(1~5选关)/B 返回 · G 被试编号 · T 遥测导出
 
