@@ -135,6 +135,9 @@ const LEVELS := [
 	{name = "第 33 关 · 热流之巅", short = "热流之巅", ratio = 0.6, folds = 6, target_m = 74.0, wind = "head", wind_up = -2200.0, wind_up_x = 34.0, wind_up_len = 10.0, wind_up2 = 3200.0, wind_up2_x = 46.0, wind_up2_len = 14.0, reward = 14,
 		gate_x = 60.0, gate_h = 24.0, gate_bonus = 3,
 		tip = "热流之巅（大师篇）：竖直风的精确高度课——34-44 米深谷砸你到底，46-60 米强热流把你抛回来，而 60 米高空门挂在 24m 以上（全系列最高门）+3：谷底攒的俯冲速度就是热流里的燃料，骑得越正抛得越高，够不着就是骑歪了。74 米冲线。大师关（用户指令扩展）"},
+	{name = "第 34 关 · 配重峡", short = "配重峡", ratio = 0.6, folds = 6, target_m = 70.0, wind = "head", side_wind = 120.0, reward = 14,
+		gate_x = 46.0, gate_h = 12.0, gate_bonus = 3, gate_side = -660.0,
+		tip = "配重峡（大师篇）：顶风马拉松——双倍侧风（120px/s²）全程把你往右推，46 米高空门（12m 以上）挂在 -11m 横位极左：从起跳到冲线按住 A 不松手才顶得到 +3，一松手就被风带走。侧翼配重给你余量（1 级从容、2 级宽裕），但顶风的意志才是门票。70 米冲线。大师关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
