@@ -154,6 +154,9 @@ const LEVELS := [
 	{name = "第 39 关 · 俯冲侧峡", short = "俯冲侧峡", ratio = 0.7, folds = 5, target_m = 72.0, wind = "head", side_wind = -60.0, reward = 14,
 		low_gate_x = 52.0, low_gate_top = 18.0, low_gate_side = 240.0, gate_bonus = 3,
 		tip = "俯冲侧峡（大师篇）：双操作课——52 米低空门（18m 以下）挂在 +4m 横位，左推侧风（60px/s²）却把你往左带：自然滑翔高度在门顶之上，按住 S 俯冲压低、同时按 D 顶风右靠，两键同按才穿得过 +3。垂直与横向双操作，72 米冲线。大师关（用户指令扩展）"},
+	{name = "第 40 关 · 三轴终考", short = "三轴终考", ratio = 0.7, folds = 5, target_m = 74.0, wind = "head", side_wind = -60.0, reward = 14,
+		low_gate_x = 64.0, low_gate_top = 16.0, low_gate_side = 0.0, low_gate_swing = 360.0, low_gate_period = 3.0, gate_bonus = 3,
+		tip = "三轴终考（大师篇）：俯冲（高度）× 摆门相位（横位时机）× 左推侧风（横位力场）三轴同关——64 米摆动低门（12m 以下、0 点 ±6m 摆、3 秒来回）：S 键俯冲压到门下、顶住左推风稳住横位、再对上门摆到的相位，三样全对上才吃得到 +3。大师篇毕业考，74 米冲线。大师关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [

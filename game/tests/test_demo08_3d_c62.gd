@@ -61,7 +61,7 @@ func _run() -> void:
 		and absf(float(c1.LEVELS[37].low_gate_top) - 12.0) < 1e-6
 		and absf(float(c1.low_gate_side_at(0.75)) - 360.0) < 1e-6
 		and absf(float(c1.low_gate_side_at(2.25)) + 360.0) < 1e-6
-		and int(c1.LEVELS.size()) == 38,
+		and int(c1.LEVELS.size()) == 40,
 		"C62-1 静态锚：摆动低门 66m/top12/±360/3s / 38 关")
 
 	# C62-2 双时序配方：5 折 v=0.35 26°、1.6s 起俯冲 → 过关穿摆动低门，24 = 3 + 7 + 14
