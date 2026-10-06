@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-07T04:54:00+08:00",
-  "round": 151,
+  "checkedAt": "2026-10-07T05:52:00+08:00",
+  "round": 152,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（04:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（05:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "demo-04 3D v16 掉坑恢复视觉标记交付、demo-08 3D v21 俯冲输入+L37（37 关）；[SENT] 零回执根因=SOP 不在任务流程——已模板化注入四任务必读位置"
+      "evidence": "✅ demo-08 3D v22 菜单大师篇 L38（38 关）；✅ demo-04 3D v16 掉坑恢复视觉标记；GPT 对比送验 SOP 注入后消化核对 06:52"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -53,7 +53,7 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "🔴 GPT 对比送验 SOP 已注入（demo-02/03/04/08 必读位置）——下轮核对 [SENT] 回执（05:52/06:52）"
+    "queue": "GPT 对比送验 SOP 注入后消化核对 06:52（SOP 已入四任务必读位置）"
   },
   "watch": [
     "🔴【硬红线】03:50 巡检合规——持续",
