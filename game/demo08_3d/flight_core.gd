@@ -126,6 +126,9 @@ const LEVELS := [
 	{name = "第 30 关 · 终局峡谷", short = "终局峡谷", ratio = 0.6, folds = 6, target_m = 70.0, wind = "head", side_wind = -60.0, wind_up = -1600.0, wind_up_x = 36.0, wind_up_len = 8.0, wind_up2 = 2400.0, wind_up2_x = 48.0, wind_up2_len = 12.0, reward = 14,
 		gate_x = 66.0, gate_h = 16.0, gate_bonus = 3, gate_side = -240.0,
 		tip = "终局峡谷：全机制终考——逆风 1.25 倍、左推侧风（60px/s²）、36-44 米下沉谷压你下去、48-60 米热气流把你托回来，出口高度够不够得着 66 米左侧高空门（-4m 横位、16m 以上）+3：谷里被压多低、热流里爬多高、风替你漂多左，三件事拼成最后一掷，70 米冲线。新机制关（用户指令扩展）"},
+	{name = "第 31 关 · 风暴回廊", short = "风暴回廊", ratio = 0.6, folds = 6, target_m = 76.0, wind = "head", side_wind = 60.0, wind_up = -2200.0, wind_up_x = 30.0, wind_up_len = 10.0, wind_up2 = 2800.0, wind_up2_x = 44.0, wind_up2_len = 14.0, reward = 14,
+		gate_x = 62.0, gate_h = 16.0, gate_bonus = 3, gate_side = 300.0, gate_swing = 360.0, gate_period = 3.0,
+		tip = "风暴回廊（大师篇）：机制全叠的进阶挑战——逆风 1.25 倍、右推侧风、30-40 米深谷把你砸下去、44-58 米热气流再托回来，爬出热流还要够得着 62 米摆动高门（+5m 横位、16m 以上、±6m、3 秒来回）+3：能量、漂移、门相三重时序，76 米冲线。大师关（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
