@@ -327,3 +327,8 @@
 
 ## 2026-10-05 21:10（轮68·键位条视觉确认 ✅）
 - v11 新增的游戏内键位条从未做 Web 视觉确认——本轮 CDP 实拍 v12 构建确认渲染正常（左下角小字低调可读，符合设计意图）。证据：reviews/shots/demo-04-3d-v12-keysbar.png（已镜像主仓库）。
+
+## 2026-10-05 21:20（轮69·阻塞清单完整化）
+- itch 通道排查：package-itch.ps1 仅打包 zip，上传为手动网页流程（无 butler/API key）——需登录 sxguan 账号操作。正式入册为第四项显式阻塞（与 ChatGPT 同类：等登录会话）。
+- 3D 上线时注意：itch 嵌入 viewport 需按 3D 构建设计尺寸调整（800×450，非 2D 的 960×540）。
+- 阻塞清单终态：① Pages 余量裁决（demo-02-3d 属主；净零发版已免疫）② 正式资产通路 ③ ChatGPT 会话（备案稿就绪）④ itch 上传（zip 可随时打包：package-itch.ps1 -Version demo-04-3d-v12）。
