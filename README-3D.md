@@ -28,7 +28,7 @@
 tools godot:  godot --headless --path game -s res://tests/test_demo04_3d.gd
 # 2D 冻结基线回归（7 用例）
 godot --headless --path game -s res://tests/test_demo04.gd
-# 五关巡游机器人（真实输入全通验证）
+# 六关巡游机器人（真实输入全通验证，含终局回廊）
 godot --headless --path game res://tests/movie_demo04_3d.tscn
 # 导出 Web（导出后必须核对 pck）
 godot --headless --path game --export-release "Web" ../builds/demo-04-3d-vN/index.html
@@ -42,7 +42,7 @@ node tools/verify-pck-demo04-3d.mjs builds/demo-04-3d-vN
 - ⚠️ Miro v1 API：GET 列表返回无内容的桩，检索必须单件 GET；文本在顶层 `text` 字段
 
 ## 代码结构（game/demo04_3d/）
-root.gd（LEVELS 数据驱动五关+实验房+遥测）· player.gd（CharacterBody3D，DNA 语义对齐 2D）·
+root.gd（LEVELS 数据驱动六关+实验房+遥测）· player.gd（CharacterBody3D，DNA 语义对齐 2D）·
 ability_state.gd（DNA 参数）· camera_rig.gd（跟随）· tour_driver.gd（?tour=1 显式巡游组件）
 
 ## 关键规则（3D 适配，详见 physics-baseline.md）
