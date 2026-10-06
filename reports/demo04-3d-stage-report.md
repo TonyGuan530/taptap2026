@@ -58,6 +58,16 @@
 3. 新增弹跳板（L1 z 侧带，纯可选玩具）— v8 轮次
 4. 实验房新增 1~5 选关（lab-only）— v9 轮次
 
+## 阻塞清单（等用户/登录，自动化边界内已尽力）
+| # | 阻塞项 | 解锁后动作 | 就绪度 |
+| --- | --- | --- | --- |
+| 1 | Pages 余量裁决（demo-02-3d 持 4 版 ≈138M 可清；槽位→v10 已保留） | 属主清理或授权统一清理 | 已按规则预清过一次（-92M）|
+| 2 | 正式资产通路（imagegen 工具或 ChatGPT 素材） | 绿幕工作流 3D 适配：角色+四外星生物 billboard → 接入点已留 → 26 项套件复验 → vN+1 发版 | 管线与验证全就绪 |
+| 3 | ChatGPT 评审补送（登录会话） | 粘贴 reviews/chatgpt-demo-04-3d-v12.md 累计备案稿 + 附图 | 稿件就绪 |
+| 4 | itch 上传（登录 sxguan 账号） | dist-itch/demo-04-3d-v12.zip（16.6MB）已预打包；viewport 建议 800×450 | zip 就绪 |
+
+注：净零发版策略下 #1 不阻塞本 demo 的发版能力（v12→vN+1 均为净零）；仅影响其他 demo 的发版余量。
+
 ## 工具资产（过程沉淀）
 verify-pck（导出核对）/ cdp-shot / cdp-video / cdp-tour-video / cdp-webcheck / web-shot（骨架）/
 tour_driver（游戏内巡游组件）——全部零依赖 Node 或 GDScript，headless 无窗。
