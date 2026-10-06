@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-06T18:53:00+08:00",
-  "round": 139,
+  "checkedAt": "2026-10-06T19:52:00+08:00",
+  "round": 140,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（18:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（19:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "🟢 FB-104 已响应：demo-08 折纸 3D 化 spike 发布（参数驱动机体形变+折纸态环绕预览+逐笔响应）——Miro Feedback Slide 协议生效；builds 巡检清理 1015→970M（含 PINNED 误删自纠恢复 demo-02-3d-v10/inkbound-v9/tonight-v8）"
+      "evidence": "✅ FB-104 spike 已落地（responded）；demo-08 v16 大师篇 L34（34 关）——spike 后恢复加关节奏属正常（FB-109 回退按钮待评估）"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -53,9 +53,10 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "FB-104 responded 待用户复测折纸 spike；FB-109 预览/回退并入 demo-08 下阶段；FB-103/105~107 各 worktree 开发中"
+    "queue": "FB-104 responded 待用户复测；FB-109 回退按钮评估；FB-103/105~107 各 worktree 开发中"
   },
   "watch": [
+    "🔴【硬红线·执行记录】19:50 巡检击杀 2 违规进程（31296/44476）——发现即杀持续",
     "⚠️【ChatGPT 通道】3D 迁移高峰评审归档放缓——批示各任务 3D 里程碑照常过 GPT 评审",
     "🔴【最高优先】FB-108 WASD 反向真 bug（用户本人实测卡住）——demo-02 下轮必修",
     "🟢 FB-109 fyh828（首位外部通关测试者）建议并入 demo-08 折纸 spike 设计——GitHub Issues 通道激活，巡查每轮必查 --state all",
