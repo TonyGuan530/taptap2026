@@ -61,8 +61,8 @@ func _run() -> void:
 	var c1: Object = CoreScript.new()
 	c1.start_level(33)
 	_check(float(c1.side_wind_accel()) == 120.0 and absf(float(c1.LEVELS[33].gate_side) + 660.0) < 1e-6
-		and int(c1.LEVELS.size()) == 38,
-		"C56-1 静态锚：侧风 120 / 门 -660 极左 / 38 关")
+		and int(c1.LEVELS.size()) == 39,
+		"C56-1 静态锚：侧风 120 / 门 -660 极左 / 39 关")
 
 	# C56-2 顶风马拉松：全程按住 A → 过关吃极左门，24 = 3 + 7 + 14
 	var hold: Object = _mk_and_fly(4, 0.2, 30.0, 0, true)

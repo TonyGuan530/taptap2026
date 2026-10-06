@@ -85,7 +85,7 @@ func _run() -> void:
 
 	# 全 30 关推进到 final
 	var all_pass := true
-	for i in 38:
+	for i in 39:
 		core.start_level(i)
 		_fly_recipe(core, _c1_recipe(i))
 		all_pass = all_pass and core.last_pass
@@ -93,18 +93,18 @@ func _run() -> void:
 			core.settle_continue()
 			if String(core.state) == "shop":
 				core.shop_skip()
-	_check(all_pass and String(core.state) == "settle" and core.level_idx == 37,
-		"C50-1 全 38 关推进到 L38 结算态")
+	_check(all_pass and String(core.state) == "settle" and core.level_idx == 38,
+		"C50-1 全 39 关推进到 L39 结算态")
 
 	# 场景层终局面板渲染
 	var go: String = core.settle_continue()
-	_check(go == "final" and String(core.state) == "final", "C50-2 L38 结算继续 → final")
+	_check(go == "final" and String(core.state) == "final", "C50-2 L39 结算继续 → final")
 	scene._show_final()
 	var txt: String = String(scene.final_body.text)
-	_check(txt.begins_with("38 关全部飞过终点旗！"),
+	_check(txt.begins_with("39 关全部飞过终点旗！"),
 		"C50-3 通关行「%s…」" % txt.left(14))
-	_check(txt.contains("吃门 36/45 扇"),
-		"C50-4 吃门统计「36/45 扇」（C1 配方基准线）")
+	_check(txt.contains("吃门 35/46 扇"),
+		"C50-4 吃门统计「35/46 扇」（C1 配方基准线，L38/39 窄容差门在种子基线下脱靶）")
 	_check(txt.contains("总飞行") and txt.contains("最远一掷") and txt.contains("金币余额"),
 		"C50-5 里程/最远/金币段保留")
 	_check(txt.contains("强化：力气 x0 · 翼面 x0 · 加固 x0 · 铅条 x0 · 侧配 x0 · 无特殊部件"),

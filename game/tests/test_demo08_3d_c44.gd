@@ -59,8 +59,8 @@ func _run() -> void:
 	c1.start_level(27)
 	c1.plane_pos.x = 60.0 + 40.0 * 60.0
 	_check(float(c1.side_wind_accel()) == 60.0 and float(c1.updraft_accel()) == -2000.0
-		and int(c1.LEVELS.size()) == 38,
-		"C44-1 静态锚：侧风 +60 / 谷内 -2000 / 38 关")
+		and int(c1.LEVELS.size()) == 39,
+		"C44-1 静态锚：侧风 +60 / 谷内 -2000 / 39 关")
 
 	# C44-2 低线（被动克制）：4 折 v=0.35 24° 无舵 → 过关吃右侧低门，23 = 3 + 6 + 14
 	var lo: Object = _mk_and_fly(4, 0.35, 24.0, 0.0, 0.0)

@@ -66,8 +66,8 @@ func _run() -> void:
 	c1.plane_pos.x = 60.0 + 55.0 * 60.0
 	var a_l24: float = c1.updraft_accel()
 	_check(a_sink == -2500.0 and a_therm == 3000.0 and a_out == 0.0
-		and a_l24 == -1600.0 and int(c1.LEVELS.size()) == 38,
-		"C39-1 双区带分段：谷 -2500 / 热流 +3000 / 区外 0 / L24 单带 -1600，38 关")
+		and a_l24 == -1600.0 and int(c1.LEVELS.size()) == 39,
+		"C39-1 双区带分段：谷 -2500 / 热流 +3000 / 区外 0 / L24 单带 -1600，39 关")
 
 	# C39-2 配方：4 折 v=0.2 40° → 过关吃高门，收益 25 = 3 + 8 + 14
 	var good: Object = _mk_and_fly(24, 4, 0.2, 40.0, 1.0)
