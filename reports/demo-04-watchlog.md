@@ -413,3 +413,7 @@
 - 用例30 外星生物 billboard 接入全过（alien_highjump.png → billboard 替换灰盒 + 灰盒隐藏）；修复过程：CR 游离/孤儿 for/字符串前缀被吞 三处补丁伤依次清理。
 - 资产接入面完备：player.png + alien_{glow,highjump,break,double}.png 共 5 张 PNG 放入 game/assets/ 即全角色 billboard 化。
 - 29/29 + 2D 7/7 全绿；无发版（v15 已含此能力，头less 测试为验证性）。
+
+## 2026-10-05 22:30（轮81·例行巡检）
+- 全部健康：v15-3D/v12-2D 双链接 200 ✓；worktree 零未提交、远端同步 ✓。
+- 四项阻塞等用户/登录（阶段总报告），无变化。稳态持续。
