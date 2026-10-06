@@ -76,7 +76,7 @@
       "id": "demo-06-3d",
       "title": "墨迹漂流 / INKBOUND（几何与墨刃）",
       "goal": "多笔画梯架与闭合板面，按真实尺寸搭建攀爬；野外拾取弹性与黏性改变通路，三段立体纸页之后用黄墨画武器，切藤或搭建绕行，找回完整画页。",
-      "buildId": "demo-06-inkbound-v10",
+      "buildId": "demo-06-inkbound-v10-touch",
       "status": "done",
       "landingUrl": "./inkbound-v10.html"
     },

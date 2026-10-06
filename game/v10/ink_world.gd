@@ -7,6 +7,7 @@ const Rules := preload("res://v10/sketch_rules.gd")
 const SketchPad := preload("res://v10/sketch_pad.gd")
 const Structures := preload("res://v10/structures.gd")
 const Blade := preload("res://v10/blade.gd")
+const TouchControls := preload("res://v10/touch_controls.gd")
 const Inkling := preload("res://v9/inkling.gd")
 const ReadableFont := preload("res://fonts/NotoSansSC-Medium.ttf")
 const Portrait := preload("res://v9/art/painter.png")
@@ -25,6 +26,10 @@ var cam: Camera3D
 var world: Node3D
 var draw_pad: Control
 var ui: Control
+var touch_controls: Control
+var footer_panel: Panel
+var keyboard_help: Label
+var touch_layout := false
 var intro_panel: Panel
 var notebook_panel: Panel
 var result_panel: Panel
@@ -71,6 +76,7 @@ var notebook_help: Label
 var landmark_positions := {"start":Vector3(0,0,0),"fountain":Vector3(-1.5,0,2),"threshold_goal":Vector3(5.1,1.25,0),"courtyard_goal":Vector3(13.5,2.05,0),"tower_goal":Vector3(22,3.1,0),"threshold_aim":Vector3(3.5,1.25,0),"courtyard_aim":Vector3(12,2.05,0),"tower_aim":Vector3(20.5,3.1,0),"threshold_side":Vector3(5,0.60,4),"courtyard_side":Vector3(11.8,1.0,4),"tower_side_low":Vector3(19,1.0,4),"tower_side_high":Vector3(22,2.0,4),"yellow_courtyard":Vector3(25,0,0),"yellow_entry":Vector3(27.5,0,0),"vines":Vector3(30.4,0,0),"enemy":Vector3(33.6,0.35,0),"yellow_goal":Vector3(36.5,0.60,0),"word_Sharp":Vector3(27.5,0,-0.6),"yellow_ledge":Vector3(29.25,2.60,0.70)}
 var safe_point := Vector3(0,FEET_OFFSET,0)
 var climbing_id := -1
+var climb_up_guard := false
 var climb_progress := 0.0
 var next_id := 1
 var preview: Node3D
@@ -89,6 +95,8 @@ func _ready() -> void:
 	_build_ui()
 	if OS.has_feature("web"):
 		qa_enabled = bool(JavaScriptBridge.eval("new URLSearchParams(location.search).get('qa') === '1'"))
+		if bool(JavaScriptBridge.eval("navigator.maxTouchPoints > 0 || matchMedia('(pointer: coarse)').matches")): _enable_touch_layout()
+	elif DisplayServer.is_touchscreen_available(): _enable_touch_layout()
 	_update_camera(1.0)
 	_update_hud()
 	_message("画页散了。还好，笔还在。")
@@ -260,6 +268,10 @@ func _build_player() -> void:
 	player.add_child(actor)
 
 func _process(delta: float) -> void:
+	touch_controls.set_gameplay_enabled(not intro_open and not notebook_open and not result_open)
+	touch_controls.attack_available = selected_color == "yellow" and weapon != null
+	if touch_controls.climbing != (climbing_id >= 0):
+		touch_controls.climbing = climbing_id >= 0; touch_controls.queue_redraw()
 	clock += delta
 	_update_camera(delta)
 	preview_age += delta
@@ -269,7 +281,10 @@ func _process(delta: float) -> void:
 	qa_age += delta
 	if qa_enabled and qa_age > 0.1:
 		qa_age = 0.0
-		JavaScriptBridge.eval("window.__v10_ink_qa = "+JSON.stringify(qa_snapshot())+";")
+		var snapshot := qa_snapshot()
+		snapshot.touch = touch_controls.snapshot()
+		snapshot.viewport = [get_viewport().get_visible_rect().size.x,get_viewport().get_visible_rect().size.y]
+		JavaScriptBridge.eval("window.__v10_ink_qa = "+JSON.stringify(snapshot)+";")
 
 func _physics_process(delta: float) -> void:
 	if intro_open or notebook_open or result_open:
@@ -279,11 +294,17 @@ func _physics_process(delta: float) -> void:
 		actor.pose("idle"); return
 	_step_combat(delta)
 	if climbing_id >= 0:
-		var climb_input := float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP))-float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))
+		var climb_input := clampf(float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP))-float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))-touch_controls.axis.y,-1.0,1.0)
 		climb_step(delta,climb_input)
 	else:
 		_update_floor_property()
-		var direction := Vector3(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT))-float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),0,float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))-float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP))).normalized()
+		# Finishing a climb requires a fresh upward input before walking forward.
+		# Otherwise the held climb direction immediately carries a player off a small landing.
+		if not Input.is_physical_key_pressed(KEY_W) and not Input.is_physical_key_pressed(KEY_UP): climb_up_guard = false
+		var keys := Vector2(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT))-float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))-float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)))
+		if climb_up_guard and keys.y<0: keys.y = 0
+		var movement: Vector2 = (keys.normalized()+touch_controls.axis).limit_length(1.0)
+		var direction := Vector3(movement.x,0,movement.y)
 		player.velocity.x = direction.x*SPEED; player.velocity.z = direction.z*SPEED
 		player.velocity.y -= GRAVITY*delta
 		player.move_and_slide()
@@ -376,6 +397,55 @@ func _update_floor_property() -> void:
 	player.floor_max_angle = deg_to_rad(64 if sticky else 48)
 	player.floor_stop_on_slope = true
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch: _enable_touch_layout()
+	var touch_press: bool = event is InputEventScreenTouch and event.pressed
+	var mouse_press: bool = event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and event.device != InputEvent.DEVICE_ID_EMULATION
+	if touch_layout and (touch_press or mouse_press):
+		for button in buttons.values():
+			if intro_open and not intro_panel.is_ancestor_of(button): continue
+			if notebook_open and not notebook_panel.is_ancestor_of(button): continue
+			if result_open and not result_panel.is_ancestor_of(button): continue
+			if button.is_visible_in_tree() and not button.disabled and button.get_global_rect().has_point(event.position):
+				button.pressed.emit(); get_viewport().set_input_as_handled(); return
+
+func jump_or_exit() -> void:
+	if intro_open or notebook_open or result_open: return
+	if climbing_id >= 0: exit_climb(false)
+	elif player.is_on_floor(): player.velocity.y = 5.0
+
+func _touch_action(action: String) -> void:
+	match action:
+		"jump": jump_or_exit()
+		"attack": attack()
+		"interact": interact()
+		"notebook": toggle_notebook()
+		"reclaim": reclaim_nearest()
+
+func _touch_world(point: Vector2) -> void:
+	if intro_open or notebook_open or result_open: return
+	if selected_color == "yellow": attack(); return
+	var hit := mouse_surface(point)
+	if not hit.is_empty(): place_active(hit.position)
+
+func _enable_touch_layout() -> void:
+	if touch_layout: return
+	touch_layout = true; touch_controls.set_touch_enabled(true)
+	footer_panel.hide(); keyboard_help.hide()
+	message_label.position = Vector2(205,503); message_label.size = Vector2(730,32)
+	message_label.add_theme_font_size_override("font_size",16)
+	for button in buttons.values(): button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	buttons.notebook.text = "画纸"; buttons.restart.text = "重开"
+	buttons.close.text = "关闭画纸"; buttons.undo.text = "撤销末笔"
+	for id in ["ladder","board","blade","color_black","color_yellow"]:
+		buttons[id].position.y = 54; buttons[id].size.y = 56
+	for i in 4:
+		var id: String = ["property_None","property_Sticky","property_Elastic","property_Sharp"][i]
+		buttons[id].position.y = 145+i*57; buttons[id].size.y = 52
+	notebook_help.hide(); draw_pad.position.y = 112
+	for id in ["undo","clear","confirm"]:
+		buttons[id].position.y = 422; buttons[id].size.y = 52
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if intro_open:
@@ -393,9 +463,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_Q: reclaim_nearest()
 		if event.physical_keycode == KEY_F: attack()
 		if event.physical_keycode == KEY_SPACE:
-			if climbing_id >= 0: exit_climb(false)
-			elif player.is_on_floor(): player.velocity.y = 5.0
+			jump_or_exit()
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.device == InputEvent.DEVICE_ID_EMULATION: return
 		if intro_open or notebook_open or result_open: return
 		if selected_color == "yellow": attack(); return
 		var hit := mouse_surface(event.position)
@@ -542,7 +612,8 @@ func _update_preview() -> void:
 	if preview:
 		preview.queue_free(); preview = null
 	if intro_open or notebook_open or result_open or active_tool.is_empty() or active_tool.kind == "blade": return
-	var hit := mouse_surface(get_viewport().get_mouse_position())
+	var screen: Vector2 = touch_controls.aim_screen if touch_controls.touch_enabled and touch_controls.has_aim else get_viewport().get_mouse_position()
+	var hit := mouse_surface(screen)
 	if hit.is_empty(): return
 	var placement := build_placement(hit.position)
 	preview_data = placement
@@ -584,6 +655,7 @@ func climb_step(delta: float, input: float) -> void:
 		if not supported.is_empty() and _clear_capsule(entry.exit):
 			player.position = entry.exit; _remember_safe_point()
 			climbing_id = -1; player.velocity = Vector3.ZERO
+			climb_up_guard = true; touch_controls.release_all()
 			_message("脚已落在真实台面上，走近画页把它拾起。")
 		else: _message("顶端现在无法落脚，按 S 下来或 Space 退出。")
 
@@ -698,7 +770,7 @@ func reset_run() -> void:
 	enemy_hp = ENEMY_MAX_HP; enemy_body.collision_layer = 4; enemy_body.position = Vector3(33.6,0.35,0)
 	enemy_state = "idle"; enemy_timer = 0; enemy_flash = 0; enemy_actor.pose("idle"); enemy_actor.scale = Vector3.ONE
 	player_hp = MAX_HP; player_invulnerability = 0
-	climbing_id = -1; notebook_open = false; notebook_panel.hide()
+	climbing_id = -1; climb_up_guard = false; notebook_open = false; notebook_panel.hide()
 	player.position = Vector3(0,FEET_OFFSET,0); player.velocity = Vector3.ZERO; safe_point = player.position
 	draw_pad.ink_color = Color("263844"); draw_pad.queue_redraw()
 	_message("画纸和墨瓶准备好了。拿到高台上的碎页。")
@@ -720,11 +792,11 @@ func _build_ui() -> void:
 	objective_label = _label(hud,"拿到高台上的碎页。",Vector2(14,41),Vector2(610,24),17)
 	_button(ui,"画纸 · Tab",Vector2(766,14),Vector2(178,38),toggle_notebook,"notebook")
 	_button(ui,"重开 · R",Vector2(828,58),Vector2(116,30),reset_run,"restart")
-	var footer := _panel(ui,Vector2(12,438),Vector2(936,92))
-	footer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	footer_panel = _panel(ui,Vector2(12,438),Vector2(936,92))
+	footer_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	message_label = _label(ui,"",Vector2(24,476),Vector2(910,48),17)
 	message_label.add_theme_color_override("font_color",Color("263e43"))
-	_label(ui,"WASD 移动 · Space 跳/离梯 · E 攀爬/补墨 · Q 回收 · 黄墨左键/F 挥砍",Vector2(22,447),Vector2(860,26),14)
+	keyboard_help = _label(ui,"WASD 移动 · Space 跳/离梯 · E 攀爬/补墨 · Q 回收 · 黄墨左键/F 挥砍",Vector2(22,447),Vector2(860,26),14)
 	notebook_panel = _panel(ui,Vector2(90,15),Vector2(780,510))
 	notebook_panel.hide()
 	_label(notebook_panel,"绘本 / 保留每一笔",Vector2(24,14),Vector2(350,30),23)
@@ -753,8 +825,8 @@ func _build_ui() -> void:
 	estimate_label = _label(notebook_panel,"",Vector2(24,478),Vector2(730,26),14)
 	intro_panel = _panel(ui,Vector2(170,70),Vector2(620,400))
 	var portrait := TextureRect.new()
-	portrait.texture = Portrait; portrait.position = Vector2(26,42); portrait.size = Vector2(232,290)
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.texture = Portrait; portrait.position = Vector2(26,42); portrait.size = Vector2(232,290)
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	intro_panel.add_child(portrait)
@@ -767,6 +839,11 @@ func _build_ui() -> void:
 	result_label = _label(result_panel,"",Vector2(30,24),Vector2(440,230),21)
 	_button(result_panel,"继续在画页里走",Vector2(30,280),Vector2(240,44),close_result,"continue")
 	_button(result_panel,"重新画一条路",Vector2(286,280),Vector2(185,44),reset_run,"result_restart")
+	touch_controls = TouchControls.new()
+	ui.add_child(touch_controls)
+	touch_controls.action_requested.connect(_touch_action)
+	touch_controls.world_tapped.connect(_touch_world)
+	touch_controls.touch_detected.connect(_enable_touch_layout)
 	_update_estimate()
 
 func _panel(parent: Node, pos: Vector2, dimensions: Vector2) -> Panel:
@@ -811,6 +888,7 @@ func _button(parent: Node, text: String, pos: Vector2, dimensions: Vector2, acti
 func begin_adventure() -> void:
 	intro_open = false; intro_panel.hide()
 	_message("拿到高台上的碎页。Tab 打开画纸；可画梯架，或退远一点搭坡板。")
+	_update_hud()
 
 func toggle_notebook() -> void:
 	if intro_open or result_open: return
@@ -862,6 +940,7 @@ func _message(value: String) -> void:
 
 func _update_hud() -> void:
 	if not hud_label: return
+	if touch_controls: touch_controls.set_gameplay_enabled(not intro_open and not notebook_open and not result_open)
 	var count := 0
 	for goal in goals:
 		if goal: count += 1

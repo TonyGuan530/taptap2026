@@ -7,11 +7,36 @@ fs.mkdirSync(dir,{recursive:true});
 const route=process.argv.includes('--board')?'board':'ladder';
 const record=process.argv.includes('--record');
 const blackOnly=process.argv.includes('--black-only');
-const localPck=path.join(root,'builds/demo-06-inkbound-v10/index.pck');
+const mobile=process.argv.includes('--touch');
+const localPck=path.resolve(process.env.INKBOUND_V10_PCK||path.join(root,'builds/demo-06-inkbound-v10/index.pck'));
 const buildProof={url:process.env.INKBOUND_V10_URL||'http://127.0.0.1:8788/builds/demo-06-inkbound-v10/index.html?qa=1',expectedPckSha256:createHash('sha256').update(fs.readFileSync(localPck)).digest('hex')};
-const b=await browser(),page=await b.newPage({viewport:{width:960,height:540}});
+const b=await browser(),page=await b.newPage(mobile?{viewport:{width:844,height:390},hasTouch:true,isMobile:true}:{viewport:{width:960,height:540},hasTouch:false});
 // Retain the complete ~29 MB PCK response rather than Chromium's default small body cache.
 const network=await page.context().newCDPSession(page);
+const fingers=new Map();
+async function screen(point){
+  const s=await state(),box=await page.locator('#canvas').boundingBox();
+  const scale=Math.min(box.width/s.viewport[0],box.height/s.viewport[1]);
+  return [box.x+(box.width-s.viewport[0]*scale)/2+point[0]*scale,box.y+(box.height-s.viewport[1]*scale)/2+point[1]*scale];
+}
+async function finger(id,point,type){
+  let touchPoints;
+  if(type==='touchEnd'){
+    const released=fingers.get(id);fingers.delete(id);
+    // Chromium's partial end packet names the finger being lifted, rather
+    // than the ones staying down. Verified against native DOM touchend events.
+    touchPoints=fingers.size&&released?[released]:[];
+  }else{const [x,y]=await screen(point);fingers.set(id,{id,x,y,radiusX:4,radiusY:4,force:1});touchPoints=[...fingers.values()];}
+  await network.send('Input.dispatchTouchEvent',{type,touchPoints});
+}
+async function tap(point,id=1){await finger(id,point,'touchStart');await page.waitForTimeout(110);await finger(id,point,'touchEnd');await page.waitForTimeout(160);}
+async function motion(name,pressed,strength=1){
+  if(!mobile){if(pressed)await page.keyboard.down(name);else await page.keyboard.up(name);return;}
+  if(!pressed){if(fingers.has(0))await finger(0,[0,0],'touchEnd');return;}
+  const s=await state(),centre=s.touch.joystick,offset={d:[64,0],a:[-64,0],w:[0,-64],s:[0,64]}[name];
+  if(!fingers.has(0))await finger(0,centre,'touchStart');
+  await finger(0,[centre[0]+offset[0]*strength,centre[1]+offset[1]*strength],'touchMove');
+}
 await network.send('Network.enable',{maxTotalBufferSize:256*1024*1024,maxResourceBufferSize:96*1024*1024});
 let pckTimer;
 function receivePck(){
@@ -19,7 +44,7 @@ function receivePck(){
   const finished=new Promise((resolve,reject)=>{
     pckTimer=setTimeout(()=>reject(Error('Timed out capturing actual HTTP PCK body')),90000);
     network.on('Network.responseReceived',event=>{
-      if(new URL(event.response.url).pathname.endsWith('/demo-06-inkbound-v10/index.pck')){requestId=event.requestId;receivedStatus=event.response.status;}
+      if(new URL(event.response.url).pathname===new URL('index.pck',buildProof.url).pathname){requestId=event.requestId;receivedStatus=event.response.status;}
     });
     network.on('Network.loadingFinished',async event=>{
       if(event.requestId!==requestId)return;
@@ -38,11 +63,18 @@ const state=()=>page.evaluate(()=>window.__v10_ink_qa);
 async function shot(name){await page.waitForTimeout(200);await page.screenshot({path:path.join(dir,route+'-'+name+'.png')});}
 async function button(name){
   const s=await state();check(Array.isArray(s.ui.buttons[name]),'button available '+name);
-  await page.mouse.click(...s.ui.buttons[name]);await page.waitForTimeout(150);
+  if(mobile)await tap(s.ui.buttons[name]);else await page.mouse.click(...s.ui.buttons[name]);await page.waitForTimeout(150);
   // Wait for the real save acknowledgement; software-rendered frames can exceed 150 ms.
   if(name==='confirm')await page.waitForFunction(()=>!window.__v10_ink_qa.ui.notebook,null,{timeout:10000});
 }
-async function key(name,ms=0){if(ms){await page.keyboard.down(name);await page.waitForTimeout(ms);await page.keyboard.up(name);}else await page.keyboard.press(name);await page.waitForTimeout(110);}
+async function key(name,ms=0){
+  if(mobile){
+    if(['w','a','s','d'].includes(name)){await motion(name,true);await page.waitForTimeout(ms||80);await motion(name,false);}
+    else if(name==='Tab'){const s=await state();if(s.ui.notebook)await button('close');else await tap(s.touch.actions.notebook);}
+    else{const action={e:'interact',q:'reclaim',f:'attack',Space:'jump'}[name];if(!action)throw Error('No touch equivalent '+name);await tap((await state()).touch.actions[action]);}
+  }else if(ms){await page.keyboard.down(name);await page.waitForTimeout(ms);await page.keyboard.up(name);}else await page.keyboard.press(name);
+  await page.waitForTimeout(110);
+}
 async function move(x,z,tolerance=.28){
   for(const axis of [0,2]){
     let previous=null,stuck=0;
@@ -53,7 +85,10 @@ async function move(x,z,tolerance=.28){
       if(Math.abs(d)<tolerance)break;
       const k=axis===0?(d>0?'d':'a'):(d>0?'s':'w');
       const delay=Math.min(320,Math.max(40,Math.abs(d)/3.5*800));
-      await page.keyboard.down(k);await page.waitForTimeout(delay);await page.keyboard.up(k);await page.waitForTimeout(100);
+      // A touch dispatch can wait for a software-rendered frame. Use the real
+      // joystick's analog range near the target rather than oscillating at full speed.
+      const strength=mobile?Math.min(1,Math.max(.12,Math.abs(d)/1.4)):1;
+      await motion(k,true,strength);await page.waitForTimeout(delay);await motion(k,false);await page.waitForTimeout(100);
       const p=(await state()).player[axis];
       if(previous!==null&&Math.abs(p-previous)<.02)stuck++;else stuck=0;
       previous=p;
@@ -62,6 +97,14 @@ async function move(x,z,tolerance=.28){
   }
 }
 async function stroke(points){
+  if(mobile){
+    await finger(2,points[0],'touchStart');await page.waitForTimeout(90);
+    for(let i=1;i<points.length;i++){
+      for(let j=1;j<=8;j++){const a=points[i-1],p=points[i];await finger(2,[a[0]+(p[0]-a[0])*j/8,a[1]+(p[1]-a[1])*j/8],'touchMove');await page.waitForTimeout(20);}
+      await page.waitForTimeout(80);
+    }
+    await finger(2,points.at(-1),'touchEnd');await page.waitForTimeout(160);return;
+  }
   await page.mouse.move(...points[0]);await page.mouse.down();await page.waitForTimeout(60);
   for(const point of points.slice(1)){await page.mouse.move(...point,{steps:8});await page.waitForTimeout(80);}
   await page.mouse.up();await page.waitForTimeout(80);
@@ -79,25 +122,31 @@ async function draw(kind,property='None',length=230){
     await stroke([[x+130,y+280],[x+120,y+280-length],[x+140,y+280-length],[x+130,y+280]]);
     await stroke([[x+100,y+267],[x+160,y+267]]);
   }
-  let s=await state();check(s.drawing.analysis.ok,'actual mouse strokes form '+kind);
+  let s=await state();check(s.drawing.analysis.ok,'actual '+(mobile?'finger':'mouse')+' strokes form '+kind);
   if(kind==='ladder')check(s.drawing.strokes.length===4,'four separate strokes remain separate');
   await shot('draw-'+kind+'-'+property+'-'+length);
   await button('confirm');s=await state();
   check(!s.ui.notebook&&s.active_tool.kind===kind&&s.active_tool.property===property,'saved actual '+property+' '+kind);
   return s.active_tool;
 }
-async function aim(name,place=true){const s=await state();check(s.landmarks[name],'landmark '+name);await page.mouse.move(...s.landmarks[name].ground_screen);await page.waitForTimeout(220);if(place){await page.mouse.click(...(await state()).landmarks[name].ground_screen);await page.waitForTimeout(250);}}
+async function aim(name,place=true){const s=await state();check(s.landmarks[name],'landmark '+name);if(mobile){if(place)await tap(s.landmarks[name].ground_screen);await page.waitForTimeout(250);return;}await page.mouse.move(...s.landmarks[name].ground_screen);await page.waitForTimeout(220);if(place){await page.mouse.click(...(await state()).landmarks[name].ground_screen);await page.waitForTimeout(250);}}
 async function climb(){
   await key('e');check((await state()).climbing_id>=0,'ordinary E enters physical ladder');
-  await page.keyboard.down('w');
+  await motion('w',true);
   try {await page.waitForFunction(()=>window.__v10_ink_qa.climbing_id<0,null,{timeout:7000});}
-  finally {await page.keyboard.up('w');}
+  finally {await motion('w',false);}
   await page.waitForTimeout(150);
   check((await state()).player[1]>1,'climb exits onto actual raised support');
 }
 function compact(s){return {player:s.player,tool:s.active_tool,words:s.words,ink:s.ink,structures:s.structures,goals:s.goals,yellow_unlocked:s.yellow_unlocked,won:s.won,message:s.ui.message,weapon:s.weapon,vines:s.vines,enemy:s.enemy,combat:s.combat,final_goal:s.final_goal,result_text:s.ui.result_text};}
 async function milestone(phase){const s=await state();evidence.push({phase,state:compact(s)});await shot(phase);}
-async function faceRight(ms=60){await key('d',ms);await page.waitForTimeout(350);check((await state()).facing[0]>.9,'ordinary D faces the actual weapon right');}
+async function faceRight(ms=60){
+  if(mobile){await motion('d',true,.12);await page.waitForTimeout(ms);await motion('d',false);}
+  else await key('d',ms);
+  await page.waitForTimeout(350);
+  const facing=(await state()).facing;
+  check(facing[0]>.10&&Math.abs(facing[2])<.02,'ordinary input faces the actual weapon right');
+}
 async function swing(){
   await page.waitForFunction(()=>window.__v10_ink_qa.weapon.cooldown<=0&&!window.__v10_ink_qa.weapon.swinging,null,{timeout:10000});
   const before=(await state()).weapon.swing;await key('f');
@@ -106,9 +155,10 @@ async function swing(){
 }
 async function finalJump(){
   await move(34.85,0);
-  await page.keyboard.down('d');await page.keyboard.press('Space');
+  await motion('d',true);await key('Space');
+  if(mobile){const s=await state();check(s.won||(s.touch.axis[0]>.8&&s.touch.fingers===1),'lifting jump finger keeps the real movement finger held');}
   try{await page.waitForFunction(()=>window.__v10_ink_qa.won,null,{timeout:6000});}
-  finally{await page.keyboard.up('d');}
+  finally{await motion('d',false);}
   const s=await state();check(s.won&&s.final_goal.collected&&s.ui.result,'physical arrival collects the final page and opens the ending');
   await milestone('ending');
 }
@@ -131,7 +181,7 @@ try{
   check(buildProof.pckSha256===buildProof.expectedPckSha256,'actual HTTP PCK matches this source export');
   await page.waitForFunction(()=>window.__v10_ink_qa,null,{timeout:60000});await page.waitForTimeout(600);
   check((await state()).version===10,'boot independent V10 build');await shot('intro');
-  await button('begin');check(!(await state()).ui.intro,'ordinary click begins adventure');if(record)await startRecord();await milestone('world');
+  await button('begin');check(!(await state()).ui.intro,'ordinary '+(mobile?'tap':'click')+' begins adventure');if(record)await startRecord();await milestone('world');
   if(route==='ladder'){
     await move(2.1,0);await draw('ladder','None',60);
     const before=await state();await aim('threshold_goal');let s=await state();
@@ -167,7 +217,9 @@ try{
       await key('Tab');await button('property_Sharp');await button('confirm');await swing();
       s=await state();check(s.vines.cut&&s.vines.collision===0&&Math.abs(s.weapon.length-original)<.001,'same strokes with Sharp physically cut and remove the obstruction');
       await milestone('yellow');
-      await move(32.5,0);const hp=(await state()).combat.hp;
+      // Reach well inside the enemy's physical range; a loose navigation tolerance
+      // can otherwise leave analog touch movement just outside its attack radius.
+      await move(32.7,0,.10);const hp=(await state()).combat.hp;
       await page.waitForFunction(h=>window.__v10_ink_qa.combat.hp<h,hp,{timeout:5000});
       check((await state()).combat.hp<hp,'enemy windup causes a real hit rather than contact every frame');await milestone('enemy-hit');
       await move(32.0,0);await faceRight(220);await swing();await swing();
@@ -184,4 +236,4 @@ try{
   if(record){await page.waitForTimeout(1000);await finishRecord();}
   check(errors.length===0,'no browser or Godot console errors');
 }catch(error){evidence.push({failure:String(error),state:await state().catch(()=>null),errors});await shot('failure').catch(()=>{});if(record)await finishRecord().catch(()=>{});throw error;}
-finally{clearTimeout(pckTimer);await b.close();fs.writeFileSync(path.join(dir,route+'-qa.json'),JSON.stringify({route,blackOnly,build:buildProof,errors,evidence,method:'ordinary Playwright mouse and physical keyboard; QA read-only'},null,2)+'\n');}
+finally{clearTimeout(pckTimer);await b.close();fs.writeFileSync(path.join(dir,route+'-qa.json'),JSON.stringify({route,blackOnly,build:buildProof,errors,evidence,method:mobile?'actual CDP touch events on 844x390 mobile browser; two independent fingers; QA read-only':'ordinary Playwright mouse and physical keyboard; QA read-only'},null,2)+'\n');}
