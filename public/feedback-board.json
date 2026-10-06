@@ -94,8 +94,9 @@
       "build": "demo-02-3d",
       "ts": "2026-10-04",
       "text": "WASD 方向反了（第一人称移动映射错位，卡住无法通关）【Issue#1 用户本人】",
-      "status": "open",
-      "reply": ""
+      "status": "fixed",
+      "reply": "感谢反馈！该问题已定位并修复（输入轴参数序反，GitHub Issue#1 同源）：修复随 demo-02-3d-v8 上线，当前基线 v10 已含此修复并通过自动化回归（W 前进/A 左移方向均验证正确）。请用最新链接重试：https://tonyguan530.github.io/taptap2026/play.html?id=demo-02-3d-v10 。如仍有异常欢迎再反馈。",
+      "fixedIn": "demo-02-3d-v8（2026-10-05 上线，v10 基线含）"
     },
     {
       "id": "FB-109",
