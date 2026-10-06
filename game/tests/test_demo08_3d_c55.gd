@@ -119,6 +119,21 @@ func _run() -> void:
 	_check(String(core.state) == "fly" and not scene.fold_preview_rect.visible,
 		"C55-5b fly 态预览隐藏")
 
+	# C55-6 逐笔形变（C69）：fold 态下逐条 add_fold + 重建 → 折痕/参数逐笔累积（输入路径同款调用）
+	scene._go_menu()
+	core.start_level(1)
+	scene._on_level_pressed(1)
+	core.add_fold(core.paper_rect.position + core.paper_rect.size * Vector2(0.92, 0.3),
+		core.paper_rect.position + core.paper_rect.size * Vector2(0.92, 0.53))
+	scene._rebuild_plane_visual()
+	var parts1: int = _part_count(scene)
+	core.add_fold(core.paper_rect.position + core.paper_rect.size * Vector2(0.92, 0.4),
+		core.paper_rect.position + core.paper_rect.size * Vector2(0.92, 0.63))
+	scene._rebuild_plane_visual()
+	var parts2: int = _part_count(scene)
+	_check(parts1 == 5 and parts2 == 7 and absf(_wing_x(scene) - 0.55 * clampf(0.72 + float(core.plane_params.lift_area) * 0.24, 0.68, 1.35)) < 0.01,
+		"C55-6 逐笔形变：1 折 %d parts → 2 折 %d parts（预览实时响应）" % [parts1, parts2])
+
 	_log("==========================================")
 	_log("结果：PASS %d · FAIL %d" % [passes, fails])
 	var f := FileAccess.open("user://test_demo08_3d_c55_log.txt", FileAccess.WRITE)

@@ -887,7 +887,8 @@ func _unhandled_input(event: InputEvent) -> void:
 					fold_p1 = pos
 					fold_has_p1 = true
 				else:
-					core.add_fold(fold_p1, pos)
+					if core.add_fold(fold_p1, pos):
+						_rebuild_plane_visual()   # C69：逐笔形变——每画一条折线预览与世界机体即时响应
 					fold_has_p1 = false
 		elif core.state == "throw":
 			if event.pressed:
