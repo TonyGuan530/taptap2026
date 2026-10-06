@@ -1,6 +1,6 @@
 # Miro 导出：看板 uXjVHggi_m8=
 
-> 拉取时间：2026/10/7 01:50:29 · 共 102 条内容（按 纵向→横向 排序）
+> 拉取时间：2026/10/7 02:50:32 · 共 102 条内容（按 纵向→横向 排序）
 > 请把有用的想法整理进 requirements/backlog.md（每个玩法块一节，## demo-0X 开头）
 
 ### [text] @(4546,-854)
@@ -178,7 +178,7 @@ headless 4 用例全 PASS&#xff08;含「抢运救局」新用例&#xff09;。itch C
 
 ### [text] @(27900,5890)
 
-<p><strong>主题&#xff1a;规则组合产生通路</strong></p><p>黑墨限定建造几何&#xff0c;黄墨限定手持墨刃。实际原笔迹决定长度、宽度与碰撞&#xff1b;野外拾取的词条改变同一张画稿。手动意图选择保障可靠性&#xff0c;后续 $P/$Q 有限模板候选只帮助选择用途。没有把自由画枪、动物、载具标为已完成。</p>
+<p><strong>主题&#xff1a;规则组合产生通路</strong></p><p>黑墨限定建造几何&#xff0c;黄墨限定手持墨刃。实际原笔迹决定长度、宽度与碰撞&#xff1b;野外拾取的词条改变同一张画稿。手动意图选择保障可靠性&#xff0c;后续 $P/$Q 有限模板候选只帮助选择用途。没有把自由画枪、动物、载具标为已完成。</p><p><strong>INKBOUND-TOUCH-20261007 · GD&#xff0f;编剧新提案&#xff0c;尚未实现</strong></p><p>V10 多解不等于涌现。新主旨&#xff1a;可信结构&#xff0b;相符词条授能&#xff0c;梯子外观不能自动可攀爬。取消墨色用途锁&#xff1b;首片可攀爬&#xff0b;漂浮、两槽、一个开放邮台目标。能力读取结构&#xff0c;目标只认结果&#xff1b;同一稿从无能力到授能&#xff0c;再在新处境复用。需自由试玩验证。</p><p><a href="https://github.com/TonyGuan530/taptap2026/blob/main/docs/inkbound-emergence-redesign.md">修订策划</a> · <a href="https://github.com/TonyGuan530/taptap2026/blob/main/docs/inkbound-gd-writer-review.md">独立评审</a></p>
 
 ### [text] @(29100,5890)
 
@@ -221,7 +221,7 @@ headless 回归 4/4 PASS。上方卡片截图/录屏已更新为 v3&#xff08;链�
 
 ### [text] @(29100,6325)
 
-<p><strong>独游方向与实机入口</strong></p><p>奶油纸雕平台、青绿树林、深墨线条、金黄墨刃&#xff1b;沿用原绘画学徒角色。下方图片全部是实际导出游戏截图。</p><p>已验证桌面试玩、手机展示页和含游戏音频的两条完整录像。</p><p>https://tonyguan530.github.io/taptap2026/inkbound-v10.html</p><p>发布提交 2393839cdbe2c711e107e710d6a6fd157c677b32&#xff1b;Pages workflow 37494892795。</p>
+<p><strong>独游方向与实机入口</strong></p><p>奶油纸雕平台、青绿树林、深墨线条、金黄墨刃&#xff1b;沿用原绘画学徒角色。下方图片全部是实际导出游戏截图。</p><p>已验证桌面试玩、手机展示页和含游戏音频的两条完整录像。</p><p>https://tonyguan530.github.io/taptap2026/inkbound-v10.html</p><p>发布提交 2393839cdbe2c711e107e710d6a6fd157c677b32&#xff1b;Pages workflow 37494892795。</p><p><strong>INKBOUND-TOUCH-20261007 · 触控补丁已上线</strong></p><p><a href="https://tonyguan530.github.io/taptap2026/builds/demo-06-inkbound-v10-touch/index.html">手机横屏触控试玩</a>&#xff1a;摇杆、独立手指点控与手绘。147 项原生检查及两条浏览器路线通过。实体 Android&#xff0f;iOS 尚未验证&#xff1b;新授能规则仍是提案。</p>
 
 ### [sticker] @(16706,6342)
 
