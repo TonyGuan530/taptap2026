@@ -35,6 +35,7 @@ try {
     await page.locator('.slot[href="play.html?id=demo-08-3d-v27"]').waitFor();
     assert(await page.locator('.slot[href="play.html?id=demo-08-v3"]').count()===0,'2D absent from rendered hub');
     await page.goto(base+'/archive.html');
+    await page.locator('details').filter({has:page.locator('#list')}).locator('summary').click();
     await page.locator('#list .meta').filter({hasText:'demo-08-v3'}).waitFor();
     assert(true,'2D v3 appears in rendered archive');
   } finally { await browser.close(); }

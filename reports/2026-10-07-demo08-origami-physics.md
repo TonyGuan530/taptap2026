@@ -39,3 +39,11 @@
 
 试玩：<https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v27/index.html>。
 FB-104/109 维持 responded，等待真人复测，不代写 KEEP 或验收通过。
+
+## 发布回执
+
+- 产品提交 `165464684154bd58f7761d359d07edee142d5607` 已推送 main；[Pages 流水线 37591026543](https://github.com/TonyGuan530/taptap2026/actions/runs/37591026543) 的 build / deploy-pages 均 success，itch job skipped。
+- 2026-10-07 16:06（UTC+8）线上复测完成：独立预览可见纸面且没有占位纹理；手动折痕、回退、五步示范、自由试飞与五关连续通关到总成绩均 PASS，浏览器运行错误为 0。
+- 线上 PCK 与最后一次本地导出 SHA256 相同：`38094db7827da24521607ca55fdf0ced30e0fb9b04af1c11df02bb346fea684b`。
+- 大厅已无 2D v3 卡片，3D 指向 v27；展开「其他归档记录」可见 2D v3。`reviews/demo08-physical-published.json` 和 `reviews/demo08-physical-browser-online.json` 保存实测证据，截图后缀为 `-online.png`。
+- 本轮修改仅涉及 demo08 与 FB-104/109；其他大厅/归档/反馈条目经逐项比较保持不变，PINNED v10 无差异，builds 总大小约 789.1MiB。
