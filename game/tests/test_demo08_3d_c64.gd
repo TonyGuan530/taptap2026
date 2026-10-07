@@ -2,7 +2,7 @@ extends SceneTree
 ## demo-08 3D 阶段 C64（大师篇·L40 三轴终考）核心不变量（headless，固定 delta=1/60）：
 ## 纯既有机制组合（无新字段）：逆风 × 左推侧风 -60 × 摆动低门 64m/top12/0±360/3s × 俯冲输入。
 ## 三轴：俯冲定高度、侧风推横位（D 窗顶风修正）、摆相定横位时机。
-## 配方 3×0.35@27° dive=1.6s + D 0.4-1.2s。L1-L39 逐位不变。40 关。
+## 配方 3×0.35@27° dive=1.6s + D 0.4-1.2s。L1-L39 逐位不变。42 关。
 ## 运行：godot --headless --path game -s res://tests/test_demo08_3d_c64.gd（失败退出码非零）
 
 const CoreScript := preload("res://demo08_3d/flight_core.gd")
@@ -55,15 +55,15 @@ func _run() -> void:
 	await process_frame
 	_log("demo-08 3D 阶段 C64 三轴终考测试开始")
 
-	# C64-1 静态锚：摆动低门 64m/top12/0±360/3s、左推侧风 -60、40 关
+	# C64-1 静态锚：摆动低门 64m/top12/0±360/3s、左推侧风 -60、42 关
 	var c1: Object = CoreScript.new()
 	c1.start_level(39)
 	_check(absf(float(c1.LEVELS[39].low_gate_x) - 64.0) < 1e-6
 		and absf(float(c1.LEVELS[39].low_gate_top) - 16.0) < 1e-6
 		and absf(float(c1.LEVELS[39].low_gate_side)) < 1e-6
 		and absf(float(c1.LEVELS[39].low_gate_swing) - 360.0) < 1e-6
-		and float(c1.side_wind_accel()) == -60.0 and int(c1.LEVELS.size()) == 41,
-		"C64-1 静态锚：摆动低门 64m/top12/0±360 / 侧风 -60 / 40 关")
+		and float(c1.side_wind_accel()) == -60.0 and int(c1.LEVELS.size()) == 42,
+		"C64-1 静态锚：摆动低门 64m/top12/0±360 / 侧风 -60 / 42 关")
 
 	# C64-2 三轴配方：3 折 v=0.35 27° dive=1.6s + D 0.4-1.2s → 过关穿摆动低门，24 = 3 + 7 + 14
 	var good: Object = _mk_and_fly(3, 0.35, 27.0, 1.6, 0.4, 1.2)

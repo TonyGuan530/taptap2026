@@ -63,7 +63,7 @@ func _run() -> void:
 	var mid: bool = c1.low_gate_open()
 	c1.flight_time = 3.6
 	var late: bool = c1.low_gate_open()
-	_check(early == false and mid == true and late == false and int(c1.LEVELS.size()) == 41
+	_check(early == false and mid == true and late == false and int(c1.LEVELS.size()) == 42
 		and absf(float(c1.LEVELS[40].low_gate_top) - 16.0) < 1e-6,
 		"C65-1 低门时机窗三态 + 门 top16 + 41 关")
 

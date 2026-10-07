@@ -60,7 +60,7 @@ func _run() -> void:
 	c1.start_level(36)
 	_check(absf(float(c1.LEVELS[36].low_gate_x) - 70.0) < 1e-6
 		and absf(float(c1.LEVELS[36].low_gate_top) - 21.0) < 1e-6
-		and c1.dive_input == false and int(c1.LEVELS.size()) == 41,
+		and c1.dive_input == false and int(c1.LEVELS.size()) == 42,
 		"C61-1 静态锚：低门 70m/top21 / 缺省不俯冲 / 37 关")
 
 	# C61-2 俯冲配方：4 折 v=0.35 30°、2.0s 起俯冲 → 过关穿低门，24 = 3 + 7 + 14
