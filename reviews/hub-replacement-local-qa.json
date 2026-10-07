@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-07T04:27:52.047Z",
+  "base": "http://127.0.0.1:8788/",
+  "previewMode": "static Pages preview with current main frontend",
+  "passed": true,
+  "evidence": [
+    {
+      "kind": "dino",
+      "cardClicked": true,
+      "target": "builds/demo-05-tonight-v8/index.html",
+      "engineStatus": "ready"
+    },
+    {
+      "kind": "ink",
+      "cardClicked": true,
+      "target": "builds/demo-06-inkbound-v10-touch/index.html",
+      "engineStatus": "ready"
+    },
+    {
+      "kind": "dinoSmoke",
+      "pckSha256": "3445936913e527425fe94fdbc43d40a8f10ba78f3dade7a33223af96e6812a98",
+      "before": [
+        -5,
+        -0.03,
+        4
+      ],
+      "after": [
+        -2,
+        -0.03,
+        4
+      ],
+      "buildingMenu": true,
+      "errors": [],
+      "method": "actual browser card clicks and normal keyboard/pointer input; read-only QA; original validated PCK"
+    }
+  ]
+}

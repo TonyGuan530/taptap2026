@@ -35,20 +35,19 @@
     {
       "id": "demo-05-hd2d-v6",
       "title": "恐龙火山 HD-2D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "reason": "大厅恐龙卡片已切换为 Low Poly 3D V8 营地生存版，原 HD-2D 版归档。",
+      "archivedAt": "2026-10-07"
     },
     {
       "id": "demo-05-tonight-v8",
-      "title": "恐龙 V8 · 交友与营地建设",
-      "status": "archived",
+      "title": "恐龙也想开灯 · Low Poly 3D V8",
+      "status": "active",
       "revivable": true,
-      "reason": "旧合辑中的恐龙原型已归档；独立保留交友、雇佣与建设实录。",
       "videoUrl": "tonight-v8-videos/dino-v8.mp4",
       "poster": "tonight-assets/dino-preview-v8.png",
-      "featured": true,
-      "archivedAt": "2026-10-07",
-      "displayOrder": 4
+      "activatedAt": "2026-10-07"
     },
     {
       "id": "demo-06-inkbound-v10-touch",
@@ -71,8 +70,10 @@
     {
       "id": "demo-06-v15",
       "title": "词条涂鸦 2D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "reason": "大厅小画家卡片已切换为 INKBOUND V10 触控版，原 2D 涂鸦原型归档。",
+      "archivedAt": "2026-10-07"
     },
     {
       "id": "demo-08-3d-v26",

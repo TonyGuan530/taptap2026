@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-05",
+  "updatedAt": "2026-10-07",
   "note": "玩法块计划（由成员的 Miro 想法整理而来）。status 取值：pending=待开发 / doing=开发中 / done=已可玩 / paused=暂停。buildId 填 builds/ 下的目录名，填了首页卡片就自动变成可点击试玩。流水线每轮按顺序挑第一个 pending 的开发。",
   "slots": [
     {
@@ -39,17 +39,18 @@
     },
     {
       "id": "demo-05",
-      "title": "重生之我是恐龙·火山生存",
-      "goal": "HD-2D 实时生存（像饥荒/环世界）：直接控制像素恐龙；阶段B PASS；阶段C 三层齐备——灰潮夜潮（安全区）+泥流夜漫（路径拓扑）+萨满预报75%（不完全信息驱动营地区位）；督导 KEEP 候选，待真人空间学习证据；回合制火山短局归档",
-      "buildId": "demo-05-hd2d-v6",
+      "title": "恐龙也想开灯 · 3D 营地生存",
+      "goal": "带着现代记忆探索史前世界，结交并雇佣野生恐龙，分工采集，自由建造和升级营地。发展灯泡与蒸汽科技，面对火山的飞船／地下双结局。",
+      "buildId": "demo-05-tonight-v8",
       "status": "done"
     },
     {
       "id": "demo-06",
-      "title": "词条涂鸦创造（新想法）",
-      "goal": "探索获得词条(Fire/Heavy/Float/Sticky...) + 有限墨水画图形 + 赋词条生成效果；关卡只给目标不规定答案，涌现来自统一规则组合",
-      "buildId": "demo-06-v15",
-      "status": "done"
+      "title": "墨迹漂流 / INKBOUND · V10 触控版",
+      "goal": "多笔手绘梯架、坡板和墨刃；探索拾取词条，按实际尺寸搭建、切藤或绕行。支持电脑键鼠与手机横屏触控。",
+      "buildId": "demo-06-inkbound-v10-touch",
+      "status": "done",
+      "landingUrl": "./inkbound-v10.html"
     },
     {
       "id": "demo-06-3d",
@@ -57,7 +58,9 @@
       "goal": "多笔画梯架与闭合板面，按真实尺寸搭建攀爬；野外拾取弹性与黏性改变通路，三段立体纸页之后用黄墨画武器，切藤或搭建绕行，找回完整画页。",
       "buildId": "demo-06-inkbound-v10-touch",
       "status": "done",
-      "landingUrl": "./inkbound-v10.html"
+      "landingUrl": "./inkbound-v10.html",
+      "hidden": true,
+      "canonicalSlot": "demo-06"
     },
     {
       "id": "demo-08",

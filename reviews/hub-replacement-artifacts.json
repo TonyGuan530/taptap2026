@@ -1,0 +1,62 @@
+{
+  "files": [
+    {
+      "file": "builds/demo-05-tonight-v8/build.json",
+      "bytes": 269,
+      "sha256": "47092ba097b5511662cd9c41295fa15e89d5d6df7bcb2db53e06009c41c165ac"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/index.apple-touch-icon.png",
+      "bytes": 9166,
+      "sha256": "8386ecb7144f48c70ad6385dc784f1bddecc92fbec89b02c9be0c56b4105da67"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/index.audio.position.worklet.js",
+      "bytes": 2973,
+      "sha256": "be33985bc7160d6bf9646f259cd86b259cd67b02ccb297ee5c44f8ac84327bc8"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/index.audio.worklet.js",
+      "bytes": 7298,
+      "sha256": "5b476a9c9ce642c0ee4256436d1bc31d9c38f868aca0f9a8e2a57c18d2dec2a3"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/index.html",
+      "bytes": 5470,
+      "sha256": "02703d1053a15dcc9024d86cbd57b2819bc9fd577d34e83011ceca624baf9493"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/index.icon.png",
+      "bytes": 3900,
+      "sha256": "d9b31e0360c95113f022cc24f5458c0cd24738dbf28783ed423986adf97e47bd"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/index.js",
+      "bytes": 279815,
+      "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/index.pck",
+      "bytes": 27378124,
+      "sha256": "3445936913e527425fe94fdbc43d40a8f10ba78f3dade7a33223af96e6812a98"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/index.png",
+      "bytes": 21443,
+      "sha256": "3cb4495c0b98dfbe4b663cbf2b6836473572339beb66d902367893162a70be0e"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/index.wasm",
+      "bytes": 39514754,
+      "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+    },
+    {
+      "file": "builds/demo-05-tonight-v8/PINNED.md",
+      "bytes": 373,
+      "sha256": "4a710b5790a42fcbb454efafe4796bb846f57990fb9b9b2331b4b7f9a142a142"
+    }
+  ],
+  "pckMatchesPreviousValidation": true,
+  "htmlFinalNewlineNormalized": true,
+  "metadataWhitespaceNormalized": true
+}

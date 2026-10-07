@@ -44,7 +44,7 @@ async function renderSlots(builds) {
   try {
     const r = await fetch('demos.json?v=' + Date.now());
     const d = await r.json();
-    slots = d.slots || [];
+    slots = (d.slots || []).filter((slot) => !slot.hidden);
   } catch (e) { /* 没有 demos.json 就隐藏大厅 */ }
   if (sec) sec.hidden = slots.length === 0;
   if (!slots.length) return;
