@@ -35,5 +35,5 @@
 ### Task 3: Delivery
 - [x] Rebuild font subset, v29 export with exit0+artifacts, independent review and fixes.
 - [x] Update only demo08 slots/archive/feedback, archive own v28 for size, keep others.
-- [ ] Commit/push, Pages success, online workbench actions and all five challenges, PCKhash.
-- [ ] Save evidence/report, sync only owned files to primary, direct play URL.
+- [x] Commit/push, Pages success, online workbench actions and all five challenges, PCKhash.
+- [x] Save evidence/report, sync only owned files to primary, direct play URL.

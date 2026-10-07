@@ -1,0 +1,40 @@
+{
+  "verifiedAt": "2026-10-07T09:20:37.825Z",
+  "base": "https://tonyguan530.github.io/taptap2026",
+  "passed": true,
+  "pckSha256": "5affbd8d314cb6eff93197e698240611fec4f9ab329812d4a03ad6b0762ba4de",
+  "checks": [
+    {
+      "name": "2D slot removed",
+      "passed": true
+    },
+    {
+      "name": "3D slot points to v29",
+      "passed": true
+    },
+    {
+      "name": "2D v3 archived",
+      "passed": true
+    },
+    {
+      "name": "v29 active",
+      "passed": true
+    },
+    {
+      "name": "v28 archived",
+      "passed": true
+    },
+    {
+      "name": "Online PCK matches latest tested export",
+      "passed": true
+    },
+    {
+      "name": "2D absent from rendered hub",
+      "passed": true
+    },
+    {
+      "name": "2D v3 appears in rendered archive",
+      "passed": true
+    }
+  ]
+}

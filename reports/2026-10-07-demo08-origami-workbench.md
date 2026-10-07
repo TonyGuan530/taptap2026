@@ -15,3 +15,7 @@
 - https://github.com/rabbit-ear/rabbit-ear
 
 最终本地浏览器 2026-10-07T09:15:52.151Z：实际鼠标选面、边中点吸附、两次倾斜面折叠、数值输入、旧折痕调整、取消复原、实际旋转手柄90度、撤销重做、空白纸撤销、环绕/平移/缩放不改几何均通过；示范飞机和五关全通，运行错误0。独立代码复核发现的未确认历史重选错误已修复，复核无剩余 Critical/Important。导入/导出 exit0 且 HTML/JS/WASM/PCK 均存在。
+
+线上核验：产品提交5c05d65f3c600d3c8fdf4183571424d6df48ca58，Actions37599665983 的 build/deploy-pages 均 success，itch 跳过。2026-10-07T09:21:24.612Z 的线上实际工作台45项检查全通过，错误0；包括吸附画折痕、未确认历史重选、数值角度、祖先折痕重调/取消、实际手柄90度、撤销重做、空白纸撤销、浏览视角不改几何、示范飞机试飞和五关连续通过。大厅v29与v28归档验证；线上PCK SHA256 5affbd8d314cb6eff93197e698240611fec4f9ab329812d4a03ad6b0762ba4de 与最终本地导出一致。
+
+试玩：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v29/index.html
