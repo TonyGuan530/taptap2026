@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-07T09:10:00+08:00",
-  "note": "归档区：GPT 对比裁决/用户 review 判不合格的 demo 形态与整体下线记录。git 历史可随时复活。",
+  "updated": "2026-10-07T09:15:00+08:00",
+  "note": "归档区：历史版本与下线 demo 全量登记。构建目录在仓库 archive-builds/（git 历史可复活，Pages 直链已撤）。",
   "items": [
     {
       "id": "demo-01",
@@ -16,6 +16,86 @@
       "reason": "与 demo-01 定位重叠，2026-10-03 裁定归档留档 CI",
       "archivedAt": "2026-10-03",
       "lastBuild": "demo-07-v2",
+      "revivable": true
+    },
+    {
+      "id": "demo-01-v3",
+      "title": "灵感菇侦探（原生 3D）",
+      "reason": "用户亲测裁决归档（2026-10-07）",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-01-v3",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v14",
+      "title": "物性谜题 3D 探索版（L6-L8）",
+      "reason": "探索版被 v15+ 取代，基线钉 v10",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-02-3d-v14",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v14",
+      "title": "岩浆降温 2D v14",
+      "reason": "被 3D 线取代后归档",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-03-v14",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v15",
+      "title": "SOUP 3D 资产加载器版",
+      "reason": "被 v17 取代",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-04-3d-v15",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v22",
+      "title": "恐龙火山 2D v22",
+      "reason": "HD-2D 线接管后 2D 归档",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-05-v22",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-tonight-v8",
+      "title": "demo-05 tonight 活动版",
+      "reason": "活动线归档",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-05-tonight-v8",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v15",
+      "title": "词条涂鸦 2D v15",
+      "reason": "移交外部 AI 后按收束归档",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-06-v15",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v9",
+      "title": "词条涂鸦 3D v9",
+      "reason": "移交外部 AI 后按收束归档",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-06-3d-v9",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-inkbound-v9",
+      "title": "Inkbound V9",
+      "reason": "被 V10 取代",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-06-inkbound-v9",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-tonight-v8",
+      "title": "demo-06 tonight 活动版",
+      "reason": "活动线归档",
+      "archivedAt": "2026-10-07",
+      "lastBuild": "demo-06-tonight-v8",
       "revivable": true
     }
   ]
