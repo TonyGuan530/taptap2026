@@ -1,0 +1,7 @@
+{
+  "title": "TapTap2026 Demo",
+  "version": "demo-02-3d-v15",
+  "date": "2026-10-07T09:30:00+08:00",
+  "author": "49321",
+  "notes": "user-requested fixes: third-person SpringArm camera (V toggles first-person), L1 earlier spring trigger + direction dashes"
+}
