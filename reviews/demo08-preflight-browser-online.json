@@ -1,0 +1,215 @@
+{
+  "verifiedAt": "2026-10-07T09:58:07.095Z",
+  "base": "https://tonyguan530.github.io/taptap2026",
+  "build": "demo-08-3d-v30",
+  "passed": true,
+  "checks": [
+    {
+      "name": "editable flying starter",
+      "passed": true
+    },
+    {
+      "name": "preflight before flight",
+      "passed": true
+    },
+    {
+      "name": "slider selects 60 degrees",
+      "passed": true
+    },
+    {
+      "name": "moving mouse preserves selected angle",
+      "passed": true
+    },
+    {
+      "name": "numerical input commits 30 degrees",
+      "passed": true
+    },
+    {
+      "name": "45 degree preset",
+      "passed": true
+    },
+    {
+      "name": "adjusting angle does not launch",
+      "passed": true
+    },
+    {
+      "name": "charge commits pending typed angle without Enter",
+      "passed": true
+    },
+    {
+      "name": "charging locks angle against keyboard and mouse",
+      "passed": true
+    },
+    {
+      "name": "release outside button launches",
+      "passed": true
+    },
+    {
+      "name": "actual physics launches at selected 30 degrees",
+      "passed": true
+    },
+    {
+      "name": "practice landing",
+      "passed": true
+    },
+    {
+      "name": "five-level menu",
+      "passed": true
+    },
+    {
+      "name": "level 1",
+      "passed": true
+    },
+    {
+      "name": "level starter 1",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 1",
+      "passed": true
+    },
+    {
+      "name": "level 2",
+      "passed": true
+    },
+    {
+      "name": "level starter 2",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 2",
+      "passed": true
+    },
+    {
+      "name": "level 3",
+      "passed": true
+    },
+    {
+      "name": "level starter 3",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 3",
+      "passed": true
+    },
+    {
+      "name": "level 4",
+      "passed": true
+    },
+    {
+      "name": "level starter 4",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 4",
+      "passed": true
+    },
+    {
+      "name": "level 5",
+      "passed": true
+    },
+    {
+      "name": "level starter 5",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 5",
+      "passed": true
+    },
+    {
+      "name": "five-level final",
+      "passed": true
+    },
+    {
+      "name": "no browser or script errors",
+      "passed": true
+    }
+  ],
+  "telemetry": [
+    "PAPER|menu|levels=5",
+    "PAPER|level|1|practice=true",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|aim|angle=12",
+    "PAPER|aim|angle=12",
+    "PAPER|aim|angle=15",
+    "PAPER|aim|angle=19",
+    "PAPER|aim|angle=22",
+    "PAPER|aim|angle=25",
+    "PAPER|aim|angle=29",
+    "PAPER|aim|angle=32",
+    "PAPER|aim|angle=35",
+    "PAPER|aim|angle=39",
+    "PAPER|aim|angle=42",
+    "PAPER|aim|angle=45",
+    "PAPER|aim|angle=49",
+    "PAPER|aim|angle=52",
+    "PAPER|aim|angle=55",
+    "PAPER|aim|angle=58",
+    "PAPER|aim|angle=60",
+    "PAPER|aim|angle=30",
+    "PAPER|aim|angle=45",
+    "PAPER|aim|angle=30",
+    "PAPER|launch|angle=30|mass=0.00504|area=0.03545",
+    "PAPER|land|13.45m|3.43s",
+    "PAPER|menu|levels=5",
+    "PAPER|level|1|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|aim|angle=12",
+    "PAPER|launch|angle=12|mass=0.00504|area=0.03545",
+    "PAPER|course|1|pass=true|12.01m",
+    "PAPER|level|2|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|aim|angle=12",
+    "PAPER|launch|angle=12|mass=0.00504|area=0.03545",
+    "PAPER|course|2|pass=true|16.02m",
+    "PAPER|level|3|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|aim|angle=12",
+    "PAPER|launch|angle=12|mass=0.00504|area=0.03545",
+    "PAPER|course|3|pass=true|9.05m",
+    "PAPER|level|4|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|aim|angle=12",
+    "PAPER|launch|angle=12|mass=0.00504|area=0.03545",
+    "PAPER|course|4|pass=true|13.06m",
+    "PAPER|level|5|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|aim|angle=12",
+    "PAPER|launch|angle=12|mass=0.00504|area=0.03545",
+    "PAPER|course|5|pass=true|20.04m",
+    "PAPER|final|levels=5"
+  ],
+  "errors": []
+}
