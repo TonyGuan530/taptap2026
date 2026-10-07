@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-07T06:54:00+08:00",
-  "round": 153,
+  "checkedAt": "2026-10-07T08:52:00+08:00",
+  "round": 155,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "守卫下轮实跑"
+    "thisRound": "guard SKIP not-foreground（08:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -28,7 +28,7 @@
     "demo-04": {
       "cron": "15,45 * * * *",
       "runCount": 24,
-      "evidence": "✅ 3D v14 发布（时间基巡游驱动器 Web 低帧率鲁棒+六关演示片重录 991帧；净零替换）"
+      "evidence": "✅ 3D v17 实验房选关器扩展至 6（lab-first 被试直达 L6 终局回廊；净零替换）"
     },
     "demo-05": {
       "cron": "20,50 * * * *",
@@ -53,7 +53,7 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "🔴 督导代执行 GPT 对比送验（06:54 升级警告发出，07:52 起 demo-02 开始）"
+    "queue": "GPT 对比送验：出证已完成待递交（用户手动贴 prompt.md 或督导重试）；FB-104/109 随 demo-08；FB-103 已移交"
   },
   "watch": [
     "🔴【硬红线】06:50 巡检合规——持续",
