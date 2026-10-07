@@ -36,7 +36,7 @@ const LEVELS := [
 			[Vector3(12.25, 4.5, 0), Vector3(0.5, 9, 13), "wall"],
 			[Vector3(0, 9.25, 0), Vector3(24, 0.5, 13), "wall"],
 		],
-		spring = { pos = Vector3(-4.5, 0.15, 0), imp = Vector3(0, 12, 0) },
+		springs = [ { pos = Vector3(-4.5, 0.15, 0), imp = Vector3(0, 12, 0), size = Vector3(2, 2.4, 2) } ],   # FIX-2：触发带加高=提前 0.2-0.3s 点火，给人类玩家更长滞空窗口
 		fragile = null,
 		goal = { pos = Vector3(7, 0.65, 0), size = Vector3(2.4, 1.1, 2.4) },   # 底 0.1m 离地防贴合误触发
 	},
@@ -195,7 +195,9 @@ var elapsed := 0.0
 var yaw := 0.0
 var pitch := 0.0
 var cam_rig: Node3D
+var cam_arm: SpringArm3D
 var camera: Camera3D
+var third_person := true
 var comic_style: Resource
 var hud_tag: Label
 var hud_level: Label
@@ -217,7 +219,7 @@ func _ensure_input_actions() -> void:
 	var defs := {
 		"p_left": [KEY_A], "p_right": [KEY_D], "p_fwd": [KEY_W], "p_back": [KEY_S],
 		"p_flap": [KEY_SPACE], "p_reset": [KEY_R],
-		"p_tag1": [KEY_1], "p_tag2": [KEY_2], "p_tag3": [KEY_3],
+		"p_tag1": [KEY_1], "p_tag2": [KEY_2], "p_tag3": [KEY_3], "p_pov": [KEY_V],
 	}
 	for action: String in defs:
 		if not InputMap.has_action(action):
@@ -346,6 +348,16 @@ func _load_level(idx: int) -> void:
 	goal.body_entered.connect(_on_goal_enter)
 	add_child(goal)
 	level_nodes.append(goal)
+	if level_idx == 0:
+		for i in 3:   # FIX-2：弹射方向虚线标示（地面三段黄虚线指向 +X）
+			var dash := MeshInstance3D.new()
+			var dm := BoxMesh.new()
+			dm.size = Vector3(1.1, 0.06, 0.5)
+			dash.mesh = dm
+			dash.position = Vector3(0.4 + i * 1.5, 0.08, 0)
+			dash.material_override = comic_style.body_material(Color(0.95, 0.82, 0.25))
+			add_child(dash)
+			level_nodes.append(dash)
 	# 球与状态
 	_spawn_ball(lv.spawn)
 	_apply_tag()
@@ -389,10 +401,13 @@ func _spawn_ball(pos: Vector3) -> void:
 		cam_rig = Node3D.new()
 		cam_rig.name = "CameraRig"
 		add_child(cam_rig)
+		cam_arm = SpringArm3D.new()
+		cam_arm.spring_length = 4.5   # 第三人称默认（V 键切第一人称，FIX-1）
+		cam_arm.collision_mask = 0    # 简化：不做相机避障（v15 修复范围）
+		cam_rig.add_child(cam_arm)
 		camera = Camera3D.new()
-		camera.position = Vector3(0, 0.25, 0)
 		camera.fov = 80.0
-		cam_rig.add_child(camera)
+		cam_arm.add_child(camera)
 		camera.current = true
 	_apply_tag()
 
@@ -419,7 +434,7 @@ func _refresh_hud() -> void:
 	var t: Dictionary = TAGS[tag_idx]
 	hud_tag.text = "词条：%s · %s" % [t.name, t.kw]
 	hud_tag.add_theme_color_override("font_color", t.color)
-	hud_hint.text = "WASD 移动｜鼠标观察｜1/2/3 切词条｜空格=羽毛扑翼(滞空一次)｜R 重置｜Esc 释放鼠标"
+	hud_hint.text = "WASD 移动｜鼠标观察｜1/2/3 切词条｜空格=羽毛扑翼(滞空一次)｜V 切视角｜R 重置｜Esc 释放鼠标"
 
 
 func switch_tag(i: int) -> void:
@@ -539,6 +554,9 @@ func _physics_process(delta: float) -> void:
 		switch_tag(1)
 	if Input.is_action_just_pressed("p_tag3"):
 		switch_tag(2)
+	if Input.is_action_just_pressed("p_pov"):
+		third_person = not third_person
+		cam_arm.spring_length = 4.5 if third_person else 0.0   # V 切第三/第一人称（FIX-1）
 
 	in_spring = false
 	for a in spring_areas:
@@ -554,7 +572,7 @@ func _physics_process(delta: float) -> void:
 	if cam_rig != null and is_instance_valid(ball):
 		cam_rig.global_position = ball.global_position + Vector3(0, 0.3, 0)
 		cam_rig.rotation = Vector3(0, yaw, 0)
-		camera.rotation.x = pitch
+		cam_arm.rotation.x = pitch
 
 	if flash_t > 0.0:
 		flash_t = maxf(0.0, flash_t - delta)
