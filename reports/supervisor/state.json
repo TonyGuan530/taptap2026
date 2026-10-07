@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-07T08:52:00+08:00",
-  "round": 155,
+  "checkedAt": "2026-10-07T09:52:00+08:00",
+  "round": 156,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
-    "thisRound": "guard SKIP not-foreground（08:50 实跑）"
+    "thisRound": "guard SKIP not-foreground（09:50 实跑）"
   },
   "automations": {
     "supervisor": {
@@ -13,7 +13,7 @@
     },
     "demo-01(流水线)": {
       "cron": "*/5 * * * *",
-      "evidence": "⚠️ demo-08 v23 L39（39 关）继续加关——FB-104/109/SOP 均未消化；督导下轮起亲自代执行送验（demo-02 起）"
+      "evidence": "✅ demo-08 3D v25 L41 时机俯冲与低门时间窗（41 关）——FB-104/109 排队中"
     },
     "demo-02": {
       "cron": "5,35 * * * *",
@@ -53,7 +53,7 @@
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "GPT 对比送验：出证已完成待递交（用户手动贴 prompt.md 或督导重试）；FB-104/109 随 demo-08；FB-103 已移交"
+    "queue": "GPT 对比送验递交环节：下轮督导重试浏览器递交（视口加宽+ProseMirror 直写方案）；FB-102 responded 待裁决归档"
   },
   "watch": [
     "🔴【硬红线】06:50 巡检合规——持续",
