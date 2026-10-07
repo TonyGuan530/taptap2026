@@ -876,7 +876,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_H:
 			keys_hint_visible = not keys_hint_visible
 			lbl_keys.visible = keys_hint_visible
-		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5:
+		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6:
 			# 实验房关卡选择器（Phase D lab-first）：1~5 直达对应关卡，全 DNA 自动带上
 			if mode == "lab":
 				var idx: int = event.keycode - KEY_1
