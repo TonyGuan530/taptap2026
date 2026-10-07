@@ -19,6 +19,8 @@ const PAPER_H := 300.0
 
 var style_def: Resource = StyleDef.new()   # 3d-shared 基座统一样式（toon+描边）
 
+const OrigamiEditor = preload("res://demo08_3d/origami_editor.gd")
+var origami_editor: Control
 var practice_mode := false
 var paper = PaperGeometry.new()
 var fold_animation := 1.0
@@ -106,6 +108,12 @@ func _ready() -> void:
 	_build_world()
 	_build_hud()
 	_build_fold_preview()
+	origami_editor=OrigamiEditor.new()
+	origami_editor.name="OrigamiWorkbench"
+	hud.add_child(origami_editor)
+	origami_editor.geometry_changed.connect(_sync_workbench)
+	origami_editor.fly_requested.connect(_on_fold_done)
+	origami_editor.menu_requested.connect(_go_menu)
 	_apply_level_props()
 	_on_level_pressed.call_deferred(0,true)
 	auto_shots_dir = String(OS.get_environment("DEMO08_SHOTS_DIR"))
@@ -1017,14 +1025,30 @@ func _on_level_pressed(i: int, practice: bool = false) -> void:
 	fold_has_p1 = false
 	_apply_level_props()
 	_update_status()
+	if origami_editor!=null:
+		origami_editor.load_sheet(0.7 if practice_mode else float(core.level_dict().ratio),"自由折纸" if practice_mode else "第%d关 · %s" % [i+1,String(core.LEVELS[i].short)])
+		origami_editor.visible=true
 
+
+func _sync_workbench() -> void:
+	paper=origami_editor.model.paper
+	core.folds.clear()
+	for action in paper.history:
+		var a:Vector2=Vector2(action.origin.x,action.origin.z)
+		var b:Vector2=a+Vector2(action.axis.x,action.axis.z)*0.1
+		core.folds.append([a,b])
+	core.folds_used=core.folds.size()
+	fold_animation=1.0
+	_rebuild_plane_visual()
 
 func _on_fold_done() -> void:
 	if core.state != "fold":
 		return
 	if fold_animation < 1.0 or not dart_queue.is_empty(): return
 	_end_fold_drag()
+	if origami_editor!=null and not origami_editor.model.transaction.is_empty(): return
 	core.finish_folds()
+	if origami_editor!=null: origami_editor.visible=false
 	_rebuild_plane_visual()   # C68 打磨A：折完即形变
 	fold_btn.visible = false
 	charging = false
@@ -1136,6 +1160,7 @@ func _on_menu_tip_rotate() -> void:
 # ---------------- 输入（真实事件路径） ----------------
 
 func _unhandled_input(event: InputEvent) -> void:
+	if core.state=="fold" and origami_editor!=null: return
 	if core.state=="fold":
 		if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT:
 			preview_rotating=event.pressed
@@ -1219,7 +1244,11 @@ func _process(delta: float) -> void:
 	if core.state == "fold" and fold_animation >= 1.0 and not dart_queue.is_empty():
 		var action: Dictionary = dart_queue.pop_front()
 		_record_fold(action.a,action.b,float(action.angle))
-	for button in [undo_btn,dart_btn,unfold_btn,crease_btn]: button.visible = core.state == "fold"
+	for button in [undo_btn,dart_btn,unfold_btn,crease_btn]: button.visible = false
+	fold_btn.visible=false
+	status_label.visible=core.state!="fold"
+	hint_label.visible=core.state!="fold"
+	if origami_editor!=null: origami_editor.visible=core.state=="fold"
 	undo_btn.disabled = paper.history.is_empty()
 	crease_btn.disabled = fold_animation<1.0 or not dart_queue.is_empty() or paper.history.size()>=8
 	fold_notice_time=maxf(0.0,fold_notice_time-delta)
@@ -1246,7 +1275,8 @@ func _process(delta: float) -> void:
 	_update_visuals()
 	# C68 打磨B：折纸态预览窗——可见性随状态，相机绕机体慢速环绕
 	if fold_preview_rect != null:
-		fold_preview_rect.visible = core.state == "fold"
+		fold_preview_rect.visible = false
+		fold_preview_vp.render_target_update_mode=SubViewport.UPDATE_DISABLED
 	if core.state == "fold" and fold_preview_cam != null and plane_visual != null:
 		fold_preview_cam.position = Vector3(sin(fold_preview_orbit)*preview_distance,tan(preview_elevation)*preview_distance,cos(fold_preview_orbit)*preview_distance)
 		fold_preview_cam.look_at(Vector3.ZERO)
@@ -1425,9 +1455,8 @@ func _on_paint() -> void:
 	if st == "menu" or st == "final":
 		return
 	_draw_wind_tag()
-	if st == "fold":
-		_draw_paper()
-	if st == "fold" or st == "throw":
+	if st == "fold": return
+	if st == "throw":
 		_draw_params()
 	if st == "throw":
 		_draw_throw_ui()

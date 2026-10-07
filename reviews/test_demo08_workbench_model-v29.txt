@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: begin explicit crease transaction
+PASS: reselecting pending crease preserves preview transaction
+PASS: preview partial angle
+PASS: commit first hinge
+PASS: second crease on standing face
+PASS: two editable crease features
+PASS: edit first hinge after second fold
+PASS: descendants replay and area preserved
+PASS: cancel restores all geometry and angles
+PASS: undo is a whole model transaction
+PASS: redo restores changed ancestor and children
+PASS: reject NaN angles
+PASS: reject degenerate hinge without mutation
+PASS: invalid crease leaves last good model
+PASS: flying starter has editable wing hinge
+PASS: starter wing angle is editable
+PASS: starter cancellation restores wing angle
+PASS: new sheet creates clean editable paper
+PASS: new sheet is undoable without losing starter
+PASS: NaN inside an active transaction preserves geometry
+WORKBENCH_MODEL_RESULT failures=0
