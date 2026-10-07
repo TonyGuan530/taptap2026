@@ -65,7 +65,7 @@ func _run() -> void:
 	_check(a1 == -2000.0 and a2 == 2800.0
 		and absf(float(c1.gate_side_at(0.75)) - (-240.0 + 360.0)) < 1e-6
 		and absf(float(c1.gate_side_at(2.25)) - (-240.0 - 360.0)) < 1e-6
-		and int(c1.LEVELS.size()) == 40 and float(c1.LEVELS[34].get("low_gate_x", 0.0)) == 0.0,
+		and int(c1.LEVELS.size()) == 41 and float(c1.LEVELS[34].get("low_gate_x", 0.0)) == 0.0,
 		"C57-1 静态锚：谷 -2000 / 热流 +2800 / 门摆 -240±360 / 36 关 / 无低门")
 
 	# C57-2 配方：4 折 v=0.35 30° 无舵 → 过关吃摆动高门，25 = 3 + 8 + 14

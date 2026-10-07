@@ -62,7 +62,7 @@ func _run() -> void:
 	var a_therm: float = c1.updraft_accel()
 	_check(absf(float(c1.gate_side_at(0.875)) - 420.0) < 1e-6
 		and absf(float(c1.gate_side_at(2.625)) + 420.0) < 1e-6
-		and a_sink == -2500.0 and a_therm == 3000.0 and int(c1.LEVELS.size()) == 40,
+		and a_sink == -2500.0 and a_therm == 3000.0 and int(c1.LEVELS.size()) == 41,
 		"C43-1 静态锚：门摆 ±420/3.5s / 双带 -2500/+3000 / 27 关")
 
 	# C43-2 配方：4 折 v=0.2 40° → 过关吃摆动高门，收益 25 = 3 + 8 + 14

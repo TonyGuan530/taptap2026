@@ -1195,6 +1195,7 @@ func _run() -> void:
 			Vector2(c14.paper_rect.position.x + c14.paper_rect.size.x * 0.92, c14.paper_rect.position.y + c14.paper_rect.size.y * (mid_y40 - 0.23)),
 			Vector2(c14.paper_rect.position.x + c14.paper_rect.size.x * 0.92, c14.paper_rect.position.y + c14.paper_rect.size.y * (mid_y40 + 0.23)))
 	c14.finish_folds()
+	c14.dive_input = false   # B6d35 残留俯冲清零（跨掷残留同 C15/C31 教训）
 	c14.do_throw(27.0, 1.0)
 	var guard51 := 0
 	while c14.state == "fly" and guard51 < MAX_STEPS:
@@ -1204,10 +1205,33 @@ func _run() -> void:
 		guard51 += 1
 	if c14.last_pass:
 		var go38: String = c14.settle_continue()
-		_check(go38 == "final" and c14.state == "final" and c14.low_gate_hit,
-			"B6d36 L40 三轴终考穿低门→final（本次实现际过关 %.1fm）" % c14.flight_distance)
+		_check(go38 == "shop" and c14.state == "shop" and c14.low_gate_hit,
+			"B6d36 L40 三轴终考穿低门→shop（%.1fm；LEVELS 扩展后 L40 非末关）" % c14.flight_distance)
 	else:
 		_check(true, "B6d36 L40 本折法未过关（%.1fm，流转测试以 B6d 为准）" % c14.flight_distance)
+	# L41（时机俯冲：5 折 v=0.35 28°、dive=1.8s 窗内穿低门 → final）
+	if String(c14.state) == "shop":
+		c14.shop_skip()
+	c14.start_level(40)
+	var l41_ok := true
+	for k in 5:
+		var mid_y41: float = 0.5 - 0.5 * 0.35
+		l41_ok = l41_ok and c14.add_fold(
+			Vector2(c14.paper_rect.position.x + c14.paper_rect.size.x * 0.92, c14.paper_rect.position.y + c14.paper_rect.size.y * (mid_y41 - 0.23)),
+			Vector2(c14.paper_rect.position.x + c14.paper_rect.size.x * 0.92, c14.paper_rect.position.y + c14.paper_rect.size.y * (mid_y41 + 0.23)))
+	c14.finish_folds()
+	c14.do_throw(28.0, 1.0)
+	var guard52 := 0
+	while c14.state == "fly" and guard52 < MAX_STEPS:
+		c14.dive_input = c14.flight_time >= 1.8
+		c14.step(DELTA)
+		guard52 += 1
+	if c14.last_pass:
+		var go39: String = c14.settle_continue()
+		_check(go39 == "final" and c14.state == "final" and c14.low_gate_hit,
+			"B6d37 L41 时机俯冲穿低门→final（本次实现际过关 %.1fm）" % c14.flight_distance)
+	else:
+		_check(true, "B6d37 L41 本折法未过关（%.1fm，流转测试以 B6d 为准）" % c14.flight_distance)
 	c14.reset_run()
 	_check(c14.coins == 0 and c14.unlocked == 0 and int(c14.upgrades.power) == 0 and c14.owned.is_empty(),
 		"B6e reset_run 清空进度")

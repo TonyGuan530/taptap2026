@@ -157,6 +157,9 @@ const LEVELS := [
 	{name = "第 40 关 · 三轴终考", short = "三轴终考", ratio = 0.7, folds = 5, target_m = 74.0, wind = "head", side_wind = -60.0, reward = 14,
 		low_gate_x = 64.0, low_gate_top = 16.0, low_gate_side = 0.0, low_gate_swing = 360.0, low_gate_period = 3.0, gate_bonus = 3,
 		tip = "三轴终考（大师篇）：俯冲（高度）× 摆门相位（横位时机）× 左推侧风（横位力场）三轴同关——64 米摆动低门（12m 以下、0 点 ±6m 摆、3 秒来回）：S 键俯冲压到门下、顶住左推风稳住横位、再对上门摆到的相位，三样全对上才吃得到 +3。大师篇毕业考，74 米冲线。大师关（用户指令扩展）"},
+	{name = "第 41 关 · 时机俯冲", short = "时机俯冲", ratio = 0.7, folds = 5, target_m = 74.0, wind = "none", reward = 14,
+		low_gate_x = 66.0, low_gate_top = 16.0, low_gate_open_t0 = 2.4, low_gate_open_t1 = 3.4, gate_bonus = 3,
+		tip = "时机俯冲（大师篇）：时机窗与俯冲的耦合课——66 米低空门（16m 以下）只在 2.4-3.4 秒开窗：不俯冲滑翔太高过不了，俯冲太早会撞地、太晚又错过开窗。S 键按下深度的时机就是一切，74 米冲线。新门类型（用户指令扩展）"},
 ]
 
 const SHOP_POOL := [
@@ -269,6 +272,9 @@ func start_level(i: int) -> void:
 	plane_pos = Vector2(START_X, GROUND_Y - 40.0)
 	velocity = Vector2.ZERO
 	pitch = 0.0
+	lateral = 0.0
+	lateral_vel = 0.0
+	dive_input = false   # C89 修复：进关清空横向/俯冲残留（此前上一关末态会泄入新一关）
 	eff_lift = 0.0
 	flight_time = 0.0
 	flight_distance = 0.0
@@ -436,7 +442,7 @@ func step(delta: float) -> String:
 				gate_coins += gb
 	# 低空门：穿越门位、高度 ≤ low_gate_top、横向 |lateral - low_gate_side| ≤ GATE_HALF（与高空门互斥）
 	var lg_x_m: float = float(LEVELS[level_idx].get("low_gate_x", 0.0))
-	if lg_x_m > 0.0 and not low_gate_hit and not gate_hit:
+	if lg_x_m > 0.0 and not low_gate_hit and not gate_hit and low_gate_open():
 		var lg_px := START_X + lg_x_m * PX_PER_M
 		if prev_x < lg_px and plane_pos.x >= lg_px:
 			var lg_side: float = low_gate_side_at(flight_time)  # C19：含低空门摆动项
@@ -644,6 +650,21 @@ func side_wind_accel() -> float:
 func gate_open() -> bool:
 	var t0: float = float(LEVELS[level_idx].get("gate_open_t0", 0.0))
 	var t1: float = float(LEVELS[level_idx].get("gate_open_t1", 0.0))
+	if t0 <= 0.0 and t1 <= 0.0:
+		return true
+	if t0 > 0.0 and flight_time < t0:
+		return false
+	if t1 > 0.0 and flight_time > t1:
+		return false
+	return true
+
+
+## 阶段 C89 规则扩展（规则变化）：low_gate_open_t0/t1（秒）为低门开启时间窗——
+## 时机窗从高门推广到低门，与俯冲输入耦合为"俯冲深度 × 到达时机"双约束。
+## 两字段均 0（缺省）= 常开，既有 37 关路径不变。
+func low_gate_open() -> bool:
+	var t0: float = float(LEVELS[level_idx].get("low_gate_open_t0", 0.0))
+	var t1: float = float(LEVELS[level_idx].get("low_gate_open_t1", 0.0))
 	if t0 <= 0.0 and t1 <= 0.0:
 		return true
 	if t0 > 0.0 and flight_time < t0:

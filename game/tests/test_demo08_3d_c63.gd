@@ -61,7 +61,7 @@ func _run() -> void:
 	_check(absf(float(c1.LEVELS[38].low_gate_x) - 52.0) < 1e-6
 		and absf(float(c1.LEVELS[38].low_gate_top) - 18.0) < 1e-6
 		and absf(float(c1.LEVELS[38].low_gate_side) - 240.0) < 1e-6
-		and float(c1.side_wind_accel()) == -60.0 and int(c1.LEVELS.size()) == 40,
+		and float(c1.side_wind_accel()) == -60.0 and int(c1.LEVELS.size()) == 41,
 		"C63-1 静态锚：低门 52m/top18/+240 / 侧风 -60 / 40 关")
 
 	# C63-2 双操作配方：3 折 v=0.35 27°、dive=1.2s + D 0.4-1.2s → 过关穿低门，24 = 3 + 7 + 14

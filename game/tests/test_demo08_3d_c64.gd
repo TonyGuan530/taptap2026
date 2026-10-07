@@ -62,7 +62,7 @@ func _run() -> void:
 		and absf(float(c1.LEVELS[39].low_gate_top) - 16.0) < 1e-6
 		and absf(float(c1.LEVELS[39].low_gate_side)) < 1e-6
 		and absf(float(c1.LEVELS[39].low_gate_swing) - 360.0) < 1e-6
-		and float(c1.side_wind_accel()) == -60.0 and int(c1.LEVELS.size()) == 40,
+		and float(c1.side_wind_accel()) == -60.0 and int(c1.LEVELS.size()) == 41,
 		"C64-1 静态锚：摆动低门 64m/top12/0±360 / 侧风 -60 / 40 关")
 
 	# C64-2 三轴配方：3 折 v=0.35 27° dive=1.6s + D 0.4-1.2s → 过关穿摆动低门，24 = 3 + 7 + 14
