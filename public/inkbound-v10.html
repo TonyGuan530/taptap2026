@@ -12,7 +12,7 @@
 </head>
 <body>
 <main>
-  <p class="brand">INKBOUND / 墨迹漂流 · 第一本绘本</p>
+  <p class="brand">INKBOUND / 墨迹漂流 · V10 最新可玩版 · 手机触控更新</p>
   <div class="hero">
     <div class="intro">
       <h1>把笔迹，<br>走成一条路。</h1>
@@ -33,11 +33,11 @@
   </section>
   <section class="section" id="play">
     <h2>轮到你落笔了</h2>
-    <div class="game"><iframe id="game" title="墨迹漂流 V10 试玩" src="builds/demo-06-inkbound-v10/index.html" loading="lazy" allow="autoplay; fullscreen" allowfullscreen></iframe><div class="bar"><p>电脑键鼠试玩 · WASD 移动 · Tab 画纸 · 点击台沿搭建 · E 攀爬 · Q 回收</p><button type="button" id="fullscreen">全屏试玩</button></div></div>
+    <div class="game"><iframe id="game" title="墨迹漂流 V10 试玩" src="builds/demo-06-inkbound-v10-touch/index.html" loading="lazy" allow="autoplay; fullscreen" allowfullscreen></iframe><div class="bar"><p>电脑键鼠试玩 · WASD 移动 · Tab 画纸 · 点击台沿搭建 · E 攀爬 · Q 回收</p><button type="button" id="fullscreen">全屏试玩</button></div></div>
     <p class="video-note">手机请横屏：左侧摇杆移动，右侧点按跳跃、交互与画纸；在画纸上直接用手指落笔。上方实机录像来自原版键鼠试玩。</p>
     <div class="gallery"><div><img src="inkbound-v10-art/ladder.png" alt="用真实多笔画梯架攀上高台"><p>沿自己的笔迹，走到画页旁。</p></div><div><img src="inkbound-v10-art/board.png" alt="黏性板面搭出的坡道与另一条登高路线"><p>同一个高台，可以有另一种走法。</p></div></div>
   </section>
-  <footer><a href="tonight.html">返回试玩合集</a><a href="inkbound.html">上一册绘本</a><span>墨迹漂流 / INKBOUND · V10</span></footer>
+  <footer><a href="index.html">返回试玩首页</a><a href="archive.html#inkbound-archive">旧版归档与录像</a><span>墨迹漂流 / INKBOUND · V10 触控版</span></footer>
 </main>
 <script>const game=document.getElementById('game');if(navigator.maxTouchPoints>0||matchMedia('(pointer:coarse)').matches){game.src='builds/demo-06-inkbound-v10-touch/index.html';document.querySelector('.bar p').textContent='手机横屏试玩 · 左摇杆移动 · 右侧点控 · 画纸上手指绘画';}document.getElementById('fullscreen').addEventListener('click',async()=>{try{await game.requestFullscreen();game.focus();}catch{window.open(game.src,'_blank','noopener');}});</script>
 </body>

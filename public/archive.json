@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-07T10:00:00+08:00",
+  "updated": "2026-10-07",
   "note": "归档区：全量版本历史登记（含 git 历史中所有曾发布版本）。active=现役在线；archived=已归档（构建目录在 archive-builds/ 或仅存 git 历史，可复活）。",
   "items": [
     {
@@ -40,21 +40,33 @@
     },
     {
       "id": "demo-05-tonight-v8",
-      "title": "demo-05 tonight 活动版",
-      "status": "active",
-      "revivable": true
+      "title": "恐龙 V8 · 交友与营地建设",
+      "status": "archived",
+      "revivable": true,
+      "reason": "旧合辑中的恐龙原型已归档；独立保留交友、雇佣与建设实录。",
+      "videoUrl": "tonight-v8-videos/dino-v8.mp4",
+      "poster": "tonight-assets/dino-preview-v8.png",
+      "featured": true,
+      "archivedAt": "2026-10-07",
+      "displayOrder": 4
     },
     {
       "id": "demo-06-inkbound-v10-touch",
-      "title": "demo-06-inkbound-v10-touch",
+      "title": "小画家 V10 · 手机触控更新",
       "status": "active",
       "revivable": true
     },
     {
       "id": "demo-06-tonight-v8",
-      "title": "demo-06 tonight 活动版",
-      "status": "active",
-      "revivable": true
+      "title": "小画家 V8 · 野外画家",
+      "status": "archived",
+      "revivable": true,
+      "reason": "旧开放世界原型，从首页移入归档；保留拾词、绘画与机关实录。",
+      "videoUrl": "tonight-v8-videos/ink-v8.mp4",
+      "poster": "tonight-assets/ink-preview-v8.png",
+      "featured": true,
+      "archivedAt": "2026-10-07",
+      "displayOrder": 3
     },
     {
       "id": "demo-06-v15",
@@ -742,15 +754,27 @@
     },
     {
       "id": "demo-06-inkbound-v10",
-      "title": "Inkbound 绘画解谜",
+      "title": "小画家 V10 · 原键鼠录屏版",
       "status": "archived",
-      "revivable": true
+      "revivable": true,
+      "reason": "已由 V10 触控更新替代；原版实机录像继续保留。",
+      "videoUrl": "inkbound-v10-art/ladder-play.mp4",
+      "poster": "inkbound-v10-art/world.png",
+      "featured": true,
+      "archivedAt": "2026-10-07",
+      "displayOrder": 1
     },
     {
       "id": "demo-06-inkbound-v9",
-      "title": "Inkbound 绘画解谜",
+      "title": "小画家 V9 · 墨迹漂流",
       "status": "archived",
-      "revivable": true
+      "revivable": true,
+      "reason": "旧绘本与渡河原型，最新试玩已更新为 V10 触控版。",
+      "videoUrl": "inkbound-art/rope-play.mp4",
+      "poster": "inkbound-art/world.png",
+      "featured": true,
+      "archivedAt": "2026-10-07",
+      "displayOrder": 2
     },
     {
       "id": "demo-06-v10",

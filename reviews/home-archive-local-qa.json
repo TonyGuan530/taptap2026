@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-07T03:53:12.306Z",
+  "base": "http://127.0.0.1:8788/",
+  "passed": true,
+  "evidence": [
+    {
+      "name": "desktop",
+      "id": "demo-06-inkbound-v10",
+      "video": {
+        "source": "http://127.0.0.1:8788/inkbound-v10-art/ladder-play.mp4",
+        "width": 960,
+        "height": 540,
+        "duration": 110.279,
+        "currentTime": 0.160093,
+        "error": null
+      }
+    },
+    {
+      "name": "desktop",
+      "id": "demo-06-inkbound-v9",
+      "video": {
+        "source": "http://127.0.0.1:8788/inkbound-art/rope-play.mp4",
+        "width": 960,
+        "height": 540,
+        "duration": 62.218,
+        "currentTime": 0.155633,
+        "error": null
+      }
+    },
+    {
+      "name": "desktop",
+      "id": "demo-06-tonight-v8",
+      "video": {
+        "source": "http://127.0.0.1:8788/tonight-v8-videos/ink-v8.mp4",
+        "width": 960,
+        "height": 620,
+        "duration": 369.875833,
+        "currentTime": 0.158364,
+        "error": null
+      }
+    },
+    {
+      "name": "desktop",
+      "id": "demo-05-tonight-v8",
+      "video": {
+        "source": "http://127.0.0.1:8788/tonight-v8-videos/dino-v8.mp4",
+        "width": 960,
+        "height": 620,
+        "duration": 210.346833,
+        "currentTime": 0.157352,
+        "error": null
+      }
+    },
+    {
+      "name": "desktop",
+      "latest": true,
+      "archiveIds": [
+        "demo-06-inkbound-v10",
+        "demo-06-inkbound-v9",
+        "demo-06-tonight-v8",
+        "demo-05-tonight-v8"
+      ],
+      "latestBuildHTTP": 200,
+      "errors": []
+    },
+    {
+      "name": "mobile",
+      "latest": true,
+      "archiveIds": [
+        "demo-06-inkbound-v10",
+        "demo-06-inkbound-v9",
+        "demo-06-tonight-v8",
+        "demo-05-tonight-v8"
+      ],
+      "latestBuildHTTP": 200,
+      "errors": []
+    }
+  ]
+}
