@@ -18,7 +18,7 @@ var last_lift := 0.0
 var last_drag := 0.0
 var last_aoa := 0.0
 
-func launch(paper, angle_deg: float, power: float) -> void:
+func launch(paper, angle_deg: float, power: float, yaw_deg: float = 0.0, roll_deg: float = 0.0) -> void:
 	panels = paper.aerodynamic_panels()
 	mass = paper.material_area()*0.080 # 80 g/m² stock; folding never removes mass.
 	com = paper.mass_center()
@@ -34,7 +34,7 @@ func launch(paper, angle_deg: float, power: float) -> void:
 		var upward: Vector3 = panel.normal if panel.normal.y>=0.0 else -panel.normal
 		# Weight fins smoothly toward zero; no bank threshold at partial folds.
 		mean_normal += upward*absf(upward.y)*float(panel.area)
-	orientation=Basis(Vector3.RIGHT,deg_to_rad(angle_deg))*Basis(Vector3.BACK,atan2(mean_normal.x,mean_normal.y))
+	orientation=Basis.from_euler(Vector3(deg_to_rad(angle_deg),deg_to_rad(yaw_deg),deg_to_rad(roll_deg)))*Basis(Vector3.BACK,atan2(mean_normal.x,mean_normal.y))
 	velocity=orientation*Vector3(0,0,-lerpf(4.0,16.0,clampf(power,0,1)))
 	angular_velocity=Vector3.ZERO
 

@@ -105,6 +105,10 @@ var throw_charge_btn: Button
 var throw_charge_meter: ProgressBar
 var throw_preview_basis := Basis.IDENTITY
 var syncing_throw_angle := false
+var throw_rotation_degrees := Vector3(12,0,0)
+var throw_rotation_sliders: Array[HSlider] = []
+var throw_rotation_numbers: Array[SpinBox] = []
+var throw_reset_btn: Button
 var fold_p1 := Vector2.ZERO
 var fold_has_p1 := false
 var prev_state := ""
@@ -1011,6 +1015,7 @@ func _on_reset_run() -> void:
 
 func _on_level_pressed(i: int, practice: bool = false) -> void:
 	charging=false;charge=0.0;charge_source=""
+	throw_rotation_degrees=Vector3(12,0,0)
 	fold_dragging = false
 	preview_rotating = false
 	crease_mode = true
@@ -1071,8 +1076,9 @@ func _on_fold_done() -> void:
 
 func _begin_throw_charge(source: String) -> void:
 	if core.state!="throw" or charging: return
-	if throw_angle_number.get_line_edit().has_focus(): throw_angle_number.apply()
-	throw_angle_number.get_line_edit().release_focus()
+	for number in throw_rotation_numbers:
+		if number.get_line_edit().has_focus(): number.apply()
+		number.get_line_edit().release_focus()
 	charging=true; charge=0.0; charge_source=source
 	_sync_preflight_controls()
 
@@ -1084,64 +1090,85 @@ func _input(event: InputEvent) -> void:
 		_release_throw()
 
 func _set_throw_angle(value: float) -> void:
+	_set_throw_rotation(0,value)
+
+func _set_throw_rotation(axis: int, value: float) -> void:
 	if syncing_throw_angle or core.state!="throw" or charging or not is_finite(value): return
-	core.throw_angle=clampf(roundf(value),0.0,60.0)
+	if axis<0 or axis>2: return
+	throw_rotation_degrees[axis]=clampf(roundf(value),-180.0,180.0)
+	core.throw_angle=throw_rotation_degrees.x
 	var preview = PaperFlight.new()
-	preview.launch(paper,core.throw_angle,0.0)
+	preview.launch(paper,core.throw_angle,0.0,throw_rotation_degrees.y,throw_rotation_degrees.z)
 	throw_preview_basis=preview.orientation
 	_sync_preflight_controls()
 	print("PAPER|aim|angle=%.0f" % core.throw_angle)
+	print("PAPER|pose|xyz=%.0f,%.0f,%.0f" % [throw_rotation_degrees.x,throw_rotation_degrees.y,throw_rotation_degrees.z])
+
+func _reset_throw_rotation() -> void:
+	if core.state!="throw" or charging: return
+	throw_rotation_degrees=Vector3(12,0,0)
+	for axis in 3:
+		# Discard pending text before deferred focus-exit submission can restore it.
+		var entry=throw_rotation_numbers[axis].get_line_edit()
+		entry.text=str(throw_rotation_degrees[axis]);entry.release_focus()
+	_set_throw_angle(12)
 
 func _sync_preflight_controls() -> void:
 	if preflight_panel==null: return
 	preflight_panel.visible=core.state=="throw"
 	syncing_throw_angle=true
-	if not is_equal_approx(throw_angle_slider.value,core.throw_angle): throw_angle_slider.value=core.throw_angle
-	# Assigning SpinBox.value also rewrites its LineEdit, even for an equal value.
-	if not is_equal_approx(throw_angle_number.value,core.throw_angle): throw_angle_number.value=core.throw_angle
-	if throw_angle_slider.editable==charging: throw_angle_slider.editable=not charging
-	if throw_angle_number.editable==charging: throw_angle_number.editable=not charging
+	for axis in 3:
+		var slider=throw_rotation_sliders[axis];var number=throw_rotation_numbers[axis]
+		if not is_equal_approx(slider.value,throw_rotation_degrees[axis]): slider.value=throw_rotation_degrees[axis]
+		# Preserve pending numerical text while the player is typing.
+		if not is_equal_approx(number.value,throw_rotation_degrees[axis]): number.value=throw_rotation_degrees[axis]
+		if slider.editable==charging: slider.editable=not charging
+		if number.editable==charging: number.editable=not charging
+	throw_reset_btn.disabled=charging
 	throw_charge_meter.value=charge
-	throw_charge_btn.text="角度 %d° 已锁定 · 蓄力 %.0f%%" % [core.throw_angle,charge*100.0] if charging else "按住蓄力，松开发射"
+	throw_charge_btn.text="姿态已锁定 · 蓄力 %.0f%%" % (charge*100.0) if charging else "按住蓄力，松开发射"
 	syncing_throw_angle=false
 
 func _build_preflight_controls() -> void:
 	preflight_panel=Panel.new(); preflight_panel.name="PreflightControls"
-	preflight_panel.position=Vector2(548,108); preflight_panel.size=Vector2(392,344)
+	preflight_panel.position=Vector2(548,96); preflight_panel.size=Vector2(392,430)
 	var box:=StyleBoxFlat.new();box.bg_color=Color("1c293b");box.set_corner_radius_all(10)
 	preflight_panel.add_theme_stylebox_override("panel",box);preflight_panel.visible=false;hud.add_child(preflight_panel)
-	var title:=Label.new();title.text="飞前设置";title.position=Vector2(22,16);title.add_theme_font_size_override("font_size",22)
+	var title:=Label.new();title.text="飞前姿态 · XYZ旋转";title.position=Vector2(22,14);title.add_theme_font_size_override("font_size",22)
 	title.add_theme_color_override("font_color",Color("e5ecf7"));preflight_panel.add_child(title)
-	var caption:=Label.new();caption.text="投掷仰角 · 0–60°";caption.position=Vector2(22,60)
+	var caption:=Label.new();caption.text="三轴独立旋转 · −180°～180°";caption.position=Vector2(22,50)
 	caption.add_theme_font_size_override("font_size",15);caption.add_theme_color_override("font_color",Color("a9bfd9"));preflight_panel.add_child(caption)
-	throw_angle_slider=HSlider.new();throw_angle_slider.name="LaunchAngleSlider";throw_angle_slider.position=Vector2(22,104);throw_angle_slider.size=Vector2(240,26)
-	throw_angle_slider.min_value=0;throw_angle_slider.max_value=60;throw_angle_slider.step=1;throw_angle_slider.focus_mode=Control.FOCUS_NONE
-	throw_angle_slider.value_changed.connect(_set_throw_angle);preflight_panel.add_child(throw_angle_slider)
-	throw_angle_number=SpinBox.new();throw_angle_number.name="LaunchAngleNumber";throw_angle_number.position=Vector2(279,92);throw_angle_number.size=Vector2(92,36)
-	throw_angle_number.min_value=0;throw_angle_number.max_value=60;throw_angle_number.step=1;throw_angle_number.suffix="°"
-	throw_angle_number.value_changed.connect(_set_throw_angle);preflight_panel.add_child(throw_angle_number)
-	throw_angle_number.get_line_edit().text_submitted.connect(func(_text: String): throw_angle_number.get_line_edit().release_focus())
-	for i in 4:
-		var value:float=[0,12,30,45][i]
-		var button:=Button.new();button.text="%d°"%value;button.position=Vector2(22+i*89,150);button.size=Vector2(81,32);button.focus_mode=Control.FOCUS_NONE
-		button.pressed.connect(func(): _set_throw_angle(value));preflight_panel.add_child(button)
-	throw_charge_btn=Button.new();throw_charge_btn.name="ChargeLaunchButton";throw_charge_btn.position=Vector2(22,216);throw_charge_btn.size=Vector2(348,50);throw_charge_btn.focus_mode=Control.FOCUS_NONE
+	for axis in 3:
+		var label:=Label.new();label.text=["X 抬头","Y 朝向","Z 侧倾"][axis];label.position=Vector2(22,84+axis*68);label.add_theme_font_size_override("font_size",15);preflight_panel.add_child(label)
+		var slider:=HSlider.new();slider.name="LaunchRotationSlider%d"%axis;slider.position=Vector2(82,86+axis*68);slider.size=Vector2(166,26)
+		slider.min_value=-180;slider.max_value=180;slider.step=1;slider.focus_mode=Control.FOCUS_NONE
+		slider.value_changed.connect(func(value: float): _set_throw_rotation(axis,value));preflight_panel.add_child(slider);throw_rotation_sliders.append(slider)
+		var number:=SpinBox.new();number.name="LaunchRotationNumber%d"%axis;number.position=Vector2(279,80+axis*68);number.size=Vector2(92,36)
+		number.min_value=-180;number.max_value=180;number.step=1;number.suffix="°"
+		number.value_changed.connect(func(value: float): _set_throw_rotation(axis,value));preflight_panel.add_child(number);throw_rotation_numbers.append(number)
+		number.get_line_edit().text_submitted.connect(func(_text: String): number.get_line_edit().release_focus())
+	throw_angle_slider=throw_rotation_sliders[0];throw_angle_number=throw_rotation_numbers[0]
+	throw_reset_btn=Button.new();throw_reset_btn.text="复位姿态 · X 12° / Y 0° / Z 0°";throw_reset_btn.position=Vector2(22,292);throw_reset_btn.size=Vector2(348,34);throw_reset_btn.focus_mode=Control.FOCUS_NONE
+	throw_reset_btn.pressed.connect(_reset_throw_rotation);preflight_panel.add_child(throw_reset_btn)
+	throw_charge_btn=Button.new();throw_charge_btn.name="ChargeLaunchButton";throw_charge_btn.position=Vector2(22,338);throw_charge_btn.size=Vector2(348,44);throw_charge_btn.focus_mode=Control.FOCUS_NONE
 	throw_charge_btn.button_down.connect(func(): _begin_throw_charge("button"));preflight_panel.add_child(throw_charge_btn)
-	throw_charge_meter=ProgressBar.new();throw_charge_meter.position=Vector2(22,278);throw_charge_meter.size=Vector2(348,14);throw_charge_meter.max_value=1.0;throw_charge_meter.show_percentage=false
+	throw_charge_meter=ProgressBar.new();throw_charge_meter.position=Vector2(22,386);throw_charge_meter.size=Vector2(348,12);throw_charge_meter.max_value=1.0;throw_charge_meter.show_percentage=false
 	preflight_panel.add_child(throw_charge_meter)
-	var hint:=Label.new();hint.text="↑↓ 微调角度 · 空格或按钮蓄力";hint.position=Vector2(22,310);hint.add_theme_font_size_override("font_size",13)
+	var hint:=Label.new();hint.text="↑↓ 调整X · 空格或按钮蓄力";hint.position=Vector2(22,406);hint.add_theme_font_size_override("font_size",13)
 	hint.add_theme_color_override("font_color",Color("a9bfd9"));preflight_panel.add_child(hint)
 
 func _release_throw() -> void:
 	if core.state == "throw" and charging:
 		charging = false
 		charge_source=""
-		throw_angle_number.get_line_edit().release_focus()
-		last_throw = {angle = core.throw_angle, power = charge}
+		for number in throw_rotation_numbers: number.get_line_edit().release_focus()
+		last_throw = {angle = core.throw_angle, power = charge, rotation_degrees = throw_rotation_degrees}
 		core.do_throw(core.throw_angle, charge)
+		# The legacy 2D setup clamps pitch to 0–60; the 3D pose keeps its full range.
+		core.throw_angle=throw_rotation_degrees.x
 		core.physical_flight = PaperFlight.new()
-		core.physical_flight.launch(paper,core.throw_angle,charge)
-		print("PAPER|launch|angle=%.0f|mass=%.5f|area=%.5f" % [core.throw_angle,core.physical_flight.mass,core.physical_flight.area])
+		core.physical_flight.launch(paper,core.throw_angle,charge,throw_rotation_degrees.y,throw_rotation_degrees.z)
+		print("PAPER|launch|angle=%.0f|rotation=%.0f,%.0f,%.0f|mass=%.5f|area=%.5f" % [core.throw_angle,throw_rotation_degrees.x,throw_rotation_degrees.y,throw_rotation_degrees.z,core.physical_flight.mass,core.physical_flight.area])
 		charge = 0.0
 		_sync_preflight_controls()
 		_update_status()
@@ -1152,6 +1179,7 @@ func _on_settle_continue() -> void:
 		var saved_folds: Array = core.folds.duplicate(true)
 		core.start_level(0)
 		core.throw_angle = 12.0
+		throw_rotation_degrees=Vector3(12,0,0)
 		core.folds = saved_folds
 		core.folds_used = saved_folds.size()
 		prev_state = "fold"

@@ -1,0 +1,45 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PAPER|menu|levels=5
+PAPER|level|1|practice=true
+WORKBENCH|model|angles=|pending=false|height=0.00000
+WORKBENCH|model|angles=14.0|pending=false|height=0.02540
+WORKBENCH|starter|features=1
+PAPER|aim|angle=12
+PAPER|pose|xyz=12,0,0
+PASS: preflight has explicit angle slider
+PASS: preflight controls shown before launch
+PAPER|aim|angle=30
+PAPER|pose|xyz=30,0,0
+PASS: slider and numerical input set same launch angle
+PASS: mouse movement cannot overwrite selected angle
+PASS: 3D preflight posture matches physical launch orientation
+PASS: first typed digit survives per-frame UI refresh
+PASS: numerical typing survives per-frame UI refresh
+PAPER|aim|angle=45
+PAPER|pose|xyz=45,0,0
+PASS: numerical angle updates slider
+PAPER|aim|angle=48
+PAPER|pose|xyz=48,0,0
+PASS: arrow keys adjust chosen angle by 3 degrees
+PASS: invalid angle does not mutate launch settings
+PAPER|aim|angle=42
+PAPER|pose|xyz=42,0,0
+PASS: charging commits pending numerical text without Enter
+PASS: charging locks angle controls
+PASS: charging blocks keyboard angle changes
+PAPER|launch|angle=42|rotation=42,0,0|mass=0.00504|area=0.03545
+PASS: release outside button launches with chosen angle
+PASS: preflight panel hides on launch
+PAPER|menu|levels=5
+PAPER|level|1|practice=true
+WORKBENCH|model|angles=|pending=false|height=0.00000
+WORKBENCH|model|angles=14.0|pending=false|height=0.02540
+WORKBENCH|starter|features=1
+PAPER|aim|angle=12
+PAPER|pose|xyz=12,0,0
+PASS: immediate launch in a new level preserves default angle
+PAPER|launch|angle=12|rotation=12,0,0|mass=0.00504|area=0.03545
+PASS: Space release works even if GUI obtained focus while charging
+PASS: launch clears numeric focus for flight steering
+PREFLIGHT_RESULT failures=0

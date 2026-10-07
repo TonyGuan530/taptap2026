@@ -1,0 +1,66 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PAPER|menu|levels=5
+PAPER|level|1|practice=true
+WORKBENCH|model|angles=|pending=false|height=0.00000
+WORKBENCH|model|angles=14.0|pending=false|height=0.02540
+WORKBENCH|starter|features=1
+PAPER|aim|angle=12
+PAPER|pose|xyz=12,0,0
+PASS: preflight exposes X Y Z rotation controls
+PASS: full signed rotation range axis 0
+PASS: full signed rotation range axis 1
+PASS: full signed rotation range axis 2
+PAPER|aim|angle=30
+PAPER|pose|xyz=30,0,0
+PAPER|aim|angle=30
+PAPER|pose|xyz=30,45,0
+PAPER|aim|angle=30
+PAPER|pose|xyz=30,45,-25
+PASS: three independent rotation values persist
+PASS: preview uses combined XYZ orientation
+PASS: world plane displays combined rotation
+PAPER|aim|angle=30
+PAPER|pose|xyz=30,60,-25
+PASS: pending Y numeric text commits before charge
+PASS: charge locks axis 0
+PASS: charge locks axis 1
+PASS: charge locks axis 2
+PASS: locked rotation cannot mutate
+PAPER|launch|angle=30|rotation=30,60,-25|mass=0.00504|area=0.03545
+PASS: physical launch exactly matches preview
+PASS: launch velocity follows rotated nose direction
+PASS: launch records all three axes
+PAPER|menu|levels=5
+PAPER|level|1|practice=true
+WORKBENCH|model|angles=|pending=false|height=0.00000
+WORKBENCH|model|angles=14.0|pending=false|height=0.02540
+WORKBENCH|starter|features=1
+PAPER|aim|angle=12
+PAPER|pose|xyz=12,0,0
+PASS: new level resets XYZ orientation
+PAPER|aim|angle=-160
+PAPER|pose|xyz=-160,0,0
+PAPER|aim|angle=-160
+PAPER|pose|xyz=-160,120,0
+PAPER|aim|angle=-160
+PAPER|pose|xyz=-160,120,100
+PAPER|aim|angle=12
+PAPER|pose|xyz=12,0,0
+PASS: reset restores forward launch pose
+PAPER|aim|angle=12
+PAPER|pose|xyz=12,0,0
+PASS: reset discards pending numeric text after deferred focus exit
+PAPER|aim|angle=-120
+PAPER|pose|xyz=-120,0,0
+PAPER|aim|angle=-120
+PAPER|pose|xyz=-120,90,0
+PAPER|aim|angle=-120
+PAPER|pose|xyz=-120,90,180
+PAPER|launch|angle=-120|rotation=-120,90,180|mass=0.00504|area=0.03545
+PASS: legacy 2D setup cannot clamp full-range 3D pitch
+PASS: negative pitch and 180 degree roll launch as previewed
+PAPER|aim|angle=12
+PAPER|pose|xyz=12,0,0
+PASS: practice continuation resets all rotation axes
+PREFLIGHT_XYZ_RESULT failures=0

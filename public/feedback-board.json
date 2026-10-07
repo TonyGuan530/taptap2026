@@ -64,7 +64,7 @@
       "ts": "2026-10-05",
       "text": "折纸要有物理模拟：真的可以模拟折纸并射出",
       "status": "responded",
-      "reply": "2026-10-07 v29 重设计：参考建模软件与开源折纸工具，实现独立 3D 工作台、选面高亮、折痕吸附、屏幕旋转手柄、滑条/数值折角、确认取消、旧折痕重选及下游重放、撤销重做。立体网格参与试飞，五关。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v29/index.html 。仍等待用户验收。 2026-10-07 v30 增加飞前0–60°滑条/数值投掷仰角及3D姿态预览；角度稳定保留，蓄力锁定，松开发射。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v30/index.html 。"
+      "reply": "2026-10-07 v29 重设计：参考建模软件与开源折纸工具，实现独立 3D 工作台、选面高亮、折痕吸附、屏幕旋转手柄、滑条/数值折角、确认取消、旧折痕重选及下游重放、撤销重做。立体网格参与试飞，五关。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v29/index.html 。仍等待用户验收。 2026-10-07 v30 增加飞前0–60°滑条/数值投掷仰角及3D姿态预览；角度稳定保留，蓄力锁定，松开发射。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v30/index.html 。 2026-10-07 v31 增加飞前XYZ三轴±180°旋转、一键复位；预览及起飞姿态、速度方向同步。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v31/index.html 。"
     },
     {
       "id": "FB-105",
@@ -105,7 +105,7 @@
       "ts": "2026-10-05",
       "text": "折纸预览系统：画好折叠线后更新折后效果预览（累积多次折叠）+回退按钮【Issue#2 fyh828 通关者建议】",
       "status": "responded",
-      "reply": "2026-10-07 v29 重设计：参考建模软件与开源折纸工具，实现独立 3D 工作台、选面高亮、折痕吸附、屏幕旋转手柄、滑条/数值折角、确认取消、旧折痕重选及下游重放、撤销重做。立体网格参与试飞，五关。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v29/index.html 。仍等待用户验收。 2026-10-07 v30 增加飞前0–60°滑条/数值投掷仰角及3D姿态预览；角度稳定保留，蓄力锁定，松开发射。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v30/index.html 。"
+      "reply": "2026-10-07 v29 重设计：参考建模软件与开源折纸工具，实现独立 3D 工作台、选面高亮、折痕吸附、屏幕旋转手柄、滑条/数值折角、确认取消、旧折痕重选及下游重放、撤销重做。立体网格参与试飞，五关。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v29/index.html 。仍等待用户验收。 2026-10-07 v30 增加飞前0–60°滑条/数值投掷仰角及3D姿态预览；角度稳定保留，蓄力锁定，松开发射。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v30/index.html 。 2026-10-07 v31 增加飞前XYZ三轴±180°旋转、一键复位；预览及起飞姿态、速度方向同步。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v31/index.html 。"
     },
     {
       "id": "FB-110",
