@@ -6,7 +6,7 @@
 
 验证：新XYZ回归21项通过，含实际世界姿态、速度方向、负pitch/180°roll发射、蓄力锁定、未提交Y直接发射与未提交Z复位、重试及跨关清零。已有飞前输入18项、物理30项、五关20项、真实场景和折纸工作台回归通过。独立真实GUI事件复核18/18通过，无Critical/Important。Web导入导出退出码0且产物齐全。
 
-产物SHA256：`a3507526a96f8d2b1b6237d2af800e5e93daa105751d1dcf2974f2576247bc15`。浏览器与线上核验结果在发布完成后补录。
+产物SHA256：`a3507526a96f8d2b1b6237d2af800e5e93daa105751d1dcf2974f2576247bc15`。线上PCK哈希与本地一致。产品提交c68c2eb2557ee0d0ab7801f07c6fc59a55ed1b44，Actions37605186403 build/deploy-pages success，itch跳过。线上实际Edge 44项检查全通过，错误0，五关连续通关（2026-10-07T10:09:27.687Z）；大厅、归档与产物8项核验通过。证据：reviews/demo08-preflight-xyz-browser-online.json、reviews/demo08-preflight-xyz-published.json。
 
 试玩：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v31/index.html
 
