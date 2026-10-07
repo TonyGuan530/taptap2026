@@ -473,3 +473,11 @@
 
 ## 2026-10-05 23:10（轮83·代码审查）
 - 代码审查（评审者视角）：_grounded_ticks/recovery_marker/recovery_marker_age 初始化正确；level_root 切换 queue_free 防泄漏；recovery_marker 空引用检查到位；无废弃引用。全部核心文件静态零错误。无新缺陷。
+
+## 2026-10-05 23:10（轮84·v17 实验房选关扩展上线）
+- 实验房选关器从 1~5 扩展至 1~6（lab-first 被试可按 6 直达 L6 终局回廊）。
+- 30/30 + 2D 7/7 全绿；v17 净零替换 v16 上线（200 确认）；文档/协议链接同步 v17。
+- 试玩：https://tonyguan530.github.io/taptap2026/builds/demo-04-3d-v17/index.html
+
+## 2026-10-05 23:10（轮85·备案稿更新至 v17）
+- ChatGPT 备案稿从 v12 累计版更新为 v17 累计版（版本历程 v8→v17、四项待决问题），改名 chatgpt-demo-04-3d-v17.md（取代旧稿）。登录会话解锁后粘贴即发。
