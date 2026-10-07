@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TapTap2026 · 归档区</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+  .arch-card{border:1px solid #444;border-radius:8px;padding:10px 14px;margin:10px 0;background:#1a1a1e}
+  .arch-card .reason{color:#aaa;font-size:14px;margin-top:4px}
+  .arch-card .meta{color:#777;font-size:12px;margin-top:4px}
+</style>
+</head>
+<body>
+<main style="max-width:960px;margin:0 auto;padding:24px">
+  <h1>📦 归档区 <a href="index.html" style="font-size:14px;color:var(--accent)">← 返回 Hub</a></h1>
+  <p class="muted">GPT 对比裁决 / 用户 review 判不合格的 demo 在此归档。git 历史完整保留，可随时复活。</p>
+  <div id="list"><div class="loading">加载中…</div></div>
+</main>
+<script>
+fetch('archive.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{
+  const el=document.getElementById('list');
+  if(!d.items||!d.items.length){el.innerHTML='<p class="muted">暂无归档条目</p>';return}
+  el.innerHTML=d.items.map(x=>`<div class="arch-card"><b>${x.id}</b> ${x.title||''}<div class="reason">${x.reason||''}</div><div class="meta">归档于 ${x.archivedAt||''} · 最后构建 ${x.lastBuild||'-'} · git 历史可复活</div></div>`).join('');
+}).catch(e=>{document.getElementById('list').textContent='加载失败：'+e});
+</script>
+</body>
+</html>

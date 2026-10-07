@@ -1,0 +1,14 @@
+{
+  "updated": "2026-10-07T09:05:00+08:00",
+  "note": "归档区：GPT 对比裁决/用户 review 判不合格的 demo 形态与整体下线记录。git 历史可随时复活。",
+  "items": [
+    {
+      "id": "demo-07",
+      "title": "简单美食小摊（绿幕版）",
+      "reason": "与 demo-01 定位重叠，2026-10-03 裁定归档留档 CI",
+      "archivedAt": "2026-10-03",
+      "lastBuild": "demo-07-v2",
+      "revivable": true
+    }
+  ]
+}
