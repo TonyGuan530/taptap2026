@@ -3,20 +3,6 @@
   "note": "玩法块计划（由成员的 Miro 想法整理而来）。status 取值：pending=待开发 / doing=开发中 / done=已可玩 / paused=暂停。buildId 填 builds/ 下的目录名，填了首页卡片就自动变成可点击试玩。流水线每轮按顺序挑第一个 pending 的开发。",
   "slots": [
     {
-      "id": "demo-05-tonight-v8",
-      "title": "恐龙也想开灯 V8 · 恐龙营地",
-      "goal": "现代记忆、交朋友与雇佣野外恐龙、伙伴分工、自由建造升级、文明科技与火山双结局。",
-      "buildId": "demo-05-tonight-v8",
-      "status": "done"
-    },
-    {
-      "id": "demo-06-tonight-v8",
-      "title": "野外画家 V8 · 画形状＋捡词条",
-      "goal": "真实绘画、开放鞭子与闭合造物、随机词条、同一机关多解、连续林地探索。",
-      "buildId": "demo-06-tonight-v8",
-      "status": "done"
-    },
-    {
       "id": "demo-02",
       "title": "物性变换谜题",
       "goal": "改变物品的单位/词条 → 物理属性随之改变来解谜（关联：塞尔达式箱庭谜题方向）",
