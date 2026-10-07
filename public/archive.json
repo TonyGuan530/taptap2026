@@ -84,14 +84,18 @@
     {
       "id": "demo-08-3d-v26",
       "title": "纸飞机模拟器 3D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "由 v27 的纸面折叠与物理试飞版替代，旧构建保留。"
     },
     {
       "id": "demo-08-v3",
       "title": "纸飞机模拟器 2D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终 review 明确要求归档 08 的 2D 版。"
     },
     {
       "id": "demo-09-v2",
@@ -1086,6 +1090,12 @@
     {
       "id": "demo-02-3d-v16",
       "title": "物性变换谜题 3D（第三人称）",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v27",
+      "title": "纸飞机 · 3D 折纸与物理试飞（5关）",
       "status": "active",
       "revivable": true
     }

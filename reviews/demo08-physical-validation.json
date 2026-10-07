@@ -1,0 +1,25 @@
+{
+  "verifiedAt": "2026-10-07T07:59:00.572Z",
+  "godot": "4.7.2",
+  "headless": true,
+  "checks": [
+    {
+      "test": "physics",
+      "exitCode": 0,
+      "passCount": 30,
+      "stdout": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\nPASS: reject zero-length crease\r\nPASS: crease splits and rotates paper\r\nPASS: fold conserves paper area / mass\r\nPASS: fold produces 3D vertices, not scaled boxes\r\nPASS: hinge preserves panel edge length\r\nPASS: hinge preserves panel edge length\r\nPASS: hinge preserves panel edge length\r\nPASS: hinge preserves panel edge length\r\nPASS: hinge preserves panel edge length\r\nPASS: hinge preserves panel edge length\r\nPASS: hinge preserves panel edge length\r\nPASS: hinge preserves panel edge length\r\nPASS: undo restores original sheet\r\nPASS: dart crease accepted\r\nPASS: dart crease accepted\r\nPASS: dart crease accepted\r\nPASS: dart crease accepted\r\nPASS: dart crease accepted\r\nPASS: five folds preserve sheet area\r\nPASS: overlapping layers do not multiply lift area\r\nPASS: mass comes from original 80gsm paper\r\nPASS: zero airspeed produces no lift or drag\r\nPASS: drag opposes relative air velocity\r\nPASS: open-source curve models stall\r\nPASS: finite flight reaches ground\r\nPASS: folded geometry changes trajectory\r\nPASS: 30/120fps equivalent flight\r\nPASS: wind changes airspeed and forces\r\nPASS: A/D roll moments change lateral trajectory in the expected direction\r\nPASS: S pitch moment lowers flight and reaches ground sooner\r\nFLIGHT angle=8 distance=20.55 time=3.48 apex=2.99\r\nFLIGHT angle=12 distance=19.51 time=3.62 apex=3.76\r\nFLIGHT angle=20 distance=16.93 time=3.70 apex=5.09\r\nFLIGHT angle=30 distance=14.35 time=3.65 apex=6.32\r\nFLIGHT angle=40 distance=13.45 time=3.37 apex=7.15\r\nWIND (0.0, 0.0, 2.0) distance=11.19 time=2.88 lateral=2.14\r\nWIND (1.5, 0.0, 0.0) distance=15.26 time=2.43 lateral=1.61\r\nWIND (0.0, 0.0, -2.0) distance=23.68 time=3.35 lateral=2.46\r\nPHYSICS_RESULT failures=0 dart=19.51m flat=9.38m\r\n"
+    },
+    {
+      "test": "five_levels",
+      "exitCode": 0,
+      "passCount": 20,
+      "stdout": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\nPASS: exactly five numbered challenges\r\nPASS: progression reaches level 1\r\nCOURSE level=1 passed=true distance=12.05m target=12.0m time=1.52s lateral=0.18m\r\nPASS: physical route clears level 1\r\nPASS: continue follows five-level course\r\nPASS: progression reaches level 2\r\nCOURSE level=2 passed=true distance=16.05m target=16.0m time=2.60s lateral=0.92m\r\nPASS: physical route clears level 2\r\nPASS: continue follows five-level course\r\nPASS: progression reaches level 3\r\nCOURSE level=3 passed=true distance=9.03m target=9.0m time=1.18s lateral=0.55m\r\nPASS: physical route clears level 3\r\nPASS: continue follows five-level course\r\nPASS: progression reaches level 4\r\nCOURSE level=4 passed=true distance=13.06m target=13.0m time=1.73s lateral=0.85m\r\nPASS: physical route clears level 4\r\nPASS: continue follows five-level course\r\nPASS: progression reaches level 5\r\nCOURSE level=5 passed=true distance=20.01m target=20.0m time=2.62s lateral=1.31m\r\nPASS: physical route clears level 5\r\nPASS: continue follows five-level course\r\nPASS: level five leads to completion screen\r\nPASS: high angle fails demanding distance instead of auto-pass\r\nPASS: failure retries the same level\r\nPASS: weak throw cannot automatically pass\r\nCOURSE_RESULT failures=0\r\n"
+    },
+    {
+      "test": "real",
+      "exitCode": 0,
+      "passCount": 6,
+      "stdout": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\nPAPER|menu|levels=5\r\nPAPER|level|1|practice=true\r\nPAPER|level|1|practice=true\r\nPASS: paper mesh replaces boxes\r\nPAPER|fold|1|area=0.06300\r\nPAPER|fold|2|area=0.06300\r\nPAPER|fold|3|area=0.06300\r\nPAPER|fold|4|area=0.06300\r\nPAPER|fold|5|area=0.06300\r\nPASS: five sequential paper folds animate\r\nPAPER|undo|4\r\nPASS: undo restores editable sheet\r\nPAPER|fold|5|area=0.06300\r\nPAPER|launch|mass=0.00504|area=0.03545\r\nPASS: physical flight lands 19.51m\r\nPAPER|undo|4\r\nPASS: trial preserves folded plane for editing\r\nPAPER|launch|mass=0.00504|area=0.03577\r\nPAPER|menu|levels=5\r\nPAPER|level|1|practice=true\r\nPAPER|launch|mass=0.00504|area=0.06300\r\nPASS: steering held across menu does not leak into the next launch\r\n"
+    }
+  ]
+}
