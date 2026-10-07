@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS 用例1a 刚体模式发车成功
+PASS 用例1b drive 态：rigid 非空、无 car_view（双路径互斥）
+PASS 用例1c 车库列表含侧位标注
+PASS 用例2 W 油门（action 层）生效：55.1 m/s
+PASS 用例3 HUD 键位明示：W/S = 油门/刹车倒车，A/D = 转向（B1 刚体 · 规则 r3d-3 · 追尾视角）
+PASS 用例4a 刚体冲线结算（5 帧）
+PASS 用例4b 解锁 L2 且 total_time 累加
+PASS 用例5 进入 L2 车库（rigid 已清）
+PASS 用例6a 重新发车
+PASS 用例6b 翻车结算（8 帧）
+PASS 用例6c 翻车不解锁
+PASS 用例6d 翻车重试回 L1 车库（restore 预填）
+==== 汇总：12 PASS / 0 FAIL ====

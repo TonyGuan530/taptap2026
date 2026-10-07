@@ -1,0 +1,13 @@
+{
+  "title": "箱庭谜题 3D",
+  "version": "demo-11-3d-v1",
+  "date": "2026-10-07T13:35:03.5029687+00:00",
+  "author": "Codex",
+  "notes": "已提交3D开发快照的评审版；原生场景/规则验证和浏览器验证；旧2D保留。",
+  "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+  "mainScene": "res://demo11_3d.tscn",
+  "runtime": {
+    "path": "runtime/godot-4.7.2-fc74679e3b97/index.wasm",
+    "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+  }
+}

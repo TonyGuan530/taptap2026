@@ -1,0 +1,340 @@
+{
+  "files": [
+    {
+      "path": "game/demo09_3d.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "38cbd0d74af1b748da7954a34fe733f1638ce1ed363ad761c46149ad2a2fa6ad",
+      "baseSha256": "291352472d20d8dfdea6ca1840fe6ead1de74aec11a8eb9b6ac495112bf32dc0",
+      "patch": "Preserve selected body and wheel lateral positions on launch/retry; exclude vehicle from chase camera."
+    },
+    {
+      "path": "game/demo09_3d.gd.uid",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "23ee4ac134f906600a896b2b8bc7dccf59d08414b4789d40030f328c48a41c32"
+    },
+    {
+      "path": "game/demo09_3d.tscn",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "d00c33de6d5e8bd25b55a15848c642e204a24d8607ce6da4cb13d581a786ec09"
+    },
+    {
+      "path": "game/demo09_3d/LEVEL10_CONTRACT.md",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "18e96394a6681e5ab63f5200db1fb9b61252afa7435777b5396886b69b5c8125"
+    },
+    {
+      "path": "game/demo09_3d/LEVEL11_CONTRACT.md",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "9bd55e78f13b9ddea6fdfda808e11d0f74d05de465ace95232b6bc53b2a50a55"
+    },
+    {
+      "path": "game/demo09_3d/LEVEL12_CONTRACT.md",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "af8fa0c7d8bc5e65279eb395c8f2514b6ddb7a554a118bbd5ec298ea3e8a87de"
+    },
+    {
+      "path": "game/demo09_3d/LEVEL13_CONTRACT.md",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "31a8a440c245323d67d36e3acd9c1e88a3dfed88ffe2e0d0891096dd6375d920"
+    },
+    {
+      "path": "game/demo09_3d/LEVEL14_CONTRACT.md",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "cf9832b87e9af4fd98eada9ab9b2952cbb9838ac041620572a8965ee6922c0f0"
+    },
+    {
+      "path": "game/demo09_3d/LEVEL5_CONTRACT.md",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "d2fe31c3586a8e3e7b5dea908b32c196493aad562faab138760e95a45a359b61"
+    },
+    {
+      "path": "game/demo09_3d/LEVEL7_CONTRACT.md",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "e60c8d9d868a7fd880659b645536e066ace4d0509f5da1e1a3d91a3b52995b7f"
+    },
+    {
+      "path": "game/demo09_3d/LEVEL9_CONTRACT.md",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "576efc30c5c1c531656fda049a1351bcc296845e25d63b404254b400cc00ce9b"
+    },
+    {
+      "path": "game/demo09_3d/RULES_CONTRACT.md",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "2b857a654fb20c927346f9c18d502ae762351c5f2c88235bdd8de157020eaa6f"
+    },
+    {
+      "path": "game/demo09_3d/car_view.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "57319ad7c7383ce78aa1fe68896d6fe8b099a2a8bd51992475c2142644f059e7"
+    },
+    {
+      "path": "game/demo09_3d/car_view.gd.uid",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "307f480859f2e142b58f6499f4e1ac4ff0dd59e0c5014c46e7af277b1ed49811"
+    },
+    {
+      "path": "game/demo09_3d/garage_model.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "90183475c8bf70afa2f4f2ffca8318a527e0a8690acc5b735c19ebef449a6b8f"
+    },
+    {
+      "path": "game/demo09_3d/garage_model.gd.uid",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "fb08c201cd49a7cb4f54c6795e1940306c88cc21306a478ab9a05c09d703a216"
+    },
+    {
+      "path": "game/demo09_3d/ghost_recorder.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "e366ee8a4806a7ad26ffe79c62850467b68fc5d55ec35fa493f1a962945abb2a"
+    },
+    {
+      "path": "game/demo09_3d/ghost_recorder.gd.uid",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "cb1f1979b74f782f42e9b8485250c8795d5ba0fb5d583efef6c4977920606220"
+    },
+    {
+      "path": "game/demo09_3d/ghost_view.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "a56a30f19a6dbb8db3703d521c083ecd4c74f7a2a8f8e02f05467eb56ef6c6ac"
+    },
+    {
+      "path": "game/demo09_3d/ghost_view.gd.uid",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "782201adeeb2b1caf1136cb079d4a87168b2f6c9a9716e0d867f32e5a666c9b0"
+    },
+    {
+      "path": "game/demo09_3d/lane_core.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "819019b719eff35682f5e90eda8201c60c561850ee314c67d0fa32eeffd2788b"
+    },
+    {
+      "path": "game/demo09_3d/lane_core.gd.uid",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "3b2d71bf74e584a225ae004afe565597f052f68192a9c71f1b855d55a9e3e438"
+    },
+    {
+      "path": "game/demo09_3d/rigid_car.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "de17f080c5855e48cb7b40f3a545bed35a21ed482662c282765082c72e537361"
+    },
+    {
+      "path": "game/demo09_3d/rigid_car.gd.uid",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "655f159aae54a93e8d488f44b78f076bcbba739c81129dd381fed14474343053"
+    },
+    {
+      "path": "game/demo09_3d/road_builder.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "7e7345f92bb2cfe5aa127bf4fcd4ac07f0a94883a445dd274ebf7898179b2a0d"
+    },
+    {
+      "path": "game/demo09_3d/road_builder.gd.uid",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "dfc39b1abbb2e1cb8703cef814d578c9ad078d1293a2178596c37940de808e2a"
+    },
+    {
+      "path": "game/models/native/barrel.tscn",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "685441e7f4aa79db4b60f24b6d41f99d9e64b61cce62a950883bfdd5e3cf20e5"
+    },
+    {
+      "path": "game/models/native/bush.tscn",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "dacd3beec8e6ddc4f606bef692bd015ae46679989060c9e6507047613e8a104c"
+    },
+    {
+      "path": "game/models/native/crate.tscn",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "1f3c4410809e6c3393543def5fcaebf2e888fcd38bf6a48aaf14d74907fb9585"
+    },
+    {
+      "path": "game/models/native/gate_frame.tscn",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "7502039cc820df1347b08a14f0bc60aa5fc991ac8fb505ccce4b40ac0fc2bf5c"
+    },
+    {
+      "path": "game/models/native/iron_block.tscn",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "28b0ace515736239da7ce9b26aa770dcce217ccdf75453fafb9bd2a524fd2836"
+    },
+    {
+      "path": "game/models/native/pressure_plate.tscn",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "0579d8a48b342ca39b135afe40b7076c3e67c15eb458c3c208bed5fac74f9a72"
+    },
+    {
+      "path": "game/models/native/rock.tscn",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "fee436f604166db430edb32c7ef410c027e99325327fc8e5a51cfe8ddfcbf925"
+    },
+    {
+      "path": "game/models/native/tree.tscn",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "3eb4c9a1d97c537446477d3f2929f9e2d6a5850cf9be4a47e3b0c8de5f994155"
+    },
+    {
+      "path": "game/tests/test_demo09_3d_rigidflow.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "c29279ef5e86ca54a31af1d24b3283a7bc29ef0111b5df58667dec4b56d32349"
+    },
+    {
+      "path": "game/tests/test_demo09_3d_scene.gd",
+      "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+      "sha256": "d4d5aedf8374dfe5f641f58e4ebdbf375d931acad60bdb53bba8220bd856aff0"
+    },
+    {
+      "path": "game/demo10_3d.tscn",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "b0a4ee2378cce7613d3df83766a5c21abbfbfa85187f069509b3bee5471db4e4"
+    },
+    {
+      "path": "game/demo10_3d/DISCOVERY.md",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "be1a4009c5d407b3ec9bc3fd997387c984fa6ba131bc0edf708ac26e43d091f1"
+    },
+    {
+      "path": "game/demo10_3d/WORLDMAP.md",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "7af2bd718f3d4076b1d8fda9f04599170b07e289a2f74a7c77a6affd5134bda1",
+      "baseSha256": "ee2d6a88522f60df2fead9a7cbf4e32b354227a5723f621f41cccdc6eeef85e0",
+      "patch": "Whitespace normalization only."
+    },
+    {
+      "path": "game/demo10_3d/chapter_world.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "35ef3c47a574aeef38036f2a88105c5509fd3190a6af58b14fed89d45a7c65c7",
+      "baseSha256": "fa178ea1f2b80ab0679961b9033602764c053d5c95c36061228b1a4bf98604ba",
+      "patch": "Build station ribs from three thin bars instead of solid corridor-sized boxes."
+    },
+    {
+      "path": "game/demo10_3d/chapter_world.gd.uid",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "2235813fd2e20f2dcdc56ad587c65f41d8ae02855546ee00f78aec18bd9a5a2e"
+    },
+    {
+      "path": "game/demo10_3d/demo10_3d.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "ab9d30bde526df2b288bf1db0b5015b454111f7def4d3b1fdc5fe04759a00ca4"
+    },
+    {
+      "path": "game/demo10_3d/demo10_3d.gd.uid",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "43b2069e064a80905cc520ecdf50068bf6bbd19bdbc738b075af947c4fe8b493"
+    },
+    {
+      "path": "game/demo10_3d/explorer.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "dfe54d9ee0f033df78199f79a7669e871c40690f5954e6f883c9cd396b19eec8"
+    },
+    {
+      "path": "game/demo10_3d/explorer.gd.uid",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "d1c94d273b3e50e5aac60ad8eebe699d8c6b78c419f9c76cdea46079349f4295"
+    },
+    {
+      "path": "game/demo10_3d/hud.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "5a1e2755aa0f2adaa8d1ee74de43fb017f90d6a3f913b2a55f4311fcbfbcbc94"
+    },
+    {
+      "path": "game/demo10_3d/hud.gd.uid",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "a93e5115a81cee5da87f9d092d58f53a9da26d0e29fd143551c6e21123bfe525"
+    },
+    {
+      "path": "game/demo10_3d/interaction_controller.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "438a2895793be93fe69578aadcf0c1bba7335823905a21494f6ad9f89562450e"
+    },
+    {
+      "path": "game/demo10_3d/interaction_controller.gd.uid",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "0c6992b73d0f838b0d2a721b2ac0143509211c5c77c15d8c813730779cd2456b"
+    },
+    {
+      "path": "game/demo10_3d/manuscript_ui.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "54fb1221e14900888c841e99bf08f722d6199e31968234bacc571feba3510577"
+    },
+    {
+      "path": "game/demo10_3d/manuscript_ui.gd.uid",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "7f038171bb289b74149736eb1cca6d364e6096d733ec0a5125ac2dc81a43b42a"
+    },
+    {
+      "path": "game/demo10_3d/story_core.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "d66c60df0e8342d9787b28ff60ad959781c2105cd542395d85823c592f5dc631"
+    },
+    {
+      "path": "game/demo10_3d/story_core.gd.uid",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "bc8437e6e7b7199f958f283c18ec8f7e02d8f4f1c47d51f8ebbbe4a84e939e8f"
+    },
+    {
+      "path": "game/demo10_3d/world_bridge.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "8dfe686d59c583d52ef3eaecde25f059b342b1d71b6aafd0a3f8a2f331aeb19a"
+    },
+    {
+      "path": "game/demo10_3d/world_bridge.gd.uid",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "488b7294e97a1c348f1dd839604641cb116fb539235958baedfd641ff422f07a"
+    },
+    {
+      "path": "game/tests/test_demo10_3d_phaseb.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "928f0660cf3afbfa8c8696eaaa076db40f2ced8a1d478bbbb2713525b10ef9ac"
+    },
+    {
+      "path": "game/tests/test_demo10_3d_scene.gd",
+      "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+      "sha256": "3e73726417597bba59e773130f6d08e9b7404e722762fa7989e7b07940dbf841"
+    },
+    {
+      "path": "game/demo11_3d.tscn",
+      "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+      "sha256": "1cb8b94454d43474130b72c86577bd156f7a33ff673a4efeecc0f5ed98570641"
+    },
+    {
+      "path": "game/demo11_3d/board_view.gd",
+      "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+      "sha256": "2007cda05d78fc749ba57975e871d678b5613100a327fce64cbdf87921d78dd5"
+    },
+    {
+      "path": "game/demo11_3d/board_view.gd.uid",
+      "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+      "sha256": "6d9a24825a88a9c8d85a328f22e5ae1e05a2aecf6eadfa631b9d04ebc052cd96"
+    },
+    {
+      "path": "game/demo11_3d/main_3d.gd",
+      "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+      "sha256": "e5348d1300cad152f786bfd1e690da6cd27ac954fd12fd52cf7e014d03022948"
+    },
+    {
+      "path": "game/demo11_3d/main_3d.gd.uid",
+      "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+      "sha256": "553a2d4c5c57324a477e0c409ccf4a2448fa6ed10a18eb796dd5f236ff3da147"
+    },
+    {
+      "path": "game/demo11_3d/sandbox_rules.gd",
+      "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+      "sha256": "6a9b08bc061eb162650bdb9dba03ad435416f90af9e0a2fcc3b932220f360067"
+    },
+    {
+      "path": "game/demo11_3d/sandbox_rules.gd.uid",
+      "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+      "sha256": "9d1eef6bee2cb782cde474d1a53c5f16296cbba6bc606e6f6fc2fcbab68595ae"
+    },
+    {
+      "path": "game/tests/test_demo11_3d_core.gd",
+      "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+      "sha256": "75d17e9f5844196aa8e764bc5d6d9679058a6bbedeae0a72c0930d14a8eced74"
+    },
+    {
+      "path": "game/tests/test_demo11_3d_scene.gd",
+      "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+      "sha256": "bd30cf0e10e77f50b981d7f9e21ea13c8b4c2bf4f80df41221aafacf83a5e750"
+    }
+  ]
+}

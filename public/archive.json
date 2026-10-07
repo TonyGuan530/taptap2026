@@ -3,6 +3,27 @@
   "note": "归档区：全量版本历史登记（含 git 历史中所有曾发布版本）。active=现役在线；archived=已归档（构建目录在 archive-builds/ 或仅存 git 历史，可复活）。",
   "items": [
     {
+      "id": "demo-11-3d-v1",
+      "title": "箱庭谜题 3D · 推箱与工具",
+      "status": "active",
+      "revivable": true,
+      "reason": "用户授权上传3D评审版；原2D版本保留，待最终反馈。"
+    },
+    {
+      "id": "demo-10-3d-v2",
+      "title": "修改小说 · 可探索3D世界",
+      "status": "active",
+      "revivable": true,
+      "reason": "用户授权上传3D评审版；原2D版本保留，待最终反馈。"
+    },
+    {
+      "id": "demo-09-3d-v1",
+      "title": "赛车模拟器 3D · 造车与驾驶",
+      "status": "active",
+      "revivable": true,
+      "reason": "用户授权上传3D评审版；原2D版本保留，待最终反馈。"
+    },
+    {
       "id": "demo-08-3d-v31",
       "title": "纸飞机 · 飞前XYZ旋转（5关）",
       "status": "active",

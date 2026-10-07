@@ -71,24 +71,27 @@
       "build": "demo-09",
       "ts": "2026-10-05",
       "text": "没有 3D 化",
-      "status": "open",
-      "reply": ""
+      "status": "responded",
+      "reply": "3D评审版已发布，待用户复测：https://tonyguan530.github.io/taptap2026/builds/demo-09-3d-v1/index.html",
+      "fixedIn": "demo-09-3d-v1"
     },
     {
       "id": "FB-106",
       "build": "demo-10",
       "ts": "2026-10-05",
       "text": "没有 3D 化",
-      "status": "open",
-      "reply": ""
+      "status": "responded",
+      "reply": "3D评审版已发布，待用户复测：https://tonyguan530.github.io/taptap2026/builds/demo-10-3d-v2/index.html",
+      "fixedIn": "demo-10-3d-v2"
     },
     {
       "id": "FB-107",
       "build": "demo-11",
       "ts": "2026-10-05",
       "text": "没有 3D 化",
-      "status": "open",
-      "reply": ""
+      "status": "responded",
+      "reply": "3D评审版已发布，待用户复测：https://tonyguan530.github.io/taptap2026/builds/demo-11-3d-v1/index.html",
+      "fixedIn": "demo-11-3d-v1"
     },
     {
       "id": "FB-108",

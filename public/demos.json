@@ -70,6 +70,13 @@
       "buildId": "demo-09-v2"
     },
     {
+      "id": "demo-09-3d",
+      "buildId": "demo-09-3d-v1",
+      "title": "赛车模拟器 3D · 造车与驾驶",
+      "goal": "选关进入车库，选择车身和轮胎布局后发车；真实3D刚体，W/S油门与倒车，A/D转向。",
+      "status": "done"
+    },
+    {
       "id": "demo-10",
       "title": "修改小说",
       "goal": "v3b 盲测构建（监督复评最高优先）：blind_mode 下选择前隐藏全部机械提示——派生义/伏笔回收状态/解读方向/待圆回计数只给小说文字，点击后才反馈「原来这里是伏笔！」——防 UI 杀掉 Eureka；遥测五字段照常采集供 3-5 人盲测判读（anomaly_created 敢不敢留/resolved 圆回是否自然/type 是否分流/unresolved_at_publish 未发现比例）",
@@ -77,11 +84,25 @@
       "buildId": "demo-10-v3b"
     },
     {
+      "id": "demo-10-3d",
+      "buildId": "demo-10-3d-v2",
+      "title": "修改小说 · 可探索3D世界",
+      "goal": "WASD探索小说世界，Tab打开手稿，点击词语修改正文与3D场景；E调查，Esc释放鼠标。",
+      "status": "done"
+    },
+    {
       "id": "demo-11",
       "title": "塞尔达式箱庭谜题",
       "goal": "v3 遥测 instrumentation（KEEP 复评轻量项，规则零改动）：七字段遥测（工具/移物/冻/融/烧/开关导通/完赛）+ solution family 五族归类（融冰传播/磁铁/箱桥/冻桥/纯走）+ 全通关结算显示解法家族——真人盲测的 solution family 判据数据采集就绪",
       "status": "done",
       "buildId": "demo-11-v3"
+    },
+    {
+      "id": "demo-11-3d",
+      "buildId": "demo-11-3d-v1",
+      "title": "箱庭谜题 3D · 推箱与工具",
+      "goal": "方向键移动与推箱，压板开门；F冻结、G灼烧、H磁铁，工具随关卡解锁；滚轮观察，Home复位镜头。",
+      "status": "done"
     }
   ]
 }

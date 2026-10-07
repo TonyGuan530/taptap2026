@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+REVIEW09|state|menu
+PASS: review opens a usable level menu instead of auto-start demo
+PASS: review enables real 3D rigid vehicle
+PASS: entire level menu fits viewport
+REVIEW09|state|build
+PASS: first level enters garage
+PASS: garage fits viewport
+REVIEW09|state|drive
+PASS: valid wheel design starts driving
+PASS: physical vehicle spawned
+PASS: launch preserves non-default body
+PASS: launch preserves left and right wheels
+REVIEW09|state|settle
+REVIEW09|state|build
+PASS: retry restores body
+PASS: retry restores wheel sides
+REVIEW09|state|drive
+PASS: four-wheel layout launches
+REVIEW09|drive|pos=(0.069823, 5.10304, -13.60025)|speed=39.8|grounded=4
+REVIEW09|drive|pos=(-2.634659, 5.604048, -64.42078)|speed=57.1|grounded=2
+REVIEW09|drive|pos=(-4.651747, 5.916678, -119.5796)|speed=60.8|grounded=4
+PASS: road supports physical vehicle without falling through
+PASS: physical input advances vehicle
+PASS: chase camera excludes vehicle body
+REVIEW_ENTRY_RESULT failures=0
