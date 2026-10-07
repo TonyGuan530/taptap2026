@@ -5,14 +5,18 @@
     {
       "id": "demo-02-3d-v10",
       "title": "物性变换谜题 3D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "由本轮修复版替代；旧构建和基线保留。"
     },
     {
       "id": "demo-02-v7",
       "title": "物性变换谜题 2D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "由本轮修复版替代；旧构建和基线保留。"
     },
     {
       "id": "demo-03-3d-v14",
@@ -1069,6 +1073,18 @@
       "id": "demo-11-v2",
       "title": "塞尔达式箱庭谜题",
       "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-v8",
+      "title": "物性变换谜题 2D",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v16",
+      "title": "物性变换谜题 3D（第三人称）",
+      "status": "active",
       "revivable": true
     }
   ]
