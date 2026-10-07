@@ -27,8 +27,10 @@
     {
       "id": "demo-04-3d-v17",
       "title": "SOUP 3D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终 review 已到 demo-04 结束，明确要求归档此 3D v17 版本，其他版本暂留。"
     },
     {
       "id": "demo-04-v12",
