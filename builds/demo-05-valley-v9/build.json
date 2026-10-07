@@ -1,0 +1,11 @@
+{
+  "title": "恐龙 · 小山谷营地",
+  "version": "demo-05-valley-v9",
+  "date": "2026-10-07T14:21:21.352Z",
+  "author": "codex",
+  "notes": "在营地附近采集、搭建休息棚；火山提前到来，带着营地计划转向地下避难。",
+  "runtime": {
+    "path": "runtime/godot-4.7.2-fc74679e3b97/index.wasm",
+    "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+  }
+}

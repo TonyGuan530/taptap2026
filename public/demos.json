@@ -32,26 +32,24 @@
     },
     {
       "id": "demo-05",
-      "title": "恐龙也想开灯 · 3D 营地生存",
-      "goal": "带着现代记忆探索史前世界，结交并雇佣野生恐龙，分工采集，自由建造和升级营地。发展灯泡与蒸汽科技，面对火山的飞船／地下双结局。",
-      "buildId": "demo-05-tonight-v8",
+      "title": "恐龙 · 小山谷营地",
+      "goal": "在营地附近采集、搭建休息棚；火山提前到来，带着营地计划转向地下避难。",
+      "buildId": "demo-05-valley-v9",
       "status": "done"
     },
     {
       "id": "demo-06",
-      "title": "墨迹漂流 / INKBOUND · V10 触控版",
-      "goal": "多笔手绘梯架、坡板和墨刃；探索拾取词条，按实际尺寸搭建、切藤或绕行。支持电脑键鼠与手机横屏触控。",
-      "buildId": "demo-06-inkbound-v10-touch",
-      "status": "done",
-      "landingUrl": "./inkbound-v10.html"
+      "title": "INKBOUND · 一件作品的小庭院",
+      "goal": "在小庭院画一件梯架，攀登三个目标；Z回收返还墨水，保留图纸继续搭建。",
+      "buildId": "demo-06-courtyard-v11",
+      "status": "done"
     },
     {
       "id": "demo-06-3d",
-      "title": "墨迹漂流 / INKBOUND（几何与墨刃）",
-      "goal": "多笔画梯架与闭合板面，按真实尺寸搭建攀爬；野外拾取弹性与黏性改变通路，三段立体纸页之后用黄墨画武器，切藤或搭建绕行，找回完整画页。",
-      "buildId": "demo-06-inkbound-v10-touch",
+      "title": "INKBOUND · 一件作品的小庭院",
+      "goal": "在小庭院画一件梯架，攀登三个目标；Z回收返还墨水，保留图纸继续搭建。",
+      "buildId": "demo-06-courtyard-v11",
       "status": "done",
-      "landingUrl": "./inkbound-v10.html",
       "hidden": true,
       "canonicalSlot": "demo-06"
     },
