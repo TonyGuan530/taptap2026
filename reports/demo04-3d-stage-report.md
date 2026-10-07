@@ -1,7 +1,7 @@
 # demo-04 3D 迁移 · 阶段验收对照总报告（2026-10-05，截至 v9）
 
 > 对照指南《taptap2026-demo04-3d-zcode-guide-2026-10-04.md》四阶段要求逐项给出证据。
-> 当前发布：demo-04-3d-v14（Pages），分支 demo04-3d @ 8449339+。
+> 当前发布：demo-04-3d-v17（Pages），分支 demo04-3d。
 
 ## 阶段 A：独立灰模 L1 与能力基线 — ✅ 完成
 | 要求 | 证据 |
@@ -34,7 +34,7 @@
 ## 阶段 C：正式资产、原生与 Web — 🟡 部分（两项等外部输入）
 | 要求 | 状态 | 证据/缺口 |
 | --- | --- | --- |
-| Web 导出（Compatibility） | ✅ | demo-04-3d-v14，Pages 换版链路（v1→v14 共 14 版） |
+| Web 导出（Compatibility） | ✅ | demo-04-3d-v17，Pages 换版链路（v1→v17 共 17 版） |
 | 遥测下载 | ✅ | v6：浏览器下载落地断言（cdp-webcheck） |
 | iframe 引导/字体/连续换关/缩放 | ✅ | webcheck + 多分辨率双端实拍 |
 | 鼠标捕获/Esc | N/A | 键盘操作游戏，无鼠标视角绑定 |
@@ -64,7 +64,7 @@
 | 1 | Pages 余量裁决（demo-02-3d 持 4 版 ≈138M 可清；槽位→v10 已保留） | 属主清理或授权统一清理 | 已按规则预清过一次（-92M）|
 | 2 | 正式资产通路（imagegen 工具或 ChatGPT 素材） | 绿幕工作流 3D 适配：角色+四外星生物 billboard → 接入点已留 → 26 项套件复验 → vN+1 发版 | 管线与验证全就绪 |
 | 3 | ChatGPT 评审补送（登录会话） | 粘贴 reviews/chatgpt-demo-04-3d-v12.md 累计备案稿 + 附图 | 稿件就绪 |
-| 4 | itch 上传（登录 sxguan 账号） | dist-itch/demo-04-3d-v12.zip（16.6MB）已预打包；viewport 建议 800×450 | zip 就绪 |
+| 4 | itch 上传（登录 sxguan 账号） | dist-itch/demo-04-3d-v17.zip（17.4MB）已预打包；viewport 建议 800×450 | zip 就绪 |
 
 注：净零发版策略下 #1 不阻塞本 demo 的发版能力（v12→vN+1 均为净零）；仅影响其他 demo 的发版余量。
 
