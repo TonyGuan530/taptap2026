@@ -97,6 +97,14 @@ var final_body: Label
 ## 输入状态
 var charging := false
 var charge := 0.0
+var charge_source := ""
+var preflight_panel: Panel
+var throw_angle_slider: HSlider
+var throw_angle_number: SpinBox
+var throw_charge_btn: Button
+var throw_charge_meter: ProgressBar
+var throw_preview_basis := Basis.IDENTITY
+var syncing_throw_angle := false
 var fold_p1 := Vector2.ZERO
 var fold_has_p1 := false
 var prev_state := ""
@@ -108,6 +116,7 @@ func _ready() -> void:
 	_build_world()
 	_build_hud()
 	_build_fold_preview()
+	_build_preflight_controls()
 	origami_editor=OrigamiEditor.new()
 	origami_editor.name="OrigamiWorkbench"
 	hud.add_child(origami_editor)
@@ -967,6 +976,7 @@ func paint_chart_axes(r: Rect2, max_d: float, max_h: float) -> void:
 
 
 func _go_menu() -> void:
+	charging=false;charge=0.0;charge_source=""
 	_end_fold_drag()
 	preview_rotating = false
 	core.lateral_input = 0.0
@@ -1000,6 +1010,7 @@ func _on_reset_run() -> void:
 
 
 func _on_level_pressed(i: int, practice: bool = false) -> void:
+	charging=false;charge=0.0;charge_source=""
 	fold_dragging = false
 	preview_rotating = false
 	crease_mode = true
@@ -1052,19 +1063,87 @@ func _on_fold_done() -> void:
 	_rebuild_plane_visual()   # C68 打磨A：折完即形变
 	fold_btn.visible = false
 	charging = false
+	charge_source=""
 	charge = 0.0
+	_set_throw_angle(core.throw_angle)
 	_update_status()
 
+
+func _begin_throw_charge(source: String) -> void:
+	if core.state!="throw" or charging: return
+	if throw_angle_number.get_line_edit().has_focus(): throw_angle_number.apply()
+	throw_angle_number.get_line_edit().release_focus()
+	charging=true; charge=0.0; charge_source=source
+	_sync_preflight_controls()
+
+func _input(event: InputEvent) -> void:
+	# Release is global so dragging off the button cannot leave charging stuck.
+	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and not event.pressed and charge_source=="button":
+		_release_throw()
+	if event is InputEventKey and event.keycode==KEY_SPACE and not event.pressed and charge_source=="keyboard":
+		_release_throw()
+
+func _set_throw_angle(value: float) -> void:
+	if syncing_throw_angle or core.state!="throw" or charging or not is_finite(value): return
+	core.throw_angle=clampf(roundf(value),0.0,60.0)
+	var preview = PaperFlight.new()
+	preview.launch(paper,core.throw_angle,0.0)
+	throw_preview_basis=preview.orientation
+	_sync_preflight_controls()
+	print("PAPER|aim|angle=%.0f" % core.throw_angle)
+
+func _sync_preflight_controls() -> void:
+	if preflight_panel==null: return
+	preflight_panel.visible=core.state=="throw"
+	syncing_throw_angle=true
+	if not is_equal_approx(throw_angle_slider.value,core.throw_angle): throw_angle_slider.value=core.throw_angle
+	# Assigning SpinBox.value also rewrites its LineEdit, even for an equal value.
+	if not is_equal_approx(throw_angle_number.value,core.throw_angle): throw_angle_number.value=core.throw_angle
+	if throw_angle_slider.editable==charging: throw_angle_slider.editable=not charging
+	if throw_angle_number.editable==charging: throw_angle_number.editable=not charging
+	throw_charge_meter.value=charge
+	throw_charge_btn.text="角度 %d° 已锁定 · 蓄力 %.0f%%" % [core.throw_angle,charge*100.0] if charging else "按住蓄力，松开发射"
+	syncing_throw_angle=false
+
+func _build_preflight_controls() -> void:
+	preflight_panel=Panel.new(); preflight_panel.name="PreflightControls"
+	preflight_panel.position=Vector2(548,108); preflight_panel.size=Vector2(392,344)
+	var box:=StyleBoxFlat.new();box.bg_color=Color("1c293b");box.set_corner_radius_all(10)
+	preflight_panel.add_theme_stylebox_override("panel",box);preflight_panel.visible=false;hud.add_child(preflight_panel)
+	var title:=Label.new();title.text="飞前设置";title.position=Vector2(22,16);title.add_theme_font_size_override("font_size",22)
+	title.add_theme_color_override("font_color",Color("e5ecf7"));preflight_panel.add_child(title)
+	var caption:=Label.new();caption.text="投掷仰角 · 0–60°";caption.position=Vector2(22,60)
+	caption.add_theme_font_size_override("font_size",15);caption.add_theme_color_override("font_color",Color("a9bfd9"));preflight_panel.add_child(caption)
+	throw_angle_slider=HSlider.new();throw_angle_slider.name="LaunchAngleSlider";throw_angle_slider.position=Vector2(22,104);throw_angle_slider.size=Vector2(240,26)
+	throw_angle_slider.min_value=0;throw_angle_slider.max_value=60;throw_angle_slider.step=1;throw_angle_slider.focus_mode=Control.FOCUS_NONE
+	throw_angle_slider.value_changed.connect(_set_throw_angle);preflight_panel.add_child(throw_angle_slider)
+	throw_angle_number=SpinBox.new();throw_angle_number.name="LaunchAngleNumber";throw_angle_number.position=Vector2(279,92);throw_angle_number.size=Vector2(92,36)
+	throw_angle_number.min_value=0;throw_angle_number.max_value=60;throw_angle_number.step=1;throw_angle_number.suffix="°"
+	throw_angle_number.value_changed.connect(_set_throw_angle);preflight_panel.add_child(throw_angle_number)
+	throw_angle_number.get_line_edit().text_submitted.connect(func(_text: String): throw_angle_number.get_line_edit().release_focus())
+	for i in 4:
+		var value:float=[0,12,30,45][i]
+		var button:=Button.new();button.text="%d°"%value;button.position=Vector2(22+i*89,150);button.size=Vector2(81,32);button.focus_mode=Control.FOCUS_NONE
+		button.pressed.connect(func(): _set_throw_angle(value));preflight_panel.add_child(button)
+	throw_charge_btn=Button.new();throw_charge_btn.name="ChargeLaunchButton";throw_charge_btn.position=Vector2(22,216);throw_charge_btn.size=Vector2(348,50);throw_charge_btn.focus_mode=Control.FOCUS_NONE
+	throw_charge_btn.button_down.connect(func(): _begin_throw_charge("button"));preflight_panel.add_child(throw_charge_btn)
+	throw_charge_meter=ProgressBar.new();throw_charge_meter.position=Vector2(22,278);throw_charge_meter.size=Vector2(348,14);throw_charge_meter.max_value=1.0;throw_charge_meter.show_percentage=false
+	preflight_panel.add_child(throw_charge_meter)
+	var hint:=Label.new();hint.text="↑↓ 微调角度 · 空格或按钮蓄力";hint.position=Vector2(22,310);hint.add_theme_font_size_override("font_size",13)
+	hint.add_theme_color_override("font_color",Color("a9bfd9"));preflight_panel.add_child(hint)
 
 func _release_throw() -> void:
 	if core.state == "throw" and charging:
 		charging = false
+		charge_source=""
+		throw_angle_number.get_line_edit().release_focus()
 		last_throw = {angle = core.throw_angle, power = charge}
 		core.do_throw(core.throw_angle, charge)
 		core.physical_flight = PaperFlight.new()
 		core.physical_flight.launch(paper,core.throw_angle,charge)
-		print("PAPER|launch|mass=%.5f|area=%.5f" % [core.physical_flight.mass,core.physical_flight.area])
+		print("PAPER|launch|angle=%.0f|mass=%.5f|area=%.5f" % [core.throw_angle,core.physical_flight.mass,core.physical_flight.area])
 		charge = 0.0
+		_sync_preflight_controls()
 		_update_status()
 
 
@@ -1194,24 +1273,17 @@ func _unhandled_input(event: InputEvent) -> void:
 				if not hit.is_empty():
 					if crease_mode: _select_crease(hit)
 					elif fold_preview_rect.get_rect().has_point(pos): _start_fold_drag(hit,pos)
-		elif core.state == "throw":
-			if event.pressed:
-				charging = true
-				charge = 0.0
-			else:
-				_release_throw()
 	elif event is InputEventKey:
 		var k := event as InputEventKey
 		if core.state == "throw":
 			if k.pressed and not k.echo:
 				if k.keycode == KEY_UP:
-					core.throw_angle = minf(60.0, core.throw_angle + 3.0)
+					_set_throw_angle(core.throw_angle+3.0)
 				elif k.keycode == KEY_DOWN:
-					core.throw_angle = maxf(0.0, core.throw_angle - 3.0)
+					_set_throw_angle(core.throw_angle-3.0)
 				elif k.keycode == KEY_SPACE:
-					charging = true
-					charge = 0.0
-			elif not k.pressed and k.keycode == KEY_SPACE:
+					_begin_throw_charge("keyboard")
+			elif not k.pressed and k.keycode == KEY_SPACE and charge_source=="keyboard":
 				_release_throw()
 		elif core.state == "fly":
 			# 阶段 B1：A/D 有限侧向转向（真实按键事件；松开侧清零）
@@ -1231,8 +1303,6 @@ func _unhandled_input(event: InputEvent) -> void:
 					core.dive_input = false
 		if k.pressed and not k.echo and k.keycode == KEY_R and core.state == "fly":
 			_snap_camera()
-	elif event is InputEventMouseMotion and core.state == "throw" and not charging:
-		core.throw_angle = clampf((VIEW.y - event.position.y) * 60.0 / VIEW.y, 0.0, 60.0)
 
 
 # ---------------- 主循环 ----------------
@@ -1273,6 +1343,7 @@ func _process(delta: float) -> void:
 		prev_state = core.state
 	_update_status()
 	_update_visuals()
+	_sync_preflight_controls()
 	# C68 打磨B：折纸态预览窗——可见性随状态，相机绕机体慢速环绕
 	if fold_preview_rect != null:
 		fold_preview_rect.visible = false
@@ -1296,7 +1367,8 @@ func _update_visuals() -> void:
 	if core.physical_flight != null:
 		plane_visual.basis = core.physical_flight.orientation.scaled(Vector3.ONE*3.5)
 	else:
-		plane_visual.rotation = Vector3.ZERO
+		if core.state=="throw": plane_visual.basis=throw_preview_basis.scaled(Vector3.ONE*3.5)
+		else: plane_visual.rotation = Vector3.ZERO
 	# C10 摆动门：高门横位每帧随 gate_side_at(flight_time)（与规则判定同一公式）
 	if high_gate != null and core.state == "fly":
 		high_gate.position.x = float(core.gate_side_at(float(core.flight_time))) / PX_PER_M
@@ -1457,8 +1529,6 @@ func _on_paint() -> void:
 	_draw_wind_tag()
 	if st == "fold": return
 	if st == "throw":
-		_draw_params()
-	if st == "throw":
 		_draw_throw_ui()
 
 
@@ -1503,12 +1573,7 @@ func _draw_throw_ui() -> void:
 	paint.draw_arc(origin, 56.0, -deg_to_rad(core.throw_angle), 0.0, 20, Color(0.9, 0.3, 0.3, 0.6), 2.0)
 	paint.draw_string(FONT, tip + Vector2(10.0, 0.0), "%d°" % int(round(core.throw_angle)),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("e53935"))
-	var cb := Rect2(340, 500, 280, 20)
-	paint.draw_rect(cb, Color(1, 1, 1, 0.85))
-	paint.draw_rect(cb, Color("90a4ae"), false, 1.5)
-	paint.draw_rect(Rect2(cb.position.x + 2.0, cb.position.y + 2.0, (cb.size.x - 4.0) * charge, cb.size.y - 4.0), Color("e53935"))
-	paint.draw_string(FONT, Vector2(340.0, 494.0), "蓄力 %.0f%%（按住空格/鼠标左键，松开发射）" % (charge * 100.0),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("37474f"))
+
 
 
 func _draw_wind_tag() -> void:

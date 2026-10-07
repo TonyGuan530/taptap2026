@@ -3,11 +3,19 @@
   "note": "归档区：全量版本历史登记（含 git 历史中所有曾发布版本）。active=现役在线；archived=已归档（构建目录在 archive-builds/ 或仅存 git 历史，可复活）。",
   "items": [
     {
-      "id": "demo-08-3d-v29",
-      "title": "纸飞机 · 3D 折纸工作台（5关）",
+      "id": "demo-08-3d-v30",
+      "title": "纸飞机 · 折纸与飞前调角（5关）",
       "status": "active",
       "revivable": true,
-      "reason": "完整重设计选面/折痕/角度/历史交互；五关。"
+      "reason": "保留立体折纸工作台和五关，增加飞前调角与姿态预览。"
+    },
+    {
+      "id": "demo-08-3d-v29",
+      "title": "纸飞机 · 3D 折纸工作台（5关）",
+      "status": "archived",
+      "revivable": true,
+      "reason": "由 v30 飞前调角版替代；构建保留可恢复。",
+      "archivedAt": "2026-10-07"
     },
     {
       "id": "demo-08-3d-v28",
