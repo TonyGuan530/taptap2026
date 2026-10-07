@@ -76,8 +76,9 @@
       "buildId": "demo-09-3d-v1",
       "title": "赛车模拟器 3D · 造车与驾驶",
       "goal": "选关进入车库，选择车身和轮胎布局后发车；真实3D刚体，W/S油门与倒车，A/D转向。",
-      "status": "done",
-      "hidden": false
+      "status": "paused",
+      "hidden": true,
+      "archivedAt": "2026-10-07"
     },
     {
       "id": "demo-10",

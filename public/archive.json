@@ -20,9 +20,10 @@
     {
       "id": "demo-09-3d-v1",
       "title": "赛车模拟器 3D · 造车与驾驶",
-      "status": "active",
+      "status": "archived",
       "revivable": true,
-      "reason": "用户授权上传3D评审版；原2D版本保留，待最终反馈。"
+      "reason": "用户取消赛车重构并裁决3D也归档；撤下首页入口，历史版本保留。",
+      "archivedAt": "2026-10-07"
     },
     {
       "id": "demo-08-3d-v31",
