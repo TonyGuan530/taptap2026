@@ -1,101 +1,1049 @@
 {
-  "updated": "2026-10-07T09:15:00+08:00",
-  "note": "归档区：历史版本与下线 demo 全量登记。构建目录在仓库 archive-builds/（git 历史可复活，Pages 直链已撤）。",
+  "updated": "2026-10-07T09:57:00+08:00",
+  "note": "归档区：全量版本历史登记（含 git 历史中所有曾发布版本）。active=现役在线；archived=已归档（构建目录在 archive-builds/ 或仅存 git 历史，可复活）。",
   "items": [
     {
-      "id": "demo-01",
-      "title": "灵感菇侦探（原生 3D）",
-      "reason": "用户亲测 review 后裁决归档（2026-10-07 收束期首个归档裁决）",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-01-v3",
+      "id": "demo-02-3d-v10",
+      "title": "物性变换谜题 3D",
+      "status": "active",
       "revivable": true
     },
     {
-      "id": "demo-07",
-      "title": "简单美食小摊（绿幕版）",
-      "reason": "与 demo-01 定位重叠，2026-10-03 裁定归档留档 CI",
-      "archivedAt": "2026-10-03",
-      "lastBuild": "demo-07-v2",
+      "id": "demo-02-v7",
+      "title": "物性变换谜题 2D",
+      "status": "active",
       "revivable": true
     },
     {
-      "id": "demo-01-v3",
-      "title": "灵感菇侦探（原生 3D）",
-      "reason": "用户亲测裁决归档（2026-10-07）",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-01-v3",
+      "id": "demo-03-3d-v14",
+      "title": "岩浆降温 3D",
+      "status": "active",
       "revivable": true
     },
     {
-      "id": "demo-02-3d-v14",
-      "title": "物性谜题 3D 探索版（L6-L8）",
-      "reason": "探索版被 v15+ 取代，基线钉 v10",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-02-3d-v14",
+      "id": "demo-04-3d-v17",
+      "title": "SOUP 3D",
+      "status": "active",
       "revivable": true
     },
     {
-      "id": "demo-03-v14",
-      "title": "岩浆降温 2D v14",
-      "reason": "被 3D 线取代后归档",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-03-v14",
+      "id": "demo-04-v12",
+      "title": "SOUP 2D",
+      "status": "active",
       "revivable": true
     },
     {
-      "id": "demo-04-3d-v15",
-      "title": "SOUP 3D 资产加载器版",
-      "reason": "被 v17 取代",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-04-3d-v15",
-      "revivable": true
-    },
-    {
-      "id": "demo-05-v22",
-      "title": "恐龙火山 2D v22",
-      "reason": "HD-2D 线接管后 2D 归档",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-05-v22",
+      "id": "demo-05-hd2d-v6",
+      "title": "恐龙火山 HD-2D",
+      "status": "active",
       "revivable": true
     },
     {
       "id": "demo-05-tonight-v8",
       "title": "demo-05 tonight 活动版",
-      "reason": "活动线归档",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-05-tonight-v8",
+      "status": "active",
       "revivable": true
     },
     {
-      "id": "demo-06-v15",
-      "title": "词条涂鸦 2D v15",
-      "reason": "移交外部 AI 后按收束归档",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-06-v15",
-      "revivable": true
-    },
-    {
-      "id": "demo-06-3d-v9",
-      "title": "词条涂鸦 3D v9",
-      "reason": "移交外部 AI 后按收束归档",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-06-3d-v9",
-      "revivable": true
-    },
-    {
-      "id": "demo-06-inkbound-v9",
-      "title": "Inkbound V9",
-      "reason": "被 V10 取代",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-06-inkbound-v9",
+      "id": "demo-06-inkbound-v10-touch",
+      "title": "demo-06-inkbound-v10-touch",
+      "status": "active",
       "revivable": true
     },
     {
       "id": "demo-06-tonight-v8",
       "title": "demo-06 tonight 活动版",
-      "reason": "活动线归档",
-      "archivedAt": "2026-10-07",
-      "lastBuild": "demo-06-tonight-v8",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v15",
+      "title": "词条涂鸦 2D",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v26",
+      "title": "纸飞机模拟器 3D",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-v3",
+      "title": "纸飞机模拟器 2D",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-09-v2",
+      "title": "赛车模拟器",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-10-v3b",
+      "title": "demo-10-v3b",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-11-v3",
+      "title": "塞尔达式箱庭谜题",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-01",
+      "title": "灵感菇侦探（原生 3D）",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-01-v2",
+      "title": "灵感菇侦探（原生 3D）",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-01-v3",
+      "title": "灵感菇侦探（原生 3D）",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02",
+      "title": "物性变换谜题 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v1",
+      "title": "物性变换谜题 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v11",
+      "title": "物性变换谜题 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v12",
+      "title": "物性变换谜题 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v13",
+      "title": "物性变换谜题 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v14",
+      "title": "物性变换谜题 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v2",
+      "title": "物性变换谜题 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v3",
+      "title": "物性变换谜题 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v8",
+      "title": "物性变换谜题 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v9",
+      "title": "物性变换谜题 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-v2",
+      "title": "物性变换谜题 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-v3",
+      "title": "物性变换谜题 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-v4",
+      "title": "物性变换谜题 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-v5",
+      "title": "物性变换谜题 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-v6",
+      "title": "物性变换谜题 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v1",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v10",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v11",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v12",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v13",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v2",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v4",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v5",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v6",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v7",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v8",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-3d-v9",
+      "title": "岩浆降温 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v10",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v11",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v12",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v13",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v14",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v2",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v3",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v4",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v5",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v6",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v7",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v8",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-03-v9",
+      "title": "岩浆降温 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v1",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v10",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v11",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v12",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v13",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v14",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v15",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v16",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v2",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v3",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v4",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v5",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v6",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v7",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v8",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-3d-v9",
+      "title": "SOUP 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v10",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v11",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v2",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v3",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v4",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v5",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v6",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v7",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v8",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-04-v9",
+      "title": "SOUP 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-hd2d-v1",
+      "title": "恐龙火山 HD-2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-hd2d-v2",
+      "title": "恐龙火山 HD-2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-hd2d-v3",
+      "title": "恐龙火山 HD-2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-hd2d-v4",
+      "title": "恐龙火山 HD-2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-hd2d-v5",
+      "title": "恐龙火山 HD-2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v10",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v11",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v12",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v13",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v14",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v15",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v16",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v17",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v18",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v19",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v2",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v20",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v21",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v22",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v3",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v4",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v5",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v6",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v7",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v8",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-05-v9",
+      "title": "恐龙火山 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v1",
+      "title": "词条涂鸦 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v2",
+      "title": "词条涂鸦 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v3",
+      "title": "词条涂鸦 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v4",
+      "title": "词条涂鸦 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v5",
+      "title": "词条涂鸦 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v6",
+      "title": "词条涂鸦 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v7",
+      "title": "词条涂鸦 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v8",
+      "title": "词条涂鸦 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-3d-v9",
+      "title": "词条涂鸦 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-inkbound-v10",
+      "title": "Inkbound 绘画解谜",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-inkbound-v9",
+      "title": "Inkbound 绘画解谜",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v10",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v11",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v12",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v13",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v14",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v2",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v3",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v4",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v5",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v6",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v7",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v8",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-06-v9",
+      "title": "词条涂鸦 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-07",
+      "title": "简单美食小摊",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-07-v2",
+      "title": "简单美食小摊",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v1",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v10",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v11",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v12",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v13",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v14",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v15",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v16",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v17",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v18",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v19",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v2",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v20",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v21",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v22",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v23",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v24",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v25",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v3",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v4",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v5",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v6",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v7",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v8",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v9",
+      "title": "纸飞机模拟器 3D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-v1",
+      "title": "纸飞机模拟器 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-v2",
+      "title": "纸飞机模拟器 2D",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-09-v1",
+      "title": "赛车模拟器",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-10-3d-v1",
+      "title": "demo-10-3d",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-10-v1",
+      "title": "修改小说",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-10-v2",
+      "title": "修改小说",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-10-v3",
+      "title": "修改小说",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-11-v1",
+      "title": "塞尔达式箱庭谜题",
+      "status": "archived",
+      "revivable": true
+    },
+    {
+      "id": "demo-11-v2",
+      "title": "塞尔达式箱庭谜题",
+      "status": "archived",
       "revivable": true
     }
   ]
