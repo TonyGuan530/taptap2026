@@ -1,0 +1,91 @@
+{
+  "verifiedAt": "2026-10-07T13:53:38.487Z",
+  "base": "https://tonyguan530.github.io/taptap2026",
+  "passed": true,
+  "checks": [
+    {
+      "name": "demo-09-3d-v1 visible unique hub card",
+      "passed": true
+    },
+    {
+      "name": "demo-09-3d-v1 retains 2D",
+      "passed": true
+    },
+    {
+      "name": "demo-09-3d-v1 active archive entry",
+      "passed": true
+    },
+    {
+      "name": "demo-09-3d-v1 correct source and scene",
+      "passed": true
+    },
+    {
+      "name": "demo-09-3d-v1 online PCK equals local",
+      "passed": true
+    },
+    {
+      "name": "demo-09-3d-v1 shared runtime configured",
+      "passed": true
+    },
+    {
+      "name": "demo-10-3d-v2 visible unique hub card",
+      "passed": true
+    },
+    {
+      "name": "demo-10-3d-v2 retains 2D",
+      "passed": true
+    },
+    {
+      "name": "demo-10-3d-v2 active archive entry",
+      "passed": true
+    },
+    {
+      "name": "demo-10-3d-v2 correct source and scene",
+      "passed": true
+    },
+    {
+      "name": "demo-10-3d-v2 online PCK equals local",
+      "passed": true
+    },
+    {
+      "name": "demo-10-3d-v2 shared runtime configured",
+      "passed": true
+    },
+    {
+      "name": "demo-11-3d-v1 visible unique hub card",
+      "passed": true
+    },
+    {
+      "name": "demo-11-3d-v1 retains 2D",
+      "passed": true
+    },
+    {
+      "name": "demo-11-3d-v1 active archive entry",
+      "passed": true
+    },
+    {
+      "name": "demo-11-3d-v1 correct source and scene",
+      "passed": true
+    },
+    {
+      "name": "demo-11-3d-v1 online PCK equals local",
+      "passed": true
+    },
+    {
+      "name": "demo-11-3d-v1 shared runtime configured",
+      "passed": true
+    },
+    {
+      "name": "online shared engine SHA256",
+      "passed": true
+    },
+    {
+      "name": "online index.audio.worklet.js SHA256",
+      "passed": true
+    },
+    {
+      "name": "online index.audio.position.worklet.js SHA256",
+      "passed": true
+    }
+  ]
+}

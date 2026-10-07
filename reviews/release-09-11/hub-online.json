@@ -1,0 +1,40 @@
+{
+  "verifiedAt": "2026-10-07T13:54:21.734Z",
+  "base": "https://tonyguan530.github.io/taptap2026",
+  "passed": true,
+  "checks": [
+    {
+      "name": "demo-09-v2 visible unique playable card",
+      "passed": true
+    },
+    {
+      "name": "demo-10-v3b visible unique playable card",
+      "passed": true
+    },
+    {
+      "name": "demo-11-v3 visible unique playable card",
+      "passed": true
+    },
+    {
+      "name": "demo-09-3d-v1 visible unique playable card",
+      "passed": true
+    },
+    {
+      "name": "demo-10-3d-v2 visible unique playable card",
+      "passed": true
+    },
+    {
+      "name": "demo-11-3d-v1 visible unique playable card",
+      "passed": true
+    },
+    {
+      "name": "hub opens ready 09 engine in play iframe",
+      "passed": true
+    },
+    {
+      "name": "hub and iframe have no page errors",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,125 @@
+{
+  "verifiedAt": "2026-10-07T13:54:02.079Z",
+  "base": "https://tonyguan530.github.io/taptap2026",
+  "passed": true,
+  "results": [
+    {
+      "id": "demo-09-3d-v1",
+      "checks": [
+        {
+          "name": "HTML served",
+          "passed": true
+        },
+        {
+          "name": "engine canvas ready",
+          "passed": true
+        },
+        {
+          "name": "level selection enters garage",
+          "passed": true
+        },
+        {
+          "name": "valid design launches vehicle",
+          "passed": true
+        },
+        {
+          "name": "W drives physical vehicle through track",
+          "passed": true
+        },
+        {
+          "name": "no browser or script errors",
+          "passed": true
+        }
+      ],
+      "errors": [],
+      "messages": [
+        "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org",
+        "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
+        "Build configuration: Emscripten 4.0.20, single-threaded, no GDExtension support.",
+        "REVIEW09|state|menu",
+        "REVIEW09|state|build",
+        "REVIEW09|state|drive",
+        "REVIEW09|drive|pos=(-0.001802, 5.422947, -0.01454)|speed=0.4|grounded=4",
+        "REVIEW09|drive|pos=(0.270233, 5.3809, -19.6551)|speed=46.2|grounded=4",
+        "REVIEW09|drive|pos=(-0.559021, 4.538227, -71.62071)|speed=52.8|grounded=0",
+        "REVIEW09|drive|pos=(0.637265, 7.242003, -123.2352)|speed=44.3|grounded=2"
+      ],
+      "passed": true
+    },
+    {
+      "id": "demo-10-3d-v2",
+      "checks": [
+        {
+          "name": "HTML served",
+          "passed": true
+        },
+        {
+          "name": "engine canvas ready",
+          "passed": true
+        },
+        {
+          "name": "W moves explorer",
+          "passed": true
+        },
+        {
+          "name": "Tab opens manuscript",
+          "passed": true
+        },
+        {
+          "name": "click word opens choices",
+          "passed": true
+        },
+        {
+          "name": "word choice visibly rebuilds 3D world",
+          "passed": true
+        },
+        {
+          "name": "no browser or script errors",
+          "passed": true
+        }
+      ],
+      "errors": [],
+      "messages": [
+        "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org",
+        "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
+        "Build configuration: Emscripten 4.0.20, single-threaded, no GDExtension support.",
+        "[demo10-3d] root ready | chapter=0",
+        "[DIAG pic] pic_rot=-0.12 spec_ps=false",
+        "[DIAG pic] pic_rot=-0.12 spec_ps=false"
+      ],
+      "passed": true
+    },
+    {
+      "id": "demo-11-3d-v1",
+      "checks": [
+        {
+          "name": "HTML served",
+          "passed": true
+        },
+        {
+          "name": "engine canvas ready",
+          "passed": true
+        },
+        {
+          "name": "first puzzle changes room HUD",
+          "passed": true
+        },
+        {
+          "name": "first puzzle rebuilds room geometry",
+          "passed": true
+        },
+        {
+          "name": "no browser or script errors",
+          "passed": true
+        }
+      ],
+      "errors": [],
+      "messages": [
+        "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org",
+        "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
+        "Build configuration: Emscripten 4.0.20, single-threaded, no GDExtension support."
+      ],
+      "passed": true
+    }
+  ]
+}
