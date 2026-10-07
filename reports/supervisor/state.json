@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-07T09:12:00+08:00",
-  "round": 147,
+  "checkedAt": "2026-10-07T09:58:00+08:00",
+  "round": 146,
   "quota": {
     "lastRead": "19:51: 5h=87%, weekly=46%, mcp=100%, credits=10",
     "thisRound": "guard 下轮实跑"
@@ -47,15 +47,17 @@
     "godotProcs": 0,
     "miro": "102 条稳态（无新用户反馈）",
     "feedback": "db.json 零反馈",
-    "git": "本轮 HEAD 待推",
+    "git": "本轮 HEAD 99a3307 已推送",
     "itch": "CDN 分发卡（重推无效）；Pages 恢复中"
   },
   "fiveHourPlan": {
     "done": "盲测侧基建全齐",
     "running": "demo-11 v3 已交付→盲测数据模板下一步",
-    "queue": "收束期：demo-01 已归档（首个用户亲测归档裁决）；GPT 对比送验 demo-02/03/04/08 继续"
+    "queue": "收束期：归档区已全量登记 174 条版本历史（active 15/archived 159）；GPT 对比送验 SOP 已注入四任务必读位置"
   },
   "watch": [
+    "📦【归档区 v2·用户指令】全量版本历史登记完成：174 条（git 历史全量提取）——archive.json active 15/archived 159，归档区页面按两态展示",
+    "🔴 GPT 对比送验 SOP 消化核对持续（[SENT] 回执）",
     "📦【收束期·执行记录】demo-01 灵感菇侦探已归档（用户亲测裁决，hub 撤下+归档区登记+v3 直链保留）——其自动化任务转为归档维护态（提示词下轮待更新或用户在 Automations 界面暂停）",
     "🔴【收束令·用户指令】归档区已上线（archive.html+archive.json）——GPT 裁决/用户 review 判不合格即直接归档，git 历史可复活",
     "🔴【管辖变更】demo-05/06 移交外部 AI 撤出督导排期",
