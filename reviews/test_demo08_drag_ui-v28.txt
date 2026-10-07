@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PAPER|menu|levels=5
+PAPER|level|1|practice=true
+PAPER|fold|1|area=0.06300
+PASS: two real 3D clicks create an unfolded hinge
+PAPER|drag-start|angle=0.0
+PASS: actual 3D paper click starts dragging
+DRAG_COORDS grab=(737.6446, 264.4457) target=(724.2738, 235.063)
+PAPER|drag-end|angle=60.0|area=0.06300
+PASS: mouse ray drag preserves requested partial angle
+PASS: release keeps the paper standing
+CREASE_COORDS a=(764.4551, 200.3453) b=(665.9265, 285.4766)
+PAPER|fold|2|area=0.06300
+PASS: another crease can be drawn directly on standing paper
+PAPER|drag-start|angle=0.0
+PASS: actual 3D paper click starts dragging
+DRAG_COORDS grab=(732.3229, 224.9483) target=(738.9961, 236.682)
+PAPER|drag-end|angle=-45.0|area=0.06300
+PASS: mouse ray drag preserves requested partial angle
+PAPER|undo|1
+PASS: undo preserves the first partial fold
+PAPER|drag-start|angle=60.0
+PASS: continuous reverse drag crosses relative atan2 boundary without jumping
+PASS: continuous reverse drag crosses relative atan2 boundary without jumping
+PAPER|drag-end|angle=-121.0|area=0.06300
+PAPER|fold|1|area=0.06300
+PAPER|drag-start|angle=0.0
+PASS: edge-on hinge keeps one drag mode without singular-view angle jump
+PAPER|drag-end|angle=8.2|area=0.06300
+PAPER|launch|mass=0.00504|area=0.06332
+PASS: same nonplanar paper geometry reaches physical launch
+DRAG_UI_RESULT failures=0

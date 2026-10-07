@@ -30,16 +30,19 @@ func launch(paper, angle_deg: float, power: float) -> void:
 	inertia=Vector3(mass*paper.length_m*paper.length_m/12.0,mass*(span*span+paper.length_m*paper.length_m)/12.0,mass*span*span/12.0)
 	position=Vector3(0,1.5,0)
 	var mean_normal := Vector3.ZERO
-	for panel in panels: mean_normal += panel.normal*float(panel.area)
+	for panel in panels:
+		var upward: Vector3 = panel.normal if panel.normal.y>=0.0 else -panel.normal
+		# Weight fins smoothly toward zero; no bank threshold at partial folds.
+		mean_normal += upward*absf(upward.y)*float(panel.area)
 	orientation=Basis(Vector3.RIGHT,deg_to_rad(angle_deg))*Basis(Vector3.BACK,atan2(mean_normal.x,mean_normal.y))
 	velocity=orientation*Vector3(0,0,-lerpf(4.0,16.0,clampf(power,0,1)))
 	angular_velocity=Vector3.ZERO
 
-func surface_force(normal: Vector3, relative: Vector3, panel_area: float) -> Vector3:
+func surface_force(normal: Vector3, relative: Vector3, panel_area: float, camber: float = 1.0) -> Vector3:
 	var speed := relative.length()
 	if speed<0.001: return Vector3.ZERO
 	var direction := relative/speed
-	var aoa := asin(clampf(-normal.dot(direction),-1,1))+deg_to_rad(1.0)
+	var aoa := asin(clampf(-normal.dot(direction),-1,1))+deg_to_rad(camber)
 	var cl: float = lift_curve.sample_baked(rad_to_deg(aoa))
 	var ar := maxf(span*span/maxf(area,0.00001),0.5)
 	var cd := 0.018+cl*cl/(PI*ar*0.8)+1.2*sin(aoa)*sin(aoa)
@@ -60,7 +63,7 @@ func step(delta: float, wind := Vector3.ZERO, steering: float = 0.0, dive: bool 
 		for panel in panels:
 			var arm: Vector3 = orientation*(panel.center-com)
 			var relative := velocity+angular_velocity.cross(arm)-wind
-			var f := surface_force(orientation*panel.normal,relative,float(panel.area))
+			var f := surface_force(orientation*panel.normal,relative,float(panel.area),absf(panel.normal.y))
 			force += f
 			torque += arm.cross(f)
 		var air := velocity-wind

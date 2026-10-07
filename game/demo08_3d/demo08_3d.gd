@@ -28,6 +28,21 @@ var paper_edges: MeshInstance3D
 var undo_btn: Button
 var dart_btn: Button
 var unfold_btn: Button
+var crease_btn: Button
+var crease_mode := true
+var fold_select_face := -1
+var fold_select_point := Vector3.ZERO
+var fold_dragging := false
+var preview_rotating := false
+var preview_elevation := 0.65
+var preview_distance := 1.45
+var drag_screen_mode := false
+var drag_start_angle := 0.0
+var drag_start_mouse := Vector2.ZERO
+var drag_radial := Vector3.ZERO
+var drag_plane_origin := Vector3.ZERO
+var fold_notice := ""
+var fold_notice_time := 0.0
 var core: RefCounted = CoreScript.new()
 var last_throw := {angle = 30.0, power = 1.0}   # 测试/复盘用：最近一次实际投掷入参
 
@@ -242,24 +257,29 @@ func _rebuild_plane_visual() -> void:
 	if preview_paper != null:
 		preview_paper.mesh = paper_mesh.mesh
 		preview_edges.mesh = paper_edges.mesh
-		preview_paper.position = -center*3.5
-		preview_edges.position = -center*3.5
+		# A stable pivot makes mouse picking independent of the moving center of mass.
+		preview_paper.position = Vector3.ZERO
+		preview_edges.position = Vector3.ZERO
 
 func _paper_point(pos: Vector2) -> Vector2:
 	var unit: Vector2 = (pos-core.paper_rect.position)/core.paper_rect.size
 	return Vector2((unit.x-0.5)*paper.width,(unit.y-0.5)*paper.length_m)
 
 func _on_undo_fold() -> void:
+	fold_dragging = false
 	dart_queue.clear()
 	if paper.undo():
 		fold_animation = 1.0
 		if not core.folds.is_empty(): core.folds.pop_back()
 		core.folds_used = core.folds.size()
 		fold_has_p1 = false
+		crease_mode = paper.history.is_empty()
 		_rebuild_plane_visual()
 		print("PAPER|undo|%d" % paper.history.size())
 
 func _on_unfold() -> void:
+	fold_dragging = false
+	crease_mode = true
 	dart_queue.clear()
 	core.start_level(core.level_idx)
 	core.throw_angle = 12.0
@@ -281,6 +301,7 @@ func _record_fold(a: Vector2,b: Vector2,angle: float = PI) -> bool:
 	core.folds.append([pa,pb])
 	core.folds_used = core.folds.size()
 	fold_animation = 0.0
+	crease_mode = false
 	_rebuild_plane_visual()
 	print("PAPER|fold|%d|area=%.5f" % [paper.history.size(),paper.material_area()])
 	return true
@@ -322,11 +343,115 @@ func _build_fold_preview() -> void:
 	fold_preview_rect = TextureRect.new()
 	fold_preview_rect.name = "FoldPreview"
 	fold_preview_rect.texture = fold_preview_vp.get_texture()
+	fold_preview_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fold_preview_rect.position = Vector2(480, 88)
 	fold_preview_rect.size = Vector2(460, 330)
 	fold_preview_rect.stretch_mode = TextureRect.STRETCH_SCALE
 	fold_preview_rect.visible = false
 	hud.add_child(fold_preview_rect)
+	crease_btn = _fold_button("新折痕",Vector2(830,464),Vector2(104,42),_begin_new_crease)
+
+func _begin_new_crease() -> void:
+	_end_fold_drag()
+	crease_mode = true
+	fold_has_p1 = false
+	fold_notice = ""
+
+func _preview_ray(pos: Vector2) -> Dictionary:
+	var cursor := pos-fold_preview_rect.position
+	return {"origin":fold_preview_cam.project_ray_origin(cursor)/3.5,"direction":fold_preview_cam.project_ray_normal(cursor)}
+
+func _paper_hit(ray: Dictionary) -> Dictionary:
+	var result: Dictionary = {}
+	var nearest := INF
+	for fi in paper.faces.size():
+		var face: PackedVector3Array = paper.faces[fi]
+		for j in range(1,face.size()-1):
+			var point = Geometry3D.ray_intersects_triangle(ray.origin,ray.direction,face[0],face[j],face[j+1])
+			if point is Vector3:
+				var distance: float = ray.origin.distance_squared_to(point)
+				if distance<nearest:
+					nearest=distance; result={"face":fi,"point":point}
+	return result
+
+func _hit_paper_at(pos: Vector2) -> Dictionary:
+	if fold_preview_rect.get_rect().has_point(pos): return _paper_hit(_preview_ray(pos))
+	if _paper_rect().has_point(pos):
+		var p := _paper_point(pos)
+		return _paper_hit({"origin":Vector3(p.x,1.0,p.y),"direction":Vector3.DOWN})
+	return {}
+
+func _select_crease(hit: Dictionary) -> void:
+	if not fold_has_p1:
+		fold_select_face = int(hit.face)
+		fold_select_point = hit.point
+		fold_has_p1 = true
+		fold_notice = ""
+		return
+	if int(hit.face)!=fold_select_face:
+		fold_notice = "请在同一块纸面上选择第二个点。"
+		fold_notice_time = 3.0
+		return
+	if paper.history.size()<8 and paper.begin_face_fold(fold_select_face,fold_select_point,hit.point):
+		var pr := _paper_rect()
+		core.folds.append([pr.position+(Vector2(fold_select_point.x/paper.width,fold_select_point.z/paper.length_m)+Vector2.ONE*0.5)*pr.size,pr.position+(Vector2(hit.point.x/paper.width,hit.point.z/paper.length_m)+Vector2.ONE*0.5)*pr.size])
+		core.folds_used = paper.history.size()
+		fold_animation = 1.0
+		crease_mode = false
+		fold_notice = ""
+		_rebuild_plane_visual()
+		print("PAPER|fold|%d|area=%.5f" % [paper.history.size(),paper.material_area()])
+	else:
+		fold_notice = "这条折痕不能折起，请换同一纸面的两点；也可以先回退。"
+		fold_notice_time = 3.0
+	fold_has_p1 = false
+
+func _start_fold_drag(hit: Dictionary, pos: Vector2) -> void:
+	if paper.history.is_empty(): return
+	var action: Dictionary = paper.history.back()
+	# Before any bend, grabbing either side chooses which side to lift.
+	if not bool(action.moves[int(hit.face)]) and absf(float(action.angle))<0.001:
+		for i in action.moves.size(): action.moves[i]=not action.moves[i]
+		_rebuild_plane_visual()
+	if not bool(action.moves[int(hit.face)]):
+		fold_notice = "请拖动黄色的活动纸片；新折痕按钮可添加下一条。"
+		fold_notice_time = 3.0
+		return
+	fold_dragging = true
+	drag_start_angle = float(action.angle)
+	drag_start_mouse = pos
+	drag_plane_origin = action.origin+action.axis*(hit.point-action.origin).dot(action.axis)
+	drag_radial = (hit.point-drag_plane_origin).normalized()
+	drag_screen_mode=absf(action.axis.dot(_preview_ray(pos).direction))<=0.06
+	fold_notice = ""
+	print("PAPER|drag-start|angle=%.1f" % rad_to_deg(drag_start_angle))
+
+func _drag_fold_to(pos: Vector2) -> void:
+	if not fold_dragging or paper.history.is_empty(): return
+	var action: Dictionary = paper.history.back()
+	var ray := _preview_ray(pos)
+	var denominator: float = action.axis.dot(ray.direction)
+	var angle: float = drag_start_angle+(drag_start_mouse.y-pos.y)*PI/220.0
+	if not drag_screen_mode:
+		if absf(denominator)<=0.06: return
+		var t: float = action.axis.dot(drag_plane_origin-ray.origin)/denominator
+		if t<=0.0: return
+		var radial: Vector3 = ray.origin+ray.direction*t-drag_plane_origin
+		if radial.length()>0.003:
+			radial=radial.normalized()
+			angle=drag_start_angle+atan2(action.axis.dot(drag_radial.cross(radial)),drag_radial.dot(radial))
+			drag_radial=radial
+	paper.set_last_angle(angle)
+	# Accumulate successive short rotations so atan2 cannot wrap a long drag.
+	drag_start_angle=float(action.angle)
+	drag_start_mouse=pos
+	fold_animation = 1.0
+	_rebuild_plane_visual()
+
+func _end_fold_drag() -> void:
+	if not fold_dragging: return
+	fold_dragging = false
+	print("PAPER|drag-end|angle=%.1f|area=%.5f" % [rad_to_deg(float(paper.history.back().angle)),paper.material_area()])
 
 
 ## 按关卡重建终点/门（场景应用：终点与低门为自建 ComicObject，高门用基座 gate_frame 模型；
@@ -834,6 +959,8 @@ func paint_chart_axes(r: Rect2, max_d: float, max_h: float) -> void:
 
 
 func _go_menu() -> void:
+	_end_fold_drag()
+	preview_rotating = false
 	core.lateral_input = 0.0
 	core.dive_input = false
 	practice_mode = false
@@ -865,6 +992,13 @@ func _on_reset_run() -> void:
 
 
 func _on_level_pressed(i: int, practice: bool = false) -> void:
+	fold_dragging = false
+	preview_rotating = false
+	crease_mode = true
+	fold_notice = ""
+	fold_preview_orbit = 0.6
+	preview_elevation = 0.65
+	preview_distance = 1.45
 	practice_mode = practice
 	core.physical_trial = practice
 	if i < 0 or i >= core.LEVELS.size() or i > core.unlocked:
@@ -889,6 +1023,7 @@ func _on_fold_done() -> void:
 	if core.state != "fold":
 		return
 	if fold_animation < 1.0 or not dart_queue.is_empty(): return
+	_end_fold_drag()
 	core.finish_folds()
 	_rebuild_plane_visual()   # C68 打磨A：折完即形变
 	fold_btn.visible = false
@@ -1001,17 +1136,39 @@ func _on_menu_tip_rotate() -> void:
 # ---------------- 输入（真实事件路径） ----------------
 
 func _unhandled_input(event: InputEvent) -> void:
+	if core.state=="fold":
+		if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT:
+			preview_rotating=event.pressed
+			return
+		if event is InputEventMouseButton and event.pressed and fold_preview_rect.get_rect().has_point(event.position):
+			if event.button_index==MOUSE_BUTTON_WHEEL_UP:
+				preview_distance=maxf(0.85,preview_distance-0.1)
+				return
+			if event.button_index==MOUSE_BUTTON_WHEEL_DOWN:
+				preview_distance=minf(2.6,preview_distance+0.1)
+				return
+		if event is InputEventMouseMotion:
+			if fold_dragging: _drag_fold_to(event.position)
+			elif preview_rotating:
+				fold_preview_orbit-=event.relative.x*0.012
+				preview_elevation=clampf(preview_elevation+event.relative.y*0.008,0.15,1.35)
+			return
+		if event is InputEventKey and event.pressed and event.keycode==KEY_ESCAPE:
+			_end_fold_drag()
+			fold_has_p1=false
+			crease_mode=paper.history.is_empty()
+			return
+
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		var pos: Vector2 = event.position
-		if core.state == "fold" and event.pressed:
-			if _paper_rect().grow(10.0).has_point(pos):
-				if not fold_has_p1:
-					fold_p1 = pos
-					fold_has_p1 = true
-				else:
-					if fold_animation >= 1.0 and dart_queue.is_empty() and core.folds_used < maxi(6,int(core.level_dict().folds)) and _record_fold(_paper_point(fold_p1),_paper_point(pos)):
-						_rebuild_plane_visual()   # C69：逐笔形变——每画一条折线预览与世界机体即时响应
-					fold_has_p1 = false
+		if core.state == "fold":
+			if not event.pressed:
+				_end_fold_drag()
+			elif fold_animation>=1.0 and dart_queue.is_empty():
+				var hit := _hit_paper_at(pos)
+				if not hit.is_empty():
+					if crease_mode: _select_crease(hit)
+					elif fold_preview_rect.get_rect().has_point(pos): _start_fold_drag(hit,pos)
 		elif core.state == "throw":
 			if event.pressed:
 				charging = true
@@ -1062,8 +1219,10 @@ func _process(delta: float) -> void:
 	if core.state == "fold" and fold_animation >= 1.0 and not dart_queue.is_empty():
 		var action: Dictionary = dart_queue.pop_front()
 		_record_fold(action.a,action.b,float(action.angle))
-	for button in [undo_btn,dart_btn,unfold_btn]: button.visible = core.state == "fold"
+	for button in [undo_btn,dart_btn,unfold_btn,crease_btn]: button.visible = core.state == "fold"
 	undo_btn.disabled = paper.history.is_empty()
+	crease_btn.disabled = fold_animation<1.0 or not dart_queue.is_empty() or paper.history.size()>=8
+	fold_notice_time=maxf(0.0,fold_notice_time-delta)
 	fold_btn.disabled = fold_animation < 1.0 or not dart_queue.is_empty()
 	if core.state == "throw" and charging:
 		charge = minf(1.0, charge + delta / CHARGE_TIME)
@@ -1089,8 +1248,7 @@ func _process(delta: float) -> void:
 	if fold_preview_rect != null:
 		fold_preview_rect.visible = core.state == "fold"
 	if core.state == "fold" and fold_preview_cam != null and plane_visual != null:
-		fold_preview_orbit += delta * 0.6
-		fold_preview_cam.position = Vector3(sin(fold_preview_orbit)*1.45,1.1,cos(fold_preview_orbit)*1.45)
+		fold_preview_cam.position = Vector3(sin(fold_preview_orbit)*preview_distance,tan(preview_elevation)*preview_distance,cos(fold_preview_orbit)*preview_distance)
 		fold_preview_cam.look_at(Vector3.ZERO)
 	paint.queue_redraw()
 
@@ -1191,8 +1349,9 @@ func _update_status() -> void:
 	if practice_mode:
 		match core.state:
 			"fold":
-				status_label.text = "自由折纸 · 已折 %d 步" % paper.history.size()
-				hint_label.text = "两点画折痕；示范纸飞机可逐步折。回退后能改折法，完成后投掷。" if paper.is_flat() else "机翼已打开；回退一步可继续改折痕，也可以直接去投掷。"
+				var angle: float = 0.0 if paper.history.is_empty() else rad_to_deg(float(paper.history.back().angle))
+				status_label.text = "自由折纸 · 已折 %d 步 · 当前折角 %+.0f°" % [paper.history.size(),angle]
+				hint_label.text = _fold_help()
 			"throw":
 				status_label.text = "投掷角度 %d° · 按住空格蓄力，松开发射" % core.throw_angle
 				hint_label.text = "上下键调整角度。飞行中 A/D 倾斜转向、S 俯冲。"
@@ -1211,7 +1370,7 @@ func _update_status() -> void:
 		"fold":
 			status_label.text = "%s · 折纸：已折 %d/%d 条 · 目标 %.0f 米" % [
 				String(L.name), core.folds_used, maxi(6,int(L.folds)), float(L.target_m)]
-			hint_label.text = String(L.tip)
+			hint_label.text = _fold_help()+" · "+String(L.tip)
 		"throw":
 			status_label.text = "%s · 投掷角度 %d° · 目标 %.0f 米" % [String(L.name), int(round(core.throw_angle)), float(L.target_m)]
 			hint_label.text = "鼠标上下或方向键调角度，按住空格/左键蓄力，松开发射；R 复位相机"
@@ -1242,12 +1401,21 @@ func _update_status() -> void:
 		"settle":
 			status_label.text = ("过关！" if core.last_pass else "挑战失败") + " · 飞行 %.1f 米" % core.flight_distance
 			hint_label.text = ""
+
 		"shop":
 			status_label.text = shop_status_text()
 			hint_label.text = "买不起就点跳过；金币 = 门奖（即时）+ 距离/10 + 过关奖励"
 		"final":
 			status_label.text = "五关全部完成！"
 			hint_label.text = ""
+
+
+func _fold_help() -> String:
+	if fold_notice_time>0.0 and fold_notice!="": return fold_notice
+	if fold_dragging: return "拖动控制折角，松手保留；右键拖动旋转视角。"
+	if fold_has_p1: return "再点同一纸面上的另一点，画出折痕。"
+	if crease_mode: return "两点画折痕 → 拖动黄色纸片折起；右键旋转视角，滚轮缩放。"
+	return "拖动黄色纸片调整折角；点「新折痕」可在立体纸面继续折。"
 
 
 # ---------------- 2D 覆盖绘制（纸面/折线/投掷辅助） ----------------
@@ -1280,18 +1448,14 @@ func _draw_paper() -> void:
 	paint.draw_string(FONT, pr.position + Vector2(0.0, -10.0),
 		"纸张：剩余可折 %d 次" % (maxi(6,int(core.LEVELS[core.level_idx].folds)) - core.folds_used),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("455a64"))
-	for f in core.folds:
-		var a: Vector2 = f[0]
-		var b: Vector2 = f[1]
-		paint.draw_line(a, b, Color("78909c"), 2.0)
-		paint.draw_circle(a, 3.0, Color("78909c"))
-		paint.draw_circle(b, 3.0, Color("78909c"))
 	if fold_has_p1:
-		paint.draw_circle(fold_p1, 4.0, Color("e53935"))
+		var p := pr.position+(Vector2(fold_select_point.x/paper.width,fold_select_point.z/paper.length_m)+Vector2.ONE*0.5)*pr.size
+		paint.draw_circle(p,4.0,Color("e53935"))
+		paint.draw_circle(fold_preview_rect.position+fold_preview_cam.unproject_position(fold_select_point*3.5),5.0,Color("e53935"))
 
 
 func _draw_params() -> void:
-	paint.draw_string(FONT,Vector2(480,440),"纸面 %.0f cm² · 已折 %d 步 · 飞行使用此形状" % [paper.material_area()*10000.0,paper.history.size()],HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("0d3b4e"))
+	paint.draw_string(FONT,Vector2(480,440),"纸面 %.0f cm² · 折角 %+.0f° · 松手保留立体形状" % [paper.material_area()*10000.0,0.0 if paper.history.is_empty() else rad_to_deg(float(paper.history.back().angle))],HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("0d3b4e"))
 
 
 func _tier3(v: float, mid: float, high: float) -> String:

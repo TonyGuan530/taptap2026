@@ -1,11 +1,13 @@
 param(
   [string]$GodotPath = 'D:\Program Files (x86)\Steam\steamapps\common\Godot Engine\godot.windows.opt.tools.64.exe',
-  [switch]$Rebuild
+  [switch]$Rebuild,
+  [string]$BuildId = 'demo-08-3d-v28'
 )
 $ErrorActionPreference = 'Stop'
+if ($BuildId -notmatch '^demo-08-3d-v[0-9]+$') { throw 'Invalid demo08 build ID' }
 $demoRoot = Split-Path $PSScriptRoot -Parent
 $demoVersions = @(
-  @{ Id='demo-08-3d-v27'; Scene='demo08_3d'; Title='纸飞机 · 3D 折纸与物理试飞（5关）'; Notes='五关：折法、低抛、逆风、侧风、顺风；真实纸面翻折、五步示范与回退；折后几何驱动三维近似气动力；自由试飞保留折法。' }
+  @{ Id=$BuildId; Scene='demo08_3d'; Title='纸飞机 · 拖动立体折纸（5关）'; Notes='两点画折痕，拖纸片控制角度；松手保留立体形状，可在倾斜纸面继续折；右键旋转、滚轮缩放；竖直纸面参与气动力；保留五关。' }
 )
 foreach ($demoVersion in $demoVersions) {
   $demoStage = Join-Path ([System.IO.Path]::GetTempPath()) ('taptap-demo08-' + [guid]::NewGuid().ToString('N'))
