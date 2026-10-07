@@ -5,9 +5,10 @@
     {
       "id": "demo-11-3d-v1",
       "title": "箱庭谜题 3D · 推箱与工具",
-      "status": "active",
+      "status": "archived",
       "revivable": true,
-      "reason": "用户授权上传3D评审版；原2D版本保留，待最终反馈。"
+      "reason": "用户最终review裁决归档；首页入口撤下，历史构建保留可复活。",
+      "archivedAt": "2026-10-07"
     },
     {
       "id": "demo-10-3d-v2",
@@ -152,20 +153,26 @@
     {
       "id": "demo-09-v2",
       "title": "赛车模拟器",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终review裁决归档；首页入口撤下，历史构建保留可复活。"
     },
     {
       "id": "demo-10-v3b",
       "title": "demo-10-v3b",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终review裁决归档；首页入口撤下，历史构建保留可复活。"
     },
     {
       "id": "demo-11-v3",
       "title": "塞尔达式箱庭谜题",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终review裁决归档；首页入口撤下，历史构建保留可复活。"
     },
     {
       "id": "demo-01",
