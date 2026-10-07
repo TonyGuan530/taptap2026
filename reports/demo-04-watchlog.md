@@ -470,3 +470,6 @@
 
 ## 2026-10-05 23:10（轮83·README 弹跳板范围同步）
 - README-3D 弹跳板描述从 L1 更新为 L1/L2/L4（v12 扩展后失准）；Pages 953M（-17M 他 demo 清理）。在线巡检 v16 200 ✓。
+
+## 2026-10-05 23:10（轮83·代码审查）
+- 代码审查（评审者视角）：_grounded_ticks/recovery_marker/recovery_marker_age 初始化正确；level_root 切换 queue_free 防泄漏；recovery_marker 空引用检查到位；无废弃引用。全部核心文件静态零错误。无新缺陷。
