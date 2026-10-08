@@ -5,7 +5,7 @@ extends Node2D
 ## 剧本：正常建设，预警/酸雨窗口内投资村民（策略迁移）。
 ## 运行：godot --path game --write-movie <绝对路径>/f.png --fixed-fps 30 --quit-after 1000 res://tests/movie_demo03.tscn
 
-const MODE := "storm"
+const MODE := "classic"
 
 var game: Node2D
 var shot_saved := false
