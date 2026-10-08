@@ -1,0 +1,56 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PAPER|menu|levels=5
+PAPER|level|1|practice=true
+WORKBENCH|model|angles=|pending=false|height=0.00000
+PASS: fold state has independent modeling workbench
+PASS: large 3D workspace replaces old duplicate flat view
+WORKBENCH|model|angles=|pending=false|height=0.00000
+WORKBENCH|model|angles=|pending=false|height=0.00000
+WORKBENCH|crease|1
+WORKBENCH|model|angles=0.0|pending=true|height=0.00000
+PASS: face pick and snapped edge points open hinge preview
+WORKBENCH|model|angles=0.0|pending=true|height=0.00000
+PASS: pending history row reselection keeps geometry
+WORKBENCH|angle|1|60.0
+WORKBENCH|model|angles=60.0|pending=true|height=0.09093
+PASS: slider gives actual standing geometry with explicit commit
+PASS: unconfirmed preview cannot enter flight
+WORKBENCH|commit|1
+WORKBENCH|model|angles=60.0|pending=false|height=0.09093
+UI_COORDS first_face=(491.413, 274.205) a=(542.1479, 189.9285) b=(385.852, 330.0716) second_face=(481.9898, 240.6833) a=(552.323, 177.6189) b=(411.6566, 303.7477)
+WORKBENCH|model|angles=60.0|pending=false|height=0.09093
+WORKBENCH|model|angles=60.0|pending=false|height=0.09093
+WORKBENCH|crease|2
+WORKBENCH|model|angles=60.0,0.0|pending=true|height=0.09093
+PASS: second crease picked on tilted paper in workbench
+WORKBENCH|angle|2|-45.0
+WORKBENCH|model|angles=60.0,-45.0|pending=true|height=0.05905
+WORKBENCH|commit|2
+WORKBENCH|model|angles=60.0,-45.0|pending=false|height=0.05905
+PASS: commit closes preview transaction
+WORKBENCH|model|angles=60.0,-45.0|pending=true|height=0.05905
+WORKBENCH|angle|1|30.0
+WORKBENCH|model|angles=30.0,-45.0|pending=true|height=0.02625
+PASS: history reselect changes existing hinge without undo
+WORKBENCH|model|angles=60.0,-45.0|pending=false|height=0.05905
+PASS: cancel restores committed standing shape
+WORKBENCH|model|angles=60.0,-45.0|pending=true|height=0.05905
+WORKBENCH|angle|1|90.0
+WORKBENCH|model|angles=90.0,-45.0|pending=true|height=0.08962
+PASS: rotation handle and numerical angle stay in sync
+WORKBENCH|model|angles=60.0,-45.0|pending=false|height=0.05905
+PASS: gizmo cancellation restores shape
+WORKBENCH|model|angles=60.0|pending=false|height=0.09093
+WORKBENCH|undo|1
+PASS: undo removes latest confirmed crease
+WORKBENCH|model|angles=60.0,-45.0|pending=false|height=0.05905
+WORKBENCH|redo|2
+PASS: redo restores crease geometry
+WORKBENCH|model|angles=14.0|pending=false|height=0.02540
+WORKBENCH|starter|features=1
+PASS: flying starter updates shared physical geometry
+PASS: confirmed geometry leaves editor for flight
+PAPER|launch|mass=0.00504|area=0.03545
+PASS: same final mesh enters aerodynamic flight
+WORKBENCH_UI_RESULT failures=0

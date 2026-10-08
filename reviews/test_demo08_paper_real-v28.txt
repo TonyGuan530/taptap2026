@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PAPER|menu|levels=5
+PAPER|level|1|practice=true
+PAPER|level|1|practice=true
+PASS: paper mesh replaces boxes
+PAPER|fold|1|area=0.06300
+PAPER|fold|2|area=0.06300
+PAPER|fold|3|area=0.06300
+PAPER|fold|4|area=0.06300
+PAPER|fold|5|area=0.06300
+PASS: five sequential paper folds animate
+PAPER|undo|4
+PASS: undo restores editable sheet
+PAPER|fold|5|area=0.06300
+PAPER|launch|mass=0.00504|area=0.03545
+PASS: physical flight lands 18.71m
+PAPER|undo|4
+PASS: trial preserves folded plane for editing
+PAPER|launch|mass=0.00504|area=0.03577
+PAPER|menu|levels=5
+PAPER|level|1|practice=true
+PAPER|launch|mass=0.00504|area=0.06300
+PASS: steering held across menu does not leak into the next launch

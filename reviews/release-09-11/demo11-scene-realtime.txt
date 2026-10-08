@@ -1,0 +1,153 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS  场景1a 灰模实例化：规则核心房1 起点 P(1,1)
+PASS  场景1b 房1 物件视图=2（两木箱；压力板由地形层画）
+PASS  场景1c 相机为正交投影（斜俯视固定镜头）
+PASS  场景1d HUD 显示房间 1
+PASS  场景2 KEY_RIGHT 真实分发：右移一格 (2,1)，facing=right
+PASS  场景3 KEY_UP 撞墙：不转向不记步（仍沿右面向）
+PASS  场景4 echo 事件被忽略，位置步数不变
+PASS  场景5 连按两次右都结算：(4,1) steps=3（动画未完不丢合法命令）
+PASS  场景6 房1 无冰霜杖：F 拒绝且不崩溃（tool_use 仍 0）
+PASS  场景7 箱推上开关 (5,3)：门开，箱视图到位/到位中
+PASS  场景7b HUD 门状态反馈：开启
+PASS  场景8a 踏上开启的门过房：房2（rooms_cleared=1）
+PASS  场景8b 过房后物件视图重建=1（房2 单箱）
+PASS  场景8c 玩家视图重定位到房2 起点 P(1,1)
+PASS  场景9a 箱沉入水：核心移除+视图节点移除
+PASS  场景9b 沉水格变 bridge 地形（事件后单格刷新）
+PASS  场景9c 玩家真实按键走上 bridge（可走地形验证）
+PASS  场景9d 兼容口径：累计 2（房1 箱压板推 + 房2 桥前普通推），sink 不增 object_move
+PASS  场景10a-0 玩家走到 (4,4)，facing=right
+PASS  场景10a F 冻结面前水格 (5,4) → ice（facing=right tile=ice tools=["ice"] state=play）
+PASS  场景10b 环境倒计时融化：空冰回水（经 _process 真实推进）
+PASS  场景11a Home 复位镜头尺寸
+PASS  场景11b 滚轮缩放镜头（观察输入，不影响规则）
+PASS  场景12 房2 收尾（箱桥过河到门）：进入房3（rooms_cleared=2）
+PASS  场景12b 房2 family=box_bridge（箱沉水成桥）
+PASS  场景13a G 沿 facing 烧掉面前 (6,2) 木箱，(5,3) 箱不受影响（工具只作用于面前格）
+PASS  场景13b 房3 通关（G 烧挡路箱+右推 A 箱上开关）：family=plain（burn 不入 family，兼容口径）[dbg 玩家=1,1 right 门=false A@5,3=false A@6,3=false C@5,2=false]
+PASS  场景14a H×5 沿 facing 视线拉铁 (9,3)→(4,3)（落点不越玩家格）
+PASS  场景14b 绕行推铁上开关 (2,3)，门开（铁压开关，仍在房4）
+PASS  场景14c 遥测累计：tool_use=7（冻1+烧1+磁5）、object_move=12（普通推7：房1/房2/房3×3/房4绕行×2 + 磁拉5，sink 不计）
+PASS  场景14d 房4 通关（磁拉+推铁流）：family=magnet_iron，进入房5（索引 [4]）
+PASS  场景15a 房5：B2 沉水成桥+铁推上开关A，单开关不足门仍关
+PASS  场景15b 房5：木箱推上开关B，双开关同时压住门开
+PASS  场景15c 五房全流程（真实按键连续通关）：进入 EXT-1（六房制 final 移至扩展房）、room5_complete=1
+PASS  场景15d 五房 family 齐全（房5=box_bridge）
+PASS  场景15e 五房步数=101（房1=12 房2=17 房3=26 房4=32 房5=14，工具不计步）
+PASS  场景15g EXT-1 解法A（真实按键 15 步）：进入 EXT-2（七房制：final 移至 EXT-2 通关），全程 116 步（101+15）
+PASS  场景15h 六段 family 齐全（EXT-1=box_bridge）
+PASS  场景15j EXT-2 解法（真实按键 13 步）：进入 EXT-3（八房制：final 移至 EXT-3 通关），全程 129 步（116+13）
+PASS  场景15k EXT-3 解法A（真实按键 18 步）：进入 EXT-4（九房制：final 移至 EXT-4 通关），全程 147 步（129+18）
+PASS  场景15m EXT-4 解法A（真实按键 13 步）：进入 EXT-5（十房制：final 移至 EXT-5 通关），全程 161 步（147+14）
+PASS  场景15n 九段 family 齐全（EXT-4=plain）
+PASS  场景15o EXT-5 解法（真实按键 12 步）：room_clear 进入 EXT-6，全程 173 步（161+12）
+PASS  场景15p 十段 family 齐全（EXT-5=freeze_route，F 淬冰所致）
+PASS  场景15q EXT-6 解法（真实按键 10 步）：room_clear 进入 EXT-7，全程 183 步（173+10）
+PASS  场景15r 十一段 family 齐全（EXT-6=plain，纯走位）
+PASS  场景15s EXT-7 解法A（真实按键 23 步 + 挪灶融化）：room_clear 进入 EXT-8，全程 206 步（183+23）
+PASS  场景15t 十二段 family 齐全（EXT-7=plain，纯挪灶无工具）
+PASS  场景15u EXT-8 解法（真实按键 12 步：单行阀）：room_clear 进入 EXT-9，全程 218 步（206+12）
+PASS  场景15v 十三段 family 齐全（EXT-8=plain，无工具）
+PASS  场景15w EXT-9 解法（真实按键 16 步：对影门）：room_clear 进入 EXT-10，全程 234 步（218+16）
+PASS  场景15x 十四段 family 齐全（EXT-9=plain，无工具）
+PASS  场景15y EXT-10 解法（真实按键 13 步：铁敬）：room_clear 进入 EXT-11，全程 247 步（234+13）
+PASS  场景15z 十五段 family 齐全（EXT-10=plain，无工具）
+PASS  场景15aa EXT-11 解法（真实按键：G 烧墙 + 13 步）：room_clear 进入 EXT-12，全程 260 步（247+13）
+PASS  场景15ab 十六段 family 齐全（EXT-11=plain，烧墙不入 family 关键词）
+PASS  场景15ac EXT-12 解法（真实按键 11 步：冰厅）：room_clear 进入 EXT-13，全程 271 步（260+11）
+PASS  场景15ad 十七段 family 齐全（EXT-12=plain，无工具）
+PASS  场景15ae EXT-13 解法（真实按键 13 步：闸时）：room_clear 进入 EXT-14，全程 284 步（271+13）
+PASS  场景15af 十八段 family 齐全（EXT-13=plain，无工具）
+PASS  场景15ag EXT-14 解法（真实按键 13 步：跃泉）：room_clear 进入 EXT-15，全程 297 步（284+13）
+PASS  场景15ah 十九段 family 齐全（EXT-14=plain，无工具）
+PASS  场景15ai EXT-15 解法（真实按键：踩 Z 等反拍穿 z + 铁两推下上开关 + 进 G）：room_clear 进入 EXT-16，全程 312 步（297+15）
+PASS  场景15ak EXT-16 解法（真实按键 11 键：铁滑一推定音 + 相位门过门 + 进 G）：room_clear 进入 EXT-17，全程 323 步（312+11）
+PASS  场景15al 二十一段 family 齐全（EXT-16=plain，无工具）
+PASS  场景15am EXT-17 解法（真实按键：冻冰抢窗过涧 + 铁下推上开关 + 进 G）：room_clear 进入 EXT-18，全程 337 步（323+14）
+PASS  场景15an 二十二段 family 齐全（EXT-17=freeze_route，F 冻冰）
+PASS  场景15ao EXT-18 解法（真实按键 5 键：弹簧跳越水踩自锁 + 过相位门 + 进 G）：room_clear 进入 EXT-19，全程 342 步（337+5）
+PASS  场景15ap 二十三段 family 齐全（EXT-18=plain，无工具）
+PASS  场景15aq EXT-19 解法（真实按键：等寒泉结冰过涧 + 铁下推上开关 + 进 G）：room_clear 进入 EXT-20，全程 356 步（342+14）
+PASS  场景15ar 二十四段 family 齐全（EXT-19=plain，无工具，冻冰来自寒泉周期）
+PASS  场景15as EXT-20 解法（真实按键 12 键：铁推穿脆壁缺口上开关 + 绕行进 G）：room_clear 进入 EXT-21，全程 368 步（356+12）
+PASS  场景15at 二十五段 family 齐全（EXT-20=plain，无工具，缺口靠推碰砸穿）
+PASS  场景15au EXT-21 解法（真实按键 8 键：过门-抢冰-候门三连窗）：room_clear 进入 EXT-22，全程 376 步（368+8）
+PASS  场景15av 二十六段 family 齐全（EXT-21=plain，无工具，节奏即门槛）
+PASS  场景15ax EXT-22 解法（真实按键 12 键：铁上开关 + 玩家钻缝进 G）：room_clear 进入 EXT-23，全程 388 步（376+12）
+PASS  场景15ay 二十七段 family 齐全（EXT-22=plain，无工具，缝只放行玩家）
+PASS  场景15ba EXT-23 解法（真实按键 23 键：铁上开关 + 箱献祭填坑 + 踏填土进 G）：room_clear 进入 EXT-24，全程 411 步（388+23）
+PASS  场景15bb 二十八段 family 齐全（EXT-23=box_bridge，献祭填坑归箱桥族）
+PASS  场景15bc EXT-24 解法（真实按键 9 键：过桥-等反拍-过门）：room_clear 进入 EXT-25，全程 420 步（411+9）
+PASS  场景15bd 二十九段 family 齐全（EXT-24=plain，无工具，纯节奏）
+PASS  场景15be EXT-25 解法（真实按键 9 键：相桥-等拍-呼吸桥+反相门连过）：room_clear 进入 EXT-26，全程 429 步（420+9）
+PASS  场景15bf 三十段 family 齐全（EXT-25=plain，无工具，纯节奏终演）
+PASS  场景15bg EXT-26 解法（真实按键 12 键：弹射过河-冻水跟渡-绕行上开关）：room_clear 进入 EXT-27，全程 440 步（429+11）
+PASS  场景15bh 三十一段 family 齐全（EXT-26=freeze_route，F 冻水跟渡）
+PASS  场景15bi EXT-27 解法（真实按键 15 键：箱压联桥开关 + 过桥 + 推铁上开关）：room_clear 进入 EXT-28，全程 455 步（440+15）
+PASS  场景15bj 三十二段 family 齐全（EXT-27=plain，无工具，开关压桥不压门）
+PASS  场景15bk EXT-28 解法（真实按键 20 键：两箱各压一座开关 + 双桥连成一线）：room_clear 进入 EXT-29，全程 475 步（455+20）
+PASS  场景15bl 三十三段 family 齐全（EXT-28=plain，无工具，缺一不可）
+PASS  场景15bm EXT-29 解法（真实按键 6 键：箱滑压开关 + 玩家跟滑 + 进 G）：room_clear 进入 EXT-30，全程 481 步（475+6）
+PASS  场景15bn 三十四段 family 齐全（EXT-29=plain，无工具，油道只伺候木箱）
+PASS  场景15bo EXT-30 解法（真实按键 10 键：滑+弹联运投递 + 冻河跟渡 + 推箱上开关）：room_clear 进入 EXT-31，全程 490 步（481+9）
+PASS  场景15bp 三十五段 family 齐全（EXT-30=freeze_route，F 冻河跟渡）
+PASS  场景15bq EXT-31 解法（真实按键 8 键：露潮过滩 + 反拍过门）：room_clear 进入 EXT-32，全程 498 步（490+8）
+PASS  场景15br 三十六段 family 齐全（EXT-31=plain，无工具，2:1 复拍子）
+PASS  场景15bs EXT-32 解法（真实按键 8 键：潮滩 + 接力投递 + 冻河跟渡 + 下行进 G）：room_clear 进入 EXT-33，全程 505 步（498+7）
+PASS  场景15bt 三十七段 family 齐全（EXT-32=freeze_route，F 冻河跟渡）
+PASS  场景15bu EXT-33 解法（真实按键 11 键：换乘窗跨双滩 + 推铁上开关 + 北上绕行进 G）：room_clear 进入 EXT-34（六十四房制：final 移至 EXT-34 通关），全程 516 步（505+11）
+PASS  场景15bv 三十八段 family 齐全（EXT-33=plain，无工具，错相双滩换乘窗）
+PASS  场景15bw EXT-34 解法（真实按键 11 键：推箱凿桩 + 箱压开关 + 北上绕行进 G）：room_clear 进入 EXT-35（六十四房制：final 移至 EXT-35 通关），全程 527 步（516+11）
+PASS  场景15bx 三十九段 family 齐全（EXT-34=plain，无工具，推塌桩只认推力）
+PASS  场景15by EXT-35 解法（真实按键 12 键：下行压开关 + 避轨东行 + 进 G）：room_clear 进入 EXT-36（六十四房制：final 移至 EXT-36 通关），全程 539 步（527+12）
+PASS  场景15bz 四十段 family 齐全（EXT-35=plain，无工具，暖轨车压板导通（EXT-55））
+PASS  场景15ca EXT-36 解法（真实按键 10 键：沉箱造桥 + 冻河 + 拾钥 + 开锁门）：room_clear 进入 EXT-37（六十四房制：final 移至 EXT-37 通关），全程 548 步（539+9）
+PASS  场景15cb 四十一段 family 齐全（EXT-36=box_bridge，F 冻河+沉箱桥）
+PASS  场景15cc EXT-37 解法（真实按键 15 键：推箱压开关 + 攀越藤垣 + 踏自锁板 + 进 G）：room_clear 进入 EXT-38（六十四房制：final 移至 EXT-38 通关），全程 563 步（548+15）
+PASS  场景15cd 四十二段 family 齐全（EXT-37=plain，无工具，藤垣人货分流）
+PASS  场景15ce EXT-38 解法（真实按键 10 键：推晶入坑碎水 + 冻冰过壕 + 进 G）：room_clear 进入 EXT-39（六十四房制：final 移至 EXT-39 通关），全程 572 步（563+9）
+PASS  场景15cf 四十三段 family 齐全（EXT-38=freeze_route，F 冻晶水成桥）
+PASS  场景15cg EXT-39 解法（真实按键 9 键：双井零等待过双滩 + 进 G）：room_clear 进入 EXT-40（六十四房制：final 移至 EXT-40 通关），全程 581 步（572+9）
+PASS  场景15ch 四十四段 family 齐全（EXT-39=plain，无工具，换相井零等待）
+PASS  场景15ci EXT-40 解法（真实按键 8 键：推箱上带 + 搭车 + 南绕进 G）：room_clear 进入 EXT-41（六十四房制：final 移至 EXT-41 通关），全程 589 步（581+8）
+PASS  场景15cj 四十五段 family 齐全（EXT-40=plain，无工具，带运不计序列）
+PASS  场景15ck EXT-41 解法（真实按键 9 键：上货上带 + 拐向 + 东行进 G）：room_clear 进入 EXT-42（六十四房制：final 移至 EXT-42 通关），全程 598 步（589+9）
+PASS  场景15cl 四十六段 family 齐全（EXT-41=plain，无工具，带运不计序列）
+PASS  场景15cm EXT-42 解法（真实按键 13 键：拾银钥穿银门拾金钥进金锁）：room_clear 进入 EXT-43（六十四房制：final 移至 EXT-43 通关），全程 611 步（598+13）
+PASS  场景15cn 四十七段 family 齐全（EXT-42=plain，无工具，双钥嵌套）
+PASS  场景15co EXT-43 解法（真实按键 10 键：推箱上带 + 候潮过闸 + 南绕进 G）：room_clear 进入 EXT-44（六十四房制：final 移至 EXT-44 通关），全程 621 步（611+10）
+PASS  场景15cp 四十八段 family 齐全（EXT-43=plain，无工具，带运不计序列）
+PASS  场景15cq EXT-44 解法（真实按键 7 键：推晶上带 + 随带运 + 冻冰过壕）：state=final，全程 628 步（621+7）
+PASS  场景15cr 四十九段 family 齐全（EXT-44=freeze_route，F 冻晶水成桥）
+PASS  场景15cs EXT-45 解法（真实按键 11 键：推箱上带 + 候潮联运 + 南绕进 G）：room_clear 自动进入 EXT-46（六十四房制：final 移至 EXT-46 通关），全程 639 步（628+11）
+PASS  场景15ct 五十段 family 齐全（EXT-45=plain，无工具，带运不计序列）
+PASS  场景15cu EXT-46 解法（真实按键 43 键：焚藤，攀藤借朝向烧两洞 + 双货双压开门）：room_clear 自动进入 EXT-47（六十四房制：final 移至 EXT-47 通关），全程 680 步（639+41）
+PASS  场景15cv 五十一段 family 齐全（EXT-46=plain，烧藤不进分类器——差异5 基线冻结）
+PASS  场景15cw EXT-47 解法（真实按键 32 键：引晶，磁拉晶出龛 + 推坑冻桥）：room_clear 自动进入 EXT-48（六十四房制：final 移至 EXT-48 通关），全程 707 步（680+27）
+PASS  场景15cx 五十二段 family 齐全（EXT-47=magnet_iron，拉晶与拉铁同串——差异5 冻结沿用）
+PASS  场景15cy EXT-48 解法（真实按键 17 键：潮轨，冻道困车 + 踩井沉车 + 翻回过潮）：room_clear 自动进入 EXT-49（六十四房制：final 移至 EXT-49 通关），全程 722 步（707+15）
+PASS  场景15cz 五十三段 family 齐全（EXT-48=freeze_route，F 冻桥入分类）
+PASS  场景15da EXT-49 解法（真实按键 22 键：送货门，两箱接力投递）：room_clear 自动进入 EXT-50（六十四房制：final 移至 EXT-50 通关），全程 744 步（722+22）
+PASS  场景15db 五十四段 family 齐全（EXT-49=plain，push:box:portal 不进分类器——差异5 冻结）
+PASS  场景15dc EXT-50 解法（真实按键 9 键：双踩，箱上板计 1 + 人滑入计 2 锁定 + row3 绕行）：room_clear 自动进入 EXT-51（六十四房制：final 移至 EXT-51 通关），全程 753 步（744+9）
+PASS  场景15dd 五十五段 family 齐全（EXT-50=plain，'s' 启用后占用表小写全满）
+PASS  场景15de EXT-51 解法（真实按键 21 键：潮磨，引晶上潮格磨水 + 冻桥过河 + 推箱上 S 压开门）：room_clear 自动进入 EXT-52（六十四房制：final 移至 EXT-54 通关），全程 773 步（753+20）
+PASS  场景15df 五十六段 family 齐全（EXT-51=freeze_route，F 冻桥入分类）
+PASS  场景15dg EXT-52 解法（真实按键 9 键：连碎，推 A 入坑连锁 B 同碎 + F×2 冻双水 + 踏冰进 G）：room_clear 自动进入 EXT-53（六十四房制：final 移至 EXT-54 通关），全程 780 步（773+7）
+PASS  场景15dh 五十七段 family 齐全（EXT-52=freeze_route，F 冻桥入分类）
+PASS  场景15di EXT-53 解法（真实按键 9 键：弹晶，推晶上垫弹 2 格落坑化水 + F 冻冰过河进 G）：room_clear 自动进入 EXT-54（六十四房制：final 移至 EXT-54 通关），全程 788 步（780+8）
+PASS  场景15dj 五十八段 family 齐全（EXT-53=freeze_route，F 冻桥入分类）
+PASS  场景15dk EXT-54 解法（真实按键 7 键：滑晶，推晶上滑道出道入坑化水 + F 冻冰过河进 G）：room_clear 自动进入 EXT-55（六十四房制：final 移至 EXT-58 通关），全程 794 步（788+6）
+PASS  场景15dl 五十九段 family 齐全（EXT-54=freeze_route，F 冻桥入分类）
+PASS  场景15dm EXT-55 解法（真实按键 10 键：车碾板，等 14 拍车碾双踩板咬合 + 挡轨折返 + 走位进 G）：room_clear 自动进入 EXT-56（六十四房制：final 移至 EXT-58 通关），全程 804 步（794+10，等拍不计步）
+PASS  场景15dn 六十段 family 齐全（EXT-55=plain，无工具纯走位+环境 Actor）
+PASS  场景15do EXT-56 解法（真实按键 10 键：车越堑，等 23 拍巡轨车两越断口碾双踩板咬合 + 走位进 G）：room_clear 自动进入 EXT-57（六十四房制：final 移至 EXT-58 通关），全程 814 步（804+10，等拍不计步）
+PASS  场景15dp 六十一段 family 齐全（EXT-56=plain，无工具纯走位+环境 Actor）
+PASS  场景15dq EXT-57 解法（真实按键 11 键：晶潮渡，晶上带摆渡入潮磨水 + F 冻桥 + 搭带过河进 G）：room_clear 自动进入 EXT-58（六十四房制：final 移至 EXT-58 通关），全程 821 步（814+7，等拍不计步）
+PASS  场景15dr 六十二段 family 齐全（EXT-57=freeze_route，F 冻桥入分类）
+PASS  场景15ds EXT-58 解法（真实按键 7 键：桥渡，铁上带摆渡过桥压重压板 + 玩家绕东进 G）：room_clear 自动进入 EXT-59（六十四房制：final 移至 EXT-59 通关），全程 828 步（821+7，等拍不计步）
+PASS  场景15du EXT-59 解法（真实按键 11 键：候闸，车候潮过闸压重压板门开 + 玩家 row3 绕行进 G）：state=final，全程 839 步（828+11，等拍不计步，六十四房制终点）
+PASS  场景15i 结算白底面板与双语义重开按钮出现（EXT-59 通关后）
+==== 汇总：150 PASS / 0 FAIL ====

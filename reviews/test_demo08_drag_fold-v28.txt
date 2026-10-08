@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: crease can begin without snapping flat
+PASS: drag sets a partial angle
+PASS: released 60-degree fold stays three-dimensional
+PASS: drag preserves material area
+PASS: tilted panel remains selectable
+PASS: another crease works on the tilted panel
+PASS: second crease can fold in the opposite direction
+PASS: multiple nonplanar folds preserve material
+PASS: undo restores the earlier standing fold
+PASS: existing last crease can be dragged again
+PASS: upright paper contributes aerodynamic area
+PASS: nonplanar folded paper can physically fly
+PASS: full undo returns one uncut sheet
+PASS: small fold-angle changes cannot suddenly bank launch across sampling axes or fin threshold
+DRAG_FOLD_RESULT failures=0

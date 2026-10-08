@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: exactly five numbered challenges
+PASS: progression reaches level 1
+COURSE level=1 passed=true distance=12.01m target=12.0m time=1.50s lateral=-0.22m
+PASS: physical route clears level 1
+PASS: continue follows five-level course
+PASS: progression reaches level 2
+COURSE level=2 passed=true distance=16.02m target=16.0m time=2.53s lateral=-1.06m
+PASS: physical route clears level 2
+PASS: continue follows five-level course
+PASS: progression reaches level 3
+COURSE level=3 passed=true distance=9.05m target=9.0m time=1.18s lateral=0.50m
+PASS: physical route clears level 3
+PASS: continue follows five-level course
+PASS: progression reaches level 4
+COURSE level=4 passed=true distance=13.06m target=13.0m time=1.73s lateral=0.86m
+PASS: physical route clears level 4
+PASS: continue follows five-level course
+PASS: progression reaches level 5
+COURSE level=5 passed=true distance=20.04m target=20.0m time=2.60s lateral=0.92m
+PASS: physical route clears level 5
+PASS: continue follows five-level course
+PASS: level five leads to completion screen
+PASS: high angle fails demanding distance instead of auto-pass
+PASS: failure retries the same level
+PASS: weak throw cannot automatically pass
+COURSE_RESULT failures=0

@@ -1,0 +1,11 @@
+# demo-08 v30 飞前调角
+
+用户要求：「飞前我要可以调整角度」。折纸完成后进入飞前设置，支持0–60°滑条、数值、预设与↑↓微调，3D纸飞机预览采用实际物理发射姿态。按住按钮或空格蓄力，松开发射；蓄力期间角度锁定；移动鼠标不会覆盖角度。未按Enter的数字会在蓄力前提交，退出与新关清除蓄力状态。
+
+v29 构建归档保留。维持五关、2D归档和其他Demo。物理模型沿用刚性折痕及近似气动力，真人验收仍等待用户试玩。
+
+验证：无头Godot投掷交互回归18项通过；折纸工作台、纸模型和五关原有回归通过；Web导入/导出退出码0且产物齐全。实际Edge浏览器验证滑条、分帧键入、未提交数字直接蓄力、移出按钮释放、角度锁定与五关通关。独立代码复核通过。证据位于 reviews/test_demo08_preflight_angle-v30.txt、reviews/demo08-preflight-browser-local.json。
+
+PCK SHA256：`618f73c5720c61c5916ea5c0307338f9549acd2296cf4c1ee22191bf9822018b`。线上PCK哈希与本地一致。产品提交32ea714e7783ac1491ca7c0ab76791e8257dc7b2；Actions37603905103 build/deploy-pages success，itch跳过。线上实际Edge 35项检查全通过，五关连续通关，错误0（2026-10-07T09:58:07.095Z）。大厅、归档与产物核验8项通过。证据：reviews/demo08-preflight-published.json、reviews/demo08-preflight-browser-online.json。
+
+试玩：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v30/index.html

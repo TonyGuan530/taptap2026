@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-07T01:06:00+08:00",
+  "updated": "2026-10-07",
   "items": [
     {
       "id": "FB-001",
@@ -36,8 +36,8 @@
       "build": "demo-02-3d",
       "ts": "2026-10-05",
       "text": "不能第三视角，玩法单一——要求第三人称+玩法扩展",
-      "status": "triaged",
-      "reply": "感谢反馈！视角与玩法丰富度已记录（编号 FB-101），将进入下一轮试玩评估议程：①第一人称 vs 第三人称的对比观察 ②关卡多样性扩展（已有 3 个新机制关在评审队列）。修复或取舍会在此更新。",
+      "status": "responded",
+      "reply": "2026-10-07 用户再次确认第三人称需求并授权直接修改。3D v16 已默认第三人称、补齐可见球体和相机避障，V 可切换第一人称；本地回归与浏览器画面已验证，待用户复测。本轮发布入口：https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v16/index.html 。用户已要求上传最新版本，真人验收待复测。",
       "triagedAt": "2026-10-05"
     },
     {
@@ -63,32 +63,35 @@
       "build": "demo-08-3d",
       "ts": "2026-10-05",
       "text": "折纸要有物理模拟：真的可以模拟折纸并射出",
-      "status": "open",
-      "reply": ""
+      "status": "responded",
+      "reply": "2026-10-07 v29 重设计：参考建模软件与开源折纸工具，实现独立 3D 工作台、选面高亮、折痕吸附、屏幕旋转手柄、滑条/数值折角、确认取消、旧折痕重选及下游重放、撤销重做。立体网格参与试飞，五关。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v29/index.html 。仍等待用户验收。 2026-10-07 v30 增加飞前0–60°滑条/数值投掷仰角及3D姿态预览；角度稳定保留，蓄力锁定，松开发射。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v30/index.html 。 2026-10-07 v31 增加飞前XYZ三轴±180°旋转、一键复位；预览及起飞姿态、速度方向同步。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v31/index.html 。"
     },
     {
       "id": "FB-105",
       "build": "demo-09",
       "ts": "2026-10-05",
       "text": "没有 3D 化",
-      "status": "open",
-      "reply": ""
+      "status": "responded",
+      "reply": "2026-10-07 用户最终裁决：赛车2D与3D均归档，取消造车重构，不再推进。",
+      "fixedIn": "demo-09-3d-v1"
     },
     {
       "id": "FB-106",
       "build": "demo-10",
       "ts": "2026-10-05",
       "text": "没有 3D 化",
-      "status": "open",
-      "reply": ""
+      "status": "responded",
+      "reply": "3D评审版已发布，待用户复测：https://tonyguan530.github.io/taptap2026/builds/demo-10-3d-v2/index.html",
+      "fixedIn": "demo-10-3d-v2"
     },
     {
       "id": "FB-107",
       "build": "demo-11",
       "ts": "2026-10-05",
       "text": "没有 3D 化",
-      "status": "open",
-      "reply": ""
+      "status": "responded",
+      "reply": "2026-10-07 用户裁决：箱庭谜题2D与3D均归档，撤下首页入口，不再推进。",
+      "fixedIn": "demo-11-3d-v1"
     },
     {
       "id": "FB-108",
@@ -104,8 +107,24 @@
       "build": "demo-08-3d",
       "ts": "2026-10-05",
       "text": "折纸预览系统：画好折叠线后更新折后效果预览（累积多次折叠）+回退按钮【Issue#2 fyh828 通关者建议】",
-      "status": "open",
-      "reply": ""
+      "status": "responded",
+      "reply": "2026-10-07 v29 重设计：参考建模软件与开源折纸工具，实现独立 3D 工作台、选面高亮、折痕吸附、屏幕旋转手柄、滑条/数值折角、确认取消、旧折痕重选及下游重放、撤销重做。立体网格参与试飞，五关。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v29/index.html 。仍等待用户验收。 2026-10-07 v30 增加飞前0–60°滑条/数值投掷仰角及3D姿态预览；角度稳定保留，蓄力锁定，松开发射。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v30/index.html 。 2026-10-07 v31 增加飞前XYZ三轴±180°旋转、一键复位；预览及起飞姿态、速度方向同步。复测：https://tonyguan530.github.io/taptap2026/builds/demo-08-3d-v31/index.html 。"
+    },
+    {
+      "id": "FB-110",
+      "build": "demo-02-v7",
+      "ts": "2026-10-07",
+      "text": "02-2D 卡在第三关，能 get 玩法，感觉设计有点难。",
+      "status": "responded",
+      "reply": "2D v8 已缩短第三关横漂距离约 13%、扩大舱底接收区、增加 1/2/3 切词条快捷键，并清除换关时残留的通关提示。浏览器已实际通关 L3，待用户复测；本轮发布入口：https://tonyguan530.github.io/taptap2026/builds/demo-02-v8/index.html 。用户已要求上传最新版本，真人验收待复测。"
+    },
+    {
+      "id": "FB-111",
+      "build": "demo-02-3d-v10",
+      "ts": "2026-10-07",
+      "text": "02-3D 卡在第一关，没法通关。",
+      "status": "responded",
+      "reply": "3D v16 已修正第一关默认朝向、首次操作前提前发射和越墙后的窄接收区问题，增加明确通关提示与下一关按钮/N。30/60/120Hz 测试及实际浏览器 3+W 通关通过，待用户复测；本轮发布入口：https://tonyguan530.github.io/taptap2026/builds/demo-02-3d-v16/index.html 。用户已要求上传最新版本，真人验收待复测。"
     }
   ]
 }

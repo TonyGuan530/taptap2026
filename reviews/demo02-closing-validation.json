@@ -1,0 +1,330 @@
+{
+  "verifiedAt": "2026-10-07T05:19:46.020Z",
+  "godot": "D:/GIT/taptap2026/tools/godot/Godot_v4.7.2-stable_win64_console.exe",
+  "passed": 30,
+  "total": 30,
+  "results": [
+    {
+      "name": "2d-closing-delay-0",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L3 delayed steering + one flap + stone: PASS launched=true aligned=true broken=true resets=0 pos=(819.0427, 456.2668)"
+      ]
+    },
+    {
+      "name": "2d-closing-delay-0.3",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L3 delayed steering + one flap + stone: PASS launched=true aligned=true broken=true resets=0 pos=(809.9404, 458.2055)"
+      ]
+    },
+    {
+      "name": "2d-closing-delay-0.8",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L3 delayed steering + one flap + stone: PASS launched=true aligned=true broken=true resets=0 pos=(793.5652, 462.205)"
+      ]
+    },
+    {
+      "name": "2d-closing-delay-1.2",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L3 delayed steering + one flap + stone: PASS launched=true aligned=true broken=true resets=0 pos=(774.2888, 450.6838)"
+      ]
+    },
+    {
+      "name": "2d-closing-progression",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "2D next-level clears stale victory: PASS"
+      ]
+    },
+    {
+      "name": "2d-v4",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "① L1 皮球过墙: PASS",
+        "② L2 石头砸舱门: PASS",
+        "③ L3 弹簧→羽毛横漂→石头砸舱门: PASS (over=true flaps=1)",
+        "④ L4 路线A 羽毛出生直漂入右敞口: PASS (flaps=0)",
+        "⑤ L4 路线B 砸穿脆板入舱: PASS (over=true flaps=1)",
+        "⑥ L4 石头硬闯→自动重置不误通关: PASS (goal_reached=false)",
+        "ALL DONE"
+      ]
+    },
+    {
+      "name": "2d-v5",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "① L1 皮球过墙: PASS",
+        "② L2 石头砸舱门: PASS｜撞板反馈: PASS ([\"脆墙@0.5s 撞926/450\"])",
+        "③ L3 弹簧→羽毛→石头: PASS｜路线行: PASS (路线#1: 石头@6.7s[field]｜借弹簧｜重置0)",
+        "④ L4 路线A 羽毛出生直漂: PASS",
+        "⑤ L4 路线B 砸穿脆板: PASS｜telemetry: PASS (路线#1: 石头@6.7s[high_window]｜借弹簧｜重置0)",
+        "⑥ L4 石头硬闯不误通关: PASS",
+        "ALL DONE"
+      ]
+    },
+    {
+      "name": "2d-v6",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "① L1 皮球过墙: PASS",
+        "② L2 石头砸舱门: PASS",
+        "③ L3 组合链: PASS",
+        "④ L4 路线A 出生直漂: PASS",
+        "⑤ L4 路线B 砸穿脆板: PASS",
+        "⑥ L5 路线A 弹簧→羽毛漂上高台: PASS (flaps=1)",
+        "⑦ L5 路线B 皮球弹跳链: PASS",
+        "⑧ L5 路线C 无弹簧出生直漂: PASS",
+        "ALL DONE"
+      ]
+    },
+    {
+      "name": "2d-v7",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "① L5 路线B 零输入弹跳: PASS｜idle_completion=true: PASS (路线#1: 皮球@0.0s[field]｜借弹簧｜重置0｜idle_completion)",
+        "② L5 路线A 弹簧羽毛: PASS｜idle_completion=false: PASS (路线#1: 无切换｜重置1)",
+        "③ L5 自由实验定位语义: PASS (第五关 · 高台弹跳（自由实验场）　　参考解法：弹簧→羽毛漂上高台；皮球借地面/雨棚弹跳上高台（待发现）)",
+        "④ L2 石头砸舱门回归: PASS",
+        "ALL DONE"
+      ]
+    },
+    {
+      "name": "3d-case-0",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "① L1 皮球越墙入 GOAL: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-1",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "② L1 石头撞墙不误通关: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-10",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑪ L6 石头弹道落谷不误通关: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-11",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑫ L7 顶点切石头砸穿天窗: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-12",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑬ L7 皮球直飞破不了窗: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-13",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑭ L8 皮球砸桥坠谷: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-14",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑮ L8 羽毛轻过桥面（桥未碎）: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-2",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "③ L2 转石头砸穿脆板: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-3",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "④ L3 弹簧→羽毛跨峡谷入远端 GOAL: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-4",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑤ L3 石头直走不误通关: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-5",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑥ L4 羽毛飘上高台: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-6",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑦ L4 皮球抛射上高台: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-7",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑧ L5 皮球零输入穿环: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-8",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑨ L5 石头弹不上高环: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-case-9",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "⑩ L6 羽毛接力上基座: PASS",
+        "ALL DONE fails=0"
+      ]
+    },
+    {
+      "name": "3d-closing-120hz",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L1 default camera + 3 then W reaches goal: PASS",
+        "CLOSING_3D fails=0"
+      ]
+    },
+    {
+      "name": "3d-closing-30hz",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L1 default camera + 3 then W reaches goal: PASS",
+        "CLOSING_3D fails=0"
+      ]
+    },
+    {
+      "name": "3d-closing-60hz",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L1 default camera + 3 then W reaches goal: PASS",
+        "CLOSING_3D fails=0"
+      ]
+    },
+    {
+      "name": "3d-closing-progression",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L1 default camera + 3 then W reaches goal: PASS",
+        "L1 victory exposes next-level button: PASS",
+        "Next button enters L2: PASS",
+        "CLOSING_3D fails=0"
+      ]
+    },
+    {
+      "name": "3d-closing-stone-control",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L1 stone + W cannot bypass the wall: PASS",
+        "CLOSING_3D fails=0"
+      ]
+    },
+    {
+      "name": "3d-closing-view",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": [
+        "L1 waits for the first player action: PASS",
+        "Default third-person camera: PASS",
+        "Player ball has visible geometry: PASS",
+        "Default camera faces the first goal: PASS",
+        "V switches to first person: PASS",
+        "V returns to third person: PASS",
+        "CLOSING_3D fails=0"
+      ]
+    }
+  ]
+}

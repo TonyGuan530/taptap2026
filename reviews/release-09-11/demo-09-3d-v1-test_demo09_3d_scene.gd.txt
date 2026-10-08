@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS 用例0 auto_start=false 时不自动发车
+PASS 用例1a L1 标准布局发车成功
+PASS 用例1b 道路可视 mesh 存在（1 面）
+PASS 用例1c 道路碰撞存在且来自同一网格（812 顶点）
+PASS 用例1d 可视与碰撞三角数一致（812）
+PASS 用例1e 套件装饰已布点（29 个，含起终点 gate_frame）
+PASS 用例1f CarView 存在（车身+座舱+2 轮）
+PASS 用例1g HUD 状态文本非空：第 1 关 · 郊外直道 · 速度 1 米/秒 · 里程 0 / 800 米 · 姿态 0° · 计时 0.0 秒
+PASS 用例2 轮条目 2 → 轮视图 2（不镜像成 4）
+PASS 用例3a 150 帧后仍在驾驶（无提前结算）
+PASS 用例3b 车辆沿 -Z 前进（z -0.0 → -110.4）
+PASS 用例3c 核心里程推进（120 → 1224 px）
+PASS 用例3d HUD 持续更新（计时 2.5 秒）
+PASS 用例4 姿态映射取负（car_angle=+0.3 车头向下 → rotation.x=-0.3000）
+PASS 用例5a L4 超预算布局被拒（Σ=4700>4300）
+PASS 用例5b 拒绝后场景未被破坏
+PASS 用例5c 合规布局可在 L4 重新发车
+PASS 用例6 auto_start=true 进场景即 L1 drive（截图路径）
+PASS 用例7 Rig→SpringArm(臂长8,mask=1)→Camera 装配正确
+PASS 用例8a 瞬移后 rig 不跟跳（距目标 44.5 m）
+PASS 用例8b 150 帧后 rig 收敛到车（距目标 0.00 m）
+PASS 用例9 车俯仰 0.4 时 rig 保持水平（车=-0.40000 rig=0.00000 spring=-0.24435 期望≈-0.24435）
+==== 汇总：22 PASS / 0 FAIL ====

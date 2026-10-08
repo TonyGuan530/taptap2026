@@ -1,0 +1,1271 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+DEMO10 3D 阶段 B 测试开始
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B1a 抵达第 3 章
+PASS B1b 第 3 章后山通道打开（spec）
+PASS B1c 北墙开门（Wall_N 段化）
+PASS B1d 三份记录与字条对象就位
+PASS B1e 未写气闸前：气闸对象不存在（不预泄）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B1f 记录一文本=第 3 章已选候选
+PASS B1g 字条文本=已选候选
+PASS B1h 出生点→室内→后门→后院→围栏前 几何通路全通
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B2a 写入气闸：anomaly 挂账、无立即抗议
+PASS B2b 气闸实物门出现
+PASS B2c 未解释文本：不泄底、不可进
+PASS B2d 围栏封死：门线点不可站立
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B3a 进入第 4 章
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B3b A 线 secret
+PASS B3c 飞船内饰+证物（矿井侧不存在）
+PASS B3d 门洞与舱内可站立（真实可走几何）
+PASS B3e 已解释后气闸文本=飞船说
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B3f A→B 换装：矿井内饰替换飞船（旧证物清除）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B3g 撤回解释：secret 清空
+PASS B3h 舱室随事务移除
+PASS B3i 围栏重新封死
+PASS B3j 舱室内玩家被迁回后院（未被困）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B6a 进入第 5 章
+PASS B6b 矿井舱室保留+里间尾段在场
+PASS B6c 尾段文本=矿井里间（有人刚离开）
+PASS B6d 终稿落点对象在场
+PASS B6e 主基调=科幻 → 落点在街边投递台
+PASS B6f 落点文本=终稿《回声》（现场与正文一致）
+PASS B6g 未交稿未出版
+PASS B6h 第 5 章交稿 → 过审出版，结算面板出现
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B4a 空间站线写气闸：不建异常
+PASS B4b 空间站气闸=正常设施对象存在
+PASS B4c 气闸文本=正常（无未解释暗示）
+PASS B4d 无异常无秘密
+PASS B4e 夜记文本=第 2 章实时选择
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B5a 第 3 章视角回看第 2 章夜记：表现记忆生效
+PASS B5c 缺件 spec 被拒绝
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS B7a 温情线进第 5 章（无解释）
+PASS B7b 无解释：无尾段无舱室
+PASS B7c 终稿落点在场
+PASS B7d 主基调=温情 → 落点=室内饭桌
+PASS B7e 落点文本=终稿《归途》
+PASS B7f 温情线过审出版
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段11a set_tone_mood：sci/warm/默认 灯光色互异
+PASS 段11b 中性氛围回到默认灯光
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段11c 主基调判定=susp
+PASS 段11d 事务后根脚本自动应用基调氛围
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段13a 证物未落定：东墙封死（暗门点位不可站）
+PASS 段13b 证物匣不存在（不预泄）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段13c 证物派生落定
+PASS 段13d 暗门洞与证物间内部可站（真实可走几何）
+PASS 段13e 证物匣在场
+PASS 段13f 证物匣文本引用所选证物
+PASS 段13g 室内→暗门→证物间 通路全通
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段13h 重置本章：证物回滚
+PASS 段13i 暗室重新封死、证物匣移除（WorldSpec 事务一致）
+PASS 段13j 玩家位置安全（如曾入室则被迁移）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段14a 悬疑1：井台揭盖现暗水、无雾光
+PASS 段14b 井台基座为实体障碍（碰撞原样）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段14c 悬疑2：井口雾光出现（事务重建）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段14d 悬疑回落：雾光随事务撤除、暗水保留
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段14e 抵达第 5 章温情主基调
+PASS 段14f 温情终稿：井台无红布（红布只属悬疑终稿）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段14g 悬疑线后院井台=雾光档
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段14h 悬疑主基调进第 5 章
+PASS 段14i 悬疑终稿：红布落在既有井台上（EndSpotWell 未重复建造）
+PASS 段14j 终稿落点检查点在场
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段15a 梯架垫与屋顶检查点在场（第 3 章+）
+PASS 段15b 屋顶矮道=安全站位（高度感知）
+PASS 段15c 室内地面站位仍安全（高度感知不误伤）
+PASS 段15d 视线命中梯基垫（ladder_to=roof_top）
+PASS 段15e E 交互登顶（y=3.95）
+PASS 段15f 屋顶站位安全
+PASS 段15g 视线命中屋顶检查点
+PASS 段15h 屋顶检查卡弹出
+PASS 段15i 梯顶垫可命中（ladder_to=yard_ladder_base）
+PASS 段15j E 交互下到后院地面
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段16a 证物匣在场
+PASS 段16b 星图线文本=坐标藏格
+PASS 段16c 文本仍引用所选证物
+PASS 段16d 开格节点在场
+PASS 段16e 星图 → 开格=第 3 格
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段16f 家书线文本=信笺藏格
+PASS 段16g 家书 → 开格=第 2 格
+PASS 段16h 不同道具 → 开格位置不同（联动可见）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段17a 首次检查含初见观察行
+PASS 段17b 重复检查回归常规文本
+PASS 段17c 已读记忆生效
+PASS 段17d 其他对象独立记首次
+PASS 段17e 常规文本在前、观察行在后（顺序稳定）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段18a 温情0：无花
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段18b 温情1：两丛各 3 朵（6 花）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段18c 温情2：两丛各 6 朵+微光
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段18d 基调变化不误伤花位（warm 未降）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段19a 科幻0：旧天线静默在场、无尖端光
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段19b 科幻1：尖端微光亮起、无光晕
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段19c 科幻2：蓝光晕出现（事务重建）
+PASS 段19d 其他词槽变化不误伤天线档位
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段21a 组合成立：天线横枝偏转校准
+PASS 段21b 天线指向检查点在场
+PASS 段21c 检查文本绑定星图坐标
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段21d prop 改家书：横枝回正、检查点随事务移除
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段21e 改回星图：再次校准且检查点唯一恢复
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段22a 仅温情：碗筷未出现（组合未成立）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段22b 温情×证物同时成立：窗台碗筷在场
+PASS 段22c 碗筷文本引用所选证物
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段22d 重置本章：碗筷随事务撤除
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段22e 组合再成立：碗筷恢复且唯一
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段23a 三条件齐：窗台多出水碗
+PASS 段23b 两端文本互相呼应（窗台碗水/井沿热气）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段23c 悬疑回落：水碗随事务撤除
+PASS 段23d 窗台文本回归常规（组合文本不残留）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段24a 三处刻痕全部在场（井沿/窗台/天线底座）
+PASS 段24b 未集齐：回响字条不出现
+PASS 段24c 集齐 2/3：字条仍不出现
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段24d 集齐 3/3：屋顶浮现回响字条
+PASS 段24e 回响字条文本完整（落款呼应第一章）
+PASS 段24f 重复检查不产生重复字条
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段25a 回响字条未读：字条二不出现
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段25b 读回响字条：证物间浮现字条二
+PASS 段25c 字条二文本=偏旁之二
+PASS 段25d 字条二未读：字条三不出现
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段25e 读字条二：底座浮现字条三
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段25f 三张读齐：回响字条补终句（回家）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段27a 字条三未读：字条四不出现
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段27b 字条四浮现且文本=系列收束（都擦亮了）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段27c 字条四读毕记入且唯一
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段28a 无秘密：镜筒持平（默认姿态）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段28b colony：镜筒上仰指月
+PASS 段28c colony 文本=指月
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段28d mine：镜筒下俯指矿井
+PASS 段28e mine 文本=落在地上
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段29a 未读字条四：镜片蒙霜
+PASS 段29b 未擦净：无微光
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段29c 读毕字条四：霜膜消失、镜片微光浮现
+PASS 段29d 望远镜文本追加擦净笔
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段30a 秘密未落定：无气闸室、门体不可过
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段30b colony：门开、气闸室可达
+PASS 段30c colony 文本=星图复写+月亮
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段30d mine 文本=旧罗盘
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段30e 秘密回落：门再锁、气闸室撤除
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段31a 秘密未落定：气闸室井水不出现
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+DBG: airlock_water_ins=true bowl=true warm=1 susp=3 ev=被撤稿的报道底稿 secret=colony_ship
+PASS 段31b 四线齐：气闸室角落浮现井水
+PASS 段31c 井水文本呼应窗台
+PASS 段31d 井面文本呼应气闸室
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段31e mine 线井水 persists
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段26a prop≠星图：观星台不出现
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段26b 星图×科幻2：观星台在场（围墙+望远镜）
+PASS 段26c 屋顶矮道东行→门洞→板房内部 通路全通
+PASS 段26d 望远镜文本绑定星图坐标
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段26e prop 改家书：观星台随事务撤除
+PASS 段26f 板房位置回归屋顶矮道（安全）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段20a 仅证物悬疑0：井台盖板态、无回光（组合未成立）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段20b 证物×悬疑同时成立：井面回光在场（发光小物+检查点）
+PASS 段20c 回光文本引用所选证物
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段20d 悬疑回落：回光随事务撤除（井回盖板态）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段20e 组合再成立：回光恢复且唯一（无重复对象）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段32a 三处刻痕全部在场
+PASS 段32b 未集齐：屋脊风铃不显形
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段32c 集齐 3/3：屋脊风铃显形（横杆+三管+检查点）
+PASS 段32d 一档微风：摆幅 -0.12
+PASS 段32e 二档风起：摆幅 -0.24
+PASS 段32f 循环回静：摆幅归零
+PASS 段32g 科幻分化：铃声带金属的凉
+PASS 段32h 温情分化：铃声裹灶火的暖
+PASS 段32i 悬疑分化：铃声没有回音
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段33a 观星台望远镜在场
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段33b colony 档1 指月：确认句出现
+PASS 段33c colony 档2 指后山：没有等到应答
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段33d mine 档2 指矿井：确认句出现
+PASS 段33e mine 档1 指月：没有等到应答
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段34a 揭盖+第3章：井口辘轳在场（立柱+摇臂+检查点）
+PASS 段34b 未摇桶：桶不在井口
+PASS 段34c 一摇：放绳半截，摇臂转过 2.2
+PASS 段34d 二摇：绳子一沉，水声近了
+PASS 段34e 三摇：桶出井口（桶+桶中旧物在场）
+PASS 段34f 重复摇：进度封顶、桶不重复生成
+PASS 段34g 科幻分化：桶底黄铜齿轮
+PASS 段34h 温情分化：桶底红绳铃铛
+PASS 段34i 悬疑分化：桶底锈钥匙
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段34j 悬疑回落：辘轳与桶随事务撤除
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段35a 温情0：晾衣绳不出现
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段35b 温情+1：两杆拉绳在场（立柱+绳线+检查点）
+PASS 段35c 挂上：布片在绳上，文本=夹上晾衣绳
+PASS 段35d 收回：布片随事务撤除，文本=收回怀里
+PASS 段35e 再挂：布片唯一（换向幂等）
+PASS 段35f 文本随所选道具分化
+PASS 段35g 道具快照与所选一致（布片换色依据）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段36a 证物未落定：老虎窗钉板封死（推不开是真的推不开）、暗格不可检查
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段36b 证物落定：钉板随事务卸下，阁楼木箱与检查点在场
+PASS 段36c 屋顶矮道北行→门洞→老虎窗内 通路全通
+PASS 段36d 老虎窗内两处站位安全（净宽≥胶囊+裕度）
+PASS 段36e 暗格文本=与所选证物同出一手（引证物名，盲测不泄底）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段36f 证物回滚：钉板重新封死、暗格随事务撤除
+PASS 段36g 封死态：窗内点位不可站（钉板带碰撞）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段37a 科幻0：水箱/水缸不成对在场（门控负例）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段37b 科幻1：屋顶水箱+管线+后院水缸在场，缸内半缸暗水
+PASS 段37c-1 档1 缸文本=一滴一滴，很有耐心
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段37c-2 科幻2：满缸水位升高且带微光
+PASS 段37c-3 档2 水箱文本=满了/浮标顶到管口
+PASS 段37d 温情×证物：缸沿搭木瓢回响窗台碗筷
+PASS 段37e 既有走位点安全（marks 路线与屋顶东行带不被水缸/水箱拦阻）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段38a 温情2配置：三刻痕全部在场（收集线就绪）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段38b 字条四已浮现、字条五未现（门控在字条四读毕）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段38c 字条四读毕：第五张字条压上晾衣绳木夹（纸片+检查点在场）
+PASS 段38d 字条五文本=温情收束（灯/碗，无基调数值）
+PASS 段38e 字条五读毕记入、重走事务不重复
+PASS 段38f spec 门控=字条四已读×温情≥2（实测为真）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段39a 三摇：桶出井口且自身可检查（INS_bucket 在场）
+PASS 段39b 倒进缸：水线抬升 0.06，文本=涟漪
+PASS 段39c 重复倒：幂等（水位不再变，文本=桶已空）
+PASS 段39d 无缸文本=桶先待着（分化备查）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段39e 悬疑回落：桶随事务撤除（水缸保留）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段39f 无缸：倒水无去处（状态 0，桶先待着）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段40a 侦探线 echo 写入：spec 快照=旧卷宗、文本=红标卷宗回执
+PASS 段40b 第 2 章后院未开：实物暂不可见（与井沿刻痕同章节门槛）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段40c 同槽反悔：旗标与文本条目随事务回滚
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段40d 未带旗标进第 3 章：档案架无实物
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段40e 带旗标进第 3 章：档案架南面实物在场（卷宗+标签+检查点+文本）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段40f 记者线分化=撤稿印件回执（文本随 flag_case 值变化）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段41a E 投递：一次性（首次真、重复假，幂等）
+PASS 段41b 第 2 章已投：信箱暂无回信（跨章门槛）
+PASS 段41c 信箱基础文案不回退（那封信仍在）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段41d 已投进第 5 章（mail_sent 跨章存活）
+PASS 段41e 第 5 章：信箱深处多一封回信（都收到了/锅还温着）
+PASS 段41f 盲测安全：回信无寄件人身份（只写「没有寄件人」）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段41g 未投递对照：第 5 章信箱无回信（门控负例）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段42a 同章挂上：未跨章不变干（line_dried=false）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段42b 跨过一章：spec line_dried=true（账本跨章存活）
+PASS 段42c 第 4 章：干布片仍在绳上（重建由 spec 驱动）
+PASS 段42d 绳文本=晾了一夜（太阳的气味）
+PASS 段42e E 收下：干布片随事务撤除、账本清空
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段43a 风铃/晾衣绳/井雾三件在场
+PASS 段43b 一档起风：布片掀转 0.35，铃声追加布片一句
+PASS 段43c 二档：井雾顺风偏移（-2.5→-1.9）
+PASS 段43d 回静：布片与井雾复位
+PASS 段43e 无布片时不追加（参数门控）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段44a E 收旧物：桶中旧物随场景移除（首收成功）
+PASS 段44b 证物匣文本追加一段（引旧物来历）
+PASS 段44c 桶中已无旧物（二次移除失败）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段44d 跨章存活：第 4 章匣文本仍含旧物段
+PASS 段44e 盲测安全：匣文本无基调数值/键名
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段45a 回信账本：落点文本回声（抄在最后一页）
+PASS 段45b 旧物账本：落点文本回声（看了很多遍）
+PASS 段45c 晾衣账本：落点文本回声（叠好压在手稿旁）
+PASS 段45d 核心终稿文本完整保留（零核心改动）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段45e 无账本对照：落点无回声句（门控负例）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段46a town 变体：无舷窗星（站变体专属门控）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段46b 站变体×科幻2：舷窗星在场且双板（双闪节奏）
+PASS 段46c 档2 文本=闪得更急（信号）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段46d colony：节奏=星图坐标同拍
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段46e mine：光来自地面探照灯
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段50a 盖板平放、文本无递进（未掀盖）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段50b 掀盖：盖板立起 -1.2，文本递进=一沓信（同一人的字）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段50c 跨章盖态存活：重建后盖板仍立起
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段47a 抽屉在场且闭合（盒体贴桌 z=-8.6）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段47b 拉开：抽屉盒南移 0.24，内容=坐标草稿（随道具星图）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段47c 内容随道具分化（旧照片=底片袋）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段47d 跨章开态存活：多次重建后抽屉仍拉开
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段48a 井沿圆痕在场、未投币无硬币
+PASS 段48b 投币一次性（首次真/重复假）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段48c 投后硬币在水面（spec 驱动）+ 首投文本
+PASS 段48d spec h 维置位
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段48e 跨章存活：重建后硬币仍在水面
+PASS 段48f dom 三分化文本
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段49a 开关在场，室内灯常亮（energy=1.2）
+PASS 段49b 熄灯：energy 1.2→0.144，文本=窗外的光都进来了
+PASS 段49c 开灯：复位 1.2
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段49d 空间站变体：熄灯同样生效（面板通用）
+PASS 段49e 空间站开灯复位
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段52a 椅子在场（座面+靠背+检查点）
+PASS 段52b E 坐下：落座座面（物理沉降位 1.35,0.5,-9.0）
+PASS 段52c E 站起：回到坐下前位置且安全
+PASS 段52d 坐过入终稿清点（信是坐在那里读完的）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段56a 科幻未满档：星在场但无霜（满档门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段56b 科幻满档：霜板覆在星窗上
+PASS 段56c 未擦时星检查文本无擦霜句
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段56d E 擦霜：霜板随事务撤除
+PASS 段56e 擦霜后星板仍在（透过擦净处可见）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段56f 跨章保持：擦净后重建不再结霜
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段57a 温情 0：无盆栽（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段57b 温情 1：盆栽在场（新芽、无花）
+PASS 段57c tier1 文本=新芽刚冒头
+PASS 段57d 浇水一次性（首次真/重复假）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段57e 温情 2：开花，文本=一朵很小的花
+PASS 段57f 跨章存活：浇过水追加句仍在
+PASS 段57g 终稿清点：绿植是你浇活的
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段58a 对位：抽屉文本追加=收进了证物匣的夹层
+PASS 段58b 证物匡文本追加=折角卡进锁纹（像钥匙的齿）
+PASS 段58c 对位一次性（重复假）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段58d 跨章存活：夹层段仍在
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段58e 无证物对照：对位无效且不记账（门控负例）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段59a 站×悬疑：应急广播面板在场
+PASS 段59b E 开：无秘密=平静音乐，红灯亮
+PASS 段59c E 关：静音，红灯灭
+PASS 段59d colony：广播循环登船流程
+PASS 段59e mine：广播循环下井安全须知
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段59f 悬疑 0 站变体：无广播（门控负例）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段60a E 倒水：水位 +0.06（即时）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段60b 跨章重建：水位固化保持，文本=比记忆里的满
+PASS 段60c 终稿清点：后院的水缸是满的
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段60d 未倒水对照：水位基础值、账本未置位
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段61a 第 2 章：舱顶通道未开（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段61b 第 3 章：舱顶碰撞板+俯瞰检查点在场
+PASS 段61c 梯基垫点在场
+PASS 段61d 舱顶站位安全（碰撞板上）
+PASS 段61e 俯瞰文本=走廊像小河
+PASS 段61f 返回走廊：地面站位安全
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段62a 延用：悬疑 1 时广播在场、字条不在（满档门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段62b 悬疛满档：字条在场（纸+检查点）
+PASS 段62c 字条文本=别等广播了（不指认写字人）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段63a 未投递：旗不立（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段63b 投递：小旗立起（旗杆+旗面）
+PASS 段63c 信箱文本追加=小旗立了起来
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段63d 跨章保持：旗仍立起
+PASS 段63e 跨章文本仍在
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段64a 歪画在场（框+画布）
+PASS 段64b 画布歪斜 -0.12（未摆正）
+DIAG64_PRE: bridge_ps=false
+DIAG64_POST_CALL: bridge_ps=true
+[DIAG pic] pic_rot=0.0 spec_ps=true
+DIAG64_POST_APPLY: bridge_ps=true ch=0
+DIAG64C: rot=0.0 ps=true cv3=PictureCanvas:<MeshInstance3D#6222115767759>
+PASS 段64c E 摆正：画布转正 0，账本置位
+PASS 段64d 摆正后文本=湖面平了，岸线稳了
+[DIAG pic] pic_rot=0.0 spec_ps=true
+PASS 段64e 跨章保持：摆正态跨章存活
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段65a 科幻 1：无灯箱（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段65b 科幻满档：信号灯箱在场（面板+绿灯）
+PASS 段65c 文本=满功率运转，等一个愿意听的人
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段66a 科幻 1：无应答器（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段66b 科幻 2：应答器在场（LED 在场）
+PASS 段66c 文本=自动发射信号，等一个回应
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段66d 科幻 3：应答器不撤除（与霜不冲突）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段66e 镇变体对照：无应答器（站专属）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段67a 第 2 章：壁炉未在场（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段67b 第 4 章：壁炉+灰烬+火光在场
+PASS 段67c 灰烬检查文本非空
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段67d 基调切换后灰烬检查文本仍在
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段68a 第 1 章：挂钟常驻在场（钟面+指针）
+PASS 段68b 第 1 章：指针停 3:00 整（时针 -90°）
+PASS 段68c 低悬疑：钟摆垂直下垂
+PASS 段68d 第 1 章：文本=停摆段（三点整）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段68e 第 2 章：仍停摆（负例：未到走动门控）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段68f 第 3 章：指针走到 3:40（时针 110°/分针 240°）
+PASS 段68g 第 3 章：文本=走动段
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段68h 悬疑满档：钟摆倾斜 -0.22（s 键维重建）
+PASS 段68i 悬疑满档：文本追加后缀
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段69a 室内西走道：松木板+检查点常驻在场
+PASS 段69b 初始未踩：文本无踩响追加
+PASS 段69c 区内点触发：首次返回 true
+PASS 段69d 触发后 floor_creaked=true
+PASS 段69e 踩后文本：追加「还挂在耳朵里」
+PASS 段69f 幂等：本章二次踩返回 false
+PASS 段69g 区外点：不触发且状态不变
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段69h 重建复位：踩响态归零
+PASS 段69i 真实通路：物理帧踩踏触发
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段69j 温情基调：文本=温情段且重建后无踩响追加
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段70a 南墙内面：镜框+镜面+检查点常驻在场
+PASS 段70b 未选身份：文本=倒影兜底段
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段70c 侦探身份：文本=核对照片段
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段70d 记者身份：同章文本活刷新（无重建）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段70e 宇航员身份：文本=训练手册段
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段70f 悬疑满档：侦探段+「只有你一个人」后缀（反向安放，盲测安全）
+PASS 段70g 身份切换不残留：无前身份文本
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段71a 第 1 章：烟囱未在场（back_open 门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段71b 第 3 章：烟囱体+帽+检查点在场（与壁炉同章）
+PASS 段71c 悬疑满档：烟柱在场（室内炉↔屋顶囱垂直闭合）
+PASS 段71d 悬疑文本：烟从别的什么地方来（呼应灰烬不泄底）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段71e 温情满档：烟柱在场+炊烟白汽文本
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段71f 科幻满档：烟柱在场+高效率文本
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段72a 第 1 章：无壁炉不响应（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段72b E 点火：返回 true（lit 置位）
+PASS 段72c 点火：火光 OmniLight 在场
+PASS 段72d 点火：余烬微光放大
+PASS 段72e 点火：烟囱同步冒暖白烟（三节，几何级联动）
+PASS 段72f 悬疑点火文本：发信号+烟变浓
+PASS 段72g 熄火文本：统一短句
+PASS 段72h 再 E 熄火：返回 false
+PASS 段72i 熄火：光/烟撤除+余烬复原
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段72j 重建复位：点火态归零（时间跳跃=火熄）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段73a 第 1 章：窗色=夜（镇基色零回归）
+PASS 段73b 第 1 章：窗文本无天光后缀
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段73c 悬疑满档：窗色反转近黑（s 维重建）
+PASS 段73d 悬疑反转文本：窗外不该是黑的（盲测安全）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段73e 悬疑回落：窗色复原夜色（反转可逆）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段73f 第 3 章：窗色微亮+天光后缀一（b 维）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段73g 第 5 章：窗色金黄晨光+天光后缀二（ending_dom 维）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段74a 北墙墙角：箱堆+四道刻痕+数字板常驻在场
+PASS 段74b 未推：顶箱在原位+文本=遮挡提示句
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段74c E 推箱：顶箱侧滑 0.7m（遮挡解除）
+PASS 段74d 侦探身份：揭示文本=身高刻痕段+账本置位
+PASS 段74e 幂等：再推不回滑（一次性）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段74f 记者身份：揭示文本活切换（同章无重建）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段74g 跨章保持：第 2 章顶箱仍推开（y 维账本驱动）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段75a 镇变体：无休眠舱（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段75b 站变体：舱体+呼吸灯+检查点在场
+PASS 段75c 呼吸中：emission 正弦波动（0.36~1.82，跨相位采样）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段75d 宇航员身份：名单上自己的名字
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段75e 记者身份：灯为谁亮着（活刷新）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段75f 切回镇变体：舱体/检查点/文本同步撤除
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段76a 站变体：无檐水（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段76b 雨歇档：残滴 1 条（滴线负例）
+PASS 段76c 雨歇档：雨声静音 -60+文本=最后一滴水
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段76d 小雨档：滴线 2 条+雨声 -18+文本=连成线
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段76e 暴雨档：滴线 3 条+雨声 -8+文本=间隔完全相等（盲测安全）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段76f 切回站变体：滴线与雨声同步撤除
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段77a 镇+满档无证物：门槛石在场+叩门未激活（evidence 条件负例）
+PASS 段77b 门槛石静默文本：日常句
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段77c 切站变体：敲门与门槛石同步撤除
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段77d 切回镇：门槛石恢复、叩门仍待证物（条件可逆）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段77e 拿到证物：三条件齐 → KnockPlayer 激活（循环叩门）
+PASS 段77f 门槛石敲门文本：听见+无人（盲测安全）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段78a 未掀：无浅洞+文本=57 松板句（dom 兼容）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段78b E 掀板：浅洞+铁盒在场（遮挡解除）
+PASS 段78c 板斜靠墙根：位移+倾斜（视觉遮挡解除）
+PASS 段78d 侦探身份：掀开文本=半张照片+账本置位
+PASS 段78e 掀板后踩响禁用：板不在了不响（空间因果）
+PASS 段78f 幂等：再掀不回盖（一次性）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段78g 跨章保持：第 2 章浅洞铁盒仍在（z 维账本驱动）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段79a 东墙内面：软木板+图钉常驻，未钉无描摹纸（负例）
+PASS 段79b 无证物：空板句
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段79c 有证物未钉：邀请句（evidence flag 即时、pinned 独立）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段79d E 钉板：描摹纸+红线在场+账本置位
+PASS 段79e 已钉句：红线+证物轮廓随 prop 派生（星图）
+PASS 段79f 幂等：再钉不变化（一次性）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段79g 跨章保持：第 3 章描摹纸仍在（p2 维账本驱动）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段80a 小凳八音盒常驻在场+初始静默
+PASS 段80b E 上发条：开始演奏（返回 true）
+PASS 段80c 演奏中：playing 置位+未落闩
+PASS 段80d 演奏中再 E：不重播（幂等负例）
+FAIL 段80e 曲终落闩：1.8s 后 done 置位（有限演奏）
+FAIL 段80f 曲终再上发条：可重复演奏（瞬态重置）
+PASS 段80g 听后感随主基调三分化（星历/哄人睡觉）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段81a 窗台稿纸常驻+初始未写（stage=0）
+PASS 段81b 未写文本：blank 句
+PASS 段81c 第一次 E：档 1（平静=勿念）
+PASS 段81d 第二次 E：档 2（牵挂=井边的花）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段81e 第三次 E：档 3（追问）+文本固化当前档
+PASS 段81f 墨线视觉递进：3 条随档位出现（l2 键维重建）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段81g 跨章保持：第 2 章仍为档 3（最终档账本驱动）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段82a 初始：非守夜
+PASS 段82b 仅点火：未涌现（缺灯灭+未坐）
+PASS 段82c 点火+灯灭：仍未涌现（缺坐着）
+PASS 段82d 三瞬态齐：守夜涌现+火光增旺 2.4
+PASS 段82e 守夜文本：今晚不睡了，等门响（盲测安全）
+PASS 段82f 站起即消散：火光回落 1.6（任一退出即不成立）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段82g 重建复位：守夜态归零（瞬态涌现不跨章）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段83a 初始：叩门未激活（镇+无证物+低悬疑）
+PASS 段83b 非激活敲门文本：这屋里本来也只有你
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段83c 三条件齐：knock_active 快照置位、回应待发
+PASS 段83d 激活回应文本：里面安静得像在听（盲测安全）
+PASS 段83e 已回应幂等文本：刚才那一下用完了
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段84a 出生点首样本：足迹 0 于 spawn（起点也是动线的一部分）
+PASS 段84b 动线样本：足迹 1 于传送目的地（0.9m 间距采样）
+PASS 段84c 其余 6 枚保持隐藏（循环复用未到）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段85a 初始：三处记忆均未唤起
+PASS 段85b 井边唤起：信号发出+文本=打水的记忆
+PASS 段85c 门槛唤起：凹痕=三代人的鞋底
+PASS 段85d 屋顶唤起：俯瞰的记忆
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段85e 重建重置：新的一天可重新唤起（每章一次语义）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段86a 站变体：无风筝（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段86b 镇变体：风筝+尾穗挂树梢
+PASS 段86c 风筝文本：悬念句（盲测安全）
+PASS 段86d 风档 1：风筝摆角 +0.15（家族联动）
+PASS 段86e 风档 2：摆角 +0.30（三档递进）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段86f 重建复位：风档归零摆角回正（瞬态家族语义）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段87a 解释未落定：无蓝点（认知门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段87b colony 落定：蓝点在场（认知解锁）
+PASS 段87c colony 星文本：你知道那是什么（地球，盲测安全）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段87d 换 mine：蓝点仍在但文本换世界观（矿灯）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段88a 第 1 章：无晨光斑（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段88b 第 3 章：仍无晨光斑（back_open 已翻但 end_dom 空——负例二）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段88c 第 5 章：晨光斑在场+斜置角（与窗对位）
+PASS 段88d 同章联动：窗色金黄+窗台暖光小片（61×76 同键控）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段55a 悬疑满档：五斗柜+收音机+指示灯在场
+PASS 段55b E 开：指示灯亮，杂音文本（sci=电码）
+PASS 段55c E 关：指示灯灭，文本=杂音停了
+PASS 段55d dom 三分化文本（warm=哼歌/susp=呼吸）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段55e 空间站对照：站变体无收音机（镇专属门控）
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段54a 悬疑 0：无脚印（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段54b 悬疑 1：三枚脚印在场，文本=不是你的
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段54c 悬疑 2：五枚脚印（密度随档），文本=不止一趟
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段53a 温情 0：无巢（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段53b 第 3 章：新泥+巢环累积在场
+PASS 段53c stage2 文本=筑好了
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段53d 第 4 章：雏鸟在场，文本=有了声音
+[demo10-3d] root ready | chapter=0
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段51a 温情 0：猫不出现（门控负例）
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段51b 温情+1：猫常驻（实体占位=不可穿）
+PASS 段51c 摸猫账本一次性 + dom 三分化文本
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+[DIAG pic] pic_rot=-0.12 spec_ps=false
+PASS 段51d 终稿清点：猫的回声（稿纸当卧垫）
+==========================================
+PASS 483 / FAIL 2
+WARNING: 8 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)

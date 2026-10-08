@@ -1,0 +1,11 @@
+{
+  "title": "INKBOUND · 一件作品的小庭院",
+  "version": "demo-06-courtyard-v11",
+  "date": "2026-10-07T14:21:21.431Z",
+  "author": "codex",
+  "notes": "在小庭院画一件梯架，攀登三个目标；Z回收返还墨水，保留图纸继续搭建。",
+  "runtime": {
+    "path": "runtime/godot-4.7.2-fc74679e3b97/index.wasm",
+    "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+  }
+}

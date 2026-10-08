@@ -69,13 +69,13 @@ const LEVELS := [
 			Rect2(-40, 0, 40, 540),             # 左墙
 			Rect2(960, 0, 40, 540),             # 右墙
 			Rect2(0, 470, 350, 70),             # 左发射台（右侧是深坑）
-			Rect2(620, 240, 40, 230),           # 舱室左壁
+			Rect2(560, 240, 40, 230),           # v8：舱室前移 60px，横漂距离约缩短 13%
 			Rect2(470, 340, 40, 130),           # 坑中石柱（垫脚/障碍）
 		],
 		spring = Rect2(150, 440, 100, 30),      # 弹簧：原地高高起飞（冲量需抵消羽毛的空气阻尼）
 		spring_impulse = Vector2(250, -690),
-		fragile = Rect2(660, 240, 300, 30),     # 舱室脆天花板：只能从正上方砸穿进入
-		goal = Rect2(680, 430, 270, 40),        # 舱底整条 = 目标区（砸穿即落在上面）
+		fragile = Rect2(600, 240, 360, 30),     # 保留石头砸板教学，远端仍封闭至右墙
+		goal = Rect2(620, 430, 330, 40),        # 舱底随舱室前移，加宽落点容错
 		spawn = Vector2(200, 60),
 		solution = "弹簧 → 羽毛横漂 → 石头砸舱门",
 	},
@@ -157,7 +157,7 @@ func _ready() -> void:
 
 	for i in TAGS.size():
 		var b := Button.new()
-		b.text = TAGS[i].name
+		b.text = "%d %s" % [i + 1, TAGS[i].name]
 		b.position = Vector2(540 + i * 108, 6)
 		b.size = Vector2(100, 36)
 		b.focus_mode = Control.FOCUS_NONE   # 别抢空格键：空格留给跳跃
@@ -265,6 +265,7 @@ func _load_level(idx: int) -> void:
 	tel_mid_switch = false
 	tel_flapped = false
 	route_line = ""
+	msg_label.text = ""   # 换关时清除上一关通关提示，不能在未过关时显示通关
 	if idx != prev_level:
 		tel_wins = 0   # run_index 语义：同关重玩保留通关次数，换关归零
 	for c in get_children():
@@ -277,7 +278,7 @@ func _load_level(idx: int) -> void:
 	_spawn_ball(lv.spawn)
 	_apply_tag()
 	level_label.text = lv.name + (("　　参考解法：" + lv.solution) if OS.is_debug_build() else "")
-	hint = "←→=空中横移｜空格=羽毛轻扑翼（滞空限一次）｜点词条实时改变物理，送球进金色 GOAL！"
+	hint = "←→ 横移｜1/2/3 切词条｜空格=羽毛轻扑翼（滞空限一次）｜送球进金色 GOAL！"
 	_refresh_next_button()
 	queue_redraw()
 
@@ -431,6 +432,14 @@ func _refresh_next_button() -> void:
 
 
 # ---------------- 每帧 ----------------
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		var key: int = event.physical_keycode if event.physical_keycode != 0 else event.keycode
+		var tag: int = [KEY_1, KEY_2, KEY_3].find(key)
+		if tag >= 0:
+			_on_tag(tag)
+			get_viewport().set_input_as_handled()
 
 func _physics_process(delta: float) -> void:
 	if ball == null or goal_reached:

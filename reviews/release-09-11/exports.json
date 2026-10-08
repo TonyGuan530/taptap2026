@@ -1,0 +1,94 @@
+[
+  {
+    "projectStage": "C:\\Users\\49321\\AppData\\Local\\Temp\\taptap-review-demo-09-3d-v1-13be24b5f9e74ee1acdc4c696f7212ac\\game",
+    "buildId": "demo-09-3d-v1",
+    "pckSha256": "19ca609d77304e66fdf8e1e0a5010916c783f0919e918d06a59f7e6fd510c65c",
+    "checks": [
+      {
+        "step": "import",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      },
+      {
+        "step": "test_demo09_3d_scene.gd",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      },
+      {
+        "step": "test_demo09_3d_rigidflow.gd",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      },
+      {
+        "step": "test-review-entry.gd",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      },
+      {
+        "step": "export",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      }
+    ],
+    "sourceCommit": "2e318b1ae739d7fece975cf2aea43806c183840d",
+    "mainScene": "res://demo09_review.tscn"
+  },
+  {
+    "projectStage": "C:\\Users\\49321\\AppData\\Local\\Temp\\taptap-review-demo-10-3d-v2-d47ba33703a8468094d876d9f6978353\\game",
+    "buildId": "demo-10-3d-v2",
+    "pckSha256": "e342b174725af6584631ee76a3e363185c3e7d455a8295dcd3ace84d35c9d605",
+    "checks": [
+      {
+        "step": "import",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      },
+      {
+        "step": "test_demo10_3d_scene.gd",
+        "shutdownResourceDiagnostic": true,
+        "exitCode": 0
+      },
+      {
+        "step": "test_demo10_3d_phaseb.gd",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      },
+      {
+        "step": "export",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      }
+    ],
+    "sourceCommit": "f137d9390cf941d11b847882b1a37a07a6c74fb5",
+    "mainScene": "res://demo10_3d.tscn"
+  },
+  {
+    "projectStage": "C:\\Users\\49321\\AppData\\Local\\Temp\\taptap-review-demo-11-3d-v1-733a24d861144ebdb3aa20bc942424b1\\game",
+    "buildId": "demo-11-3d-v1",
+    "pckSha256": "1b0184b819b617da888cae61f20b8430d151619053b6be17ac4605f55a2dbde3",
+    "checks": [
+      {
+        "step": "import",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      },
+      {
+        "step": "test_demo11_3d_core.gd",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      },
+      {
+        "step": "test_demo11_3d_scene.gd",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      },
+      {
+        "step": "export",
+        "shutdownResourceDiagnostic": false,
+        "exitCode": 0
+      }
+    ],
+    "sourceCommit": "a175609b2053dc9bed0d30cabc785f910094bf97",
+    "mainScene": "res://demo11_3d.tscn"
+  }
+]

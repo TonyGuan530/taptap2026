@@ -1,0 +1,3 @@
+demo-08-3d-v31 import exit=0
+demo-08-3d-v31 export exit=0
+EXPORTED demo-08-3d-v31 stage=C:\Users\49321\AppData\Local\Temp\taptap-demo08-684899351b5f48269188f96579b5ecc4

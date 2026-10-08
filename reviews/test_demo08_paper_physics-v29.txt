@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: reject zero-length crease
+PASS: crease splits and rotates paper
+PASS: fold conserves paper area / mass
+PASS: fold produces 3D vertices, not scaled boxes
+PASS: hinge preserves panel edge length
+PASS: hinge preserves panel edge length
+PASS: hinge preserves panel edge length
+PASS: hinge preserves panel edge length
+PASS: hinge preserves panel edge length
+PASS: hinge preserves panel edge length
+PASS: hinge preserves panel edge length
+PASS: hinge preserves panel edge length
+PASS: undo restores original sheet
+PASS: dart crease accepted
+PASS: dart crease accepted
+PASS: dart crease accepted
+PASS: dart crease accepted
+PASS: dart crease accepted
+PASS: five folds preserve sheet area
+PASS: overlapping layers do not multiply lift area
+PASS: mass comes from original 80gsm paper
+PASS: zero airspeed produces no lift or drag
+PASS: drag opposes relative air velocity
+PASS: open-source curve models stall
+PASS: finite flight reaches ground
+PASS: folded geometry changes trajectory
+PASS: 30/120fps equivalent flight
+PASS: wind changes airspeed and forces
+PASS: A/D roll moments change lateral trajectory in the expected direction
+PASS: S pitch moment lowers flight and reaches ground sooner
+FLIGHT angle=8 distance=19.45 time=3.12 apex=2.93
+FLIGHT angle=12 distance=18.71 time=3.27 apex=3.69
+FLIGHT angle=20 distance=16.42 time=3.42 apex=5.02
+FLIGHT angle=30 distance=13.45 time=3.43 apex=6.28
+FLIGHT angle=40 distance=12.17 time=3.27 apex=7.14
+WIND (0.0, 0.0, 2.0) distance=11.29 time=2.92 lateral=2.25
+WIND (1.5, 0.0, 0.0) distance=15.21 time=2.42 lateral=1.61
+WIND (0.0, 0.0, -2.0) distance=25.16 time=3.52 lateral=2.37
+PHYSICS_RESULT failures=0 dart=18.71m flat=9.38m

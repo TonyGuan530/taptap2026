@@ -1,0 +1,283 @@
+{
+  "verifiedAt": "2026-10-07T09:21:24.612Z",
+  "base": "https://tonyguan530.github.io/taptap2026",
+  "build": "demo-08-3d-v29",
+  "passed": true,
+  "checks": [
+    {
+      "name": "face selected and edge-midpoint snapping",
+      "passed": true
+    },
+    {
+      "name": "reselect pending crease keeps transaction",
+      "passed": true
+    },
+    {
+      "name": "numeric angle 60",
+      "passed": true
+    },
+    {
+      "name": "first hinge stands in 3D",
+      "passed": true
+    },
+    {
+      "name": "explicit first commit",
+      "passed": true
+    },
+    {
+      "name": "second crease on tilted face",
+      "passed": true
+    },
+    {
+      "name": "second fold numeric angle",
+      "passed": true
+    },
+    {
+      "name": "second commit",
+      "passed": true
+    },
+    {
+      "name": "numeric angle 30",
+      "passed": true
+    },
+    {
+      "name": "ancestor edit preserves downstream feature",
+      "passed": true
+    },
+    {
+      "name": "cancel restores ancestor and child",
+      "passed": true
+    },
+    {
+      "name": "actual screen rotation handle sets 90 degrees",
+      "passed": true
+    },
+    {
+      "name": "undo whole operation",
+      "passed": true
+    },
+    {
+      "name": "redo whole operation",
+      "passed": true
+    },
+    {
+      "name": "new sheet clears geometry",
+      "passed": true
+    },
+    {
+      "name": "new sheet can be undone",
+      "passed": true
+    },
+    {
+      "name": "orbit pan and zoom do not mutate paper",
+      "passed": true
+    },
+    {
+      "name": "editable flying starter",
+      "passed": true
+    },
+    {
+      "name": "starter exposes wing angle",
+      "passed": true
+    },
+    {
+      "name": "real 3D paper appears in workbench",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "practice landing",
+      "passed": true
+    },
+    {
+      "name": "five-level menu",
+      "passed": true
+    },
+    {
+      "name": "level 1",
+      "passed": true
+    },
+    {
+      "name": "level starter 1",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 1",
+      "passed": true
+    },
+    {
+      "name": "level 2",
+      "passed": true
+    },
+    {
+      "name": "level starter 2",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 2",
+      "passed": true
+    },
+    {
+      "name": "level 3",
+      "passed": true
+    },
+    {
+      "name": "level starter 3",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 3",
+      "passed": true
+    },
+    {
+      "name": "level 4",
+      "passed": true
+    },
+    {
+      "name": "level starter 4",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 4",
+      "passed": true
+    },
+    {
+      "name": "level 5",
+      "passed": true
+    },
+    {
+      "name": "level starter 5",
+      "passed": true
+    },
+    {
+      "name": "physical launch",
+      "passed": true
+    },
+    {
+      "name": "level cleared 5",
+      "passed": true
+    },
+    {
+      "name": "five-level final",
+      "passed": true
+    },
+    {
+      "name": "no browser or script errors",
+      "passed": true
+    }
+  ],
+  "telemetry": [
+    "PAPER|menu|levels=5",
+    "PAPER|level|1|practice=true",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|crease|1",
+    "WORKBENCH|model|angles=0.0|pending=true|height=0.00000",
+    "WORKBENCH|angle|1|60.0",
+    "WORKBENCH|model|angles=60.0|pending=true|height=0.09093",
+    "WORKBENCH|commit|1",
+    "WORKBENCH|model|angles=60.0|pending=false|height=0.09093",
+    "WORKBENCH|model|angles=60.0|pending=false|height=0.09093",
+    "WORKBENCH|model|angles=60.0|pending=false|height=0.09093",
+    "WORKBENCH|crease|2",
+    "WORKBENCH|model|angles=60.0,0.0|pending=true|height=0.09093",
+    "WORKBENCH|angle|2|-45.0",
+    "WORKBENCH|model|angles=60.0,-45.0|pending=true|height=0.05905",
+    "WORKBENCH|commit|2",
+    "WORKBENCH|model|angles=60.0,-45.0|pending=false|height=0.05905",
+    "WORKBENCH|model|angles=60.0,-45.0|pending=true|height=0.05905",
+    "WORKBENCH|angle|1|30.0",
+    "WORKBENCH|model|angles=30.0,-45.0|pending=true|height=0.02625",
+    "WORKBENCH|model|angles=60.0,-45.0|pending=false|height=0.05905",
+    "WORKBENCH|model|angles=60.0,-45.0|pending=true|height=0.05905",
+    "WORKBENCH|angle|1|63.0",
+    "WORKBENCH|model|angles=63.0,-45.0|pending=true|height=0.06300",
+    "WORKBENCH|angle|1|65.0",
+    "WORKBENCH|model|angles=65.0,-45.0|pending=true|height=0.06554",
+    "WORKBENCH|angle|1|68.0",
+    "WORKBENCH|model|angles=68.0,-45.0|pending=true|height=0.06919",
+    "WORKBENCH|angle|1|70.0",
+    "WORKBENCH|model|angles=70.0,-45.0|pending=true|height=0.07152",
+    "WORKBENCH|angle|1|73.0",
+    "WORKBENCH|model|angles=73.0,-45.0|pending=true|height=0.07485",
+    "WORKBENCH|angle|1|75.0",
+    "WORKBENCH|model|angles=75.0,-45.0|pending=true|height=0.07696",
+    "WORKBENCH|angle|1|78.0",
+    "WORKBENCH|model|angles=78.0,-45.0|pending=true|height=0.07995",
+    "WORKBENCH|angle|1|80.0",
+    "WORKBENCH|model|angles=80.0,-45.0|pending=true|height=0.08182",
+    "WORKBENCH|angle|1|83.0",
+    "WORKBENCH|model|angles=83.0,-45.0|pending=true|height=0.08443",
+    "WORKBENCH|angle|1|85.0",
+    "WORKBENCH|model|angles=85.0,-45.0|pending=true|height=0.08605",
+    "WORKBENCH|angle|1|88.0",
+    "WORKBENCH|model|angles=88.0,-45.0|pending=true|height=0.08827",
+    "WORKBENCH|angle|1|90.0",
+    "WORKBENCH|model|angles=90.0,-45.0|pending=true|height=0.08962",
+    "WORKBENCH|model|angles=60.0,-45.0|pending=false|height=0.05905",
+    "WORKBENCH|model|angles=60.0|pending=false|height=0.09093",
+    "WORKBENCH|undo|1",
+    "WORKBENCH|model|angles=60.0,-45.0|pending=false|height=0.05905",
+    "WORKBENCH|redo|2",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=60.0,-45.0|pending=false|height=0.05905",
+    "WORKBENCH|undo|2",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|launch|mass=0.00504|area=0.03545",
+    "PAPER|land|18.71m|3.27s",
+    "PAPER|menu|levels=5",
+    "PAPER|level|1|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|launch|mass=0.00504|area=0.03545",
+    "PAPER|course|1|pass=true|12.01m",
+    "PAPER|level|2|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|launch|mass=0.00504|area=0.03545",
+    "PAPER|course|2|pass=true|16.02m",
+    "PAPER|level|3|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|launch|mass=0.00504|area=0.03545",
+    "PAPER|course|3|pass=true|9.05m",
+    "PAPER|level|4|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|launch|mass=0.00504|area=0.03545",
+    "PAPER|course|4|pass=true|13.06m",
+    "PAPER|level|5|practice=false",
+    "WORKBENCH|model|angles=|pending=false|height=0.00000",
+    "WORKBENCH|model|angles=14.0|pending=false|height=0.02540",
+    "WORKBENCH|starter|features=1",
+    "PAPER|launch|mass=0.00504|area=0.03545",
+    "PAPER|course|5|pass=true|20.04m",
+    "PAPER|final|levels=5"
+  ],
+  "errors": []
+}

@@ -18,7 +18,7 @@ const ENEMY_MAX_HP := 3
 const FEET_OFFSET := 0.62
 const SPEED := 3.5
 const GRAVITY := 18.0
-const SAFE_BOUNDS := Rect2(Vector2(-3.75,-5.75),Vector2(43.5,13.5))
+const SAFE_BOUNDS := Rect2(Vector2(-3.75,-5.75),Vector2(19.5,13.5))
 const PROPERTY_TEXT := {"None":"无词条 · 尺寸和接触决定结果","Sticky":"黏性 · 板面抓地，支持 62° 陡坡","Elastic":"弹性 · 原笔迹实际放大 1.4 倍","Sharp":"锋利 · 黄刃真实接触可切开软藤"}
 var player: CharacterBody3D
 var actor: Node3D
@@ -52,7 +52,7 @@ var ink := {"black":MAX_BLACK_INK,"yellow":0.0}
 var words: Array = ["None"]
 var structures: Array = []
 var goals: Array = [false,false,false]
-var goal_positions: Array[Vector3] = [Vector3(5.1,1.25,0),Vector3(13.5,2.05,0),Vector3(22.0,3.10,0)]
+var goal_positions: Array[Vector3] = [Vector3(4,1.25,0),Vector3(8,2.05,2),Vector3(12,3.10,-2)]
 var goal_nodes: Array[Node3D] = []
 var yellow_unlocked := false
 var won := false
@@ -73,7 +73,7 @@ var player_invulnerability := 0.0
 var weapon: Node3D
 var facing := Vector3.RIGHT
 var notebook_help: Label
-var landmark_positions := {"start":Vector3(0,0,0),"fountain":Vector3(-1.5,0,2),"threshold_goal":Vector3(5.1,1.25,0),"courtyard_goal":Vector3(13.5,2.05,0),"tower_goal":Vector3(22,3.1,0),"threshold_aim":Vector3(3.5,1.25,0),"courtyard_aim":Vector3(12,2.05,0),"tower_aim":Vector3(20.5,3.1,0),"threshold_side":Vector3(5,0.60,4),"courtyard_side":Vector3(11.8,1.0,4),"tower_side_low":Vector3(19,1.0,4),"tower_side_high":Vector3(22,2.0,4),"yellow_courtyard":Vector3(25,0,0),"yellow_entry":Vector3(27.5,0,0),"vines":Vector3(30.4,0,0),"enemy":Vector3(33.6,0.35,0),"yellow_goal":Vector3(36.5,0.60,0),"word_Sharp":Vector3(27.5,0,-0.6),"yellow_ledge":Vector3(29.25,2.60,0.70)}
+var landmark_positions := {"start":Vector3(0,0,0),"fountain":Vector3(-1.5,0,2),"threshold_goal":Vector3(4,1.25,0),"courtyard_goal":Vector3(8,2.05,2),"tower_goal":Vector3(12,3.1,-2),"threshold_aim":Vector3(2.5,1.25,0),"courtyard_aim":Vector3(6.5,2.05,2),"tower_aim":Vector3(10.5,3.1,-2),"threshold_side":Vector3(4,0.60,4),"courtyard_side":Vector3(8,1.0,5),"tower_side_low":Vector3(10.1,1.0,-4),"tower_side_high":Vector3(12,2.0,-4),"yellow_courtyard":Vector3(25,0,0),"yellow_entry":Vector3(27.5,0,0),"vines":Vector3(30.4,0,0),"enemy":Vector3(33.6,0.35,0),"yellow_goal":Vector3(36.5,0.60,0),"word_Sharp":Vector3(27.5,0,-0.6),"yellow_ledge":Vector3(29.25,2.60,0.70)}
 var safe_point := Vector3(0,FEET_OFFSET,0)
 var climbing_id := -1
 var climb_up_guard := false
@@ -86,7 +86,7 @@ var qa_enabled := false
 var qa_age := 0.0
 var clock := 0.0
 var word_pickups: Array = []
-var fountains: Array[Vector3] = [Vector3(-1.5,0,2),Vector3(8.4,0,2.5),Vector3(16.5,0,2.5),Vector3(27.2,0,1.15)]
+var fountains: Array[Vector3] = [Vector3(-1.5,0,2),Vector3(8.4,0,2.5),Vector3(12,0,2.5)]
 
 func _ready() -> void:
 	_build_environment()
@@ -130,16 +130,16 @@ func _build_world() -> void:
 	world = Node3D.new()
 	world.name = "PaperWorld"
 	add_child(world)
-	_platform("SafePaper",Vector3(18,-0.25,1.0),Vector3(44,0.5,14),Color("eadcbe"))
+	_platform("SafePaper",Vector3(6,-0.25,1.0),Vector3(20,0.5,14),Color("eadcbe"))
 	for layer in 3:
-		Art.box(world,Vector3(44,0.08,14),Vector3(18,-0.55-layer*0.12,1),Color("cdbb98").lightened(layer*0.05))
-	_platform("FoldedThreshold",Vector3(5,0.625,0),Vector3(3,1.25,3),Color("ddc7a2"))
-	_platform("ThresholdSide",Vector3(5,0.30,4),Vector3(3,0.60,2),Color("e2cba7"))
-	_platform("SplitCourtyard",Vector3(13.5,1.025,0),Vector3(3,2.05,3),Color("d4b896"))
-	_platform("CourtyardSide",Vector3(11.8,0.50,4),Vector3(2.4,1.0,2),Color("ddc09d"))
-	_platform("LeaningBookTower",Vector3(22,1.55,0),Vector3(3,3.10,3),Color("c9aa84"))
-	_platform("TowerSideLow",Vector3(19,0.5,4),Vector3(2,1,2),Color("ddc29e"))
-	_platform("TowerSideHigh",Vector3(22,1.0,4),Vector3(2.2,2,2),Color("d1b794"))
+		Art.box(world,Vector3(20,0.08,14),Vector3(6,-0.55-layer*0.12,1),Color("cdbb98").lightened(layer*0.05))
+	_platform("FoldedThreshold",Vector3(4,0.625,0),Vector3(3,1.25,3),Color("ddc7a2"))
+	_platform("ThresholdSide",Vector3(4,0.30,4),Vector3(3,0.60,2),Color("e2cba7"))
+	_platform("SplitCourtyard",Vector3(8,1.025,2),Vector3(3,2.05,3),Color("d4b896"))
+	_platform("CourtyardSide",Vector3(8,0.50,5),Vector3(2.4,1.0,2),Color("ddc09d"))
+	_platform("LeaningBookTower",Vector3(12,1.55,-2),Vector3(3,3.10,3),Color("c9aa84"))
+	_platform("TowerSideLow",Vector3(10.1,0.5,-4),Vector3(2,1,2),Color("ddc29e"))
+	_platform("TowerSideHigh",Vector3(12,1.0,-4),Vector3(2.2,2,2),Color("d1b794"))
 	for i in goal_positions.size():
 		var node := Node3D.new()
 		node.position = goal_positions[i]
@@ -154,7 +154,7 @@ func _build_world() -> void:
 		Art.cylinder(world,0.50,0.58,0.12,position+Vector3(0,0.06,0),Color("baa079"))
 		Art.cylinder(world,0.39,0.39,0.015,position+Vector3(0,0.13,0),Color("456d70"))
 		_label3d(world,"补墨 · E",position+Vector3(0,0.7,0))
-	for entry in [["Sticky",Vector3(7.6,0,1.0)],["Elastic",Vector3(16,0,1.0)],["Sharp",landmark_positions.word_Sharp]]:
+	for entry in [["Sticky",Vector3(7.6,0,1.0)],["Elastic",Vector3(10,0,1.0)],["Sharp",landmark_positions.word_Sharp]]:
 		var node := Art.scroll()
 		node.position = entry[1]
 		world.add_child(node)
@@ -165,11 +165,11 @@ func _build_world() -> void:
 		var rail := Art.box(world,Vector3(0.08,0.09,1.3),Vector3(2.9,0.06,x+2.1),Color("677d7b"))
 		rail.rotation.y = 0.35
 	Art.box(world,Vector3(0.50,0.025,0.36),Vector3(7,0.025,-2),Color("f8ebcb"))
-	Art.box(world,Vector3(0.18,0.03,2.4),Vector3(22.4,3.13,0),Color("b2685d"))
-	Art.cylinder(world,0.16,0.20,0.40,Vector3(25,0.2,1),Color("d3ad48"))
-	for x in [-3,1,7,9,16,24,26]:
+	Art.box(world,Vector3(0.18,0.03,2.4),Vector3(12.4,3.13,-2),Color("b2685d"))
+	Art.cylinder(world,0.16,0.20,0.40,Vector3(13.8,0.2,1),Color("d3ad48"))
+	for x in [-3,1,7,9,15]:
 		for z in [-4.6,6.7]: _fold_tree(Vector3(x,0,z),1.6+fmod(x*0.13+4,0.6))
-	for i in 18:
+	for i in 11:
 		var x := -2.0+float(i)*1.65
 		Art.box(world,Vector3(0.7,0.025,0.1),Vector3(x,0.02,-3.1),Color("a9a68e"))
 	_build_yellow_courtyard()
@@ -460,7 +460,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_R: reset_run(); return
 		if result_open: return
 		if event.physical_keycode == KEY_E: interact()
-		if event.physical_keycode == KEY_Q: reclaim_nearest()
+		if event.physical_keycode in [KEY_Q,KEY_Z]: reclaim_nearest()
 		if event.physical_keycode == KEY_F: attack()
 		if event.physical_keycode == KEY_SPACE:
 			jump_or_exit()
@@ -683,7 +683,7 @@ func reclaim_structure(id: int) -> bool:
 		_message("先走到另一块支撑上，再回收脚下造物。" ); return false
 	ink.black = minf(MAX_BLACK_INK,ink.black+entry.cost)
 	entry.node.queue_free(); structures.erase(entry)
-	_message("回收了作品，%.1f 黑墨回到墨瓶。" % entry.cost)
+	_message("画稿仍在手中！回收 %.1f 黑墨，直接点下一座台沿再摆放。" % entry.cost)
 	_update_hud(); return true
 
 func reclaim_nearest() -> void:
@@ -732,12 +732,12 @@ func collect_goals() -> void:
 		if not goals[i] and feet.distance_to(goal_positions[i]) < 0.75:
 			goals[i] = true; goal_nodes[i].hide()
 			Audio.play(self,880+i*120)
-			_message(["碎页拾起了。到对岸去。","中庭的画页回来了。登上书塔，找回画页。","第一张画页，回来了。找到黄墨：画作能成为武器。"][i])
-	if not yellow_unlocked and goals.all(func(value): return value):
-		yellow_unlocked = true; ink.yellow = MAX_YELLOW_INK
+			_message(["第一张到手！站稳台面后 Z 回收，再用同一画稿去中庭。","第二张到手！Z 回收返还黑墨，同一作品再登书塔。","三张齐了，小庭院完成！"][i])
+	if not won and goals.all(func(value): return value):
+		won = true
 		result_open = true; result_panel.show()
-		result_label.text = "第一张画页，回来了。\n\n找到了黄墨：画作能成为武器。\n\n继续向右，带上画作穿过藤庭。\n锋利切藤，或借黑墨搭路越过。"
-		buttons["continue"].text = "带上黄墨，去藤庭"
+		result_label.text = "小庭院的三张画页，都回来了。\n\n同一份画稿可以回收、再摆放。\n笔迹留在手中，黑墨回到瓶里。\n\n继续探索，或重新画一条路。"
+		buttons["continue"].text = "继续逛小庭院"
 	if yellow_unlocked and not final_goal_collected and feet.distance_to(landmark_positions.yellow_goal) < 0.75:
 		final_goal_collected = true; won = true; final_goal_node.hide()
 		result_open = true; result_panel.show(); buttons["continue"].text = "继续在画页里走"
@@ -796,7 +796,7 @@ func _build_ui() -> void:
 	footer_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	message_label = _label(ui,"",Vector2(24,476),Vector2(910,48),17)
 	message_label.add_theme_color_override("font_color",Color("263e43"))
-	keyboard_help = _label(ui,"WASD 移动 · Space 跳/离梯 · E 攀爬/补墨 · Q 回收 · 黄墨左键/F 挥砍",Vector2(22,447),Vector2(860,26),14)
+	keyboard_help = _label(ui,"WASD 移动 · Space 跳/离梯 · E 攀爬/补墨 · Z/Q 回收 · 同一画稿反复摆放",Vector2(22,447),Vector2(860,26),14)
 	notebook_panel = _panel(ui,Vector2(90,15),Vector2(780,510))
 	notebook_panel.hide()
 	_label(notebook_panel,"绘本 / 保留每一笔",Vector2(24,14),Vector2(350,30),23)
@@ -832,7 +832,7 @@ func _build_ui() -> void:
 	intro_panel.add_child(portrait)
 	_label(intro_panel,"墨迹漂流",Vector2(280,30),Vector2(315,46),30)
 	_label(intro_panel,"画页散了。\n还好，笔还在。",Vector2(280,100),Vector2(310,90),24)
-	_label(intro_panel,"找回被墨水冲散的画页。\n\n画短梯，搭长板，沿笔迹往上走。\n长度不够时，画纸会告诉你。",Vector2(280,208),Vector2(314,110),16)
+	_label(intro_panel,"在小庭院找回三张画页。\n\n画一件作品，保存一次。\n站稳台面后 Z 回收，直接再摆放。\n同一作品可以反复用！",Vector2(280,208),Vector2(314,110),16)
 	_button(intro_panel,"带上画纸",Vector2(280,332),Vector2(310,44),begin_adventure,"begin")
 	result_panel = _panel(ui,Vector2(230,92),Vector2(500,350))
 	result_panel.hide()
@@ -887,7 +887,7 @@ func _button(parent: Node, text: String, pos: Vector2, dimensions: Vector2, acti
 
 func begin_adventure() -> void:
 	intro_open = false; intro_panel.hide()
-	_message("拿到高台上的碎页。Tab 打开画纸；可画梯架，或退远一点搭坡板。")
+	_message("Tab 画一件作品并保存；登台取页，站稳后 Z 回收，同一画稿继续搭下一台。")
 	_update_hud()
 
 func toggle_notebook() -> void:

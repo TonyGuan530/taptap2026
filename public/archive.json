@@ -3,16 +3,88 @@
   "note": "归档区：全量版本历史登记（含 git 历史中所有曾发布版本）。active=现役在线；archived=已归档（构建目录在 archive-builds/ 或仅存 git 历史，可复活）。",
   "items": [
     {
+      "id": "demo-06-courtyard-v11",
+      "title": "INKBOUND · 一件作品的小庭院",
+      "status": "active",
+      "revivable": true,
+      "reason": "在小庭院画一件梯架，攀登三个目标；Z回收返还墨水，保留图纸继续搭建。"
+    },
+    {
+      "id": "demo-05-valley-v9",
+      "title": "恐龙 · 小山谷营地",
+      "status": "active",
+      "revivable": true,
+      "reason": "在营地附近采集、搭建休息棚；火山提前到来，带着营地计划转向地下避难。"
+    },
+    {
+      "id": "demo-11-3d-v1",
+      "title": "箱庭谜题 3D · 推箱与工具",
+      "status": "archived",
+      "revivable": true,
+      "reason": "用户最终review裁决归档；首页入口撤下，历史构建保留可复活。",
+      "archivedAt": "2026-10-07"
+    },
+    {
+      "id": "demo-10-3d-v2",
+      "title": "修改小说 · 可探索3D世界",
+      "status": "active",
+      "revivable": true,
+      "reason": "用户授权上传3D评审版；原2D版本保留，待最终反馈。"
+    },
+    {
+      "id": "demo-09-3d-v1",
+      "title": "赛车模拟器 3D · 造车与驾驶",
+      "status": "archived",
+      "revivable": true,
+      "reason": "用户取消赛车重构并裁决3D也归档；撤下首页入口，历史版本保留。",
+      "archivedAt": "2026-10-07"
+    },
+    {
+      "id": "demo-08-3d-v31",
+      "title": "纸飞机 · 飞前XYZ旋转（5关）",
+      "status": "active",
+      "revivable": true,
+      "reason": "飞前XYZ三轴独立旋转，预览和实际起飞姿态一致；五关。"
+    },
+    {
+      "id": "demo-08-3d-v30",
+      "title": "纸飞机 · 折纸与飞前调角（5关）",
+      "status": "archived",
+      "revivable": true,
+      "reason": "由 v31 飞前XYZ旋转版替代；构建保留可恢复。",
+      "archivedAt": "2026-10-07"
+    },
+    {
+      "id": "demo-08-3d-v29",
+      "title": "纸飞机 · 3D 折纸工作台（5关）",
+      "status": "archived",
+      "revivable": true,
+      "reason": "由 v30 飞前调角版替代；构建保留可恢复。",
+      "archivedAt": "2026-10-07"
+    },
+    {
+      "id": "demo-08-3d-v28",
+      "title": "纸飞机 · 拖动立体折纸（5关）",
+      "status": "archived",
+      "revivable": true,
+      "reason": "用户认为旧交互仍不好用，由 v29 折纸工作台替代；构建保留可恢复。",
+      "archivedAt": "2026-10-07"
+    },
+    {
       "id": "demo-02-3d-v10",
       "title": "物性变换谜题 3D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "由本轮修复版替代；旧构建和基线保留。"
     },
     {
       "id": "demo-02-v7",
       "title": "物性变换谜题 2D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "由本轮修复版替代；旧构建和基线保留。"
     },
     {
       "id": "demo-03-3d-v14",
@@ -23,8 +95,10 @@
     {
       "id": "demo-04-3d-v17",
       "title": "SOUP 3D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终 review 已到 demo-04 结束，明确要求归档此 3D v17 版本，其他版本暂留。"
     },
     {
       "id": "demo-04-v12",
@@ -35,26 +109,29 @@
     {
       "id": "demo-05-hd2d-v6",
       "title": "恐龙火山 HD-2D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "reason": "大厅恐龙卡片已切换为 Low Poly 3D V8 营地生存版，原 HD-2D 版归档。",
+      "archivedAt": "2026-10-07"
     },
     {
       "id": "demo-05-tonight-v8",
-      "title": "恐龙 V8 · 交友与营地建设",
+      "title": "恐龙也想开灯 · Low Poly 3D V8",
       "status": "archived",
       "revivable": true,
-      "reason": "旧合辑中的恐龙原型已归档；独立保留交友、雇佣与建设实录。",
       "videoUrl": "tonight-v8-videos/dino-v8.mp4",
       "poster": "tonight-assets/dino-preview-v8.png",
-      "featured": true,
+      "activatedAt": "2026-10-07",
       "archivedAt": "2026-10-07",
-      "displayOrder": 4
+      "reason": "由密集体验快速迭代版替代；旧构建保留。"
     },
     {
       "id": "demo-06-inkbound-v10-touch",
       "title": "小画家 V10 · 手机触控更新",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "由密集体验快速迭代版替代；旧构建保留。"
     },
     {
       "id": "demo-06-tonight-v8",
@@ -71,38 +148,50 @@
     {
       "id": "demo-06-v15",
       "title": "词条涂鸦 2D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "reason": "大厅小画家卡片已切换为 INKBOUND V10 触控版，原 2D 涂鸦原型归档。",
+      "archivedAt": "2026-10-07"
     },
     {
       "id": "demo-08-3d-v26",
       "title": "纸飞机模拟器 3D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "由 v27 的纸面折叠与物理试飞版替代，旧构建保留。"
     },
     {
       "id": "demo-08-v3",
       "title": "纸飞机模拟器 2D",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终 review 明确要求归档 08 的 2D 版。"
     },
     {
       "id": "demo-09-v2",
       "title": "赛车模拟器",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终review裁决归档；首页入口撤下，历史构建保留可复活。"
     },
     {
       "id": "demo-10-v3b",
       "title": "demo-10-v3b",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终review裁决归档；首页入口撤下，历史构建保留可复活。"
     },
     {
       "id": "demo-11-v3",
       "title": "塞尔达式箱庭谜题",
-      "status": "active",
-      "revivable": true
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户最终review裁决归档；首页入口撤下，历史构建保留可复活。"
     },
     {
       "id": "demo-01",
@@ -1069,6 +1158,26 @@
       "title": "塞尔达式箱庭谜题",
       "status": "archived",
       "revivable": true
+    },
+    {
+      "id": "demo-02-v8",
+      "title": "物性变换谜题 2D",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-02-3d-v16",
+      "title": "物性变换谜题 3D（第三人称）",
+      "status": "active",
+      "revivable": true
+    },
+    {
+      "id": "demo-08-3d-v27",
+      "title": "纸飞机 · 3D 折纸与物理试飞（5关）",
+      "status": "archived",
+      "revivable": true,
+      "archivedAt": "2026-10-07",
+      "reason": "用户要求拖动立体折纸，由 v28 替代；旧构建归档可恢复。"
     }
   ]
 }

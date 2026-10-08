@@ -1,0 +1,69 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started 项目初始化 (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | 正在扫描文件结构……[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | 正在加载全局类名……[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | 正在校验 GDExtension……[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | 正在创建自动加载脚本……[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | 正在初始化插件……[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | 正在启动文件扫描……[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1msavepack[22m | Started 打包中 (102 steps)[39m[0m
+[   1% ] [90m[1msavepack[22m | 正在保存文件：res://comic_style/shaders/pixel_outline.gdshader[39m[0m
+[   4% ] [90m[1msavepack[22m | 正在保存文件：res://comic_style/shaders/plain_toon.gdshader[39m[0m
+[   8% ] [90m[1msavepack[22m | 正在保存文件：res://comic_style/shaders/sprite_comic.gdshader[39m[0m
+[  12% ] [90m[1msavepack[22m | 正在保存文件：res://comic_style/comic_object.gdc[39m[0m
+[  15% ] [90m[1msavepack[22m | 正在保存文件：res://comic_style/comic_style.gdc[39m[0m
+[  19% ] [90m[1msavepack[22m | 正在保存文件：res://comic_style/model_library.gdc[39m[0m
+[  23% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/car_view.gdc[39m[0m
+[  26% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/garage_model.gdc[39m[0m
+[  30% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/ghost_recorder.gdc[39m[0m
+[  33% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/ghost_view.gdc[39m[0m
+[  37% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/lane_core.gdc[39m[0m
+[  40% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/rigid_car.gdc[39m[0m
+[  44% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/road_builder.gdc[39m[0m
+[  48% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/imported/NotoSansSC.ttf-ff973a0c5d0f84d2db7594b18fe2f063.fontdata[39m[0m
+[  48% ] [90m[1msavepack[22m | 正在保存文件：res://fonts/NotoSansSC.ttf.import[39m[0m
+[  51% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-f1798be058cfca2bc639ec95e9e37821-barrel.scn[39m[0m
+[  55% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-d99481129d9f0d85457b4526e6c47c37-bush.scn[39m[0m
+[  59% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-bc85206a4fa9c0569d443a7ce542868e-crate.scn[39m[0m
+[  62% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-8df03dcd7a2ad58c4d4bcb0efe875129-gate_frame.scn[39m[0m
+[  66% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-68b53879f729166d010f7f32f2c18e17-iron_block.scn[39m[0m
+[  69% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-b6371355c7720439ed9ff70c486c1c2e-pressure_plate.scn[39m[0m
+[  73% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-80cd02b18a311c1408b67f0043df0992-rock.scn[39m[0m
+[  76% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-2a6a32db2108ded5812e71a23574a8f4-tree.scn[39m[0m
+[  80% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex[39m[0m
+[  80% ] [90m[1msavepack[22m | 正在保存文件：res://icon.svg.import[39m[0m
+[  84% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-efb90b90399a109b27df414828dbd791-demo09_review.scn[39m[0m
+[  87% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_review.gdc[39m[0m
+[  91% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d.gdc[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/exported/133200997/export-5571ab27740407e1104dc69264c0471d-demo09_3d.scn[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://comic_style/comic_object.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://comic_style/comic_style.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://comic_style/model_library.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/car_view.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/garage_model.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/ghost_recorder.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/ghost_view.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/lane_core.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/rigid_car.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d/road_builder.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://models/native/barrel.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://models/native/bush.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://models/native/crate.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://models/native/gate_frame.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://models/native/iron_block.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://models/native/pressure_plate.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://models/native/rock.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://models/native/tree.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_review.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_review.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d.gd.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://demo09_3d.tscn.remap[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/global_script_class_cache.cfg[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://icon.svg[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://.godot/uid_cache.bin[39m[0m
+[  95% ] [90m[1msavepack[22m | 正在保存文件：res://project.binary[39m[0m
+[92m[ DONE ][39m [1msavepack[22m
+[0m
